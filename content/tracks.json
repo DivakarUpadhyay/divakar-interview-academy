@@ -1,0 +1,9 @@
+[
+  { "slug": "foundations", "title": "1. Programming Foundations", "summary": "C# from basics to advanced, OOP and SOLID, design patterns, clean code and coding-round practice. Start here." },
+  { "slug": "dotnet", "title": "2. .NET Platform", "summary": "The .NET runtime, ASP.NET Core MVC and Web API, LINQ, ADO.NET and Entity Framework Core." },
+  { "slug": "data", "title": "3. Database, ETL & BI", "summary": "SQL Server with T-SQL, ETL design, SSIS packages and SSRS reports." },
+  { "slug": "devops-cloud", "title": "4. DevOps & Cloud", "summary": "Docker, Kubernetes, Azure DevOps pipelines and the major Azure services." },
+  { "slug": "frontend", "title": "5. Frontend", "summary": "JavaScript first, then jQuery, AngularJS (legacy), Angular, React and Vue." },
+  { "slug": "web3", "title": "6. Web3 & Blockchain", "summary": "Blockchain fundamentals, Ethereum, wallets, Solidity smart contracts and dApp integration from .NET and JavaScript." },
+  { "slug": "career", "title": "7. Career & Interview Skills", "summary": "HR and behavioural rounds, managerial and team-lead rounds, career gaps, salary negotiation and company-wise preparation." }
+]
