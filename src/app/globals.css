@@ -223,3 +223,7 @@ mark { background: #ffe066; color: #111; border-radius: 3px; padding: 0 2px; }
   .card, details.panel { box-shadow: none; break-inside: avoid; }
   .code-block pre { white-space: pre-wrap; }
 }
+
+/* long tokens (e.g. ClusterIP/NodePort/...) must wrap inside cards on phones */
+.grid > * { min-width: 0; }
+.card, .q-card, details.panel { overflow-wrap: anywhere; }

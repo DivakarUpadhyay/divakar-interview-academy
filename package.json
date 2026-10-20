@@ -9,7 +9,7 @@
     "build": "node scripts/build-db.mjs && next build",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "node --test tests/"
+    "test": "node --test tests/content.test.mjs"
   },
   "dependencies": {
     "better-sqlite3": "13.0.3",

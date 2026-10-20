@@ -361,3 +361,12 @@ public class ExportService(IEnumerable<IExporter> exporters)
     public byte[] Run(Report r, string fmt) => exporters.Single(e => e.Format == fmt).Export(r);
 }
 ```
+
+## One-liners to say in the interview
+
+- **SRP**: "A class should have one reason to change — one actor it serves."
+- **OCP**: "Add new behaviour by adding classes, not by editing tested ones."
+- **LSP**: "A subclass must work anywhere its base class is expected — no surprises."
+- **ISP**: "Don't force clients to depend on methods they don't use."
+- **DIP**: "High-level policy depends on abstractions; details plug in through DI."
+- **Balance**: "I apply SOLID where change is likely; for simple, stable code I keep it simple."

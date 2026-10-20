@@ -2,17 +2,17 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "REST API" };
 
-const ENDPOINTS: [string, string, string][] = [
-  ["GET", "/api/tracks", "Learning tracks in order, each with its courses."],
-  ["GET", "/api/courses", "All courses in learning order with lesson, question and cheat-sheet counts."],
-  ["GET", "/api/courses/{slug}", "One course: overview, versions, lifecycle, tools (HTML) and the module → lesson syllabus."],
-  ["GET", "/api/courses/{slug}/lessons/{lesson}", "One lesson with grade, priority and HTML body."],
-  ["GET", "/api/courses/{slug}/questions?level=&priority=&q=", "Interview questions for one course."],
-  ["GET", "/api/courses/{slug}/cheatsheet", "Cheat-sheet sections for one course."],
-  ["GET", "/api/questions?course=a,b&level=Beginner,Scenario&priority=High&q=&limit=50&offset=0", "All questions, filtered and paged. Returns { total, items }."],
-  ["GET", "/api/questions/random?course=&level=&priority=&count=10", "A random set for mock interviews (not cached)."],
-  ["GET", "/api/search?q=text", "Full-text search (SQLite FTS5) across lessons, questions, cheat sheets and courses."],
-  ["GET", "/api/stats", "Totals: tracks, courses, lessons, questions, scenario questions, cheat-sheet sections."],
+const ENDPOINTS: [string, string, string, string][] = [
+  ["GET", "/api/tracks", "/api/tracks", "Learning tracks in order, each with its courses."],
+  ["GET", "/api/courses", "/api/courses", "All courses in learning order with lesson, question and cheat-sheet counts."],
+  ["GET", "/api/courses/{slug}", "/api/courses/csharp", "One course: overview, versions, lifecycle, tools (HTML) and the module → lesson syllabus."],
+  ["GET", "/api/courses/{slug}/lessons/{lesson}", "/api/courses/csharp/lessons/value-types-vs-reference-types", "One lesson with grade, priority and HTML body."],
+  ["GET", "/api/courses/{slug}/questions?level=&priority=&q=", "/api/courses/csharp/questions?priority=High", "Interview questions for one course."],
+  ["GET", "/api/courses/{slug}/cheatsheet", "/api/courses/csharp/cheatsheet", "Cheat-sheet sections for one course."],
+  ["GET", "/api/questions?course=a,b&level=Beginner,Scenario&priority=High&q=&limit=50&offset=0", "/api/questions?course=sqlserver&level=Scenario&limit=5", "All questions, filtered and paged. Returns { total, items }."],
+  ["GET", "/api/questions/random?course=&level=&priority=&count=10", "/api/questions/random?count=3", "A random set for mock interviews (not cached)."],
+  ["GET", "/api/search?q=text", "/api/search?q=dependency%20injection", "Full-text search (SQLite FTS5) across lessons, questions, cheat sheets and courses."],
+  ["GET", "/api/stats", "/api/stats", "Totals: tracks, courses, lessons, questions, scenario questions, cheat-sheet sections."],
 ];
 
 export default function ApiDocs() {
@@ -27,8 +27,8 @@ export default function ApiDocs() {
         <table>
           <thead><tr><th>Method</th><th>Endpoint</th><th>Returns</th></tr></thead>
           <tbody>
-            {ENDPOINTS.map(([m, p, d]) => (
-              <tr key={p}><td>{m}</td><td><a href={p.replace(/\{slug\}/, "csharp").replace(/\{lesson\}/, "")}><code>{p}</code></a></td><td>{d}</td></tr>
+            {ENDPOINTS.map(([m, p, example, d]) => (
+              <tr key={p}><td>{m}</td><td><a href={example}><code>{p}</code></a></td><td>{d}</td></tr>
             ))}
           </tbody>
         </table>

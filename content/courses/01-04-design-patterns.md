@@ -526,3 +526,22 @@ Use the **Transactional Outbox**: in the same `SaveChanges` transaction, insert 
 ## Answer formula
 
 Problem → pattern name → how it works (2 lines) → code shape (interface + classes) → where you used it → trade-off.
+
+## Which pattern for which problem?
+
+| Problem in the interview question | Pattern |
+|---|---|
+| Big `switch` on type / many interchangeable algorithms | Strategy |
+| Add caching/logging/retry without touching a class | Decorator |
+| Wrap a third-party SDK behind your own interface | Adapter |
+| One simple call over many subsystems | Facade |
+| Object creation varies by input/config | Factory Method / Abstract Factory |
+| Complex object with many optional parts | Builder |
+| Exactly one shared instance | Singleton (prefer `AddSingleton`) |
+| Notify many listeners of changes | Observer / events |
+| Request passes through a series of handlers | Chain of Responsibility |
+| Behaviour depends on the object's state | State |
+| Fixed algorithm with customisable steps | Template Method |
+| Decouple senders and handlers (CQRS) | Mediator / Command |
+| Reliable event publishing with DB writes | Outbox |
+| Flaky downstream service | Retry + Circuit Breaker |
