@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { getCourses, getSyllabus, getTracks } from "@/lib/db";
 import { Grade, Legend, Priority } from "@/components/Badges";
 import { DoneMark } from "@/components/LessonDone";
 
-export const metadata: Metadata = { title: "Roadmap & syllabus" };
+export const metadata: Metadata = pageMeta({ title: "Roadmap & Full Syllabus", description: "The complete learning roadmap: every track, course, module and lesson in study order, graded basic to advanced and tagged by interview priority.", path: "/roadmap" });
 
 export default function Roadmap() {
   const tracks = getTracks();

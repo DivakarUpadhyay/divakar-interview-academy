@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { breadcrumbs, describe, jsonLd, pageMeta, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { getCourse, getCourses } from "@/lib/db";
 import CourseHeader from "@/components/CourseHeader";
@@ -10,7 +11,8 @@ export function generateStaticParams() {
 }
 export async function generateMetadata({ params }: PageProps<"/courses/[slug]/overview">): Promise<Metadata> {
   const c = getCourse((await params).slug);
-  return { title: c ? `${c.title} — overview, versions, lifecycle, tools` : "Course" };
+  if (!c) return { title: "Course" };
+  return pageMeta({ title: `${c.title} — Overview, Versions, Lifecycle & Tools`, description: `${c.title}: what it is, every version and its features, how it works step by step, and the tools you need. ${c.summary}`, path: `/courses/${c.slug}/overview` });
 }
 
 export default async function OverviewPage({ params }: PageProps<"/courses/[slug]/overview">) {

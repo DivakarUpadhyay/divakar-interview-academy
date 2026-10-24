@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "REST API" };
+export const metadata: Metadata = pageMeta({ title: "REST API", description: "Read-only REST API for DevLadder: courses, lessons, interview questions with filters, cheat sheets and full-text search, with request examples.", path: "/api-docs" });
 
 const ENDPOINTS: [string, string, string, string][] = [
   ["GET", "/api/tracks", "/api/tracks", "Learning tracks in order, each with its courses."],

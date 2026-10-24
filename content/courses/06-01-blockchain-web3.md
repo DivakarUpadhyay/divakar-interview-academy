@@ -3,6 +3,7 @@ slug: blockchain-web3
 title: Blockchain & Web3 Fundamentals
 track: web3
 order: 1
+group: Blockchain
 icon: W3
 color: #6f42c1
 summary: Web1/Web2/Web3, blockchain data structures, hashing and cryptography, consensus (PoW, PoS), Bitcoin and Ethereum, accounts, transactions and gas, wallets and keys, tokens (ERC-20, ERC-721, ERC-1155), DeFi, NFTs, DAOs, layer 2s, oracles, dApp architecture with .NET and JavaScript, and security.

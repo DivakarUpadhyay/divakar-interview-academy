@@ -15,7 +15,7 @@ const dbPath = path.join(root, "data", "academy.db");
 
 const LANG_ALIAS = {
   cs: "csharp", "c#": "csharp", tsql: "sql", "t-sql": "sql", ps: "powershell", ps1: "powershell", sh: "bash", shell: "bash",
-  yml: "yaml", js: "javascript", ts: "typescript", html: "xml", vue: "xml", razor: "xml", cshtml: "xml", sol: "javascript", solidity: "javascript",
+  yml: "yaml", js: "javascript", ts: "typescript", html: "xml", vue: "xml", razor: "xml", cshtml: "xml", sol: "javascript", solidity: "javascript", vb: "vbnet", "vb.net": "vbnet", aspx: "xml", ascx: "xml", kusto: "sql", kql: "sql", gherkin: "gherkin", mermaid: "plaintext", pascal: "delphi",
 };
 
 const escapeHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -42,6 +42,21 @@ const marked = new Marked({
 });
 
 const md = (s) => (s && s.trim() ? marked.parse(s.trim()) : "");
+
+// Interview answers written as prose become a one-line summary + short bullet points for quick revision.
+// Answers that already have structure (code, tables, lists, quotes) are rendered as written.
+const ABBR = /\b(e\.g|i\.e|etc|vs|approx|incl)\./gi;
+const KEEP = "\u0001";
+function answerHtml(markdown) {
+  const text = (markdown || "").trim();
+  if (!text || /```|^\s*[-*>]\s|^\s*\d+\.\s|\|---/m.test(text)) return md(text);
+  const guarded = text.replace(/\s*\n\s*/g, " ").replace(ABBR, (m) => m.slice(0, -1) + KEEP);
+  let parts = guarded.split(/(?<=[.!?])\s+(?=[A-Z0-9`"(*])/).map((p) => p.replaceAll(KEEP, ".").trim()).filter(Boolean);
+  parts = parts.flatMap((p) => (p.length > 170 && p.includes("; ") ? p.split("; ").map((x, i, a) => (i < a.length - 1 ? `${x};` : x)) : [p]));
+  if (parts.length < 2) return md(text);
+  const [first, ...rest] = parts;
+  return `<p class="q-short"><strong>In short:</strong> ${marked.parseInline(first)}</p>\n<ul class="q-points">${rest.map((r) => `<li>${marked.parseInline(r)}</li>`).join("")}</ul>\n`;
+}
 const plain = (s) => (s || "").replace(/[#>*_`|]/g, " ").replace(/\s+/g, " ").trim();
 
 const tracks = JSON.parse(fs.readFileSync(path.join(contentDir, "tracks.json"), "utf8"));
@@ -63,10 +78,10 @@ const db = new Database(tmpPath);
 db.pragma("journal_mode = DELETE");
 db.exec(`
 CREATE TABLE tracks (
-  id INTEGER PRIMARY KEY, slug TEXT UNIQUE NOT NULL, title TEXT NOT NULL, ord INTEGER NOT NULL, summary TEXT NOT NULL);
+  id INTEGER PRIMARY KEY, slug TEXT UNIQUE NOT NULL, title TEXT NOT NULL, menu TEXT NOT NULL, ord INTEGER NOT NULL, summary TEXT NOT NULL);
 CREATE TABLE courses (
   id INTEGER PRIMARY KEY, slug TEXT UNIQUE NOT NULL, title TEXT NOT NULL, track_id INTEGER NOT NULL REFERENCES tracks(id),
-  ord INTEGER NOT NULL, seq INTEGER NOT NULL, icon TEXT NOT NULL, color TEXT NOT NULL, summary TEXT NOT NULL,
+  ord INTEGER NOT NULL, seq INTEGER NOT NULL, grp TEXT NOT NULL, icon TEXT NOT NULL, color TEXT NOT NULL, summary TEXT NOT NULL,
   overview_html TEXT NOT NULL, versions_html TEXT NOT NULL, lifecycle_html TEXT NOT NULL, tools_html TEXT NOT NULL);
 CREATE TABLE modules (
   id INTEGER PRIMARY KEY, course_id INTEGER NOT NULL REFERENCES courses(id), ord INTEGER NOT NULL, title TEXT NOT NULL);
@@ -85,10 +100,10 @@ CREATE VIRTUAL TABLE search USING fts5(
   kind UNINDEXED, course_slug UNINDEXED, ref UNINDEXED, title, body, tokenize = 'porter unicode61');
 `);
 
-const insTrack = db.prepare("INSERT INTO tracks (slug, title, ord, summary) VALUES (?, ?, ?, ?)");
+const insTrack = db.prepare("INSERT INTO tracks (slug, title, menu, ord, summary) VALUES (?, ?, ?, ?, ?)");
 const insCourse = db.prepare(`INSERT INTO courses
-  (slug, title, track_id, ord, seq, icon, color, summary, overview_html, versions_html, lifecycle_html, tools_html)
-  VALUES (@slug, @title, @track_id, @ord, @seq, @icon, @color, @summary, @overview, @versions, @lifecycle, @tools)`);
+  (slug, title, track_id, ord, seq, grp, icon, color, summary, overview_html, versions_html, lifecycle_html, tools_html)
+  VALUES (@slug, @title, @track_id, @ord, @seq, @grp, @icon, @color, @summary, @overview, @versions, @lifecycle, @tools)`);
 const insModule = db.prepare("INSERT INTO modules (course_id, ord, title) VALUES (?, ?, ?)");
 const insLesson = db.prepare(`INSERT INTO lessons (course_id, module_id, seq, slug, title, grade, priority, body_html)
   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
@@ -99,7 +114,7 @@ const insSearch = db.prepare("INSERT INTO search (kind, course_slug, ref, title,
 const stats = { courses: 0, lessons: 0, questions: 0, cheats: 0 };
 db.transaction(() => {
   const trackIds = {};
-  tracks.forEach((t, i) => { trackIds[t.slug] = insTrack.run(t.slug, t.title, i + 1, t.summary).lastInsertRowid; });
+  tracks.forEach((t, i) => { trackIds[t.slug] = insTrack.run(t.slug, t.title, t.menu || t.title, i + 1, t.summary).lastInsertRowid; });
 
   const ordered = [...courses].sort((a, b) =>
     trackIndex.get(a.meta.track) - trackIndex.get(b.meta.track) || Number(a.meta.order) - Number(b.meta.order));
@@ -107,7 +122,7 @@ db.transaction(() => {
   ordered.forEach((c, i) => {
     const m = c.meta;
     const courseId = insCourse.run({
-      slug: m.slug, title: m.title, track_id: trackIds[m.track], ord: Number(m.order), seq: i + 1,
+      slug: m.slug, title: m.title, track_id: trackIds[m.track], ord: Number(m.order), seq: i + 1, grp: m.group || "",
       icon: m.icon || m.title.slice(0, 2), color: m.color || "#2563eb", summary: m.summary || "",
       overview: md(c.overview), versions: md(c.versions), lifecycle: md(c.lifecycle), tools: md(c.tools),
     }).lastInsertRowid;
@@ -128,7 +143,7 @@ db.transaction(() => {
       }
     });
     c.questions.forEach((q, qi) => {
-      const id = insQ.run(courseId, qi + 1, q.level, q.priority, q.question.replace(/`/g, ""), marked.parseInline(q.question), md(q.answer)).lastInsertRowid;
+      const id = insQ.run(courseId, qi + 1, q.level, q.priority, q.question.replace(/`/g, ""), marked.parseInline(q.question), answerHtml(q.answer)).lastInsertRowid;
       insSearch.run("question", m.slug, String(id), q.question, plain(q.answer));
       stats.questions++;
     });

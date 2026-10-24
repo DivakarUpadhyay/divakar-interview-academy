@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { getCourses, getTracks } from "@/lib/db";
 import CourseCard from "@/components/CourseCard";
 
-export const metadata: Metadata = { title: "Courses" };
+export const metadata: Metadata = pageMeta({ title: "All Courses", description: "Every course in learning order — fundamentals, .NET, database, cloud and DevOps, frontend, automation, Web3 and interview preparation — with lessons, interview Q&A and cheat sheets.", path: "/courses" });
 
 export default function CoursesPage() {
   const tracks = getTracks();

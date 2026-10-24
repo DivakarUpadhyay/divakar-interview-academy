@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { breadcrumbs, describe, jsonLd, pageMeta, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { getCheats, getCourse, getCourses } from "@/lib/db";
 import CourseHeader from "@/components/CourseHeader";
@@ -11,7 +12,8 @@ export function generateStaticParams() {
 }
 export async function generateMetadata({ params }: PageProps<"/courses/[slug]/cheatsheet">): Promise<Metadata> {
   const c = getCourse((await params).slug);
-  return { title: c ? `${c.title} — cheat sheet` : "Cheat sheet" };
+  if (!c) return { title: "Cheat sheet" };
+  return pageMeta({ title: `${c.title} Cheat Sheet`, description: `One-page ${c.title} cheat sheet for quick revision before an interview: key facts, syntax, comparisons and pitfalls.`, path: `/courses/${c.slug}/cheatsheet` });
 }
 
 export default async function CheatPage({ params }: PageProps<"/courses/[slug]/cheatsheet">) {

@@ -35,3 +35,6 @@ export function useStored<T>(key: string, fallback: T): [T, (v: T) => void] {
 
 export const useDoneLessons = () => useStored<string[]>("done-lessons", []);
 export const useBookmarks = () => useStored<number[]>("bookmarks", []);
+// "I know this" marks, keyed by course + question text so they survive DB rebuilds (row ids change).
+export const useKnown = () => useStored<string[]>("known-questions", []);
+export const knownKey = (q: { course_slug: string; question: string }) => `${q.course_slug}::${q.question}`;

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import DemoKit from "./DemoKit";
 
-export const metadata: Metadata = { title: "Demo kit — live coding & SQL playground" };
+export const metadata: Metadata = pageMeta({ title: "Demo Kit — Live Coding & SQL Playground", description: "Run JavaScript and SQL live in your browser to practise interview coding tasks and demonstrate queries without installing anything.", path: "/demo" });
 
 export default function DemoPage() {
   return (

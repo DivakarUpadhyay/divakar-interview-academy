@@ -9,9 +9,9 @@ function conn() {
   return db;
 }
 
-export type Track = { id: number; slug: string; title: string; ord: number; summary: string };
+export type Track = { id: number; slug: string; title: string; menu: string; ord: number; summary: string };
 export type CourseSummary = {
-  id: number; slug: string; title: string; track_slug: string; track_title: string; seq: number;
+  id: number; slug: string; title: string; track_slug: string; track_title: string; seq: number; grp: string;
   icon: string; color: string; summary: string; lessons: number; questions: number; cheats: number;
 };
 export type Course = CourseSummary & { overview_html: string; versions_html: string; lifecycle_html: string; tools_html: string };
@@ -25,7 +25,7 @@ export type Question = {
 export type Cheat = { id: number; ord: number; title: string; body_html: string };
 export type SearchHit = { kind: string; course_slug: string; course_title: string; ref: string; title: string; snippet: string };
 
-const COURSE_COLS = `c.id, c.slug, c.title, t.slug AS track_slug, t.title AS track_title, c.seq, c.icon, c.color, c.summary,
+const COURSE_COLS = `c.id, c.slug, c.title, t.slug AS track_slug, t.title AS track_title, c.seq, c.grp, c.icon, c.color, c.summary,
   (SELECT COUNT(*) FROM lessons l WHERE l.course_id = c.id) AS lessons,
   (SELECT COUNT(*) FROM questions q WHERE q.course_id = c.id) AS questions,
   (SELECT COUNT(*) FROM cheats s WHERE s.course_id = c.id) AS cheats`;
@@ -34,7 +34,7 @@ export const LEVELS = ["Beginner", "Intermediate", "Advanced", "Scenario"] as co
 export const PRIORITIES = ["High", "Medium", "Low"] as const;
 
 export function getTracks(): Track[] {
-  return conn().prepare("SELECT id, slug, title, ord, summary FROM tracks ORDER BY ord").all() as Track[];
+  return conn().prepare("SELECT id, slug, title, menu, ord, summary FROM tracks ORDER BY ord").all() as Track[];
 }
 
 export function getCourses(): CourseSummary[] {
@@ -115,4 +115,25 @@ export function getStats() {
     (SELECT COUNT(*) FROM lessons) AS lessons, (SELECT COUNT(*) FROM questions) AS questions,
     (SELECT COUNT(*) FROM questions WHERE level = 'Scenario') AS scenarios,
     (SELECT COUNT(*) FROM cheats) AS cheats`).get() as Record<string, number>;
+}
+
+/** All questions for a set of courses, in the given course order, most-asked first within each course. */
+export function getQuestionsForCourses(slugs: string[]): Question[] {
+  if (!slugs.length) return [];
+  const rows = conn().prepare(`SELECT q.id, c.slug AS course_slug, c.title AS course_title, q.ord, q.level, q.priority, q.question, q.question_html, q.answer_html
+    FROM questions q JOIN courses c ON c.id = q.course_id WHERE c.slug IN (${slugs.map(() => "?").join(",")})
+    ORDER BY CASE q.priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 ELSE 3 END,
+      CASE q.level WHEN 'Beginner' THEN 1 WHEN 'Intermediate' THEN 2 WHEN 'Advanced' THEN 3 ELSE 4 END, q.ord`).all(...slugs) as Question[];
+  const rank = new Map(slugs.map((s, i) => [s, i]));
+  return rows.sort((a, b) => rank.get(a.course_slug)! - rank.get(b.course_slug)!);
+}
+
+export type QuestionIndexRow = { id: number; course_slug: string; level: string; priority: string; question_html: string };
+
+/** Every question (titles only) for the topic-wise index, most important first within each course. */
+export function getQuestionIndex(): QuestionIndexRow[] {
+  return conn().prepare(`SELECT q.id, c.slug AS course_slug, q.level, q.priority, q.question_html
+    FROM questions q JOIN courses c ON c.id = q.course_id
+    ORDER BY c.seq, CASE q.priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 ELSE 3 END,
+      CASE q.level WHEN 'Beginner' THEN 1 WHEN 'Intermediate' THEN 2 WHEN 'Advanced' THEN 3 ELSE 4 END, q.ord`).all() as QuestionIndexRow[];
 }

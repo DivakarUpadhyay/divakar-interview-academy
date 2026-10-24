@@ -3,6 +3,7 @@ slug: solidity
 title: Solidity & Smart Contract Development
 track: web3
 order: 2
+group: Blockchain
 icon: Sol
 color: #363636
 summary: Solidity syntax, data types and data locations, functions, visibility and modifiers, events, errors, inheritance and interfaces, ERC-20/721 with OpenZeppelin, payable and Ether transfers, upgradeable contracts, gas optimisation, testing with Hardhat/Foundry, deployment and security vulnerabilities.

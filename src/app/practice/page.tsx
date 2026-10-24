@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { getCourses, getTracks } from "@/lib/db";
 import PracticePanel from "./PracticePanel";
 
-export const metadata: Metadata = { title: "Practice — mock interview" };
+export const metadata: Metadata = pageMeta({ title: "Mock Interview Test", description: "Timed mock interviews with random questions by course, level and priority — answer, reveal and self-score.", path: "/practice" });
 
 export default function PracticePage() {
   const tracks = getTracks().map(({ slug, title }) => ({ slug, title }));

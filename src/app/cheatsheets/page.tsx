@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { getCheats, getCourses, getTracks } from "@/lib/db";
 import Prose from "@/components/Prose";
 import PrintButton from "@/components/PrintButton";
 
-export const metadata: Metadata = { title: "Cheat sheets — quick interview revision" };
+export const metadata: Metadata = pageMeta({ title: "Cheat Sheets — Quick Interview Revision", description: "One-page cheat sheets for every course: C#, .NET, SQL Server, system design, Azure, Angular, React and more — the facts to revise the morning of your interview.", path: "/cheatsheets" });
 
 export default function CheatSheets() {
   const tracks = getTracks();

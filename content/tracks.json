@@ -1,9 +1,50 @@
 [
-  { "slug": "foundations", "title": "1. Programming Foundations", "summary": "C# from basics to advanced, OOP and SOLID, design patterns, clean code and coding-round practice. Start here." },
-  { "slug": "dotnet", "title": "2. .NET Platform", "summary": "The .NET runtime, ASP.NET Core MVC and Web API, LINQ, ADO.NET and Entity Framework Core." },
-  { "slug": "data", "title": "3. Database, ETL & BI", "summary": "SQL Server with T-SQL, ETL design, SSIS packages and SSRS reports." },
-  { "slug": "devops-cloud", "title": "4. DevOps & Cloud", "summary": "Docker, Kubernetes, Azure DevOps pipelines and the major Azure services." },
-  { "slug": "frontend", "title": "5. Frontend", "summary": "JavaScript first, then jQuery, AngularJS (legacy), Angular, React and Vue." },
-  { "slug": "web3", "title": "6. Web3 & Blockchain", "summary": "Blockchain fundamentals, Ethereum, wallets, Solidity smart contracts and dApp integration from .NET and JavaScript." },
-  { "slug": "career", "title": "7. Career & Interview Skills", "summary": "HR and behavioural rounds, managerial and team-lead rounds, career gaps, salary negotiation and company-wise preparation." }
+  {
+    "slug": "foundations",
+    "title": "0. Fundamentals",
+    "menu": "Fundamentals",
+    "summary": "Start here: how computers and memory work, data structures and algorithms, how the web works (networking and hosting), and system design — high-level and low-level design."
+  },
+  {
+    "slug": "dotnet",
+    "title": "1. .NET",
+    "menu": ".NET",
+    "summary": "The whole .NET ecosystem in learning order: C#, VB.NET and .NET internals (CLR, memory, GC); OOP, SOLID and patterns; ADO.NET, LINQ, Entity Framework and Dapper; Web Forms and MVC 5; ASP.NET Core MVC and Web API; exception handling, logging and custom controls; then architecture, clean code and microservices."
+  },
+  {
+    "slug": "data",
+    "title": "2. Database, ETL & BI",
+    "menu": "Database",
+    "summary": "SQL Server and T-SQL from SELECT to tuning, SQL Server internals (storage, indexes, optimizer, transactions, locking), then ETL design, SSIS packages and SSRS reports."
+  },
+  {
+    "slug": "devops-cloud",
+    "title": "3. Cloud & DevOps",
+    "menu": "Cloud & DevOps",
+    "summary": "Git first, then Docker and Kubernetes, Azure DevOps CI/CD pipelines and the Azure services a .NET developer uses."
+  },
+  {
+    "slug": "frontend",
+    "title": "4. Frontend",
+    "menu": "Frontend",
+    "summary": "HTML and CSS, JavaScript and TypeScript first, then jQuery, AngularJS (legacy), Angular, React and Vue."
+  },
+  {
+    "slug": "automation",
+    "title": "5. Automation & Industry 4.0",
+    "menu": "Automation",
+    "summary": "Test automation with Selenium and Playwright, industrial automation (PLC, SCADA, Modbus, OPC UA) and Industry 4.0 (IIoT, MQTT, MES, OEE, digital twins)."
+  },
+  {
+    "slug": "web3",
+    "title": "6. Web3 & Blockchain",
+    "menu": "Web3",
+    "summary": "Blockchain fundamentals, Ethereum, wallets, Solidity smart contracts and dApp integration from .NET and JavaScript."
+  },
+  {
+    "slug": "interview",
+    "title": "7. Interview Questions & Career",
+    "menu": "Interview Questions",
+    "summary": "Role-based interview preparation (.NET full stack first), HR and behavioural rounds, team-lead rounds, career gaps, salary negotiation and company-wise preparation."
+  }
 ]

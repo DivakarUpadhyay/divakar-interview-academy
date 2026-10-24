@@ -2,7 +2,7 @@
   "name": "divakar-interview-academy",
   "version": "1.0.0",
   "private": true,
-  "description": "Divakar Interview Academy - .NET, SQL Server, BI, DevOps, Azure and frontend courses, interview Q&A and cheat sheets",
+  "description": "DevLadder - step-by-step tutorials: .NET, SQL Server, BI, DevOps, Azure and frontend courses, interview Q&A and cheat sheets",
   "scripts": {
     "db": "node scripts/build-db.mjs",
     "dev": "node scripts/build-db.mjs && next dev",

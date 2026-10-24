@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import SearchBox from "./SearchBox";
 
-export const metadata: Metadata = { title: "Search" };
+export const metadata: Metadata = pageMeta({ title: "Search", description: "Search lessons, interview answers and cheat sheets.", path: "/search", noindex: true });
 
 export default function SearchPage() {
   return (

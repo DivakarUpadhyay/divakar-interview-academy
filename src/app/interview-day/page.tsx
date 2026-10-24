@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { getCourses, getTracks } from "@/lib/db";
+import { AddToChecklist, Checklist } from "@/app/notebook/NotebookPanel";
 
-export const metadata: Metadata = { title: "Interview day plan" };
+export const metadata: Metadata = pageMeta({ title: "Interview Day Plan & Checklist", description: "A step-by-step plan from one week before the interview to the thank-you mail, with your own checklist and quick revision links.", path: "/interview-day" });
 
 const PLAN: { when: string; items: string[] }[] = [
   {
@@ -59,12 +61,18 @@ export default function InterviewDay() {
   const tracks = getTracks();
   const courses = getCourses();
   return (
-    <div className="narrow">
+    <div>
       <h1>Interview day plan</h1>
       <p className="muted">A step-by-step checklist from one week out to the thank-you mail, with direct links to the quick-revision material.</p>
+      <Checklist />
+      <h2>Standard plan</h2>
       {PLAN.map((p) => (
         <div key={p.when} className="card" style={{ marginBottom: 12 }}>
-          <h2 style={{ marginTop: 0 }}>{p.when}</h2>
+          <div className="row">
+            <h2 style={{ margin: 0 }}>{p.when}</h2>
+            <span className="spacer" />
+            <AddToChecklist texts={p.items} />
+          </div>
           <ul className="checklist">{p.items.map((i) => <li key={i}>☐ {i}</li>)}</ul>
         </div>
       ))}

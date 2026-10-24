@@ -1,8 +1,9 @@
 ---
 slug: csharp
 title: C# Language — Basics to Advanced
-track: foundations
+track: dotnet
 order: 1
+group: Languages & Internals
 icon: C#
 color: #68217a
 summary: Types, control flow, collections, generics, delegates, async/await, memory and modern C# features up to C# 14.
@@ -96,6 +97,112 @@ dotnet run -- Divakar
 
 > **Interview tip:** "Managed code" = code whose execution is managed by the CLR (memory, security, exceptions). "Unmanaged code" = native code outside the CLR, e.g. Win32 DLLs called via P/Invoke.
 
+## Lesson: [Basic|High] First program, namespaces and keywords
+
+**Classic program structure** (what every C# file looked like before C# 9, and what top-level statements generate for you):
+
+```csharp
+using System;                       // import a namespace so you can write Console instead of System.Console
+
+namespace Divakar.Shop              // logical grouping of types; usually matches the folder
+{
+    internal class Program          // every method lives inside a type
+    {
+        static void Main(string[] args)   // entry point: static, named Main, returns void or int (or Task/Task<int>)
+        {
+            Console.WriteLine("Hello, Divakar!");
+            Console.Write("Your name: ");
+            string? name = Console.ReadLine();
+            Console.WriteLine($"Welcome {name}");   // string interpolation
+        }
+    }
+}
+```
+
+**Modern equivalent (C# 10+):**
+
+```csharp
+// GlobalUsings.cs — applies to every file in the project
+global using System.Text.Json;
+
+// Customer.cs — file-scoped namespace saves one level of indentation
+namespace Divakar.Shop.Models;
+public class Customer { public string Name { get; set; } = ""; }
+
+// Program.cs — top-level statements: the compiler creates Program and Main
+using Divakar.Shop.Models;
+var c = new Customer { Name = "Asha" };
+Console.WriteLine(JsonSerializer.Serialize(c));
+```
+
+**Namespaces:**
+
+- Prevent name clashes (`Divakar.Shop.Models.Order` vs `Divakar.Billing.Order`).
+- `using` imports a namespace; `using Alias = Some.Long.Namespace.Type;` creates an alias; `using static System.Math;` lets you write `Sqrt(2)`.
+- Implicit usings (`<ImplicitUsings>enable</ImplicitUsings>` in the .csproj) auto-import `System`, `System.Linq`, `System.Collections.Generic`, `System.IO`, `System.Threading.Tasks` and more.
+- A namespace is not an assembly: one assembly (DLL) can contain many namespaces and one namespace can span many assemblies.
+
+**Keywords** are reserved words with special meaning: `class`, `int`, `if`, `return`, `public`, `static`, `new`, `this`, `base`, `null`, `true`... You can't use them as identifiers unless prefixed with `@` (`int @class = 5;`). **Contextual keywords** are only special in certain places and can otherwise be used as names: `var`, `async`, `await`, `get`, `set`, `init`, `value`, `yield`, `record`, `required`, `where`, `select`, `field` (C# 14).
+
+**Naming conventions:** `PascalCase` for types, methods, properties and namespaces; `camelCase` for locals and parameters; `_camelCase` for private fields; interfaces start with `I` (`IRepository`); async methods end with `Async`.
+
+## Lesson: [Basic|High] Data types, numbers and type conversion
+
+| C# keyword | .NET type | Size | Range / precision | Literal |
+|---|---|---|---|---|
+| `byte` / `sbyte` | `Byte` / `SByte` | 1 byte | 0–255 / −128–127 | `255` |
+| `short` / `ushort` | `Int16` / `UInt16` | 2 bytes | ±32,767 / 0–65,535 | `100` |
+| `int` / `uint` | `Int32` / `UInt32` | 4 bytes | ±2.1 billion | `42`, `42u` |
+| `long` / `ulong` | `Int64` / `UInt64` | 8 bytes | ±9.2 × 10¹⁸ | `42L` |
+| `float` | `Single` | 4 bytes | ~6–9 digits, binary floating point | `1.5f` |
+| `double` | `Double` | 8 bytes | ~15–17 digits, binary floating point (default for decimals) | `1.5` |
+| `decimal` | `Decimal` | 16 bytes | 28–29 digits, base-10 — **use for money** | `1.5m` |
+| `char` | `Char` | 2 bytes | One UTF-16 code unit | `'A'` |
+| `bool` | `Boolean` | 1 byte | `true` / `false` | `true` |
+| `string` | `String` | reference | Immutable text | `"text"` |
+| `object` | `Object` | reference | Base of every type | — |
+
+```csharp
+Console.WriteLine(0.1 + 0.2 == 0.3);       // False — binary floating point can't store 0.1 exactly
+Console.WriteLine(0.1m + 0.2m == 0.3m);    // True  — decimal is exact for base-10 values
+int big = 1_000_000;                        // digit separators
+int hex = 0xFF, bin = 0b1010;
+
+// Integer overflow wraps silently by default...
+int max = int.MaxValue;
+int wrapped = unchecked(max + 1);           // -2147483648
+// ...unless you ask for checking
+try { int boom = checked(max + 1); } catch (OverflowException) { Console.WriteLine("Overflow!"); }
+
+Console.WriteLine(7 / 2);     // 3   — integer division truncates
+Console.WriteLine(7 / 2.0);   // 3.5
+Console.WriteLine(7 % 2);     // 1   — remainder
+Console.WriteLine(Math.Round(2.5));                              // 2 — banker's rounding (to even) by default
+Console.WriteLine(Math.Round(2.5, MidpointRounding.AwayFromZero)); // 3
+```
+
+**Type conversion:**
+
+| Kind | Example | Notes |
+|---|---|---|
+| Implicit (widening) | `long l = intValue; double d = intValue;` | Safe, no data loss, no syntax needed |
+| Explicit cast (narrowing) | `int i = (int)3.99;` → `3` | May lose data; truncates decimals |
+| `Convert` class | `Convert.ToInt32("42")`, `Convert.ToInt32(3.5)` → `4` | Rounds to even; `null` → 0 |
+| `Parse` | `int.Parse("42")` | Throws `FormatException` on bad input |
+| `TryParse` | `int.TryParse(input, out var n)` | Returns `false` instead of throwing — **use for user input** |
+| `as` / `is` | `obj as string`, `obj is int n` | Reference/pattern conversions without exceptions |
+
+```csharp
+if (int.TryParse(Console.ReadLine(), out int qty) && qty > 0)
+    Console.WriteLine($"Ordering {qty}");
+else
+    Console.WriteLine("Please enter a positive number");
+
+decimal price = decimal.Parse("1,234.50", NumberStyles.Number, CultureInfo.InvariantCulture); // culture decides what , and . mean
+```
+
+> **Interview tip:** "Why decimal for money?" — `double` is binary and can't represent 0.1 exactly, so sums drift (`0.1 + 0.2 != 0.3`). `decimal` stores base-10 digits exactly, at the cost of speed and memory.
+
 ## Lesson: [Basic|High] Value types vs reference types
 
 | | Value types | Reference types |
@@ -123,38 +230,123 @@ Console.WriteLine(b1.X); // 99
 
 > **Interview tip:** "Value types live on the stack" is only partly true. A value-type *field* inside a class lives on the heap with that object. Say: value types are stored *inline* where they are declared.
 
-## Lesson: [Basic|Medium] Variables, operators and control flow
+## Lesson: [Basic|High] Variables, constants and operators
 
 ```csharp
-int age = 30;
-var city = "Pune";            // type inferred at compile time — still strongly typed
+int age = 30;                 // declare + initialise; a local must be assigned before use
+var city = "Pune";            // type inferred at compile time — still strongly typed (city is string)
 const double Pi = 3.14159;    // compile-time constant
-readonly DateTime created;    // (field) set once, in declaration or constructor
-
-if (age >= 18 && city is "Pune" or "Mumbai") { /* ... */ }
-
-for (int i = 0; i < 3; i++) { }
-foreach (var c in "abc") { }
-while (age-- > 25) { }
-do { } while (false);
-
-// switch expression (C# 8+)
-string grade = score switch
-{
-    >= 90 => "A",
-    >= 75 => "B",
-    >= 50 => "C",
-    _ => "F"
-};
-
-// null operators
-string? s = null;
-int len = s?.Length ?? 0;     // null-conditional + null-coalescing
-s ??= "default";              // assign if null
+// readonly DateTime created; // (field only) set once, in declaration or constructor
+int a = 10, b = 3;            // several variables in one statement
 ```
 
-- `==` compares values for value types and **references** for reference types unless overloaded (`string` overloads it to compare text).
+**Scope:** a variable exists inside the `{ }` block where it is declared; locals are not visible outside their method, loop or `if` block.
+
+| Category | Operators | Example |
+|---|---|---|
+| Arithmetic | `+ - * / %` `++ --` | `a % b` → 1; `i++` (use then add) vs `++i` (add then use) |
+| Assignment | `= += -= *= /= %= ??=` | `total += price;` |
+| Comparison | `== != > < >= <=` | `age >= 18` |
+| Logical | `&& \|\| !` (short-circuit), `& \|` (always evaluate both) | `isAdmin \|\| isOwner` |
+| Bitwise | `& \| ^ ~ << >>` | `flags & Perm.Write` |
+| Null | `?.` `?[]` `??` `??=` `!` | `name?.Length ?? 0` |
+| Type | `is`, `as`, `typeof`, `sizeof`, `nameof` | `obj is string s` |
+| Conditional | `? :` | `age >= 18 ? "adult" : "minor"` |
+| Range / index | `..` `^` | `arr[^1]` last item, `arr[1..3]` |
+| Lambda | `=>` | `x => x * 2` |
+
+```csharp
+int i = 5;
+Console.WriteLine(i++);   // 5 (then i = 6)
+Console.WriteLine(++i);   // 7
+
+string? s = null;
+int len = s?.Length ?? 0;     // null-conditional + null-coalescing
+s ??= "default";              // assign only if null
+
+Console.WriteLine(2 + 3 * 4);       // 14 — * before + (precedence)
+Console.WriteLine((2 + 3) * 4);     // 20 — use brackets to make intent clear
+```
+
+- `==` compares values for value types and **references** for reference types unless overloaded (`string` overloads it to compare text; records compare values).
+- `&&` and `||` **short-circuit**: `if (user != null && user.IsActive)` never touches `user` when it is null.
 - `is` checks type/pattern; `as` casts and returns `null` on failure instead of throwing.
+
+## Lesson: [Basic|High] Conditions and loops: if, ternary, switch, for, while, do-while
+
+**if / else if / else and the ternary operator:**
+
+```csharp
+if (marks >= 75) Console.WriteLine("Distinction");
+else if (marks >= 35) Console.WriteLine("Pass");
+else Console.WriteLine("Fail");
+
+string result = marks >= 35 ? "Pass" : "Fail";           // ternary: condition ? whenTrue : whenFalse
+string label = marks >= 75 ? "A" : marks >= 35 ? "B" : "F";  // nesting works but hurts readability
+```
+
+**switch statement and switch expression:**
+
+```csharp
+switch (day)
+{
+    case DayOfWeek.Saturday:
+    case DayOfWeek.Sunday:            // stacked cases share one body
+        Console.WriteLine("Weekend");
+        break;                        // C# does not allow fall-through from a non-empty case
+    case DayOfWeek.Friday when isHoliday:   // case guard
+        Console.WriteLine("Long weekend");
+        break;
+    default:
+        Console.WriteLine("Weekday");
+        break;
+}
+
+string grade = score switch          // switch expression (C# 8+) returns a value
+{
+    >= 90 => "A",
+    >= 75 and < 90 => "B",
+    >= 50 => "C",
+    _ => "F"                         // discard = default
+};
+```
+
+**Loops:**
+
+| Loop | Checks condition | Use when |
+|---|---|---|
+| `for` | Before each iteration | You know the count / need the index |
+| `foreach` | — iterates a collection | Read every item (can't add/remove items of the collection while looping) |
+| `while` | Before (may run 0 times) | Repeat until something changes |
+| `do-while` | After (runs at least once) | Menus, retry prompts |
+
+```csharp
+for (int i = 0; i < 5; i++) Console.Write(i);           // 01234
+for (int i = 10; i > 0; i -= 2) Console.Write(i);       // 108642
+
+foreach (var name in new[] { "Asha", "Ravi" }) Console.WriteLine(name);
+
+int attempts = 0;
+while (!Connect() && attempts < 3) attempts++;
+
+string? input;
+do
+{
+    Console.Write("Enter yes or no: ");
+    input = Console.ReadLine();
+} while (input is not ("yes" or "no"));
+
+for (int i = 1; i <= 10; i++)
+{
+    if (i % 2 == 0) continue;   // skip the rest of this iteration
+    if (i > 7) break;           // leave the loop
+    Console.Write(i);           // 1357
+}
+```
+
+Nested loops: `break` only leaves the innermost loop — extract the loops into a method and `return`, or use a flag. `goto` exists but is almost never used.
+
+> **Interview tip:** "for vs foreach" — `foreach` works on any `IEnumerable`, is cleaner and avoids index bugs; `for` gives the index and lets you modify elements of an array/list by position. Modifying a `List<T>` (Add/Remove) inside `foreach` throws `InvalidOperationException`.
 
 ## Lesson: [Basic|High] Strings, StringBuilder and immutability
 
@@ -174,7 +366,88 @@ string csv = sb.ToString();   // one final allocation
 - Compare with `string.Equals(a, b, StringComparison.OrdinalIgnoreCase)` rather than `ToLower()`.
 - `string.IsNullOrWhiteSpace(x)` covers `null`, `""` and `"   "`.
 
-## Lesson: [Basic|High] Arrays and collections
+## Lesson: [Basic|Medium] DateTime, DateOnly, TimeSpan and time zones
+
+```csharp
+DateTime now = DateTime.Now;          // local time of the machine
+DateTime utc = DateTime.UtcNow;       // UTC — store and compare in UTC
+DateTime d = new DateTime(2026, 10, 24, 9, 30, 0);
+DateTime tomorrow = DateTime.Today.AddDays(1);
+
+TimeSpan gap = new DateTime(2026, 12, 31) - DateTime.Today;   // difference = TimeSpan
+Console.WriteLine($"{gap.TotalDays:N0} days left");
+TimeSpan timeout = TimeSpan.FromSeconds(30);
+
+Console.WriteLine(d.ToString("yyyy-MM-dd HH:mm"));   // 2026-10-24 09:30 (custom format)
+Console.WriteLine(d.ToString("D"));                   // long date in current culture
+Console.WriteLine(d.ToString("O"));                   // ISO 8601 round-trip: 2026-10-24T09:30:00.0000000
+
+if (DateTime.TryParseExact("24/10/2026", "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+    Console.WriteLine(parsed.DayOfWeek);              // Saturday
+
+DateOnly birthday = new(1991, 5, 14);                 // .NET 6+: date without time
+TimeOnly opening = new(9, 0);                         // time without date
+DateTimeOffset placed = DateTimeOffset.UtcNow;        // instant + offset — best for timestamps across time zones
+
+var india = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");   // "Asia/Kolkata" on Linux (.NET 6+ accepts both)
+DateTime indiaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, india);
+```
+
+| Type | Holds | Use for |
+|---|---|---|
+| `DateTime` | Date + time, `Kind` = Local/Utc/Unspecified | General use; store as UTC |
+| `DateTimeOffset` | Date + time + UTC offset | Timestamps in APIs and databases |
+| `DateOnly` / `TimeOnly` | Just a date / just a time | Birthdays, opening hours |
+| `TimeSpan` | A duration | Differences, timeouts |
+| `TimeProvider` (.NET 8) | Abstraction of "now" | Unit-testable time |
+
+> **Interview tip:** `DateTime` is a **struct** (value type) and is immutable — `d.AddDays(1)` returns a new value, it doesn't change `d`. Store UTC, convert to local only for display.
+
+# Module: Arrays and Collections
+
+## Lesson: [Basic|High] Arrays: single, multidimensional and jagged
+
+An **array** is a fixed-size, zero-indexed block of elements of one type. Arrays are reference types (derived from `System.Array`), even when the elements are value types.
+
+```csharp
+int[] marks = new int[5];                 // five zeros
+int[] primes = { 2, 3, 5, 7 };            // initializer
+string[] cities = ["Pune", "Taipei"];     // collection expression (C# 12)
+
+marks[0] = 90;
+Console.WriteLine(primes.Length);         // 4
+Console.WriteLine(primes[^1]);            // 7 — index from end
+int[] middle = primes[1..3];              // { 3, 5 } — range creates a copy
+// primes[10] = 1;                        // IndexOutOfRangeException
+
+// Multidimensional (rectangular) array: one block, every row same length
+int[,] grid = { { 1, 2, 3 }, { 4, 5, 6 } };
+Console.WriteLine(grid[1, 2]);            // 6
+Console.WriteLine(grid.GetLength(0));     // 2 rows
+Console.WriteLine(grid.GetLength(1));     // 3 columns
+for (int r = 0; r < grid.GetLength(0); r++)
+    for (int c = 0; c < grid.GetLength(1); c++)
+        Console.Write(grid[r, c] + " ");
+
+// Jagged array: an array of arrays, rows can have different lengths
+int[][] jagged = new int[3][];
+jagged[0] = [1];
+jagged[1] = [1, 2];
+jagged[2] = [1, 2, 3];
+Console.WriteLine(jagged[2][1]);          // 2
+foreach (int[] row in jagged) Console.WriteLine(string.Join(",", row));
+```
+
+**Useful `Array` methods:** `Array.Sort(arr)`, `Array.Reverse(arr)`, `Array.IndexOf(arr, x)`, `Array.Find(arr, predicate)`, `Array.Resize(ref arr, newSize)` (creates a new array and copies), `Array.Copy`, `Array.Fill`, `arr.Clone()` (shallow copy).
+
+| | Multidimensional `int[,]` | Jagged `int[][]` |
+|---|---|---|
+| Shape | Rectangular — all rows equal | Rows can differ |
+| Memory | One contiguous object | Outer array + one array per row |
+| Access | `a[r, c]` | `a[r][c]` |
+| Speed | Slightly slower indexing in the CLR | Usually faster, more flexible |
+
+## Lesson: [Basic|High] Collections overview: generic vs non-generic
 
 | Type | When to use | Lookup |
 |---|---|---|
@@ -198,6 +471,158 @@ List<int> list = [.. nums, 10];   // spread
 
 - `IEnumerable<T>` = can be iterated; `ICollection<T>` adds Count/Add/Remove; `IList<T>` adds index access.
 - Prefer returning `IReadOnlyList<T>`/`IEnumerable<T>` from public APIs.
+
+**Generic vs non-generic collections:**
+
+| Non-generic (`System.Collections`, .NET 1.x) | Generic replacement (`System.Collections.Generic`, .NET 2.0+) |
+|---|---|
+| `ArrayList` | `List<T>` |
+| `Hashtable` | `Dictionary<TKey, TValue>` |
+| `SortedList` | `SortedList<TKey, TValue>` |
+| `Stack`, `Queue` | `Stack<T>`, `Queue<T>` |
+
+Generic collections are **type-safe** (compile-time errors instead of runtime `InvalidCastException`) and **faster for value types** (no boxing). Use the non-generic ones only when maintaining old code.
+
+## Lesson: [Basic|High] List<T> and Dictionary<TKey, TValue> in depth
+
+```csharp
+var names = new List<string> { "Ravi", "Asha" };
+names.Add("Meera");
+names.AddRange(["Kiran", "John"]);
+names.Insert(0, "Zoya");                  // at index
+names.Remove("John");                     // first match; returns bool
+names.RemoveAt(0);
+names.RemoveAll(n => n.StartsWith("K"));
+bool hasAsha = names.Contains("Asha");
+int idx = names.IndexOf("Meera");
+string? first = names.Find(n => n.Length > 4);
+names.Sort();                             // in place
+names.ForEach(Console.WriteLine);
+Console.WriteLine($"{names.Count} items, capacity {names.Capacity}");
+```
+
+- `List<T>` is a resizable array: `Count` = items, `Capacity` = allocated slots; when full it **doubles** and copies — pass an initial capacity if you know the size.
+- Index access O(1); `Contains`/`IndexOf`/`Remove` are O(n); inserting at the start is O(n).
+
+```csharp
+var stock = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+{
+    ["pen"] = 10,
+    ["book"] = 4
+};
+stock.Add("bag", 2);                      // throws ArgumentException if the key exists
+stock["pen"] = 12;                        // add or overwrite
+if (stock.TryGetValue("book", out int qty)) Console.WriteLine(qty);
+stock.TryAdd("pen", 99);                  // false — key already there, no exception
+bool removed = stock.Remove("bag");
+foreach (var (item, count) in stock) Console.WriteLine($"{item}: {count}");
+// var x = stock["laptop"];               // KeyNotFoundException — use TryGetValue
+```
+
+- Average O(1) lookup using the key's `GetHashCode()` and `Equals()`; keys must be unique and not null.
+- Iteration order is **not guaranteed** — use `SortedDictionary`/`SortedList` or sort with LINQ when order matters.
+- Custom key types must override `Equals` and `GetHashCode` consistently (records do this for you).
+
+## Lesson: [Basic|Medium] SortedList, HashSet, Stack and Queue
+
+```csharp
+// SortedList<TKey,TValue>: kept sorted by key; arrays inside → small memory, O(n) inserts
+var ranks = new SortedList<int, string> { [3] = "Bronze", [1] = "Gold", [2] = "Silver" };
+foreach (var kv in ranks) Console.WriteLine($"{kv.Key}: {kv.Value}");   // 1 Gold, 2 Silver, 3 Bronze
+Console.WriteLine(ranks.Keys[0]);     // index access to keys/values
+
+// HashSet<T>: unique items, O(1) Contains, set operations
+var skills = new HashSet<string> { "C#", "SQL" };
+skills.Add("C#");                     // ignored — returns false
+skills.UnionWith(["Azure", "SQL"]);   // C#, SQL, Azure
+skills.IntersectWith(["SQL", "Azure", "React"]);   // SQL, Azure
+
+// Stack<T>: LIFO — last in, first out (undo, call stack, bracket matching)
+var undo = new Stack<string>();
+undo.Push("type A"); undo.Push("type B");
+Console.WriteLine(undo.Peek());       // type B (look, don't remove)
+Console.WriteLine(undo.Pop());        // type B (remove)
+// undo.Pop() on an empty stack throws InvalidOperationException — use TryPop
+
+// Queue<T>: FIFO — first in, first out (jobs, BFS, print queue)
+var jobs = new Queue<string>();
+jobs.Enqueue("email"); jobs.Enqueue("invoice");
+Console.WriteLine(jobs.Dequeue());    // email
+Console.WriteLine(jobs.TryPeek(out var next) ? next : "empty");   // invoice
+
+// PriorityQueue<TElement,TPriority> (.NET 6): lowest priority value comes out first
+var pq = new PriorityQueue<string, int>();
+pq.Enqueue("low", 5); pq.Enqueue("urgent", 1);
+Console.WriteLine(pq.Dequeue());      // urgent
+```
+
+| Collection | Ordered by | Duplicates | Typical use |
+|---|---|---|---|
+| `SortedList<K,V>` | Key (array-based) | Keys unique | Small, mostly-read sorted maps |
+| `SortedDictionary<K,V>` | Key (tree-based) | Keys unique | Many inserts/removes, sorted |
+| `HashSet<T>` / `SortedSet<T>` | None / sorted | No | Uniqueness, set maths |
+| `Stack<T>` | LIFO | Yes | Undo, parsing |
+| `Queue<T>` | FIFO | Yes | Work queues, BFS |
+
+## Lesson: [Basic|Medium] ArrayList and Hashtable (legacy non-generic collections)
+
+You will meet these in old .NET Framework code and in interviews.
+
+```csharp
+using System.Collections;
+
+var list = new ArrayList();
+list.Add(1);            // boxed to object
+list.Add("two");        // anything goes — no type safety
+list.Add(3.5);
+foreach (object o in list) Console.WriteLine(o);
+int first = (int)list[0]!;          // cast needed; wrong cast → InvalidCastException at runtime
+
+var table = new Hashtable();
+table["IN"] = "India";
+table["TW"] = "Taiwan";
+table["IN"] = "Bharat";             // overwrite
+Console.WriteLine(table["XX"] == null);   // True — missing key returns null (Dictionary throws)
+foreach (DictionaryEntry e in table) Console.WriteLine($"{e.Key} = {e.Value}");
+```
+
+| | `ArrayList` | `List<T>` | `Hashtable` | `Dictionary<K,V>` |
+|---|---|---|---|---|
+| Type safety | ❌ object | ✅ | ❌ object | ✅ |
+| Boxing of value types | Yes | No | Yes | No |
+| Missing key | — | — | Returns `null` | Throws (use `TryGetValue`) |
+| Thread safety | `ArrayList.Synchronized` wrapper | No (use concurrent collections) | Safe for many readers + one writer | No |
+
+> **Interview tip:** "Hashtable vs Dictionary" — Dictionary is generic (type-safe, no boxing, faster); a missing key throws in Dictionary but returns null in Hashtable; both are hash-based with O(1) average lookup. Use `ConcurrentDictionary` for multi-threaded writes.
+
+## Lesson: [Intermediate|Medium] Tuple and ValueTuple
+
+```csharp
+// System.Tuple (.NET 4): class, read-only, members named Item1..Item7
+Tuple<int, string> t1 = Tuple.Create(1, "Asha");
+Console.WriteLine(t1.Item2);
+
+// System.ValueTuple (C# 7): struct, mutable fields, can have names, nice syntax
+(int Id, string Name) t2 = (1, "Asha");
+Console.WriteLine(t2.Name);
+t2.Name = "Ravi";
+
+(int Min, int Max) MinMax(int[] xs) => (xs.Min(), xs.Max());   // return several values
+var (min, max) = MinMax([4, 9, 1]);                             // deconstruction
+Console.WriteLine($"{min}-{max}");
+
+(a, b) = (b, a);                      // swap without a temp variable
+var counts = new Dictionary<(string City, int Year), int> { [("Pune", 2026)] = 10 };   // tuple as a composite key
+```
+
+| | `Tuple<...>` | `ValueTuple` `( , )` |
+|---|---|---|
+| Kind | Class (heap) | Struct (no allocation) |
+| Members | `Item1`, `Item2` … read-only properties | Named fields, mutable |
+| Equality | Value equality via `Equals` | `==` and `Equals` compare values |
+| Use | Legacy APIs | Modern code: multiple return values, quick grouping |
+
+For public APIs with a meaning, prefer a **record** (`record MinMax(int Min, int Max)`) — tuple names are not part of the type at runtime.
 
 # Module: Types in Depth
 
@@ -232,6 +657,61 @@ Console.WriteLine(o1 == new Order(1, 100)); // True — value equality
 
 **Choose:** class for entities with identity/behaviour; struct for small immutable values (< ~16 bytes, no inheritance); record for DTOs and immutable data compared by value.
 
+## Lesson: [Basic|Medium] Structs and enums in depth
+
+**Struct rules:**
+
+```csharp
+public readonly struct Temperature        // readonly struct: all fields immutable, compiler-enforced
+{
+    public double Celsius { get; }
+    public Temperature(double celsius) => Celsius = celsius;
+    public double Fahrenheit => Celsius * 9 / 5 + 32;
+    public override string ToString() => $"{Celsius:0.#}°C";
+}
+
+var t = new Temperature(36.6);
+Temperature empty = default;              // all fields zero — a struct is never null
+Temperature? maybe = null;                // Nullable<Temperature> if you need "no value"
+```
+
+- Value type: copied on assignment and when passed to methods (unless `ref`/`in`).
+- No inheritance (sealed, derive from `System.ValueType`), but **can implement interfaces**.
+- Can have constructors, properties, methods, operators; parameterless constructors and field initialisers allowed since C# 10.
+- Keep structs **small and immutable**; a mutable struct inside a collection or property leads to "I changed a copy" bugs.
+
+**Enum in depth:**
+
+```csharp
+public enum OrderStatus : byte            // underlying type (default int)
+{
+    Pending = 1,
+    Paid = 2,
+    Shipped = 3,
+    Cancelled = 9
+}
+
+OrderStatus s = OrderStatus.Paid;
+int code = (int)s;                                   // 2
+OrderStatus fromCode = (OrderStatus)3;               // Shipped
+string name = s.ToString();                          // "Paid"
+bool ok = Enum.TryParse("shipped", ignoreCase: true, out OrderStatus parsed);
+bool defined = Enum.IsDefined(typeof(OrderStatus), 5);   // false — casts don't validate!
+foreach (var v in Enum.GetValues<OrderStatus>()) Console.WriteLine(v);
+
+[Flags]
+public enum Permission { None = 0, Read = 1, Write = 2, Delete = 4, All = Read | Write | Delete }
+var p = Permission.Read | Permission.Write;          // combine with OR
+p |= Permission.Delete;                              // add
+p &= ~Permission.Write;                              // remove
+bool canRead = (p & Permission.Read) != 0;           // or p.HasFlag(Permission.Read)
+Console.WriteLine(p);                                // "Read, Delete"
+```
+
+- Enum values are named constants of an integral type; `[Flags]` values must be powers of two so they can combine as bits.
+- Any integer can be cast to an enum, even undefined ones — validate input with `Enum.IsDefined` or a `switch` with a default.
+- Store enums in databases as int (stable) or string (readable); never reorder existing values.
+
 ## Lesson: [Basic|High] Boxing and unboxing
 
 **Boxing** wraps a value type in an object on the heap; **unboxing** extracts it back with an explicit cast.
@@ -265,6 +745,66 @@ string sure = middle!;             // null-forgiving operator — you promise it
 ```
 
 Nullable reference types are **compile-time warnings only**; at runtime a `string` can still be null if a warning was ignored.
+
+## Lesson: [Basic|High] var, object initializers, anonymous types and dynamic
+
+**`var` (implicitly typed local, C# 3):** the compiler infers the type from the right-hand side; the variable is still statically typed.
+
+```csharp
+var count = 10;                 // int
+var customers = new List<Customer>();
+// var x;                       // error — must be initialised
+// var y = null;                // error — no type to infer
+count = "ten";                  // error — count is int forever
+```
+
+Use `var` when the type is obvious from the right side or very long; write the type when it helps the reader (`decimal total = GetTotal();`).
+
+**Object and collection initializers:** set properties right after construction without writing many constructors.
+
+```csharp
+var c = new Customer { Id = 1, Name = "Asha", Address = new Address { City = "Pune" } };
+var cities = new List<string> { "Pune", "Taipei" };
+var phoneBook = new Dictionary<string, string> { ["Asha"] = "98200", ["Ravi"] = "98300" };
+Customer c2 = new() { Name = "Ravi" };       // target-typed new (C# 9)
+```
+
+The constructor runs first, then each property setter in order. Combine with `init` / `required` properties for immutable objects that must be fully initialised.
+
+**Anonymous types:** read-only, compiler-generated classes without a name — mainly for LINQ projections inside one method.
+
+```csharp
+var person = new { Name = "Asha", Age = 28 };
+Console.WriteLine(person.Name);
+// person.Age = 30;             // error — properties are read-only
+var summary = orders.Select(o => new { o.Id, Total = o.Lines.Sum(l => l.Price) });   // property names inferred
+Console.WriteLine(new { A = 1 }.Equals(new { A = 1 }));   // True — value equality
+```
+
+Limits: only usable with `var` (no type name), can't be returned from a method in a typed way (use a record or tuple instead), properties only.
+
+**`dynamic` (C# 4):** type checking moves from compile time to **runtime** (Dynamic Language Runtime).
+
+```csharp
+dynamic d = 10;
+d = "now a string";               // allowed
+Console.WriteLine(d.Length);      // resolved at runtime → 12
+// d.NoSuchMethod();              // compiles, but throws RuntimeBinderException at runtime
+
+dynamic bag = new ExpandoObject();   // add members at runtime
+bag.Name = "Asha";
+bag.Greet = (Func<string>)(() => $"Hi {bag.Name}");
+Console.WriteLine(bag.Greet());      // used for COM interop (Office), dynamic languages, loose data
+```
+
+| | `var` | `object` | `dynamic` |
+|---|---|---|---|
+| Type decided | Compile time (inferred) | Compile time (`object`) | Runtime |
+| IntelliSense / compile errors | ✅ | Only object members | ❌ |
+| Needs casting | No | Yes | No |
+| Performance | Normal | Boxing for value types | Slower (runtime binding) |
+
+> **Interview tip:** "Is `var` the same as `dynamic`?" — No. `var` is just shorthand; the compiler fixes the type at compile time. `dynamic` skips compile-time checks and binds at runtime, so mistakes become runtime exceptions.
 
 ## Lesson: [Intermediate|Medium] Properties, indexers, static and const vs readonly
 
@@ -328,6 +868,57 @@ th.Read(45);
 - **Multicast:** a delegate can hold several methods; all are invoked in order.
 - **Closure:** a lambda captures variables from the outer scope (by reference, not by value).
 
+## Lesson: [Intermediate|Medium] Anonymous methods, Predicate and multicast delegates
+
+**From named method → anonymous method → lambda** (the same delegate, three syntaxes through C# history):
+
+```csharp
+public delegate int Calc(int a, int b);         // custom delegate type: the method "signature"
+
+static int Add(int a, int b) => a + b;
+Calc c1 = Add;                                   // C# 1: named method
+Calc c2 = delegate (int a, int b) { return a * b; };   // C# 2: anonymous method
+Calc c3 = (a, b) => a - b;                       // C# 3: lambda expression
+Console.WriteLine(c1(4, 2) + c2(4, 2) + c3(4, 2));     // 6 + 8 + 2 = 16
+```
+
+Anonymous methods can omit the parameter list (`delegate { ... }`) when you ignore the parameters; otherwise lambdas replaced them.
+
+**Built-in generic delegates:**
+
+| Delegate | Signature | Example |
+|---|---|---|
+| `Func<T1, ..., TResult>` | Up to 16 inputs, returns `TResult` | `Func<decimal, decimal> tax = p => p * 0.18m;` |
+| `Action<T1, ...>` | Up to 16 inputs, returns `void` | `Action<string> log = Console.WriteLine;` |
+| `Predicate<T>` | One input, returns `bool` | `Predicate<int> isAdult = age => age >= 18;` |
+
+```csharp
+var ages = new List<int> { 12, 25, 17, 40 };
+Predicate<int> isAdult = a => a >= 18;
+List<int> adults = ages.FindAll(isAdult);        // List<T>.FindAll/Find/RemoveAll take Predicate<T>
+Func<int, bool> sameIdea = a => a >= 18;         // LINQ uses Func<T,bool>: ages.Where(sameIdea)
+```
+
+**Multicast delegates:** one delegate instance can hold an invocation list of several methods.
+
+```csharp
+static void Email(string msg) => Console.WriteLine($"Email: {msg}");
+static void Sms(string msg) => Console.WriteLine($"SMS: {msg}");
+
+Action<string> notify = Email;
+notify += Sms;
+notify += msg => Console.WriteLine($"Push: {msg}");
+notify("Order shipped");        // all three run, in order
+notify -= Sms;                  // remove works with the same method; a lambda can't be removed unless you kept a reference to it
+notify("Delivered");            // Email + Push
+
+Func<int> f = () => 1;
+f += () => 2;
+Console.WriteLine(f());         // 2 — only the LAST return value is kept
+```
+
+If one handler throws, the remaining handlers don't run — loop over `GetInvocationList()` and wrap each call in try/catch when you need isolation.
+
 ## Lesson: [Intermediate|High] Extension methods, generics and constraints
 
 ```csharp
@@ -347,7 +938,41 @@ T Max<T>(T a, T b) where T : IComparable<T> => a.CompareTo(b) >= 0 ? a : b;
 
 Constraints: `where T : class`, `struct`, `new()`, `notnull`, `unmanaged`, a base class, an interface, or `T : U`.
 
-**Covariance / contravariance:** `IEnumerable<out T>` lets `IEnumerable<string>` be used as `IEnumerable<object>`; `Action<in T>` lets `Action<object>` be used as `Action<string>`.
+**Covariance / contravariance:** `IEnumerable<out T>` lets `IEnumerable<string>` be used as `IEnumerable<object>`; `Action<in T>` lets `Action<object>` be used as `Action<string>` — see the next lesson.
+
+## Lesson: [Advanced|Medium] Covariance and contravariance
+
+Variance answers: "if `Dog` is an `Animal`, can a `Something<Dog>` be used where a `Something<Animal>` is expected?"
+
+| Term | Direction | Keyword | Works when T is… | Example |
+|---|---|---|---|---|
+| **Covariance** | `Dog` → `Animal` (more derived to less) | `out T` | only **returned** (output) | `IEnumerable<out T>`, `Func<out TResult>`, `IReadOnlyList<out T>` |
+| **Contravariance** | `Animal` → `Dog` (less derived to more) | `in T` | only **accepted** (input) | `Action<in T>`, `IComparer<in T>`, `Predicate<in T>` |
+| Invariance | Exact type only | — | both in and out | `List<T>`, `IList<T>`, `Dictionary<K,V>` |
+
+```csharp
+class Animal { public string Name = ""; }
+class Dog : Animal { }
+
+IEnumerable<Dog> dogs = new List<Dog> { new() { Name = "Rex" } };
+IEnumerable<Animal> animals = dogs;          // ✅ covariance: you only read Animals out of it
+
+Action<Animal> feed = a => Console.WriteLine($"Feeding {a.Name}");
+Action<Dog> feedDog = feed;                  // ✅ contravariance: something that handles any Animal can handle a Dog
+
+Func<Dog> makeDog = () => new Dog();
+Func<Animal> makeAnimal = makeDog;           // ✅ covariant return
+
+// List<Animal> list = new List<Dog>();      // ❌ invariant: otherwise you could Add(new Cat()) into a list of dogs
+
+// Your own variant interface
+public interface IProducer<out T> { T Produce(); }          // T only in output positions
+public interface IConsumer<in T> { void Consume(T item); }   // T only in input positions
+```
+
+Arrays are covariant too (`object[] objs = new string[3];`), but it's **unsafe**: `objs[0] = 1;` compiles and throws `ArrayTypeMismatchException` at runtime — one reason to prefer generic collections.
+
+> **Interview tip:** Remember "**out** = things come **out** (return values) → covariance; **in** = things go **in** (parameters) → contravariance". Variance works only for interfaces and delegates, and only with reference types (`IEnumerable<int>` is not an `IEnumerable<object>`).
 
 ## Lesson: [Intermediate|Medium] Pattern matching, tuples and deconstruction
 
@@ -395,7 +1020,74 @@ finally
 - `throw;` rethrows and **keeps the original stack trace**; `throw ex;` resets it — avoid.
 - Catch specific exceptions first, general ones last.
 - Don't use exceptions for normal control flow; use `TryParse`-style APIs.
-- Custom exception: derive from `Exception`, provide the standard constructors.
+- Custom exception: derive from `Exception`, provide the standard constructors (next lesson).
+
+## Lesson: [Basic|High] Built-in exceptions, throw and custom exceptions
+
+**Exception hierarchy:** everything derives from `System.Exception`. Common built-in exceptions:
+
+| Exception | Thrown when |
+|---|---|
+| `NullReferenceException` | You use a member of a `null` reference |
+| `ArgumentException` / `ArgumentNullException` / `ArgumentOutOfRangeException` | A method receives an invalid argument (throw these yourself to validate input) |
+| `InvalidOperationException` | The object's state doesn't allow the call (e.g. modifying a list during `foreach`, `First()` on empty sequence) |
+| `IndexOutOfRangeException` | Array index outside its bounds |
+| `KeyNotFoundException` | Dictionary indexer with a missing key |
+| `InvalidCastException` | Bad explicit cast / unboxing to the wrong type |
+| `FormatException` | `int.Parse("abc")` |
+| `OverflowException` | `checked` arithmetic overflows |
+| `DivideByZeroException` | Integer division by zero (`double` gives Infinity instead) |
+| `FileNotFoundException`, `DirectoryNotFoundException`, `IOException` | File system problems |
+| `NotImplementedException` / `NotSupportedException` | Method not written yet / operation not supported by design |
+| `TimeoutException`, `OperationCanceledException` / `TaskCanceledException` | Timeouts and cancellation |
+| `HttpRequestException` | `HttpClient` call failed |
+| `OutOfMemoryException`, `StackOverflowException` | Runtime failures — the latter can't be caught and kills the process |
+
+**Throwing:**
+
+```csharp
+public void Withdraw(decimal amount)
+{
+    ArgumentOutOfRangeException.ThrowIfNegativeOrZero(amount);            // .NET 8 throw helpers
+    if (amount > Balance) throw new InsufficientFundsException(Balance, amount);
+    Balance -= amount;
+}
+
+public Customer(string name) => Name = name ?? throw new ArgumentNullException(nameof(name));   // throw expression
+
+try { Save(); }
+catch (SqlException ex)
+{
+    log.LogError(ex, "Save failed");
+    throw;                  // ✅ rethrow keeps the original stack trace
+    // throw ex;            // ❌ resets the stack trace to this line
+}
+```
+
+**Custom exception:**
+
+```csharp
+public class InsufficientFundsException : Exception
+{
+    public decimal Balance { get; }
+    public decimal Requested { get; }
+
+    public InsufficientFundsException() { }
+    public InsufficientFundsException(string message) : base(message) { }
+    public InsufficientFundsException(string message, Exception inner) : base(message, inner) { }
+    public InsufficientFundsException(decimal balance, decimal requested)
+        : base($"Balance {balance} is less than requested {requested}.")
+        => (Balance, Requested) = (balance, requested);
+}
+
+try { account.Withdraw(5000); }
+catch (InsufficientFundsException ex) when (ex.Requested > 1000)
+{
+    Console.WriteLine($"Large withdrawal refused: {ex.Message}");
+}
+```
+
+Guidelines: name ends with `Exception`; derive from `Exception` (not `ApplicationException`); add properties with useful data; create custom exceptions only when callers will catch them specifically — otherwise use the built-in ones.
 
 ## Lesson: [Intermediate|High] IDisposable, using and the garbage collector
 
@@ -442,6 +1134,118 @@ Span<byte> buffer = stackalloc byte[256];      // stack memory, no GC
 
 - `Span<T>` cannot be stored on the heap (no fields in classes, no boxing). Use `Memory<T>` when you need to keep it or use it across `await`.
 - Other tools: `ArrayPool<T>.Shared`, `StringBuilder` pooling, avoiding LINQ in hot loops, `struct` enumerators.
+
+# Module: Files and Streams
+
+## Lesson: [Basic|Medium] File, Directory and Path — quick file operations
+
+The static classes in `System.IO` do one-line file work:
+
+```csharp
+string folder = Path.Combine(AppContext.BaseDirectory, "data");   // builds paths with the right separator (\ or /)
+Directory.CreateDirectory(folder);                                  // no error if it already exists
+string file = Path.Combine(folder, "notes.txt");
+
+File.WriteAllText(file, "Line 1\n");               // create or overwrite
+File.AppendAllText(file, "Line 2\n");              // add to the end
+File.WriteAllLines(file, ["a", "b", "c"]);
+string all = File.ReadAllText(file);
+string[] lines = File.ReadAllLines(file);           // whole file in memory
+foreach (var line in File.ReadLines(file))          // lazy — one line at a time, good for big files
+    Console.WriteLine(line);
+
+if (File.Exists(file)) File.Copy(file, Path.Combine(folder, "backup.txt"), overwrite: true);
+File.Move(file, Path.Combine(folder, "renamed.txt"));
+File.Delete(Path.Combine(folder, "backup.txt"));
+
+foreach (var csv in Directory.EnumerateFiles(folder, "*.csv", SearchOption.AllDirectories))
+    Console.WriteLine(Path.GetFileName(csv));
+
+Console.WriteLine(Path.GetExtension("report.pdf"));            // .pdf
+Console.WriteLine(Path.GetFileNameWithoutExtension("report.pdf")); // report
+string temp = Path.GetTempFileName();
+
+await File.WriteAllTextAsync(file, "async version");          // async versions for servers/UI apps
+```
+
+Watch out for: missing folders (`DirectoryNotFoundException`), files locked by another process (`IOException`), permissions (`UnauthorizedAccessException`), and building paths with string concatenation (use `Path.Combine`). Never build paths from user input without validating them (path traversal like `..\..\web.config`).
+
+## Lesson: [Basic|Medium] FileInfo and DirectoryInfo
+
+`FileInfo` / `DirectoryInfo` are **instance** classes: create one object for a path and use its properties and methods repeatedly (security checks happen once, and you get metadata).
+
+```csharp
+var info = new FileInfo(@"C:\data\orders.csv");
+if (info.Exists)
+{
+    Console.WriteLine($"{info.Name} {info.Length / 1024} KB, modified {info.LastWriteTime:g}");
+    Console.WriteLine(info.Extension);          // .csv
+    Console.WriteLine(info.DirectoryName);      // C:\data
+    info.CopyTo(@"C:\archive\orders.csv", overwrite: true);
+    using StreamReader reader = info.OpenText();
+    Console.WriteLine(reader.ReadLine());
+}
+
+var dir = new DirectoryInfo(@"C:\data");
+foreach (FileInfo f in dir.GetFiles("*.log").Where(f => f.LastWriteTime < DateTime.Now.AddDays(-30)))
+    f.Delete();                                 // clean up logs older than 30 days
+DirectoryInfo sub = dir.CreateSubdirectory("2026");
+```
+
+| | `File` / `Directory` (static) | `FileInfo` / `DirectoryInfo` (instance) |
+|---|---|---|
+| Usage | One-off operations | Several operations on the same file/folder |
+| Metadata | Separate calls (`File.GetLastWriteTime`) | Properties (`Length`, `CreationTime`, `Attributes`) |
+| Refresh | Always current | Cached — call `Refresh()` for fresh values |
+
+## Lesson: [Intermediate|Medium] Streams, StreamReader/StreamWriter and async file I/O
+
+A **stream** is a sequence of bytes you read or write piece by piece, so huge files never need to fit in memory. `Stream` is the abstract base for `FileStream`, `MemoryStream`, `NetworkStream`, `BufferedStream`, `GZipStream`, `CryptoStream`…
+
+```csharp
+// Text: StreamWriter / StreamReader wrap a stream and handle encoding (UTF-8 by default)
+using (var writer = new StreamWriter("log.txt", append: true))
+{
+    writer.WriteLine($"{DateTime.UtcNow:O} Started");
+}   // Dispose flushes and closes the file
+
+using var reader = new StreamReader("big.csv");
+string? line;
+long count = 0;
+while ((line = await reader.ReadLineAsync()) != null)   // streams line by line
+    if (line.Contains("ERROR")) count++;
+
+// Bytes: FileStream with explicit options
+await using var fs = new FileStream("photo.jpg", FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 81920, useAsync: true);
+var buffer = new byte[81920];
+int read;
+while ((read = await fs.ReadAsync(buffer)) > 0) { /* process buffer[..read] */ }
+
+// Copy one stream into another (e.g. upload → Blob storage, file → HTTP response)
+await using var source = File.OpenRead("report.pdf");
+await using var target = File.Create("copy.pdf");
+await source.CopyToAsync(target);
+
+// MemoryStream: a stream over a byte[] in memory — handy for tests and in-memory files
+using var ms = new MemoryStream();
+await JsonSerializer.SerializeAsync(ms, new { Id = 1 });
+byte[] json = ms.ToArray();
+
+// Compression by chaining streams
+await using var zip = new GZipStream(File.Create("data.gz"), CompressionLevel.Optimal);
+await using var zipWriter = new StreamWriter(zip);
+await zipWriter.WriteAsync("compressed text");
+```
+
+| Class | Purpose |
+|---|---|
+| `FileStream` | Read/write bytes in a file (`FileMode`: Create, Open, Append, OpenOrCreate) |
+| `StreamReader` / `StreamWriter` | Text on top of any stream, with encoding |
+| `BinaryReader` / `BinaryWriter` | Primitive types as binary |
+| `MemoryStream` | In-memory byte buffer |
+| `BufferedStream`, `GZipStream`, `CryptoStream` | Decorators that add buffering, compression, encryption |
+
+> **Interview tip:** Always dispose streams (`using` / `await using`) — otherwise file handles stay locked and buffered data may never be written. Use async I/O in web apps so threads aren't blocked while waiting for the disk.
 
 # Module: Asynchronous and Parallel Programming
 
@@ -669,6 +1473,66 @@ Generics let you write type-safe code once for many types (`List<T>`, `Repositor
 
 `throw;` rethrows the current exception and **preserves the original stack trace**. `throw ex;` throws it again from the current line, losing where it really failed. To add context, throw a new exception and pass the original as `innerException`.
 
+## [Beginner|High] Why should you use `decimal` instead of `double` for money?
+
+`double` is binary floating point and can't represent many base-10 fractions exactly (0.1 + 0.2 != 0.3), so totals drift by tiny amounts that show up in invoices and reports. `decimal` stores base-10 digits exactly with 28–29 significant digits. Trade-off: `decimal` is slower and uses 16 bytes, so use `double` for scientific/graphics maths and `decimal` for money and quantities that must add up exactly. In SQL Server map it to `DECIMAL(18,2)`, not `FLOAT`.
+
+## [Beginner|High] What is the difference between `Parse`, `TryParse` and `Convert`?
+
+`int.Parse("x")` throws `FormatException` for bad input (and `ArgumentNullException` for null). `int.TryParse(s, out var n)` returns `false` instead of throwing — use it for user input. `Convert.ToInt32(value)` accepts many types (object, double, string), returns 0 for `null`, and rounds doubles to the nearest even number (`Convert.ToInt32(2.5)` → 2) whereas a cast truncates (`(int)2.9` → 2). Pass a `CultureInfo` when parsing numbers and dates from files or APIs.
+
+## [Beginner|High] What is the difference between `Dictionary` and `Hashtable`?
+
+`Dictionary<TKey,TValue>` is generic: type-safe, no boxing, faster; a missing key with the indexer throws `KeyNotFoundException` (use `TryGetValue`). `Hashtable` is the old non-generic version storing `object` keys/values: needs casts, boxes value types, and returns `null` for a missing key. Both are hash tables with O(1) average lookup. For multiple threads use `ConcurrentDictionary`.
+
+## [Beginner|High] What is the difference between a multidimensional and a jagged array?
+
+A multidimensional (rectangular) array `int[,]` is one object where every row has the same length, accessed as `a[r, c]`. A jagged array `int[][]` is an array of arrays — each row is a separate array and can have a different length, accessed as `a[r][c]`. Jagged arrays are more flexible and often faster in .NET; rectangular arrays suit fixed grids such as matrices.
+
+## [Beginner|Medium] When do you use for, foreach, while and do-while?
+
+`for` when you need the index or a counted loop; `foreach` to read every item of any `IEnumerable` (cleanest, but you can't add/remove items of a `List` inside it); `while` to repeat while a condition is true (may run zero times); `do-while` when the body must run at least once (menus, retry prompts). `break` exits the loop, `continue` skips to the next iteration.
+
+## [Beginner|Medium] What is a namespace? Explain the two meanings of `using`.
+
+A namespace groups related types and prevents name clashes (`Shop.Models.Order` vs `Billing.Order`). The `using` **directive** (`using System.Text;`) imports a namespace — plus `using static`, aliases and `global using`. The `using` **statement/declaration** (`using var conn = new SqlConnection(...)`) calls `Dispose()` automatically at the end of the scope, even if an exception is thrown.
+
+## [Beginner|Medium] What are anonymous types?
+
+Compiler-generated, unnamed classes with read-only properties, created with `new { Name = "Asha", Age = 28 }` and used through `var`. They have value-based `Equals`/`GetHashCode`, and are mostly used for LINQ projections within one method. They can't be returned in a typed way or have methods — use a record or a tuple for that.
+
+## [Beginner|Medium] What is the difference between Stack and Queue?
+
+`Stack<T>` is LIFO — `Push` adds to the top, `Pop` removes the most recent, `Peek` reads it (undo, expression parsing, DFS). `Queue<T>` is FIFO — `Enqueue` adds at the back, `Dequeue` removes the oldest (job processing, BFS, buffering). Both are O(1) for add/remove; `TryPop`/`TryDequeue` avoid exceptions on empty collections; `PriorityQueue<T,P>` dequeues by priority.
+
+## [Intermediate|High] How do you create a custom exception, and when should you?
+
+Derive from `Exception`, end the name with `Exception`, provide the standard constructors (parameterless, message, message + inner exception) plus constructors/properties for useful data (e.g. `Balance`, `Requested`). Create one only when callers need to catch that specific situation (e.g. `InsufficientFundsException` → show a friendly message or return 409); otherwise throw the built-in ones (`ArgumentException`, `InvalidOperationException`). Always pass the inner exception when wrapping.
+
+## [Intermediate|Medium] What is the difference between `Tuple` and `ValueTuple`?
+
+`Tuple<T1,...>` (.NET 4) is a class on the heap with read-only `Item1`, `Item2` properties. `ValueTuple` (C# 7, syntax `(int Id, string Name)`) is a struct — no allocation — with named, mutable fields, deconstruction (`var (id, name) = ...`) and `==` support. Use ValueTuple for returning several values from private/internal methods; use a record for public APIs because tuple element names are not kept at runtime.
+
+## [Intermediate|Medium] What is the difference between `Func`, `Action` and `Predicate`?
+
+All are built-in generic delegate types. `Func<T1..., TResult>` takes up to 16 inputs and returns a value (`Func<int,int,int> add`). `Action<T1...>` takes inputs and returns `void` (`Action<string> log`). `Predicate<T>` takes one input and returns `bool`, used by `List<T>.Find/FindAll/RemoveAll`; LINQ uses `Func<T,bool>` for the same idea.
+
+## [Intermediate|Medium] What is a multicast delegate?
+
+A delegate whose invocation list contains several methods, built with `+=` and reduced with `-=`. Invoking it calls each method in order; for delegates with a return value only the last result is returned, and an exception in one handler stops the rest. Events are built on multicast delegates — that's how many subscribers receive one event.
+
+## [Intermediate|Medium] How do you read a very large file efficiently in C#?
+
+Stream it instead of loading it all: `File.ReadLines(path)` (lazy `IEnumerable<string>`) or a `StreamReader` with `ReadLineAsync` in a loop, a `FileStream` with a reasonable buffer for binary data, and `CopyToAsync` to move data between streams. Avoid `File.ReadAllText/ReadAllLines` for large files (whole file in memory), dispose streams with `using`, and use async I/O in server apps.
+
+## [Intermediate|Medium] DateTime vs DateTimeOffset — which should you store?
+
+`DateTime` holds a date/time with a `Kind` (Local, Utc, Unspecified) but no offset, so the same value can mean different instants on different servers. `DateTimeOffset` stores the instant plus the UTC offset, so it is unambiguous. Store UTC (`DateTime.UtcNow` or `DateTimeOffset`) in databases and APIs, convert to the user's time zone only for display, use `DateOnly` for pure dates like birthdays, and `TimeProvider` to make "now" testable.
+
+## [Intermediate|Medium] What is a `[Flags]` enum?
+
+An enum whose values are powers of two (`Read = 1, Write = 2, Delete = 4`) so several can be combined in one value with bitwise OR (`Read | Write`). Test with `(value & Flag) != 0` or `HasFlag`, remove with `value &= ~Flag`. `[Flags]` also makes `ToString()` print "Read, Write". Typical for permissions and options.
+
 ## [Advanced|High] How do you make code thread-safe? Compare lock, Monitor, SemaphoreSlim, Interlocked and concurrent collections.
 
 - `lock` (sugar for `Monitor.Enter/Exit`): mutual exclusion inside one process, synchronous only.
@@ -720,6 +1584,14 @@ Blocking on async code ties up a thread while it waits. In a context with a sync
 ## [Scenario|Medium] You need to call 500 external URLs as fast as possible without getting rate-limited. How?
 
 Use async I/O with **bounded concurrency**: `Parallel.ForEachAsync(urls, new ParallelOptions { MaxDegreeOfParallelism = 10 }, ...)` or a `SemaphoreSlim` with `Task.WhenAll`. Reuse one `HttpClient` from `IHttpClientFactory`. Add retries with exponential backoff (Polly / `Microsoft.Extensions.Http.Resilience`), respect `429 Retry-After`, and pass cancellation tokens and timeouts.
+
+## [Scenario|Medium] You must count error lines in a 5 GB log file without running out of memory. How?
+
+Stream it: `foreach (var line in File.ReadLines(path)) if (line.Contains("ERROR", StringComparison.Ordinal)) count++;` or a `StreamReader` with `ReadLineAsync` — memory stays constant because only one line is held at a time. Don't use `ReadAllText`/`ReadAllLines`. For more speed: a larger buffer (`new StreamReader(path, Encoding.UTF8, true, 1 << 16)`), `Span`-based searching, or splitting the file into ranges processed in parallel when the disk is fast.
+
+## [Scenario|Medium] After deploying to the cloud, order times shown to users are 5.5 hours off. What went wrong?
+
+The code used `DateTime.Now`, which is the server's local time — the cloud server runs in UTC while the developer's PC ran in IST (or the opposite conversion was applied twice). Fix: store and compare in UTC (`DateTime.UtcNow`/`DateTimeOffset`), mark `DateTimeKind.Utc` when reading from the database, convert to the user's time zone (`TimeZoneInfo.ConvertTimeFromUtc`) only for display, send ISO 8601 with offset (`"O"` format) in APIs, and inject `TimeProvider` so tests can control the time.
 
 # Cheatsheet
 
@@ -807,3 +1679,22 @@ order?.Status = Status.Shipped;                    // C# 14
 4. async/await doesn't create threads; no `.Result`.
 5. `IDisposable` + `using` + GC generations.
 6. Delegates vs events.
+
+## Data types & conversion
+
+| Need | Use |
+|---|---|
+| Money, quantities | `decimal` (`12.5m`) |
+| Scientific / graphics | `double` |
+| User input → number | `int.TryParse(s, out var n)` |
+| Overflow check | `checked(a + b)` |
+| Timestamps | UTC: `DateTime.UtcNow` / `DateTimeOffset` |
+| Pure dates / times | `DateOnly` / `TimeOnly` |
+
+## Arrays & collections in one look
+
+`int[]` fixed · `int[,]` rectangular · `int[][]` jagged · `List<T>` growable · `Dictionary<K,V>` key lookup (`TryGetValue`) · `HashSet<T>` unique · `SortedList/SortedDictionary` ordered keys · `Stack<T>` LIFO · `Queue<T>` FIFO · `PriorityQueue<T,P>` · `ArrayList`/`Hashtable` = legacy (boxing, no type safety) · `(int, string)` ValueTuple for quick multi-returns.
+
+## Delegates, exceptions & files
+
+`Func` returns · `Action` void · `Predicate` bool · `+=` multicast · `out T` covariance, `in T` contravariance · `throw;` not `throw ex;` · custom exception = derive `Exception` + 3 constructors · `File.ReadLines` for big files · always `using`/`await using` streams · `Path.Combine` for paths.
