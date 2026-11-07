@@ -12,6 +12,7 @@
     "test": "node --test tests/content.test.mjs"
   },
   "dependencies": {
+    "@vercel/analytics": "2.0.1",
     "better-sqlite3": "13.0.3",
     "highlight.js": "11.12.0",
     "marked": "18.1.1",
