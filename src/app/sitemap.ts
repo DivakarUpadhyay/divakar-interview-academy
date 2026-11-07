@@ -21,6 +21,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url("/interview-day", 0.6),
     url("/demo", 0.5),
     url("/api-docs", 0.3),
+    url("/about", 0.4),
+    url("/contact", 0.3),
+    url("/privacy", 0.2),
+    url("/terms", 0.2),
+    url("/disclosure", 0.2),
     ...ROLES.map((r) => url(`/interview-questions/${r.slug}`, 0.8)),
     ...getCourses().flatMap((c) => [
       url(`/courses/${c.slug}`, 0.8),

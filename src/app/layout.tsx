@@ -7,6 +7,7 @@ import { getCourses, getTracks } from "@/lib/db";
 import { buildMenu } from "@/lib/menu";
 import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/seo";
 import { GtmHead, GtmNoScript } from "@/components/GoogleTagManager";
+import { AdSenseScript } from "@/components/AdSense";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -80,6 +81,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/search">Search</Link>
               <Link href="/api-docs">REST API</Link>
             </div>
+            <div>
+              <h4>Site</h4>
+              <Link href="/about">About</Link>
+              <Link href="/contact">Contact</Link>
+              <Link href="/privacy">Privacy Policy</Link>
+              <Link href="/terms">Terms of Use</Link>
+              <Link href="/disclosure">Disclosure</Link>
+            </div>
           </div>
           <div className="container row footer-bottom">
             <span>© {new Date().getFullYear()} DevLadder · by Divakar Upadhyay</span>
@@ -89,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </footer>
         <CopyHandler />
         <GtmHead />
+        <AdSenseScript />
       </body>
     </html>
   );

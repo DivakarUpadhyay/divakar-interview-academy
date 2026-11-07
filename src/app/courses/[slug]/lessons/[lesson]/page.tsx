@@ -7,6 +7,8 @@ import Prose from "@/components/Prose";
 import { Grade, Priority } from "@/components/Badges";
 import { DoneMark, LessonDoneToggle } from "@/components/LessonDone";
 import StudyActions from "@/components/StudyActions";
+import { AdSlot } from "@/components/AdSense";
+import { AD_SLOTS } from "@/lib/ads";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -77,7 +79,9 @@ export default async function LessonPage({ params }: PageProps<"/courses/[slug]/
           <Priority p={lesson.priority} />
           <span className="muted small">Lesson {lesson.seq} of {all.length}</span>
         </div>
+        <AdSlot slot={AD_SLOTS.lessonTop} />
         <Prose html={lesson.body_html} />
+        <AdSlot slot={AD_SLOTS.lessonBottom} />
         <div className="lesson-tools">
           <LessonDoneToggle id={`${course.slug}/${lesson.slug}`} />
           <StudyActions item={{ key: `l::${course.slug}/${lesson.slug}`, kind: "lesson", title: lesson.title, href: `/courses/${course.slug}/lessons/${lesson.slug}`, course: course.title }} />
