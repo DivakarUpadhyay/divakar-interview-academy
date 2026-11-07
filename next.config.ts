@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // The SQLite file is read at runtime by the REST API routes; make sure it ships with them.
-  outputFileTracingIncludes: { "/api/**": ["./data/academy.db"] },
+  // Every page and JSON endpoint is generated at build time from data/academy.db, so the site is plain
+  // static files (out/) that any free static host can serve, e.g. Cloudflare Pages.
+  output: "export",
 };
 
 export default nextConfig;

@@ -4,6 +4,7 @@ import type { Question } from "@/lib/db";
 import { Chips, LEVELS, PRIORITIES, QuestionCard } from "@/components/QuestionList";
 import { Legend } from "@/components/Badges";
 import { useBookmarks } from "@/lib/progress";
+import { findQuestions } from "@/lib/static-data";
 
 type C = { slug: string; title: string; track_slug: string; questions: number };
 const PAGE = 40;
@@ -24,32 +25,19 @@ export default function InterviewPanel({ tracks, courses }: { tracks: { slug: st
   // debounce the search box
   useEffect(() => { const t = setTimeout(() => setQuery(text), 300); return () => clearTimeout(t); }, [text]);
 
-  const params = (offset: number) => {
-    const p = new URLSearchParams({ limit: String(PAGE), offset: String(offset) });
-    if (course) p.set("course", course);
-    if (levels.length) p.set("level", levels.join(","));
-    if (prios.length) p.set("priority", prios.join(","));
-    if (query.trim()) p.set("q", query.trim());
-    return p;
-  };
-
+  // All matches are filtered in the browser; only PAGE of them are rendered at a time.
+  const [matches, setMatches] = useState<Question[]>([]);
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetch(`/api/questions?${params(0)}`).then((r) => r.json()).then((d) => {
+    findQuestions({ courses: course ? [course] : undefined, levels, priorities: prios, q: query }).then((list) => {
       if (cancelled) return;
-      setItems(d.items); setTotal(d.total); setOpen(new Set()); setLoading(false);
+      setMatches(list); setItems(list.slice(0, PAGE)); setTotal(list.length); setOpen(new Set()); setLoading(false);
     }).catch(() => setLoading(false));
     return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [course, levels, prios, query]);
 
-  const more = async () => {
-    setLoading(true);
-    const d = await fetch(`/api/questions?${params(items.length)}`).then((r) => r.json());
-    setItems((x) => [...x, ...d.items]);
-    setLoading(false);
-  };
+  const more = () => setItems(matches.slice(0, items.length + PAGE));
 
   const shown = onlyMarked ? items.filter((q) => marks.includes(q.id)) : items;
   const toggle = (id: number) => setOpen((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });

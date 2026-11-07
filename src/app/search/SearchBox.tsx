@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import type { SearchHit } from "@/lib/db";
+import { search } from "@/lib/static-data";
 
-type Hit = { kind: string; course_slug: string; course_title: string; ref: string; title: string; snippet: string };
+type Hit = SearchHit;
 
 const KIND: Record<string, string> = { lesson: "Lesson", question: "Interview Q", cheat: "Cheat sheet", course: "Course" };
 
@@ -27,8 +29,7 @@ export default function SearchBox() {
     if (q.trim().length < 2) { setHits([]); return; }
     const t = setTimeout(async () => {
       setBusy(true);
-      const r = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-      setHits(r.ok ? await r.json() : []);
+      setHits(await search(q).catch(() => []));
       setBusy(false);
       history.replaceState(null, "", `?q=${encodeURIComponent(q)}`);
     }, 250);

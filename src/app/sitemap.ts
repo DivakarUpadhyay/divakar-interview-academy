@@ -3,6 +3,8 @@ import { getAllLessonParams, getCourses } from "@/lib/db";
 import { ROLES } from "@/lib/roles";
 import { SITE_URL } from "@/lib/seo";
 
+export const dynamic = "force-static";
+
 // Every public page: static sections, each course (+ overview, interview Q&A, cheat sheet), every lesson and every role bank.
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

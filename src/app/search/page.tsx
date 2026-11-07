@@ -8,7 +8,7 @@ export default function SearchPage() {
   return (
     <>
       <h1>Search everything</h1>
-      <p className="muted">Lessons, interview answers, cheat sheets and course overviews. Uses SQLite full-text search through <code>/api/search</code>.</p>
+      <p className="muted">Lessons, interview answers, cheat sheets and course overviews. Search runs in your browser, so results appear as you type.</p>
       <SearchBox />
     </>
   );

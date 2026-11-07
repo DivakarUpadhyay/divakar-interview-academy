@@ -4,6 +4,7 @@ import type { Question } from "@/lib/db";
 import { Chips, LEVELS, PRIORITIES } from "@/components/QuestionList";
 import { Level, Priority } from "@/components/Badges";
 import { useStored } from "@/lib/progress";
+import { randomQuestions } from "@/lib/static-data";
 
 type C = { slug: string; title: string; track_slug: string; questions: number };
 type Rating = "good" | "partial" | "miss";
@@ -48,12 +49,7 @@ export default function PracticePanel({ tracks, courses }: { tracks: { slug: str
     setError("");
     let qs = questions;
     if (!qs) {
-      const p = new URLSearchParams({ count: String(count) });
-      if (picked.length) p.set("course", picked.join(","));
-      if (levels.length) p.set("level", levels.join(","));
-      if (prios.length) p.set("priority", prios.join(","));
-      const d = await fetch(`/api/questions/random?${p}`).then((r) => r.json());
-      qs = d.items as Question[];
+      qs = await randomQuestions({ courses: picked, levels, priorities: prios }, count);
     }
     if (!qs.length) { setError("No questions match these filters. Remove a filter and try again."); return; }
     setQueue(qs); setIdx(0); setRatings({}); setRevealed(false); setPhase("run");

@@ -13,8 +13,8 @@ export default function InterviewPage() {
       <h1>Interview Q&amp;A panel</h1>
       <p className="muted">
         Every interview question, topic by topic. Filter by course, level (Beginner → Advanced, plus real-world Scenario
-        questions) and priority. Answers include examples and code. Data comes from the REST API
-        (<code>/api/questions</code>).
+        questions) and priority. Answers include examples and code. Data comes from
+        <code>/data/questions.json</code>.
       </p>
       <InterviewPanel tracks={tracks.map(({ slug, title }) => ({ slug, title }))} courses={courses} />
     </>

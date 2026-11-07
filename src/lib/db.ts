@@ -23,6 +23,7 @@ export type Question = {
   question: string; question_html: string; answer_html: string;
 };
 export type Cheat = { id: number; ord: number; title: string; body_html: string };
+/** One search result; `snippet` is HTML with matches wrapped in <mark>. */
 export type SearchHit = { kind: string; course_slug: string; course_title: string; ref: string; title: string; snippet: string };
 
 const COURSE_COLS = `c.id, c.slug, c.title, t.slug AS track_slug, t.title AS track_title, c.seq, c.grp, c.icon, c.color, c.summary,
@@ -65,48 +66,9 @@ export function getCheats(courseId: number): Cheat[] {
   return conn().prepare("SELECT id, ord, title, body_html FROM cheats WHERE course_id = ? ORDER BY ord").all(courseId) as Cheat[];
 }
 
-export type QuestionFilter = {
-  courses?: string[]; levels?: string[]; priorities?: string[]; q?: string; limit?: number; offset?: number; random?: boolean;
-};
-
-export function findQuestions(f: QuestionFilter): { total: number; items: Question[] } {
-  const where: string[] = [];
-  const args: unknown[] = [];
-  const inList = (col: string, vals?: string[]) => {
-    if (vals && vals.length) { where.push(`${col} IN (${vals.map(() => "?").join(",")})`); args.push(...vals); }
-  };
-  inList("c.slug", f.courses);
-  inList("q.level", f.levels);
-  inList("q.priority", f.priorities);
-  if (f.q && f.q.trim()) {
-    where.push("(q.question LIKE ? OR q.answer_html LIKE ?)");
-    const like = `%${f.q.trim().replace(/[%_]/g, "")}%`;
-    args.push(like, like);
-  }
-  const from = `FROM questions q JOIN courses c ON c.id = q.course_id ${where.length ? "WHERE " + where.join(" AND ") : ""}`;
-  const total = (conn().prepare(`SELECT COUNT(*) AS n ${from}`).get(...args) as { n: number }).n;
-  const limit = Math.min(Math.max(f.limit ?? 50, 1), 500);
-  const offset = Math.max(f.offset ?? 0, 0);
-  const order = f.random ? "RANDOM()" : "c.seq, CASE q.priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 ELSE 3 END, q.ord";
-  const items = conn().prepare(`SELECT q.id, c.slug AS course_slug, c.title AS course_title, q.ord, q.level, q.priority, q.question, q.question_html, q.answer_html
-    ${from} ORDER BY ${order} LIMIT ? OFFSET ?`).all(...args, limit, offset) as Question[];
-  return { total, items };
-}
-
 export function getQuestionsForCourse(courseId: number): Question[] {
   return conn().prepare(`SELECT q.id, c.slug AS course_slug, c.title AS course_title, q.ord, q.level, q.priority, q.question, q.question_html, q.answer_html
     FROM questions q JOIN courses c ON c.id = q.course_id WHERE c.id = ? ORDER BY q.ord`).all(courseId) as Question[];
-}
-
-export function search(term: string, limit = 40): SearchHit[] {
-  // Quote every word so user input can't break FTS5 syntax; prefix-match the last word.
-  const words = term.toLowerCase().match(/[\p{L}\p{N}#+.]+/gu)?.slice(0, 8) ?? [];
-  if (!words.length) return [];
-  const match = words.map((w, i) => `"${w.replace(/"/g, "")}"${i === words.length - 1 ? "*" : ""}`).join(" ");
-  return conn().prepare(`SELECT s.kind, s.course_slug, c.title AS course_title, s.ref, s.title,
-      snippet(search, 4, char(2), char(3), ' … ', 18) AS snippet
-    FROM search s JOIN courses c ON c.slug = s.course_slug
-    WHERE search MATCH ? ORDER BY bm25(search, 0, 0, 0, 8.0, 1.0) LIMIT ?`).all(match, Math.min(limit, 100)) as SearchHit[];
 }
 
 export function getStats() {
@@ -136,4 +98,19 @@ export function getQuestionIndex(): QuestionIndexRow[] {
     FROM questions q JOIN courses c ON c.id = q.course_id
     ORDER BY c.seq, CASE q.priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 ELSE 3 END,
       CASE q.level WHEN 'Beginner' THEN 1 WHEN 'Intermediate' THEN 2 WHEN 'Advanced' THEN 3 ELSE 4 END, q.ord`).all() as QuestionIndexRow[];
+}
+
+/** Every question in the default list order (course, then High → Low priority) — served as a static JSON file. */
+export function getAllQuestions(): Question[] {
+  return conn().prepare(`SELECT q.id, c.slug AS course_slug, c.title AS course_title, q.ord, q.level, q.priority, q.question, q.question_html, q.answer_html
+    FROM questions q JOIN courses c ON c.id = q.course_id
+    ORDER BY c.seq, CASE q.priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 ELSE 3 END, q.ord`).all() as Question[];
+}
+
+export type SearchDoc = { kind: string; course_slug: string; course_title: string; ref: string; title: string; body: string };
+
+/** The full-text search rows (plain text) — searched in the browser so the site can be hosted as static files. */
+export function getSearchDocs(): SearchDoc[] {
+  return conn().prepare(`SELECT s.kind, s.course_slug, c.title AS course_title, s.ref, s.title, s.body
+    FROM search s JOIN courses c ON c.slug = s.course_slug`).all() as SearchDoc[];
 }
