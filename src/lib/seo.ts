@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 // Public site address used for canonical URLs, the sitemap and structured data.
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://divakar-interview-academy.vercel.app").replace(/\/$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://devladder.pages.dev").replace(/\/$/, "");
 export const SITE_NAME = "DevLadder";
 const OG_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: "DevLadder — tutorials from basics to advanced" };
 
