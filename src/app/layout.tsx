@@ -26,6 +26,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" } },
   // Google Search Console ownership tag for https://devladder.pages.dev/ (account divakaru1991@gmail.com).
+  // AdSense site ownership tag; only present in builds where the AdSense ID is set (Cloudflare).
+  other: process.env.NEXT_PUBLIC_ADSENSE_CLIENT ? { "google-adsense-account": process.env.NEXT_PUBLIC_ADSENSE_CLIENT } : undefined,
   verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "Cnjg00o39Txv8hsbJyQep3zou8SVyyDFUUPw_1xlpxM" },
 };
 
@@ -49,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(siteJsonLd)} />
+        <AdSenseScript />
       </head>
       <body>
         <GtmNoScript />
@@ -100,7 +103,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </footer>
         <CopyHandler />
         <GtmHead />
-        <AdSenseScript />
         <Analytics />
       </body>
     </html>

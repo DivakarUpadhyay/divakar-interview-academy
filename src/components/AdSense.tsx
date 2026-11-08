@@ -1,22 +1,15 @@
 "use client";
 
-import Script from "next/script";
 import { useEffect, useRef } from "react";
 
 // Google AdSense. Nothing renders until NEXT_PUBLIC_ADSENSE_CLIENT is set (e.g. ca-pub-1234567890123456),
 // so the site stays ad-free until the AdSense account is approved.
 const CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 
+/** The AdSense loader as a plain tag for <head>, so it is in the static HTML that AdSense's site check reads. */
 export function AdSenseScript() {
   if (!CLIENT) return null;
-  return (
-    <Script
-      id="adsense"
-      strategy="afterInteractive"
-      crossOrigin="anonymous"
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${CLIENT}`}
-    />
-  );
+  return <script async crossOrigin="anonymous" src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${CLIENT}`} />;
 }
 
 /** One responsive display ad unit. `slot` is the ad unit ID from AdSense → Ads → By ad unit. */
