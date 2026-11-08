@@ -91,6 +91,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div>
               <h4>Site</h4>
+              <Link href="/mentoring">Mock Interviews</Link>
+              <Link href="/interview-prep-pack">Interview Prep Pack</Link>
+              <Link href="/hire">Hire Me</Link>
+              <Link href="/advertise">Advertise</Link>
               <Link href="/about">About</Link>
               <Link href="/contact">Contact</Link>
               <Link href="/privacy">Privacy Policy</Link>

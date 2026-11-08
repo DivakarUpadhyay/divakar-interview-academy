@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { breadcrumbs, jsonLd, SITE_URL } from "@/lib/seo";
 import { TOOLS, type Tool } from "@/lib/tools";
+import Resources from "@/components/Resources";
 
 /** Shared layout for a tool page: title, the tool itself, a how-to guide, FAQ (with FAQPage data) and related tools. */
 export default function ToolPage({ tool, children, howTo, faq }: {
@@ -28,6 +29,7 @@ export default function ToolPage({ tool, children, howTo, faq }: {
           <details key={q} className="panel"><summary>{q}</summary><p>{a}</p></details>
         ))}
       </section>
+      <Resources track={tool.slug === "sql-formatter" ? "data" : "dotnet"} />
       <section className="tool-related">
         <h2>More free tools</h2>
         <div className="tool-grid">

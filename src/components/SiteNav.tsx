@@ -15,6 +15,9 @@ const PRACTICE = [
   ["/demo", "Demo Kit", "Run JavaScript and SQL live in the browser"],
 ] as const;
 const MORE = [
+  ["/mentoring", "Mock Interviews & Mentoring"],
+  ["/interview-prep-pack", "Interview Prep Pack"],
+  ["/hire", "Hire Me"],
   ["/roadmap", "Roadmap & Syllabus"],
   ["/courses", "All Courses"],
   ["/search", "Search"],

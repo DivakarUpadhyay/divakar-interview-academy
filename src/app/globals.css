@@ -479,3 +479,17 @@ main.container { min-height: calc(100vh - 120px); min-height: calc(100svh - 120p
    and single-column pages are centred in that space instead of hugging the left edge. */
 .container { max-width: 1440px; }
 .policy, .narrow, .tool-page { margin-left: auto; margin-right: auto; }
+
+/* Earning pages: offers, prep pack, hire, advertise; and recommended-resources boxes */
+.offer { max-width: 980px; }
+.offer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 16px 0 8px; }
+.offer-card { display: flex; flex-direction: column; gap: 6px; }
+.offer-card h2 { margin: 0; font-size: 1.15rem; }
+.offer-card .btn { align-self: flex-start; margin-top: auto; }
+.offer-price { font-size: 1.3rem; font-weight: 700; margin: 0; }
+.offer th { text-align: left; white-space: nowrap; vertical-align: top; }
+.resources { margin: 18px 0; }
+.resources h2 { margin: 0 0 6px; font-size: 1.05rem; }
+.resources ul { margin: 0; padding-left: 1.1em; }
+.resources li { margin: .3em 0; }
+.resource-tag { margin-left: 6px; font-size: .7rem; }

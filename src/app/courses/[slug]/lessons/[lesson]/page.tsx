@@ -8,6 +8,7 @@ import { Grade, Priority } from "@/components/Badges";
 import { DoneMark, LessonDoneToggle } from "@/components/LessonDone";
 import StudyActions from "@/components/StudyActions";
 import { AdSlot } from "@/components/AdSense";
+import Resources from "@/components/Resources";
 import { AD_SLOTS } from "@/lib/ads";
 
 export const dynamicParams = false;
@@ -86,6 +87,7 @@ export default async function LessonPage({ params }: PageProps<"/courses/[slug]/
           <LessonDoneToggle id={`${course.slug}/${lesson.slug}`} />
           <StudyActions item={{ key: `l::${course.slug}/${lesson.slug}`, kind: "lesson", title: lesson.title, href: `/courses/${course.slug}/lessons/${lesson.slug}`, course: course.title }} />
         </div>
+        <Resources track={course.track_slug} />
         <div className="pager">
           {prev ? (
             <Link className="card" href={`/courses/${course.slug}/lessons/${prev.slug}`}><span className="muted small">← Previous</span><br />{prev.title}</Link>
