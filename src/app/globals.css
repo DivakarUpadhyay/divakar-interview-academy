@@ -418,3 +418,30 @@ h2.home-title { font-size: 1.6rem; margin-top: 22px; }
 .policy li { margin: .3em 0; }
 /* Hide an ad box until Google actually fills it (AdSense sets data-ad-status="unfilled" when no ad is served). */
 .ad-box:has(ins[data-ad-status="unfilled"]) { display: none; }
+
+/* Free developer tools */
+.tool-page { max-width: 1100px; padding-bottom: 24px; }
+.tool-lead { font-size: 1.05rem; max-width: 820px; }
+.tool-box { margin: 14px 0 22px; }
+.tool { display: grid; gap: 10px; }
+.tool-label { font-weight: 600; margin: 4px 0 0; }
+.tool-text, .tool-input { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface-2); color: var(--text); font: .92rem/1.5 "Cascadia Code", Consolas, "SFMono-Regular", Menlo, monospace; resize: vertical; }
+.tool-input.mono, .mono { font-family: "Cascadia Code", Consolas, "SFMono-Regular", Menlo, monospace; }
+.tool-actions { flex-wrap: wrap; gap: 8px 14px; }
+.tool-regex { gap: 6px; align-items: center; flex-wrap: nowrap; }
+.tool-regex .tool-input { flex: 1; min-width: 0; }
+.tool-ok { color: var(--low); font-weight: 600; margin: 0; }
+.tool-err { color: var(--high); font-weight: 600; margin: 0; overflow-wrap: anywhere; }
+.tool-preview { padding: 10px 12px; border: 1px dashed var(--border); border-radius: 8px; white-space: pre-wrap; overflow-wrap: anywhere; min-height: 1.6em; }
+.tool-preview mark { background: var(--must-bg); color: var(--text); border-radius: 3px; outline: 1px solid var(--medium); }
+.tool-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.tool-pre { margin: 0; padding: 10px 12px; background: var(--code-bg); color: var(--code-text); border-radius: 8px; overflow: auto; font-size: .88rem; }
+.tool-times { margin: 0; padding-left: 1.2em; }
+.tool-guide { max-width: 860px; }
+.tool-guide details.panel { margin: 8px 0; }
+.tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin: 12px 0; }
+.tool-grid a.card { color: var(--text); }
+.tool-guide pre { max-width: 100%; overflow-x: auto; padding: 12px 14px; background: var(--code-bg); color: var(--code-text); border-radius: 8px; }
+.tool-guide pre code { white-space: pre; background: none; color: inherit; }
+.tool-page, .tool-guide, .tool-box { min-width: 0; }

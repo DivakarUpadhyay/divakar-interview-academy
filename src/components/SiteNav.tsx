@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { MenuLink, MenuTrack } from "@/lib/menu";
+import { TOOLS } from "@/lib/tools";
 
 // Tutorialsteacher-style menu bar: one mega menu per subject (columns = groups, basics → advanced), then practice and more.
 const PRACTICE = [
@@ -88,6 +89,17 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
               </div>
             );
           })}
+          <div {...itemProps("tools")}>
+            {trigger("tools", "Tools", path.startsWith("/tools"))}
+            <div className="dropdown right wide">
+              {TOOLS.map((t) => (
+                <Link key={t.slug} href={`/tools/${t.slug}`} className={path === `/tools/${t.slug}` ? "active" : ""}>
+                  <span><b>{t.name}</b><br /><span className="hint">{t.short}</span></span>
+                </Link>
+              ))}
+              <Link href="/tools" className={path === "/tools" ? "active" : ""}><b>All free tools →</b></Link>
+            </div>
+          </div>
           <div {...itemProps("practice")}>
             {trigger("practice", "Practice", PRACTICE.some(([h]) => isActive(h)))}
             <div className="dropdown right wide">

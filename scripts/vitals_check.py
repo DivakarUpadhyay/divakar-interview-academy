@@ -48,6 +48,8 @@ def measure(browser, url, desktop):
         cdp.send("Network.emulateNetworkConditions",
                  {"offline": False, "latency": 150, "downloadThroughput": 1.6 * 1024 * 1024 / 8, "uploadThroughput": 750 * 1024 / 8})
     page.add_init_script(OBSERVE)
+    # Warm the CDN edge first: right after a deploy the very first request is a cache miss that real visitors rarely see.
+    page.request.get(url, timeout=90000)
     resp = page.goto(url, wait_until="load", timeout=90000)
     page.wait_for_timeout(4000)  # let late shifts (ads, fonts) happen
     v = page.evaluate("window.__v")

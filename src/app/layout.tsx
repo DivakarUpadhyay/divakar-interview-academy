@@ -83,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div>
               <h4>More</h4>
+              <Link href="/tools">Free Developer Tools</Link>
               <Link href="/roadmap">Roadmap &amp; Syllabus</Link>
               <Link href="/courses">All Courses</Link>
               <Link href="/search">Search</Link>

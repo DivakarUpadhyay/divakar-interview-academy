@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllLessonParams, getCourses } from "@/lib/db";
 import { ROLES } from "@/lib/roles";
 import { SITE_URL } from "@/lib/seo";
+import { TOOLS } from "@/lib/tools";
 
 export const dynamic = "force-static";
 
@@ -23,6 +24,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url("/interview-day", 0.6),
     url("/demo", 0.5),
     url("/api-docs", 0.3),
+    url("/tools", 0.9, "weekly"),
+    ...TOOLS.map((t) => url(`/tools/${t.slug}`, 0.9, "weekly")),
     url("/about", 0.4),
     url("/contact", 0.3),
     url("/privacy", 0.2),
