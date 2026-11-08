@@ -114,3 +114,11 @@ export function getSearchDocs(): SearchDoc[] {
   return conn().prepare(`SELECT s.kind, s.course_slug, c.title AS course_title, s.ref, s.title, s.body
     FROM search s JOIN courses c ON c.slug = s.course_slug`).all() as SearchDoc[];
 }
+
+export type FeedItem = { course_slug: string; course_title: string; slug: string; title: string; body_html: string };
+
+/** Every lesson with its course, newest course first, for the RSS feed. */
+export function getFeedItems(): FeedItem[] {
+  return conn().prepare(`SELECT c.slug AS course_slug, c.title AS course_title, l.slug, l.title, l.body_html
+    FROM lessons l JOIN courses c ON c.id = l.course_id ORDER BY c.seq DESC, l.seq`).all() as FeedItem[];
+}

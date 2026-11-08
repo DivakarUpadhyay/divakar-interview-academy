@@ -12,3 +12,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# IndexNow: hashes of pages already submitted
+.indexnow-state.json

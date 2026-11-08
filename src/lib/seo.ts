@@ -36,3 +36,6 @@ export const breadcrumbs = (items: { name: string; path: string }[]) => ({
   "@type": "BreadcrumbList",
   itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: SITE_URL + it.path })),
 });
+
+/** IndexNow key (public by design; also served at /<key>.txt). Used by scripts/indexnow.mjs after each deploy. */
+export const INDEXNOW_KEY = "dd569a008a813f51b428b5c1043abbb5";

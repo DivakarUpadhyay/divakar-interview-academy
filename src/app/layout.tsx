@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Divakar Upadhyay" }],
   creator: "Divakar Upadhyay",
   category: "education",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", types: { "application/rss+xml": [{ url: "/feed.xml", title: "DevLadder lessons" }] } },
   openGraph: { type: "website", siteName: SITE_NAME, locale: "en_IN", url: "/" },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" } },
