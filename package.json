@@ -14,7 +14,8 @@
     "indexnow": "node scripts/indexnow.mjs",
     "devto:drafts": "node scripts/devto-drafts.mjs",
     "devto:schedule": "node scripts/devto-schedule.mjs",
-    "vitals": "python scripts/vitals_check.py"
+    "vitals": "python scripts/vitals_check.py",
+    "devto:series": "node scripts/devto-series.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "2.0.1",

@@ -47,6 +47,13 @@ function lessons() {
   return out;
 }
 
+// dev.to series per track: readers see "Part N of M" and a list linking the other posts.
+const SERIES = {
+  dotnet: "DevLadder: C# & .NET from Scratch", data: "DevLadder: SQL Server & Data", "devops-cloud": "DevLadder: Cloud & DevOps",
+  frontend: "DevLadder: Frontend Essentials", foundations: "DevLadder: CS Fundamentals for Interviews", interview: "DevLadder: Interview Prep",
+  automation: "DevLadder: Automation & Industry 4.0", web3: "DevLadder: Web3 Basics",
+};
+
 // High-priority lessons first, taking one lesson per course in turn so the feed stays varied.
 function pick(all, done, n) {
   const byCourse = new Map();
@@ -90,6 +97,7 @@ Read the [full lesson with progress tracking](${l.url}) and the rest of the cour
     body_markdown: body,
     published: false,
     canonical_url: l.url,
+    series: SERIES[l.course.track] ?? "DevLadder",
     tags: tagsFor(l.course.track, l.grade, l.course.slug),
     description: (l.course.summary ?? "").slice(0, 150),
   };
