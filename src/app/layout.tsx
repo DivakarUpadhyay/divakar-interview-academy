@@ -54,6 +54,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(siteJsonLd)} />
         <AdSenseScript />
+        {/* impact.com site verification (Coursera / Udemy affiliate programs) */}
+        <meta name="impact-site-verification" {...{ value: "3f7b0607-152a-45d8-9094-7f8e688c9222" }} />
       </head>
       <body>
         <GtmNoScript />

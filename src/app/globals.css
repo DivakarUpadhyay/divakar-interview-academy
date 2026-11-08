@@ -493,3 +493,9 @@ main.container { min-height: calc(100vh - 120px); min-height: calc(100svh - 120p
 .resources ul { margin: 0; padding-left: 1.1em; }
 .resources li { margin: .3em 0; }
 .resource-tag { margin-left: 6px; font-size: .7rem; }
+/* Request forms on the earning pages */
+.request-form { display: grid; gap: 10px; max-width: 640px; margin: 10px 0 18px; scroll-margin-top: 90px; }
+.request-form label { display: grid; gap: 4px; font-weight: 600; font-size: .95rem; }
+.request-form input, .request-form select, .request-form textarea { font: inherit; font-weight: 400; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }
+.request-form .btn { justify-self: start; }
+.request-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }

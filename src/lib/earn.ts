@@ -4,10 +4,9 @@
 // - Free-to-paid conversion is typically 2-5% (Kannan et al., AMA; Lambrecht & Misra 2016; ITC-ILO 2023 found ~2%),
 //   so free lessons feed a low-priced Prep Pack and paid mock interviews.
 // - EthicalAds needs 50k page views/month and must be the only ad on a page; consider it instead of AdSense later. Fill in a URL once the matching account exists
-// (booking calendar, Gumroad product, affiliate links); until then buttons fall back to the contact email.
-import { CONTACT_EMAIL } from "@/lib/site";
-
-const mail = (subject: string) => `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
+// (booking calendar, Gumroad product, affiliate links); until then buttons open the on-page request form, which
+// emails the owner through functions/send-request.js (works without a mail app on the visitor's device).
+const form = (topic: string) => `#request?topic=${encodeURIComponent(topic)}`;
 
 /** Paid 1:1 sessions. Prices are starting points; change them here. */
 export const SESSIONS = [
@@ -18,16 +17,16 @@ export const SESSIONS = [
   { name: "Career and salary call", minutes: 30, price: "US$15",
     detail: "Talk through a job offer, a career gap, a move abroad or what to learn next, with advice from nine years of working as a .NET developer." },
 ];
-/** Calendly / Topmate / Cal.com booking page. Empty = booking by email. */
+/** Calendly / Topmate / Cal.com booking page. Empty = request form on the page. */
 export const BOOKING_URL = "";
-export const bookingHref = (session: string) => BOOKING_URL || mail(`Booking: ${session}`);
+export const bookingHref = (session: string) => BOOKING_URL || form(session);
 
-/** The downloadable interview pack (Gumroad / Lemon Squeezy product page). Empty = "notify me" by email. */
+/** The downloadable interview pack (Gumroad / Lemon Squeezy product page). Empty = "notify me" form. */
 export const PREP_PACK = { url: "", price: "US$9" };
-export const prepPackHref = () => PREP_PACK.url || mail("Interview Prep Pack: please notify me when it is ready");
+export const prepPackHref = () => PREP_PACK.url || form("Interview Prep Pack");
 
-export const HIRE_HREF = mail("Project or job enquiry from DevLadder");
-export const SPONSOR_HREF = mail("Sponsoring DevLadder");
+export const HIRE_HREF = form("Project or job enquiry");
+export const SPONSOR_HREF = form("Sponsorship");
 
 export type Resource = { title: string; url: string; note: string; affiliate?: boolean };
 

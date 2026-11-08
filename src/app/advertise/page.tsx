@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
-import { SPONSOR_HREF } from "@/lib/earn";
 import { getStats } from "@/lib/db";
+import RequestForm from "@/components/RequestForm";
 
 export const metadata: Metadata = pageMeta({
   title: "Advertise and Sponsor DevLadder",
@@ -31,7 +31,7 @@ export default function AdvertisePage() {
         <li><b>Course or tool listing</b> in the Recommended resources boxes</li>
       </ul>
       <p>Every sponsored item is labelled, and we only feature products that are genuinely useful to developers.</p>
-      <p><a className="btn primary" href={SPONSOR_HREF}>Ask about sponsorship</a></p>
+      <RequestForm topics={["Sponsorship"]} cta="Send enquiry" messageLabel="Your product, budget and the placement you are interested in" />
     </div>
   );
 }

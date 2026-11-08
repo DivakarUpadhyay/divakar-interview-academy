@@ -3,6 +3,7 @@ import Link from "next/link";
 import { pageMeta } from "@/lib/seo";
 import { PREP_PACK, prepPackHref } from "@/lib/earn";
 import { getStats } from "@/lib/db";
+import RequestForm from "@/components/RequestForm";
 
 export const metadata: Metadata = pageMeta({
   title: ".NET Interview Prep Pack (PDF)",
@@ -30,6 +31,8 @@ export default function PrepPackPage() {
         <p className="offer-price">{PREP_PACK.price} <span className="muted small">· PDF, free updates</span></p>
         <a className="btn primary" href={prepPackHref()}>{PREP_PACK.url ? "Get the Prep Pack" : "Notify me when it's ready"}</a>
       </div>
+      {!PREP_PACK.url && (<><h2>Get notified</h2>
+        <RequestForm topics={["Interview Prep Pack"]} cta="Notify me" messageLabel="Anything you especially want in the pack? (optional)" /></>)}
       <p className="muted small">
         Want to practise with a person instead? <Link href="/mentoring">Book a mock interview</Link>.
       </p>

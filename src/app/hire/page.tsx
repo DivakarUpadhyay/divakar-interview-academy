@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { pageMeta } from "@/lib/seo";
-import { HIRE_HREF } from "@/lib/earn";
 import { GITHUB_URL, OWNER } from "@/lib/site";
+import RequestForm from "@/components/RequestForm";
 
 export const metadata: Metadata = pageMeta({
   title: "Hire a .NET Developer",
@@ -35,7 +35,8 @@ export default function HirePage() {
         <li>Moving an old .NET Framework or Web Forms app to modern .NET</li>
         <li>Maintenance and support for an existing .NET system</li>
       </ul>
-      <p><a className="btn primary" href={HIRE_HREF}>Tell me about your project</a></p>
+      <h2>Tell me about your project</h2>
+      <RequestForm topics={["Project or job enquiry"]} messageLabel="What do you need built or fixed, and by when?" />
       <p className="muted small">
         See my code on <a href={GITHUB_URL} rel="noopener">GitHub</a>, or how I explain things in the <Link href="/courses">free courses</Link>.
       </p>
