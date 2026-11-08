@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 
 type Day = { date: string; pageViews: number; visits: number };
 type Data = { generatedAt: string; days: Day[]; countries: { name: string; pageViews: number }[];
-  pages: { path: string; pageViews: number }[]; referrers: { host: string; pageViews: number }[]; tips: string[]; error?: string };
+  pages: { path: string; pageViews: number }[]; referrers: { host: string; pageViews: number }[]; tips: string[]; error?: string;
+  vitals: null | { error?: string } & Partial<Record<"lcp" | "inp" | "cls", null | { good: number; ni: number; poor: number; samples: number }>> };
 
 // AdSense earnings per 1,000 page views (RPM), as a low / typical / high range for a developer-tutorial site with
 // mixed worldwide traffic. These are estimates, not Google figures; replace them with your real RPM from AdSense →
@@ -33,7 +34,12 @@ export default function AdminDashboard() {
   if (error) return <div className="policy"><h1>Owner dashboard</h1><p className="tool-err">Could not load stats: {error}</p></div>;
   if (!data) return <div className="policy"><h1>Owner dashboard</h1><p className="muted">Loading the last 30 days…</p></div>;
 
-  const days = data.days;
+  const allDays = data.days;
+  const days = allDays.slice(-30);
+  // Monthly totals and estimated earnings (AdSense's real figures appear in AdSense → Reports once ads run).
+  const months = Object.entries(allDays.reduce<Record<string, { pv: number; v: number }>>((m, d) => {
+    const k = d.date.slice(0, 7); (m[k] ??= { pv: 0, v: 0 }).pv += d.pageViews; m[k].v += d.visits; return m;
+  }, {})).sort(([a], [b]) => b.localeCompare(a));
   const total = days.reduce((s, d) => ({ pv: s.pv + d.pageViews, v: s.v + d.visits }), { pv: 0, v: 0 });
   const last7 = days.slice(-7);
   const avgPv = last7.reduce((s, d) => s + d.pageViews, 0) / Math.max(last7.length, 1);
@@ -42,7 +48,7 @@ export default function AdminDashboard() {
   const now = new Date();
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const monthKey = now.toISOString().slice(0, 7);
-  const monthSoFar = days.filter((d) => d.date.startsWith(monthKey)).reduce((s, d) => s + d.pageViews, 0);
+  const monthSoFar = allDays.filter((d) => d.date.startsWith(monthKey)).reduce((s, d) => s + d.pageViews, 0);
   const remainingDays = daysInMonth - now.getDate();
   const projectedPv = monthSoFar + avgPv * remainingDays;
   const earn = (rpm: number) => (projectedPv / 1000) * rpm;
@@ -78,6 +84,32 @@ export default function AdminDashboard() {
         </ul>
         <p className="muted small">AdSense status: <b>{ADSENSE_STATUS}</b>. Estimates use ${RPM.low}–${RPM.high} per 1,000 page views; your real RPM appears in AdSense → Reports after approval.</p>
       </div>
+
+      <h2>Real-visitor speed (last 7 days)</h2>
+      {data.vitals && !data.vitals.error ? (
+        <div className="admin-kpis">
+          {([["lcp", "LCP · loading"], ["inp", "INP · responsiveness"], ["cls", "CLS · layout stability"]] as const).map(([k, label]) => {
+            const v = data.vitals?.[k];
+            return (
+              <div key={k} className="card">
+                <span className="muted small">{label}</span>
+                {v ? <b className={v.good >= 0.9 ? "admin-good" : "admin-bad"}>{Math.round(v.good * 100)}% good</b> : <b>—</b>}
+                {v && <span className="small muted">{Math.round(v.ni * 100)}% needs improvement · {Math.round(v.poor * 100)}% poor · {num(v.samples)} loads</span>}
+              </div>
+            );
+          })}
+        </div>
+      ) : <p className="muted small">Speed data unavailable{data.vitals?.error ? `: ${data.vitals.error}` : ""}.</p>}
+
+      <h2>Earnings by month (estimated)</h2>
+      <div className="table-wrap"><table>
+        <thead><tr><th>Month</th><th>Visits</th><th>Page views</th><th>Low</th><th>Typical</th><th>High</th></tr></thead>
+        <tbody>{months.map(([m, t]) => (
+          <tr key={m}><td>{m}{m === monthKey ? " (so far)" : ""}</td><td>{num(t.v)}</td><td>{num(t.pv)}</td>
+            <td>{usd(t.pv / 1000 * RPM.low)}</td><td><b>{usd(t.pv / 1000 * RPM.typical)}</b></td><td>{usd(t.pv / 1000 * RPM.high)}</td></tr>
+        ))}</tbody>
+      </table></div>
+      <p className="muted small">Estimates only; no ads run until AdSense approves the site. Real earnings: AdSense → Reports / Payments.</p>
 
       <h2>Income goals</h2>
       <div className="admin-goals">

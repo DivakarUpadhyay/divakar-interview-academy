@@ -40,6 +40,8 @@ def measure(browser, url, desktop):
         viewport={"width": 1350, "height": 940} if desktop else {"width": 412, "height": 823},
         device_scale_factor=1 if desktop else 2.6, is_mobile=not desktop, has_touch=not desktop,
     )
+    # Don't let these deliberately slowed test loads count as real visitors in Cloudflare Web Analytics.
+    ctx.route("**/*cloudflareinsights.com/**", lambda r: r.abort())
     page = ctx.new_page()
     cdp = ctx.new_cdp_session(page)
     if not desktop:  # Lighthouse-like mobile: 4x slower CPU, ~1.6 Mbps / 150 ms network

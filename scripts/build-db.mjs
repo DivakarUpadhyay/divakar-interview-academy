@@ -107,6 +107,9 @@ const insCourse = db.prepare(`INSERT INTO courses
 const insModule = db.prepare("INSERT INTO modules (course_id, ord, title) VALUES (?, ?, ?)");
 const insLesson = db.prepare(`INSERT INTO lessons (course_id, module_id, seq, slug, title, grade, priority, body_html)
   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+// Question titles are rendered inside links on several pages, so they must not contain links themselves
+// (marked turns bare URLs such as http://localhost:8080 into <a> tags; nested links break React hydration).
+const questionHtml = (q) => marked.parseInline(q).replace(/<a\b[^>]*>(.*?)<\/a>/g, "$1");
 const insQ = db.prepare("INSERT INTO questions (course_id, ord, level, priority, question, question_html, answer_html) VALUES (?, ?, ?, ?, ?, ?, ?)");
 const insCheat = db.prepare("INSERT INTO cheats (course_id, ord, title, body_html) VALUES (?, ?, ?, ?)");
 const insSearch = db.prepare("INSERT INTO search (kind, course_slug, ref, title, body) VALUES (?, ?, ?, ?, ?)");
@@ -143,7 +146,7 @@ db.transaction(() => {
       }
     });
     c.questions.forEach((q, qi) => {
-      const id = insQ.run(courseId, qi + 1, q.level, q.priority, q.question.replace(/`/g, ""), marked.parseInline(q.question), answerHtml(q.answer)).lastInsertRowid;
+      const id = insQ.run(courseId, qi + 1, q.level, q.priority, q.question.replace(/`/g, ""), questionHtml(q.question), answerHtml(q.answer)).lastInsertRowid;
       insSearch.run("question", m.slug, String(id), q.question, plain(q.answer));
       stats.questions++;
     });

@@ -6,19 +6,30 @@
 const ACCOUNT_TAG = "b8e4d7f71a8ab54f70cb3054b843181c";
 const SITE_TAG = "d1a87d53907d4d1986d0cd3dd6af4415";
 
+// Real users only: Cloudflare's bot flag plus automated/headless browsers (my test tooling also blocks the beacon).
+const REAL = `bot: 0, userAgentBrowser_notin: ["HeadlessChrome", "Headless Chrome", "PhantomJS"]`;
 const QUERY = `query ($account: string!, $site: string!, $start: Date!, $end: Date!) {
   viewer { accounts(filter: { accountTag: $account }) {
-    days: rumPageloadEventsAdaptiveGroups(limit: 100, filter: { siteTag: $site, date_geq: $start, date_leq: $end }, orderBy: [date_ASC]) {
+    days: rumPageloadEventsAdaptiveGroups(limit: 200, filter: { siteTag: $site, date_geq: $start, date_leq: $end, ${REAL} }, orderBy: [date_ASC]) {
       count sum { visits } dimensions { date }
     }
-    countries: rumPageloadEventsAdaptiveGroups(limit: 10, filter: { siteTag: $site, date_geq: $start, date_leq: $end }, orderBy: [count_DESC]) {
+    countries: rumPageloadEventsAdaptiveGroups(limit: 10, filter: { siteTag: $site, date_geq: $start, date_leq: $end, ${REAL} }, orderBy: [count_DESC]) {
       count dimensions { countryName }
     }
-    pages: rumPageloadEventsAdaptiveGroups(limit: 10, filter: { siteTag: $site, date_geq: $start, date_leq: $end }, orderBy: [count_DESC]) {
+    pages: rumPageloadEventsAdaptiveGroups(limit: 10, filter: { siteTag: $site, date_geq: $start, date_leq: $end, ${REAL} }, orderBy: [count_DESC]) {
       count dimensions { requestPath }
     }
-    referrers: rumPageloadEventsAdaptiveGroups(limit: 10, filter: { siteTag: $site, date_geq: $start, date_leq: $end }, orderBy: [count_DESC]) {
+    referrers: rumPageloadEventsAdaptiveGroups(limit: 10, filter: { siteTag: $site, date_geq: $start, date_leq: $end, ${REAL} }, orderBy: [count_DESC]) {
       count dimensions { refererHost }
+    }
+  } }
+}`;
+
+const VITALS = `query ($account: string!, $site: string!, $start: Date!, $end: Date!) {
+  viewer { accounts(filter: { accountTag: $account }) {
+    rumWebVitalsEventsAdaptiveGroups(limit: 1, filter: { siteTag: $site, date_geq: $start, date_leq: $end, ${REAL} }) {
+      count
+      sum { lcpTotal lcpGood lcpNeedsImprovement lcpPoor clsTotal clsGood clsNeedsImprovement clsPoor inpTotal inpGood inpNeedsImprovement inpPoor }
     }
   } }
 }`;
@@ -58,7 +69,7 @@ export async function onRequestGet({ env, request }) {
   if (!env.CF_ANALYTICS_TOKEN) return json({ error: "CF_ANALYTICS_TOKEN is not set for this Pages project." }, 503);
   const day = (d) => d.toISOString().slice(0, 10);
   const end = new Date();
-  const start = new Date(end.getTime() - 30 * 86400000);
+  const start = new Date(end.getTime() - 90 * 86400000); // ~3 months, the free-plan maximum (13 weeks), for monthly totals
   const res = await fetch("https://api.cloudflare.com/client/v4/graphql", {
     method: "POST",
     headers: { authorization: `Bearer ${env.CF_ANALYTICS_TOKEN}`, "content-type": "application/json" },
@@ -66,6 +77,23 @@ export async function onRequestGet({ env, request }) {
   });
   const body = await res.json();
   if (body.errors?.length) return json({ error: body.errors.map((e) => e.message).join("; ") }, 502);
+
+  // Real-visitor Core Web Vitals for the last 7 days: share of loads rated good / needs improvement / poor.
+  let vitals = null;
+  try {
+    const vr = await fetch("https://api.cloudflare.com/client/v4/graphql", {
+      method: "POST",
+      headers: { authorization: `Bearer ${env.CF_ANALYTICS_TOKEN}`, "content-type": "application/json" },
+      body: JSON.stringify({ query: VITALS, variables: { account: ACCOUNT_TAG, site: SITE_TAG, start: day(new Date(end.getTime() - 7 * 86400000)), end: day(end) } }),
+    });
+    const vb = await vr.json();
+    if (vb.errors?.length) vitals = { error: vb.errors.map((e) => e.message).join("; ") };
+    else {
+      const sum = vb.data.viewer.accounts[0]?.rumWebVitalsEventsAdaptiveGroups?.[0]?.sum ?? {};
+      const pct = (m) => { const t = sum[`${m}Total`] || 0; return t ? { good: sum[`${m}Good`] / t, ni: sum[`${m}NeedsImprovement`] / t, poor: sum[`${m}Poor`] / t, samples: t } : null; };
+      vitals = { lcp: pct("lcp"), inp: pct("inp"), cls: pct("cls") };
+    }
+  } catch (e) { vitals = { error: String(e) }; }
   const a = body.data.viewer.accounts[0] ?? {};
   const data = {
     generatedAt: new Date().toISOString(),
@@ -74,5 +102,10 @@ export async function onRequestGet({ env, request }) {
     pages: (a.pages ?? []).map((g) => ({ path: g.dimensions.requestPath, pageViews: g.count })),
     referrers: (a.referrers ?? []).map((g) => ({ host: g.dimensions.refererHost || "(direct / none)", pageViews: g.count })),
   };
-  return json({ ...data, tips: recommend(data) });
+  const tips = recommend(data);
+  for (const [k, name] of [["lcp", "LCP (loading)"], ["inp", "INP (responsiveness)"], ["cls", "CLS (layout shift)"]]) {
+    const v = vitals?.[k];
+    if (v && v.good < 0.9) tips.unshift(`Speed alert: only ${Math.round(v.good * 100)}% of real visits have good ${name} (target 90%+) — run npm run vitals and fix before it hurts ranking.`);
+  }
+  return json({ ...data, vitals, tips: tips.slice(0, 7) });
 }
