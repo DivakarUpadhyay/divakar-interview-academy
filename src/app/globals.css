@@ -416,3 +416,5 @@ h2.home-title { font-size: 1.6rem; margin-top: 22px; }
 .policy { max-width: 820px; padding: 8px 0 24px; }
 .policy h2 { margin-top: 1.4em; font-size: 1.25rem; }
 .policy li { margin: .3em 0; }
+/* Hide an ad box until Google actually fills it (AdSense sets data-ad-status="unfilled" when no ad is served). */
+.ad-box:has(ins[data-ad-status="unfilled"]) { display: none; }
