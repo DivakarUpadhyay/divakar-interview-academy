@@ -1,0 +1,37 @@
+# Daily page-speed watch for https://devladder.pages.dev. Runs scripts/vitals_check.py (mobile + desktop) and opens a
+# GitHub issue when a page leaves Google's "good" range for LCP or CLS, so problems are noticed even when no one is at a PC.
+name: Page speed watch
+
+on:
+  schedule:
+    - cron: "30 1 * * *"   # every day 01:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  vitals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install playwright==1.48.0 && python -m playwright install --with-deps chromium
+      - name: Measure
+        id: measure
+        run: |
+          set +e
+          python scripts/vitals_check.py > mobile.txt; m=$?
+          python scripts/vitals_check.py --desktop > desktop.txt; d=$?
+          cat mobile.txt desktop.txt
+          if [ $m -ne 0 ] || [ $d -ne 0 ]; then echo "failed=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Open an issue when a page is outside the good range
+        if: steps.measure.outputs.failed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo "Page speed check failed on $(date -u +%F)."; echo; echo '```'; cat mobile.txt desktop.txt; echo '```'; } > body.md
+          gh issue create --title "Page speed: a page is outside Google's good range" --body-file body.md
