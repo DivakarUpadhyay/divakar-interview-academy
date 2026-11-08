@@ -25,7 +25,8 @@ export const metadata: Metadata = {
   openGraph: { type: "website", siteName: SITE_NAME, locale: "en_IN", url: "/" },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" } },
-  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } : undefined,
+  // Google Search Console ownership tag for https://devladder.pages.dev/ (account divakaru1991@gmail.com).
+  verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "Cnjg00o39Txv8hsbJyQep3zou8SVyyDFUUPw_1xlpxM" },
 };
 
 const siteJsonLd = [
