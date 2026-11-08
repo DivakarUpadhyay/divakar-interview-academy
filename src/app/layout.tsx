@@ -28,7 +28,9 @@ export const metadata: Metadata = {
   // Google Search Console ownership tag for https://devladder.pages.dev/ (account divakaru1991@gmail.com).
   // AdSense site ownership tag; only present in builds where the AdSense ID is set (Cloudflare).
   other: process.env.NEXT_PUBLIC_ADSENSE_CLIENT ? { "google-adsense-account": process.env.NEXT_PUBLIC_ADSENSE_CLIENT } : undefined,
-  verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "Cnjg00o39Txv8hsbJyQep3zou8SVyyDFUUPw_1xlpxM" },
+  verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "Cnjg00o39Txv8hsbJyQep3zou8SVyyDFUUPw_1xlpxM",
+    // Bing Webmaster Tools ownership tag.
+    other: { "msvalidate.01": "046FB5950345A7F004B012A5C60851ED" } },
 };
 
 const siteJsonLd = [
