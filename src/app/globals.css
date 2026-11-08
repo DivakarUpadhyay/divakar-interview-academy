@@ -454,3 +454,7 @@ h2.home-title { font-size: 1.6rem; margin-top: 22px; }
 .admin-bar { height: 10px; background: var(--accent); border-radius: 5px; min-width: 2px; }
 .admin-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .admin-cols ol { padding-left: 1.2em; overflow-wrap: anywhere; }
+.admin-goals { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.admin-goals .card { display: grid; gap: 6px; }
+.admin-progress { height: 12px; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
+.admin-progress > div { height: 100%; background: var(--low); border-radius: 6px; }

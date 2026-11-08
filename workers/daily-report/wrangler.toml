@@ -1,0 +1,13 @@
+# Cloudflare Worker that sends the DevLadder daily stats report at 20:00 Taiwan time (12:00 UTC).
+# Secrets (set with `npx wrangler secret put NAME`): OWNER_KEY (same as the Pages secret), RESEND_API_KEY.
+name = "devladder-daily-report"
+main = "index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[triggers]
+crons = ["0 12 * * *"]
+
+[vars]
+SITE = "https://devladder.pages.dev"
+REPORT_EMAIL = "divakaru1991@gmail.com"

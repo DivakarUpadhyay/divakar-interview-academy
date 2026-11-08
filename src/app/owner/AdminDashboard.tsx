@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 
 type Day = { date: string; pageViews: number; visits: number };
 type Data = { generatedAt: string; days: Day[]; countries: { name: string; pageViews: number }[];
-  pages: { path: string; pageViews: number }[]; referrers: { host: string; pageViews: number }[]; error?: string };
+  pages: { path: string; pageViews: number }[]; referrers: { host: string; pageViews: number }[]; tips: string[]; error?: string };
 
 // AdSense earnings per 1,000 page views (RPM), as a low / typical / high range for a developer-tutorial site with
 // mixed worldwide traffic. These are estimates, not Google figures; replace them with your real RPM from AdSense →
 // Reports once ads are running.
 const RPM = { low: 1, typical: 3.5, high: 8 };
 const PAYOUT = 100; // AdSense pays once the balance reaches US$100
+const GOALS = [500, 3000, 5000]; // monthly income targets (US$) tracked on the dashboard and in the daily report
 // Update by hand when AdSense changes: "pending" | "approved".
 const ADSENSE_STATUS: "pending" | "approved" = "pending";
 
@@ -21,7 +22,10 @@ export default function AdminDashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(location.pathname.replace(/\/$/, "") + "/data")
+    // The private key travels in the link's #fragment, which browsers never send to servers or logs.
+    const key = new URLSearchParams(location.hash.slice(1)).get("k") ?? "";
+    if (!key) { setError("Open this page with your private link (…/owner#k=…)."); return; }
+    fetch("/owner/data", { headers: { "x-owner-key": key } })
       .then(async (r) => { const j = await r.json(); if (!r.ok) throw new Error(j.error || r.statusText); setData(j); })
       .catch((e) => setError(e.message));
   }, []);
@@ -71,10 +75,28 @@ export default function AdminDashboard() {
           <li>Estimated earnings this month: <b>{usd(earn(RPM.low))}</b> (low) · <b>{usd(earn(RPM.typical))}</b> (typical) · <b>{usd(earn(RPM.high))}</b> (high)</li>
           <li>At the current pace, reaching the ${PAYOUT} payout takes about{" "}
             <b>{Number.isFinite(monthsToPayout(RPM.typical)) ? `${monthsToPayout(RPM.typical).toFixed(1)} months` : "—"}</b> (typical RPM).</li>
-          <li>Page views per day needed for $500/month: about <b>{num((500 / RPM.typical) * 1000 / 30)}</b> · for $1,000/month: <b>{num((1000 / RPM.typical) * 1000 / 30)}</b> (typical RPM)</li>
         </ul>
         <p className="muted small">AdSense status: <b>{ADSENSE_STATUS}</b>. Estimates use ${RPM.low}–${RPM.high} per 1,000 page views; your real RPM appears in AdSense → Reports after approval.</p>
       </div>
+
+      <h2>Income goals</h2>
+      <div className="admin-goals">
+        {GOALS.map((goal) => {
+          const need = (goal / RPM.typical) * 1000 / 30;          // page views per day at typical RPM
+          const pct = Math.min((avgPv / need) * 100, 100);
+          return (
+            <div key={goal} className="card">
+              <b>${goal.toLocaleString()} / month</b>
+              <span className="muted small">Needs about {num(need)} page views a day (typical RPM; {num((goal / RPM.high) * 1000 / 30)}–{num((goal / RPM.low) * 1000 / 30)} across the range)</span>
+              <div className="admin-progress"><div style={{ width: `${Math.max(pct, 0.5)}%` }} /></div>
+              <span className="small">Now {num(avgPv)} a day → <b>{pct < 0.1 ? "<0.1" : pct.toFixed(1)}%</b> of the way · {num(Math.max(need - avgPv, 0))} more a day to go</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <h2>Recommended next steps</h2>
+      <div className="card"><ol>{data.tips.map((t) => <li key={t}>{t}</li>)}</ol></div>
 
       <h2>Daily visits and page views</h2>
       <div className="table-wrap"><table>
