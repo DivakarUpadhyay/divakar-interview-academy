@@ -21,3 +21,6 @@ next-env.d.ts
 
 # Python bytecode
 __pycache__/
+
+# Paid products (sold, not published in the public repo)
+/products/
