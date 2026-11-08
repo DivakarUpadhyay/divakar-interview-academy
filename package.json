@@ -12,7 +12,8 @@
     "test": "node --test tests/content.test.mjs",
     "deploy:cloudflare": "node scripts/deploy-cloudflare.mjs",
     "indexnow": "node scripts/indexnow.mjs",
-    "devto:drafts": "node scripts/devto-drafts.mjs"
+    "devto:drafts": "node scripts/devto-drafts.mjs",
+    "devto:schedule": "node scripts/devto-schedule.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "2.0.1",
