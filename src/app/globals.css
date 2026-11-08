@@ -445,3 +445,12 @@ h2.home-title { font-size: 1.6rem; margin-top: 22px; }
 .tool-guide pre { max-width: 100%; overflow-x: auto; padding: 12px 14px; background: var(--code-bg); color: var(--code-text); border-radius: 8px; }
 .tool-guide pre code { white-space: pre; background: none; color: inherit; }
 .tool-page, .tool-guide, .tool-box { min-width: 0; }
+
+/* Hidden owner dashboard */
+.admin-dash { max-width: 1100px; }
+.admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 14px 0; }
+.admin-kpis .card { display: grid; gap: 4px; }
+.admin-kpis b { font-size: 1.7rem; }
+.admin-bar { height: 10px; background: var(--accent); border-radius: 5px; min-width: 2px; }
+.admin-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.admin-cols ol { padding-left: 1.2em; overflow-wrap: anywhere; }

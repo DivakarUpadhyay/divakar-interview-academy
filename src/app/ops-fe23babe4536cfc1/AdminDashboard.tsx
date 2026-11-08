@@ -1,0 +1,95 @@
+"use client";
+import { useEffect, useState } from "react";
+
+type Day = { date: string; pageViews: number; visits: number };
+type Data = { generatedAt: string; days: Day[]; countries: { name: string; pageViews: number }[];
+  pages: { path: string; pageViews: number }[]; referrers: { host: string; pageViews: number }[]; error?: string };
+
+// AdSense earnings per 1,000 page views (RPM), as a low / typical / high range for a developer-tutorial site with
+// mixed worldwide traffic. These are estimates, not Google figures; replace them with your real RPM from AdSense →
+// Reports once ads are running.
+const RPM = { low: 1, typical: 3.5, high: 8 };
+const PAYOUT = 100; // AdSense pays once the balance reaches US$100
+// Update by hand when AdSense changes: "pending" | "approved".
+const ADSENSE_STATUS: "pending" | "approved" = "pending";
+
+const usd = (n: number) => `$${n < 10 ? n.toFixed(2) : Math.round(n).toLocaleString()}`;
+const num = (n: number) => Math.round(n).toLocaleString();
+
+export default function AdminDashboard() {
+  const [data, setData] = useState<Data | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch(location.pathname.replace(/\/$/, "") + "/data")
+      .then(async (r) => { const j = await r.json(); if (!r.ok) throw new Error(j.error || r.statusText); setData(j); })
+      .catch((e) => setError(e.message));
+  }, []);
+
+  if (error) return <div className="policy"><h1>Owner dashboard</h1><p className="tool-err">Could not load stats: {error}</p></div>;
+  if (!data) return <div className="policy"><h1>Owner dashboard</h1><p className="muted">Loading the last 30 days…</p></div>;
+
+  const days = data.days;
+  const total = days.reduce((s, d) => ({ pv: s.pv + d.pageViews, v: s.v + d.visits }), { pv: 0, v: 0 });
+  const last7 = days.slice(-7);
+  const avgPv = last7.reduce((s, d) => s + d.pageViews, 0) / Math.max(last7.length, 1);
+  const avgVisits = last7.reduce((s, d) => s + d.visits, 0) / Math.max(last7.length, 1);
+
+  const now = new Date();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const monthKey = now.toISOString().slice(0, 7);
+  const monthSoFar = days.filter((d) => d.date.startsWith(monthKey)).reduce((s, d) => s + d.pageViews, 0);
+  const remainingDays = daysInMonth - now.getDate();
+  const projectedPv = monthSoFar + avgPv * remainingDays;
+  const earn = (rpm: number) => (projectedPv / 1000) * rpm;
+  const monthsToPayout = (rpm: number) => (avgPv > 0 ? PAYOUT / ((avgPv * 30 / 1000) * rpm) : Infinity);
+  const max = Math.max(...days.map((d) => d.pageViews), 1);
+
+  let verdict: string;
+  if (ADSENSE_STATUS !== "approved") verdict = "No payment this month: AdSense has not approved the site yet, so no ads are shown.";
+  else if (earn(RPM.high) < PAYOUT) verdict = `Unlikely this month: even at a high RPM the month would earn about ${usd(earn(RPM.high))}, below the $${PAYOUT} payout. Earnings carry over to next month.`;
+  else if (earn(RPM.low) >= PAYOUT) verdict = "Likely: even at a low RPM this month should pass the $100 payout threshold.";
+  else verdict = `Possible: you pass $${PAYOUT} only if RPM is above about ${usd(PAYOUT / (projectedPv / 1000))} per 1,000 views.`;
+
+  return (
+    <div className="policy admin-dash">
+      <h1>Owner dashboard</h1>
+      <p className="muted small">Real visitors from Cloudflare Web Analytics (bots excluded), last 30 days. Updated {new Date(data.generatedAt).toLocaleString()}.</p>
+
+      <div className="admin-kpis">
+        <div className="card"><span className="muted small">Visits (30 days)</span><b>{num(total.v)}</b></div>
+        <div className="card"><span className="muted small">Page views (30 days)</span><b>{num(total.pv)}</b></div>
+        <div className="card"><span className="muted small">Avg page views / day (7 days)</span><b>{num(avgPv)}</b></div>
+        <div className="card"><span className="muted small">Avg visits / day (7 days)</span><b>{num(avgVisits)}</b></div>
+      </div>
+
+      <h2>This month forecast ({monthKey})</h2>
+      <div className="card">
+        <p><b>Will I get paid this month?</b> {verdict}</p>
+        <ul>
+          <li>Page views so far this month: <b>{num(monthSoFar)}</b>; projected for the whole month: <b>{num(projectedPv)}</b></li>
+          <li>Estimated earnings this month: <b>{usd(earn(RPM.low))}</b> (low) · <b>{usd(earn(RPM.typical))}</b> (typical) · <b>{usd(earn(RPM.high))}</b> (high)</li>
+          <li>At the current pace, reaching the ${PAYOUT} payout takes about{" "}
+            <b>{Number.isFinite(monthsToPayout(RPM.typical)) ? `${monthsToPayout(RPM.typical).toFixed(1)} months` : "—"}</b> (typical RPM).</li>
+          <li>Page views per day needed for $500/month: about <b>{num((500 / RPM.typical) * 1000 / 30)}</b> · for $1,000/month: <b>{num((1000 / RPM.typical) * 1000 / 30)}</b> (typical RPM)</li>
+        </ul>
+        <p className="muted small">AdSense status: <b>{ADSENSE_STATUS}</b>. Estimates use ${RPM.low}–${RPM.high} per 1,000 page views; your real RPM appears in AdSense → Reports after approval.</p>
+      </div>
+
+      <h2>Daily visits and page views</h2>
+      <div className="table-wrap"><table>
+        <thead><tr><th>Date</th><th>Visits</th><th>Page views</th><th style={{ width: "45%" }}></th></tr></thead>
+        <tbody>{[...days].reverse().map((d) => (
+          <tr key={d.date}><td>{d.date}</td><td>{num(d.visits)}</td><td>{num(d.pageViews)}</td>
+            <td><div className="admin-bar" style={{ width: `${(d.pageViews / max) * 100}%` }} /></td></tr>
+        ))}</tbody>
+      </table></div>
+
+      <div className="admin-cols">
+        <div><h2>Top pages</h2><ol>{data.pages.map((p) => <li key={p.path}><code>{p.path}</code> — {num(p.pageViews)}</li>)}</ol></div>
+        <div><h2>Countries</h2><ol>{data.countries.map((c) => <li key={c.name}>{c.name} — {num(c.pageViews)}</li>)}</ol></div>
+        <div><h2>Where visitors come from</h2><ol>{data.referrers.map((r) => <li key={r.host}>{r.host} — {num(r.pageViews)}</li>)}</ol></div>
+      </div>
+    </div>
+  );
+}

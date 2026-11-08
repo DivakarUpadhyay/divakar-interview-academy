@@ -18,6 +18,8 @@ if (!fs.existsSync(root)) throw new Error("out/ not found — run `npm run build
 function pages(dir, acc = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const f = path.join(dir, e.name);
+    // Skip build assets and hidden owner pages (ops-*), which must never be submitted to search engines.
+    if (e.name.startsWith("ops-")) continue;
     if (e.isDirectory()) { if (e.name !== "_next") pages(f, acc); }
     else if (e.name.endsWith(".html") && !SKIP.has(e.name)) acc.push(f);
   }
