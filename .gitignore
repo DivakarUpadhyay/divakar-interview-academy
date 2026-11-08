@@ -15,3 +15,6 @@ next-env.d.ts
 
 # IndexNow: hashes of pages already submitted
 .indexnow-state.json
+
+# Private notes (account IDs, links) — never commit
+*.local.csv
