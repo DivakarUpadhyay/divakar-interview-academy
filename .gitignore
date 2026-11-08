@@ -18,3 +18,6 @@ next-env.d.ts
 
 # Private notes (account IDs, links) — never commit
 *.local.csv
+
+# Python bytecode
+__pycache__/
