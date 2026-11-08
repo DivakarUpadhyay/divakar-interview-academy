@@ -1,12 +1,12 @@
 ---
 slug: system-design
-title: System Design — High-Level Design (HLD) from Basics to Case Studies
+title: System Design: High-Level Design (HLD) from Basics to Case Studies
 track: foundations
 order: 5
 group: System Design
 icon: HLD
 color: #5f3dc4
-summary: How to design large systems — requirements and estimation, scalability and availability, latency vs throughput, CAP and consistency models, load balancing, caching strategies, database choice, replication, partitioning and sharding, consistent hashing, queues and event streaming, rate limiting, search, storage and CDNs, observability, and full case studies (URL shortener, news feed, chat, notification service, e-commerce checkout, file storage, ride booking) with the HLD interview framework.
+summary: How to design large systems, requirements and estimation, scalability and availability, latency vs throughput, CAP and consistency models, load balancing, caching strategies, database choice, replication, partitioning and sharding, consistent hashing, queues and event streaming, rate limiting, search, storage and CDNs, observability, and full case studies (URL shortener, news feed, chat, notification service, e-commerce checkout, file storage, ride booking) with the HLD interview framework.
 ---
 
 # Overview
@@ -27,7 +27,7 @@ summary: How to design large systems — requirements and estimation, scalabilit
 |---|---|
 | 1990s | Three-tier architecture (presentation, business, data) on single servers |
 | 2000s | Web farms + load balancers; memcached (2003); Google papers: GFS (2003), MapReduce (2004), Bigtable (2006) |
-| 2007 | Amazon Dynamo paper — eventual consistency, consistent hashing |
+| 2007 | Amazon Dynamo paper: eventual consistency, consistent hashing |
 | 2008–2012 | Cloud (AWS 2006, Azure 2010); NoSQL (Cassandra, MongoDB, Redis); Kafka (2011) |
 | 2012–2015 | Microservices, Docker (2013), Kubernetes (2014); Google Spanner (globally consistent SQL) |
 | 2016–2020 | Serverless, managed databases, service meshes, CQRS/event sourcing popular |
@@ -37,13 +37,13 @@ summary: How to design large systems — requirements and estimation, scalabilit
 
 **The HLD interview framework (≈45 minutes):**
 
-1. **Requirements (5 min)** — functional (what users do) and non-functional (scale, latency, availability, consistency, security). Agree on what's out of scope.
-2. **Estimation (5 min)** — users, requests/second, read:write ratio, storage per year, bandwidth.
-3. **API design (5 min)** — main endpoints with inputs/outputs.
-4. **Data model (5 min)** — main entities, choose SQL vs NoSQL, keys and indexes.
-5. **High-level diagram (10 min)** — client → CDN → load balancer → services → cache/DB/queue/storage.
-6. **Deep dive (10 min)** — 1–2 hard parts the interviewer cares about (feed generation, hot keys, consistency, sharding).
-7. **Wrap-up (5 min)** — bottlenecks, failure scenarios, monitoring, how it evolves at 10× scale.
+1. **Requirements (5 min)**: functional (what users do) and non-functional (scale, latency, availability, consistency, security). Agree on what's out of scope.
+2. **Estimation (5 min)**: users, requests/second, read:write ratio, storage per year, bandwidth.
+3. **API design (5 min)**: main endpoints with inputs/outputs.
+4. **Data model (5 min)**: main entities, choose SQL vs NoSQL, keys and indexes.
+5. **High-level diagram (10 min)**: client → CDN → load balancer → services → cache/DB/queue/storage.
+6. **Deep dive (10 min)**: 1–2 hard parts the interviewer cares about (feed generation, hot keys, consistency, sharding).
+7. **Wrap-up (5 min)**: bottlenecks, failure scenarios, monitoring, how it evolves at 10× scale.
 
 # Tools
 
@@ -55,8 +55,8 @@ summary: How to design large systems — requirements and estimation, scalabilit
 
 ## Lesson: [Basic|High] Requirements and back-of-the-envelope estimation
 
-**Functional requirements** — features: "users post photos", "followers see a feed", "users like and comment".
-**Non-functional requirements** — qualities: availability (99.9 % = ~8.8 h downtime/year; 99.99 % = ~53 min), latency (p99 < 200 ms), throughput, durability, consistency, security, cost.
+**Functional requirements**: features: "users post photos", "followers see a feed", "users like and comment".
+**Non-functional requirements**: qualities: availability (99.9 % = ~8.8 h downtime/year; 99.99 % = ~53 min), latency (p99 < 200 ms), throughput, durability, consistency, security, cost.
 
 **Useful numbers:**
 
@@ -68,7 +68,7 @@ summary: How to design large systems — requirements and estimation, scalabilit
 | 1 KB × 1 million | 1 GB |
 | Memory read / SSD read / same-DC round trip / cross-continent | 100 ns / 100 µs / 0.5 ms / 150 ms |
 
-**Example — photo sharing app:** 50M daily active users, each views 20 photos and uploads 0.1 per day.
+**Example: photo sharing app:** 50M daily active users, each views 20 photos and uploads 0.1 per day.
 
 - Reads: 50M × 20 / 86,400 ≈ **11,600 requests/s** (peak ~50k/s) → heavy read caching + CDN.
 - Writes: 50M × 0.1 / 86,400 ≈ **58 uploads/s**.
@@ -80,11 +80,11 @@ summary: How to design large systems — requirements and estimation, scalabilit
 | Term | Meaning |
 |---|---|
 | **Scalability** | Handle more load by adding resources |
-| Vertical scaling (scale up) | Bigger machine — simple, limited, single point of failure |
-| Horizontal scaling (scale out) | More machines — needs stateless services and data partitioning |
+| Vertical scaling (scale up) | Bigger machine: simple, limited, single point of failure |
+| Horizontal scaling (scale out) | More machines: needs stateless services and data partitioning |
 | **Availability** | % of time the system works; achieved by redundancy (no single point of failure) |
 | **Reliability** | Works correctly (no data loss, correct results) |
-| **Latency** | Time for one request (measure p50, p95, p99 — not the average) |
+| **Latency** | Time for one request (measure p50, p95, p99, not the average) |
 | **Throughput** | Requests handled per second |
 | **Durability** | Data survives failures (replication, backups) |
 
@@ -105,7 +105,7 @@ Stateless services are the key to horizontal scaling: keep session/state in Redi
 
 **Consistency models:** strong (linearizable) → read-your-writes → monotonic reads → causal → **eventual** (replicas converge eventually). Choose per feature: payment balance strong; like counts eventual.
 
-**ACID vs BASE:** ACID (Atomicity, Consistency, Isolation, Durability) — relational transactions. BASE (Basically Available, Soft state, Eventually consistent) — many NoSQL systems.
+**ACID vs BASE:** ACID (Atomicity, Consistency, Isolation, Durability), relational transactions. BASE (Basically Available, Soft state, Eventually consistent): many NoSQL systems.
 
 # Module: Building Blocks
 
@@ -115,7 +115,7 @@ Clients → **DNS** (can balance across regions: Azure Traffic Manager/Front Doo
 
 An **API gateway** adds authentication, rate limiting, request routing to microservices, response aggregation and API versioning (Azure API Management, YARP, Kong).
 
-## Lesson: [Intermediate|High] Caching — where, strategies and pitfalls
+## Lesson: [Intermediate|High] Caching: where, strategies and pitfalls
 
 ```text
 Browser cache → CDN → API gateway/output cache → application in-memory cache → distributed cache (Redis) → database buffer pool
@@ -129,7 +129,7 @@ Browser cache → CDN → API gateway/output cache → application in-memory cac
 | Write-behind | Write to cache, flush to DB asynchronously | High write throughput (risk of loss) |
 | Refresh-ahead | Refresh popular keys before expiry | Predictable hot data |
 
-**Eviction policies:** LRU (least recently used — most common), LFU, FIFO, TTL expiry.
+**Eviction policies:** LRU (least recently used, most common), LFU, FIFO, TTL expiry.
 
 **Pitfalls and fixes:**
 
@@ -141,7 +141,7 @@ Browser cache → CDN → API gateway/output cache → application in-memory cac
 | Cache penetration (requests for keys that don't exist) | Cache "not found" briefly, Bloom filter |
 | Cold start after restart | Warm up popular keys |
 
-## Lesson: [Intermediate|High] Choosing the database — SQL vs NoSQL
+## Lesson: [Intermediate|High] Choosing the database: SQL vs NoSQL
 
 | Type | Examples | Strengths | Use for |
 |---|---|---|---|
@@ -155,11 +155,11 @@ Browser cache → CDN → API gateway/output cache → application in-memory cac
 | Object storage | Azure Blob, S3 | Huge files cheaply | Images, videos, backups |
 | Vector | pgvector, Azure AI Search vectors, Qdrant | Similarity search on embeddings | AI/RAG, recommendations |
 
-Default: **start with a relational database** unless a specific need (massive scale for simple access patterns, flexible schema, special query type) points elsewhere. Many systems are **polyglot** — SQL for transactions + Redis + Blob + search index.
+Default: **start with a relational database** unless a specific need (massive scale for simple access patterns, flexible schema, special query type) points elsewhere. Many systems are **polyglot**: SQL for transactions + Redis + Blob + search index.
 
 ## Lesson: [Advanced|High] Replication, partitioning, sharding and consistent hashing
 
-**Replication** — copies of data on several nodes:
+**Replication**: copies of data on several nodes:
 
 | Type | How | Trade-off |
 |---|---|---|
@@ -169,16 +169,16 @@ Default: **start with a relational database** unless a specific need (massive sc
 
 Synchronous replication = no data loss on failover but slower writes; asynchronous = faster but may lose the last seconds. SQL Server: Always On availability groups; Azure SQL: geo-replication and read replicas.
 
-**Partitioning / sharding** — split data across nodes so each holds a part:
+**Partitioning / sharding**: split data across nodes so each holds a part:
 
 | Method | How | Watch out |
 |---|---|---|
 | Range | By key range (A–M, N–Z; dates) | Hot ranges (all new orders go to the latest partition) |
 | Hash | `hash(key) % N` | Resharding moves almost everything when N changes |
-| **Consistent hashing** | Nodes and keys on a hash ring; key goes to the next node clockwise; virtual nodes balance load | Adding a node moves only ~1/N of keys — used by Dynamo, Cassandra, distributed caches |
+| **Consistent hashing** | Nodes and keys on a hash ring; key goes to the next node clockwise; virtual nodes balance load | Adding a node moves only ~1/N of keys: used by Dynamo, Cassandra, distributed caches |
 | Directory/lookup | A service maps key → shard | Extra lookup, flexible |
 
-Choose a shard key that spreads load evenly and keeps related data together (e.g. `CustomerId` for orders). Cross-shard queries and transactions become expensive — design around the main access pattern.
+Choose a shard key that spreads load evenly and keeps related data together (e.g. `CustomerId` for orders). Cross-shard queries and transactions become expensive: design around the main access pattern.
 
 ## Lesson: [Intermediate|High] Queues, event streaming and asynchronous processing
 
@@ -197,10 +197,10 @@ Benefits: **decoupling** (producer doesn't wait for the consumer), **load levell
 
 | Algorithm | Idea |
 |---|---|
-| Fixed window | Count requests per minute window — simple, bursty at edges |
+| Fixed window | Count requests per minute window: simple, bursty at edges |
 | Sliding window log/counter | Smoother limit over a moving window |
-| **Token bucket** | Tokens refill at a rate; each request takes one; allows short bursts — most common |
-| Leaky bucket | Requests leave at a constant rate — smooths traffic |
+| **Token bucket** | Tokens refill at a rate; each request takes one; allows short bursts: most common |
+| Leaky bucket | Requests leave at a constant rate: smooths traffic |
 
 Distributed rate limiting keeps counters in Redis (atomic `INCR` with expiry or Lua scripts). ASP.NET Core has `AddRateLimiter` with fixed window, sliding window, token bucket and concurrency limiters; return **429** with `Retry-After`.
 
@@ -210,7 +210,7 @@ Distributed rate limiting keeps counters in Redis (atomic `INCR` with expiry or 
 
 # Module: Case Studies
 
-## Lesson: [Advanced|High] Case study — news feed (social timeline)
+## Lesson: [Advanced|High] Case study: news feed (social timeline)
 
 **Requirements:** post, follow, see a feed of followed users' posts sorted by time; 100M DAU; feed load < 200 ms.
 
@@ -231,7 +231,7 @@ Client → LB → Feed service → Redis feed list + celebrity posts → hydrate
 
 Extras: pagination with cursors (not offsets), ranking service, counters for likes eventually consistent, notifications via a queue.
 
-## Lesson: [Advanced|High] Case study — chat / messaging system
+## Lesson: [Advanced|High] Case study: chat / messaging system
 
 **Requirements:** 1:1 and group chat, online presence, delivery/read receipts, message history, push notifications when offline.
 
@@ -242,7 +242,7 @@ Extras: pagination with cursors (not offsets), ranking service, counters for lik
 - **Presence:** heartbeats with TTL in Redis; publish presence changes only to contacts.
 - **Scale:** chat servers scale horizontally; a pub/sub backplane (Redis / Azure SignalR Service) routes messages between servers.
 
-## Lesson: [Advanced|High] Case study — e-commerce checkout and inventory
+## Lesson: [Advanced|High] Case study: e-commerce checkout and inventory
 
 **Requirements:** browse catalog, cart, checkout, payment, inventory must not oversell, order history; flash sales with traffic spikes.
 
@@ -260,7 +260,7 @@ Key decisions:
 - **Flash sales:** queue-based admission (virtual waiting room), pre-warmed caches, rate limiting, autoscaling.
 - **Read scaling:** catalog is read-heavy → cache + read replicas + CDN.
 
-## Lesson: [Advanced|Medium] Case studies — notification service, file storage and ride booking (outlines)
+## Lesson: [Advanced|Medium] Case studies: notification service, file storage and ride booking (outlines)
 
 **Notification service:** API receives "notify user X with template T" → validates preferences (opt-outs, quiet hours) → queues per channel (email, SMS, push) → workers call providers (SendGrid, Twilio, FCM) with retries and dead-letter queues → delivery status stored; rate limits per user; templates and localisation; idempotency keys to avoid duplicate sends.
 
@@ -276,7 +276,7 @@ Key decisions:
 - **Failure handling:** timeouts, retries with backoff + jitter, circuit breakers, bulkheads, graceful degradation (show cached data), health checks.
 - **Observability:** logs, metrics (golden signals: latency, traffic, errors, saturation), distributed traces; SLOs and alerts on symptoms users feel.
 - **Deployments:** blue-green, canary releases, feature flags, automatic rollback.
-- **Disaster recovery:** **RPO** (how much data you can lose) and **RTO** (how long you can be down) drive the design — backups (RPO hours), async geo-replication (minutes), sync replication (zero); regular restore drills.
+- **Disaster recovery:** **RPO** (how much data you can lose) and **RTO** (how long you can be down) drive the design, backups (RPO hours), async geo-replication (minutes), sync replication (zero); regular restore drills.
 - **Security:** authentication at the edge, least privilege between services, encryption in transit and at rest, secrets in a vault, WAF, DDoS protection.
 
 # Interview
@@ -287,7 +287,7 @@ HLD shows the architecture of the whole system: components (clients, load balanc
 
 ## [Beginner|High] Vertical vs horizontal scaling?
 
-Vertical: give one machine more CPU/RAM — simple, no code change, but limited and a single point of failure. Horizontal: add more machines behind a load balancer — almost unlimited and fault tolerant, but services must be stateless and data must be replicated/partitioned. Typical path: scale up first, then out.
+Vertical: give one machine more CPU/RAM, simple, no code change, but limited and a single point of failure. Horizontal: add more machines behind a load balancer, almost unlimited and fault tolerant, but services must be stateless and data must be replicated/partitioned. Typical path: scale up first, then out.
 
 ## [Beginner|High] What is caching? Explain cache-aside.
 
@@ -301,7 +301,7 @@ Distributes requests across multiple servers to increase capacity and availabili
 
 In a distributed system, during a network partition you can't have both strong consistency and full availability. CP systems reject or delay requests to avoid stale data (bank balances, configuration stores like etcd); AP systems keep answering and reconcile later (social feeds, DNS, carts in Dynamo-style stores). When there is no partition, the trade-off is latency vs consistency (PACELC).
 
-## [Intermediate|High] SQL or NoSQL — how do you choose?
+## [Intermediate|High] SQL or NoSQL: how do you choose?
 
 Start from the data and access patterns. SQL for structured, related data needing transactions, joins and constraints (orders, payments). NoSQL when you need massive horizontal scale for simple key-based access, flexible schemas, very high write throughput, or special models (documents, graphs, time-series). Many systems combine them: SQL as the source of truth, Redis cache, search index, blob storage.
 
@@ -319,7 +319,7 @@ To decouple services (the producer doesn't wait for or depend on the consumer be
 
 ## [Intermediate|Medium] Replication: synchronous vs asynchronous?
 
-Synchronous: the write is acknowledged only after replicas confirm — no data loss on failover but higher latency and reduced availability if a replica is slow. Asynchronous: acknowledge after the primary writes — fast, but replicas lag (stale reads) and recent writes can be lost if the primary fails. Many systems use sync within a region and async across regions.
+Synchronous: the write is acknowledged only after replicas confirm, no data loss on failover but higher latency and reduced availability if a replica is slow. Asynchronous: acknowledge after the primary writes, fast, but replicas lag (stale reads) and recent writes can be lost if the primary fails. Many systems use sync within a region and async across regions.
 
 ## [Intermediate|Medium] How would you design a rate limiter?
 

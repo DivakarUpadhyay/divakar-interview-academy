@@ -15,7 +15,7 @@ summary: Naming, functions, error handling, code smells and refactoring, unit te
 
 Core ideas, from Robert C. Martin's *Clean Code* (2008), Martin Fowler's *Refactoring* (1999, 2nd ed. 2018) and Kent Beck's *Test-Driven Development* (2002):
 
-- Code is read far more often than it is written — optimise for the reader.
+- Code is read far more often than it is written: optimise for the reader.
 - Small, focused functions and classes with intention-revealing names.
 - Tests are part of the code, not an afterthought.
 - Leave the code cleaner than you found it (the "Boy Scout rule").
@@ -109,7 +109,7 @@ public decimal Ship(Order? o)
 ## Lesson: [Basic|Medium] Comments, formatting and magic numbers
 
 - Good code explains **what**; comments explain **why** (business reason, workaround, link to ticket).
-- Delete commented-out code — Git remembers it.
+- Delete commented-out code: Git remembers it.
 - Replace magic numbers/strings with named constants or enums: `if (age >= LegalDrivingAge)`.
 - XML doc comments (`///`) for public APIs.
 - Enforce formatting with `.editorconfig` + `dotnet format` in CI so reviews don't argue about spaces.
@@ -156,11 +156,11 @@ public static partial class Log
 
 ## Lesson: [Intermediate|Medium] Safe refactoring and legacy code
 
-1. **Cover with tests first** — characterisation tests that pin current behaviour (even if odd).
+1. **Cover with tests first**: characterisation tests that pin current behaviour (even if odd).
 2. Make **small steps**, run tests after each.
-3. Use IDE refactorings (Rename, Extract Method, Introduce Variable) — they're safe.
+3. Use IDE refactorings (Rename, Extract Method, Introduce Variable): they're safe.
 4. Separate refactoring commits from behaviour changes.
-5. For untestable legacy code: find **seams** (Feathers) — extract an interface around a static/DB call, inject it, then test.
+5. For untestable legacy code: find **seams** (Feathers), extract an interface around a static/DB call, inject it, then test.
 6. **Strangler Fig** for big rewrites: route new features to new code, migrate piece by piece.
 
 # Module: Testing
@@ -219,7 +219,7 @@ var repo2 = Substitute.For<IOrderRepository>();
 await repo2.Received(1).AddAsync(Arg.Is<Order>(o => o.Id == 1));
 ```
 
-Test doubles: **Dummy** (unused), **Stub** (returns canned data), **Fake** (working lightweight version, e.g. in-memory repo), **Mock** (verifies interactions), **Spy** (records calls). Don't mock what you don't own (e.g. `HttpClient`) — wrap it or use a fake `HttpMessageHandler`.
+Test doubles: **Dummy** (unused), **Stub** (returns canned data), **Fake** (working lightweight version, e.g. in-memory repo), **Mock** (verifies interactions), **Spy** (records calls). Don't mock what you don't own (e.g. `HttpClient`): wrap it or use a fake `HttpMessageHandler`.
 
 ## Lesson: [Intermediate|High] Test pyramid, integration tests and TDD
 
@@ -239,7 +239,7 @@ public class OrdersApiTests(WebApplicationFactory<Program> factory) : IClassFixt
 }
 ```
 
-**TDD cycle — Red, Green, Refactor:** write a failing test → write the minimum code to pass → clean up. Benefits: testable design, a safety net, living documentation.
+**TDD cycle: Red, Green, Refactor:** write a failing test → write the minimum code to pass → clean up. Benefits: testable design, a safety net, living documentation.
 
 **Code coverage:** a useful signal, not a goal. 80% coverage of meaningful branches beats 100% of trivial getters. Mutation testing (Stryker) checks whether tests actually catch bugs.
 
@@ -256,20 +256,20 @@ git push -u origin feature/1234-export-csv
 # open PR → CI runs → review → squash merge
 ```
 
-- Branching models: **trunk-based** (short-lived branches, feature flags — common with CI/CD) vs **GitFlow** (develop/release/hotfix branches — heavier).
+- Branching models: **trunk-based** (short-lived branches, feature flags, common with CI/CD) vs **GitFlow** (develop/release/hotfix branches, heavier).
 - `merge` keeps history with a merge commit; `rebase` rewrites your commits on top of the target for a linear history (never rebase shared branches).
 - Good PRs: small (< ~400 lines), one purpose, description with why + how to test, screenshots for UI.
 - Resolve conflicts locally, re-run tests.
 
 ## Lesson: [Intermediate|High] Code review checklist
 
-1. **Correctness** — does it do what the ticket says? Edge cases (null, empty, large, concurrent)?
-2. **Tests** — new behaviour covered? Bug fix has a regression test?
-3. **Design** — SOLID, no duplication, right layer, no unnecessary abstraction.
-4. **Readability** — names, function size, comments explain why.
-5. **Performance** — N+1 queries, loading whole tables, blocking async, missing indexes.
-6. **Security** — input validation, parameterised SQL, authorisation checks, no secrets in code, safe logging.
-7. **Operability** — logging, metrics, config, migrations, backward compatibility.
+1. **Correctness**: does it do what the ticket says? Edge cases (null, empty, large, concurrent)?
+2. **Tests**: new behaviour covered? Bug fix has a regression test?
+3. **Design**: SOLID, no duplication, right layer, no unnecessary abstraction.
+4. **Readability**: names, function size, comments explain why.
+5. **Performance**: N+1 queries, loading whole tables, blocking async, missing indexes.
+6. **Security**: input validation, parameterised SQL, authorisation checks, no secrets in code, safe logging.
+7. **Operability**: logging, metrics, config, migrations, backward compatibility.
 
 Tone: comment on the code, not the person; ask questions ("What happens if X is null?"); mark nits as optional; approve when good enough.
 
@@ -278,7 +278,7 @@ Tone: comment on the code, not the person; ask questions ("What happens if X is 
 | Risk | .NET practice |
 |---|---|
 | Injection (SQL, command) | Parameterised queries / EF Core / Dapper parameters; never concatenate input |
-| Broken access control | `[Authorize]` + policies; check ownership (`order.UserId == currentUser`) — prevent IDOR |
+| Broken access control | `[Authorize]` + policies; check ownership (`order.UserId == currentUser`): prevent IDOR |
 | Cryptographic failures | HTTPS everywhere, HSTS; hash passwords with ASP.NET Core Identity (PBKDF2); never roll your own crypto |
 | Security misconfiguration | No detailed errors in production; remove default accounts; least privilege |
 | Vulnerable components | Keep NuGet packages updated; Dependabot; `dotnet list package --vulnerable` |
@@ -292,7 +292,7 @@ Tone: comment on the code, not the person; ask questions ("What happens if X is 
 
 ## [Beginner|High] What is clean code? What practices do you follow?
 
-Code that is easy to read, change and test. My practices: meaningful names, small single-purpose methods, guard clauses instead of deep nesting, no magic numbers, consistent formatting enforced by `.editorconfig`/`dotnet format`, comments for *why*, unit tests for business logic, small PRs and code review, and the Boy Scout rule — leave code slightly better each time.
+Code that is easy to read, change and test. My practices: meaningful names, small single-purpose methods, guard clauses instead of deep nesting, no magic numbers, consistent formatting enforced by `.editorconfig`/`dotnet format`, comments for *why*, unit tests for business logic, small PRs and code review, and the Boy Scout rule, leave code slightly better each time.
 
 ## [Beginner|High] What is unit testing? What makes a good unit test?
 
@@ -313,12 +313,12 @@ Mocking replaces a real dependency with a controllable test double. A **stub** r
 ## [Intermediate|High] How do you unit-test code that uses `DateTime.Now`, `HttpClient` or a database?
 
 - Time: inject `TimeProvider` (.NET 8 built-in abstraction; `FakeTimeProvider` in tests) or your own `IClock`.
-- HttpClient: inject a typed client and in tests provide a fake `HttpMessageHandler` returning canned responses — or wrap the external API behind an interface and mock that.
+- HttpClient: inject a typed client and in tests provide a fake `HttpMessageHandler` returning canned responses, or wrap the external API behind an interface and mock that.
 - Database: hide it behind a repository interface for unit tests; for the data layer itself, write **integration tests** against a real engine (SQL Server in Testcontainers, or SQLite) rather than EF's InMemory provider, which doesn't behave like a relational DB.
 
 ## [Intermediate|High] What is TDD? Have you used it?
 
-Test-Driven Development: Red (write a failing test for the next small behaviour), Green (write the minimum code to pass), Refactor (clean up with tests protecting you). It produces testable, decoupled designs and high meaningful coverage. Honest answer: "I use TDD for business rules and bug fixes — I first write a test that reproduces the bug — and test-after for thin glue code."
+Test-Driven Development: Red (write a failing test for the next small behaviour), Green (write the minimum code to pass), Refactor (clean up with tests protecting you). It produces testable, decoupled designs and high meaningful coverage. Honest answer: "I use TDD for business rules and bug fixes, I first write a test that reproduces the bug, and test-after for thin glue code."
 
 ## [Intermediate|High] What is the test pyramid?
 
@@ -334,7 +334,7 @@ Symptoms that suggest a deeper design problem: **Long Method** → Extract Metho
 
 ## [Intermediate|Medium] Merge vs rebase? What is a squash merge?
 
-`merge` combines branches and keeps both histories with a merge commit (non-destructive). `rebase` replays your commits on top of another branch, which rewrites them for a linear history — never on shared/public branches. **Squash merge** combines all PR commits into one commit on `main`, keeping history clean (one commit per feature).
+`merge` combines branches and keeps both histories with a merge commit (non-destructive). `rebase` replays your commits on top of another branch, which rewrites them for a linear history: never on shared/public branches. **Squash merge** combines all PR commits into one commit on `main`, keeping history clean (one commit per feature).
 
 ## [Intermediate|Medium] Trunk-based development vs GitFlow?
 
@@ -342,11 +342,11 @@ Symptoms that suggest a deeper design problem: **Long Method** → Extract Metho
 
 ## [Advanced|Medium] What is mutation testing?
 
-A tool (Stryker.NET) makes small changes ("mutants") to your code — flipping `>` to `>=`, removing a call — and reruns the tests. If tests still pass, the mutant "survived", meaning your tests don't really check that behaviour. It measures test *quality*, unlike line coverage.
+A tool (Stryker.NET) makes small changes ("mutants") to your code: flipping `>` to `>=`, removing a call, and reruns the tests. If tests still pass, the mutant "survived", meaning your tests don't really check that behaviour. It measures test *quality*, unlike line coverage.
 
 ## [Advanced|Medium] How do you prevent SQL injection and IDOR in a .NET API?
 
-SQL injection: never concatenate user input into SQL; use EF Core LINQ, `FromSql($"...")` (interpolation is parameterised), Dapper parameters or `SqlParameter`. IDOR (Insecure Direct Object Reference): don't trust IDs from the URL — always check the resource belongs to the current user or tenant (`WHERE Id = @id AND UserId = @currentUser`), using resource-based authorisation or global query filters for multi-tenant data.
+SQL injection: never concatenate user input into SQL; use EF Core LINQ, `FromSql($"...")` (interpolation is parameterised), Dapper parameters or `SqlParameter`. IDOR (Insecure Direct Object Reference): don't trust IDs from the URL, always check the resource belongs to the current user or tenant (`WHERE Id = @id AND UserId = @currentUser`), using resource-based authorisation or global query filters for multi-tenant data.
 
 ## [Scenario|High] You join a team with a 10-year-old codebase, no tests and frequent production bugs. What's your plan?
 
@@ -361,7 +361,7 @@ SQL injection: never concatenate user input into SQL; use EF Core LINQ, `FromSql
 
 ## [Scenario|High] A reviewer rejects your PR saying the method is too long and untestable. How do you respond and fix it?
 
-Accept feedback professionally — ask for specifics if unclear. Then extract cohesive parts into well-named private methods or separate classes, move external calls (DB, HTTP, time) behind injected interfaces so the logic is testable, add unit tests for the extracted logic, and keep the PR focused. Reply to each comment with what you changed.
+Accept feedback professionally: ask for specifics if unclear. Then extract cohesive parts into well-named private methods or separate classes, move external calls (DB, HTTP, time) behind injected interfaces so the logic is testable, add unit tests for the extracted logic, and keep the PR focused. Reply to each comment with what you changed.
 
 ## [Scenario|Medium] A test passes locally but fails randomly in CI. What could cause it?
 

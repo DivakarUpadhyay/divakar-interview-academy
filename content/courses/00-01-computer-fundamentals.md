@@ -1,17 +1,17 @@
 ---
 slug: computer-fundamentals
-title: How Computers Work — CPU, Memory, OS, Processes and Threads
+title: How Computers Work: CPU, Memory, OS, Processes and Threads
 track: foundations
 order: 1
 group: How Computers Work
 icon: CPU
 color: #495057
-summary: What happens inside a computer when your program runs — bits and bytes, the CPU and instruction cycle, the memory hierarchy (registers, cache, RAM, disk), stack vs heap, virtual memory and paging, the operating system, processes and threads, scheduling, concurrency problems, compilation vs interpretation, and how all of it shows up in .NET and SQL Server.
+summary: What happens inside a computer when your program runs, bits and bytes, the CPU and instruction cycle, the memory hierarchy (registers, cache, RAM, disk), stack vs heap, virtual memory and paging, the operating system, processes and threads, scheduling, concurrency problems, compilation vs interpretation, and how all of it shows up in .NET and SQL Server.
 ---
 
 # Overview
 
-Every program you write — a C# API, a SQL query, a React page — finally runs as instructions on a **CPU** reading and writing **memory**, managed by an **operating system**. Knowing this layer explains things that otherwise look like magic: why a cache makes things fast, why the heap needs a garbage collector, why threads cause race conditions, why a query that reads from disk is slow.
+Every program you write: a C# API, a SQL query, a React page, finally runs as instructions on a **CPU** reading and writing **memory**, managed by an **operating system**. Knowing this layer explains things that otherwise look like magic: why a cache makes things fast, why the heap needs a garbage collector, why threads cause race conditions, why a query that reads from disk is slow.
 
 | Layer | What it does | Example |
 |---|---|---|
@@ -24,7 +24,7 @@ Every program you write — a C# API, a SQL query, a React page — finally runs
 
 | Era | Milestone |
 |---|---|
-| 1945 | Von Neumann architecture — program and data stored in the same memory |
+| 1945 | Von Neumann architecture: program and data stored in the same memory |
 | 1971 | Intel 4004, first commercial microprocessor |
 | 1978–1985 | x86 (8086) and 32-bit 80386 with protected/virtual memory |
 | 1990s | CPU caches on chip, pipelining, superscalar execution; Windows NT, Linux |
@@ -70,7 +70,7 @@ Computers store everything as **bits** (0/1). 8 bits = 1 **byte**.
 | Data | Representation |
 |---|---|
 | Integers | Binary, **two's complement** for negatives (`int` = 32 bits: −2,147,483,648 … 2,147,483,647) |
-| Decimals | IEEE 754 floating point (`double` = 64 bits: sign, exponent, mantissa) — why 0.1 isn't exact |
+| Decimals | IEEE 754 floating point (`double` = 64 bits: sign, exponent, mantissa), why 0.1 isn't exact |
 | Text | Characters → numbers via encodings: ASCII (7-bit), **UTF-8** (1–4 bytes, the web standard), UTF-16 (.NET `string`/`char`, Windows) |
 | Images, audio | Pixels/samples as numbers, usually compressed (JPEG, PNG, MP3) |
 
@@ -82,7 +82,7 @@ Console.WriteLine(utf8.Length);                       // 6
 Console.WriteLine("₹100".Length);                     // 4 UTF-16 chars
 ```
 
-**Endianness:** order of bytes in multi-byte numbers — little-endian (x86, ARM usually) stores the least significant byte first; network protocols use big-endian ("network byte order").
+**Endianness:** order of bytes in multi-byte numbers, little-endian (x86, ARM usually) stores the least significant byte first; network protocols use big-endian ("network byte order").
 
 ## Lesson: [Basic|High] How the CPU executes instructions
 
@@ -104,7 +104,7 @@ Main parts:
 | **Control unit** | Decodes instructions, controls the flow |
 | **Program counter** | Address of the next instruction |
 | **Cache (L1/L2/L3)** | Fast copies of recently used memory |
-| **Cores** | Independent execution units — a 8-core CPU runs 8 instruction streams at once (16 with hyper-threading/SMT) |
+| **Cores** | Independent execution units: a 8-core CPU runs 8 instruction streams at once (16 with hyper-threading/SMT) |
 
 What a line of C# becomes (simplified x64):
 
@@ -119,11 +119,11 @@ add  eax, [tax]        ; add
 mov  [total], eax      ; store back to memory
 ```
 
-**Speed tricks inside modern CPUs:** pipelining (overlap stages of several instructions), out-of-order execution, **branch prediction** (guessing `if` results — sorted data makes branches predictable and loops faster), SIMD vector instructions (process 4–16 numbers at once — `System.Numerics.Vector<T>` in .NET).
+**Speed tricks inside modern CPUs:** pipelining (overlap stages of several instructions), out-of-order execution, **branch prediction** (guessing `if` results, sorted data makes branches predictable and loops faster), SIMD vector instructions (process 4–16 numbers at once, `System.Numerics.Vector<T>` in .NET).
 
 # Module: Memory
 
-## Lesson: [Basic|High] The memory hierarchy — registers, cache, RAM, disk
+## Lesson: [Basic|High] The memory hierarchy: registers, cache, RAM, disk
 
 | Level | Typical size | Approx. access time | Notes |
 |---|---|---|---|
@@ -131,13 +131,13 @@ mov  [total], eax      ; store back to memory
 | L1 cache | 32–64 KB per core | ~1 ns | |
 | L2 cache | 256 KB – 2 MB per core | ~3–5 ns | |
 | L3 cache | 8–64 MB shared | ~10–20 ns | |
-| **RAM** (main memory) | 8–512 GB | ~80–100 ns | Volatile — lost on power off |
+| **RAM** (main memory) | 8–512 GB | ~80–100 ns | Volatile: lost on power off |
 | NVMe SSD | TBs | ~20–100 µs | Persistent |
 | HDD | TBs | ~5–10 ms | Mechanical seek |
-| Network (same datacenter) | — | ~0.5 ms round trip | |
-| Network (across continents) | — | ~150 ms round trip | |
+| Network (same datacenter) |: | ~0.5 ms round trip | |
+| Network (across continents) |: | ~150 ms round trip | |
 
-**Key idea:** each level is ~10× to 1000× slower than the one above. Data moves between cache and RAM in **cache lines** of 64 bytes, so reading memory **sequentially** (arrays) is much faster than jumping around (linked lists, scattered objects) — this is **locality of reference**.
+**Key idea:** each level is ~10× to 1000× slower than the one above. Data moves between cache and RAM in **cache lines** of 64 bytes, so reading memory **sequentially** (arrays) is much faster than jumping around (linked lists, scattered objects): this is **locality of reference**.
 
 ```csharp
 // Same work, very different speed: row-by-row walks memory sequentially (cache-friendly)
@@ -149,7 +149,7 @@ for (int c = 0; c < 5000; c++) for (int r = 0; r < 5000; r++) sum += m[r, c];   
 
 This is also why **SQL Server keeps data pages in RAM (buffer pool)** and why caching (Redis, in-memory cache) speeds up applications: RAM is ~1000× faster than SSD and ~1,000,000× faster than a cross-continent network call.
 
-## Lesson: [Basic|High] Stack vs heap — how program memory is laid out
+## Lesson: [Basic|High] Stack vs heap: how program memory is laid out
 
 A process's virtual memory is split into regions:
 
@@ -172,7 +172,7 @@ Low addresses
 | | Stack | Heap |
 |---|---|---|
 | Stores | Call frames: parameters, locals, return address | Objects (class instances, arrays, strings) |
-| Allocation | Move a pointer — extremely fast | Find space — fast in .NET (bump pointer), but needs cleanup |
+| Allocation | Move a pointer: extremely fast | Find space, fast in .NET (bump pointer), but needs cleanup |
 | Freed | Automatically when the method returns | By the garbage collector (.NET/Java) or manually (`free`/`delete` in C/C++) |
 | Size | Small (1 MB per thread by default on Windows) | Large (limited by RAM/address space) |
 | Per | Thread | Process (shared by all threads) |
@@ -187,7 +187,7 @@ void PlaceOrder()
 }                                        // frame popped: qty and the reference disappear; the Order object stays until GC finds it unreachable
 ```
 
-**Stack overflow example:** `int F(int n) => F(n + 1);` — every call adds a frame until the 1 MB stack is full and the process crashes (in .NET a `StackOverflowException` cannot be caught).
+**Stack overflow example:** `int F(int n) => F(n + 1);`: every call adds a frame until the 1 MB stack is full and the process crashes (in .NET a `StackOverflowException` cannot be caught).
 
 ## Lesson: [Intermediate|High] Virtual memory, paging and memory management by the OS
 
@@ -207,7 +207,7 @@ Terms you see in Task Manager / monitoring:
 | Virtual size | All reserved address space (often huge, mostly unused) |
 | Page file / swap | Disk area used when RAM is full |
 
-> **Interview tip:** "Memory leak in a managed app" usually means objects are still **referenced** (static lists, event handlers, caches without limits), so the GC is not allowed to free them — the OS sees private bytes grow until out-of-memory or the container is killed.
+> **Interview tip:** "Memory leak in a managed app" usually means objects are still **referenced** (static lists, event handlers, caches without limits), so the GC is not allowed to free them, the OS sees private bytes grow until out-of-memory or the container is killed.
 
 ## Lesson: [Intermediate|High] How memory is managed: manual, reference counting and garbage collection
 
@@ -220,10 +220,10 @@ Terms you see in Task Manager / monitoring:
 
 **Tracing GC in short (what .NET does):**
 
-1. **Roots** — stack references, static fields, CPU registers, GC handles.
-2. **Mark** — follow references from roots; everything reached is alive.
-3. **Sweep/compact** — free unreachable objects; move live ones together to remove gaps (fragmentation) and update references.
-4. **Generations** — new objects die young, so the GC checks young objects often (cheap) and old ones rarely.
+1. **Roots**: stack references, static fields, CPU registers, GC handles.
+2. **Mark**: follow references from roots; everything reached is alive.
+3. **Sweep/compact**: free unreachable objects; move live ones together to remove gaps (fragmentation) and update references.
+4. **Generations**: new objects die young, so the GC checks young objects often (cheap) and old ones rarely.
 
 The full .NET details (generations 0/1/2, Large Object Heap, workstation vs server GC, `IDisposable`, finalizers) are in the **.NET Internals** course.
 
@@ -242,7 +242,7 @@ The **OS kernel** sits between programs and hardware:
 | Networking | TCP/IP stack, sockets |
 | Security | Users, permissions, isolation |
 
-**User mode vs kernel mode:** your code runs in user mode; when it needs the OS (read a file, send a packet, allocate pages) it makes a **system call**, the CPU switches to kernel mode, the kernel does the work and returns. System calls are relatively expensive — that's why buffering (reading 64 KB at once instead of one byte at a time) matters.
+**User mode vs kernel mode:** your code runs in user mode; when it needs the OS (read a file, send a packet, allocate pages) it makes a **system call**, the CPU switches to kernel mode, the kernel does the work and returns. System calls are relatively expensive: that's why buffering (reading 64 KB at once instead of one byte at a time) matters.
 
 ## Lesson: [Intermediate|High] Processes vs threads, scheduling and context switches
 
@@ -254,7 +254,7 @@ The **OS kernel** sits between programs and hardware:
 | Communication | IPC: pipes, sockets, shared memory, queues | Shared variables (needs synchronisation) |
 | Crash impact | Only that process | Unhandled exception kills the whole process |
 
-**Scheduling:** the OS gives each runnable thread a **time slice** on a core, then switches to another — a **context switch** (save registers, load another thread's state, cache gets colder). Thousands of threads → lots of switching overhead. That's why .NET uses a **thread pool** (reuse a small number of threads) and **async/await** (don't hold a thread while waiting for I/O).
+**Scheduling:** the OS gives each runnable thread a **time slice** on a core, then switches to another, a **context switch** (save registers, load another thread's state, cache gets colder). Thousands of threads → lots of switching overhead. That's why .NET uses a **thread pool** (reuse a small number of threads) and **async/await** (don't hold a thread while waiting for I/O).
 
 **Thread states:** new → ready → running → waiting/blocked (I/O, lock, sleep) → ready … → terminated.
 
@@ -265,14 +265,14 @@ Console.WriteLine($"PID {p.Id}, threads {p.Threads.Count}, working set {p.Workin
 Console.WriteLine($"Cores: {Environment.ProcessorCount}");
 ```
 
-## Lesson: [Intermediate|High] Concurrency problems — race conditions, deadlocks and how to avoid them
+## Lesson: [Intermediate|High] Concurrency problems: race conditions, deadlocks and how to avoid them
 
 **Concurrency** = several tasks in progress at once (may interleave on one core). **Parallelism** = tasks literally running at the same time on several cores.
 
 | Problem | What happens | Fix |
 |---|---|---|
 | **Race condition** | Two threads read-modify-write shared data; updates get lost | Locks, atomic operations (`Interlocked`), immutable data, don't share |
-| **Deadlock** | Thread A holds lock 1 waiting for lock 2; B holds 2 waiting for 1 — both wait forever | Always lock in the same order, use timeouts, keep locks short |
+| **Deadlock** | Thread A holds lock 1 waiting for lock 2; B holds 2 waiting for 1: both wait forever | Always lock in the same order, use timeouts, keep locks short |
 | **Starvation** | A thread never gets the resource | Fair locks, priorities |
 | **Livelock** | Threads keep reacting to each other without progress | Back-off with randomness |
 | Thread-pool starvation | All pool threads blocked (e.g. `.Result` on async) | Async all the way |
@@ -302,11 +302,11 @@ The same ideas appear in databases: SQL Server uses **locks and isolation levels
 
 **Compiler stages:** lexing (characters → tokens) → parsing (tokens → syntax tree) → semantic analysis (types, symbols) → optimisation → code generation. The C# compiler **Roslyn** does these to produce IL; the **JIT** then turns IL into machine code for the actual CPU (x64 or ARM64), with tiered compilation (quick code first, optimised code for hot methods).
 
-## Lesson: [Intermediate|Medium] Putting it together — what happens when your .NET API handles a request
+## Lesson: [Intermediate|Medium] Putting it together: what happens when your .NET API handles a request
 
 1. The network card receives packets → OS TCP/IP stack reassembles them → data lands in a **socket** buffer (kernel memory).
 2. Kestrel (ASP.NET Core server), waiting asynchronously on that socket, is woken by an I/O completion; a **thread-pool thread** picks up the work.
-3. Bytes are parsed into an `HttpContext` (objects allocated on the **heap**); middleware and your controller run — **CPU** executes JIT-compiled code, using **stack** frames for each method call.
+3. Bytes are parsed into an `HttpContext` (objects allocated on the **heap**); middleware and your controller run: **CPU** executes JIT-compiled code, using **stack** frames for each method call.
 4. Your code awaits a SQL query → the thread returns to the pool (no thread blocked); the request is sent through another socket to SQL Server.
 5. SQL Server (its own process) checks its **buffer pool in RAM**; if the pages aren't cached it reads them from **disk** (slow), executes the plan, returns rows.
 6. The continuation runs on a pool thread, serialises JSON, writes to the socket; the OS sends packets back.
@@ -318,7 +318,7 @@ Every performance topic on DevLadder maps to one of these steps: CPU (algorithms
 
 ## [Beginner|High] What is the difference between stack and heap memory?
 
-The stack holds method call frames — parameters, local value-type variables and references — per thread; allocation and cleanup are automatic and very fast (push/pop) but it is small (≈1 MB per thread). The heap holds objects created with `new`, shared by all threads, larger, and in .NET cleaned by the garbage collector. Stack overflow comes from too-deep recursion; heap problems are leaks and fragmentation.
+The stack holds method call frames: parameters, local value-type variables and references, per thread; allocation and cleanup are automatic and very fast (push/pop) but it is small (≈1 MB per thread). The heap holds objects created with `new`, shared by all threads, larger, and in .NET cleaned by the garbage collector. Stack overflow comes from too-deep recursion; heap problems are leaks and fragmentation.
 
 ## [Beginner|High] What is the difference between a process and a thread?
 
@@ -326,7 +326,7 @@ A process is a running program with its own isolated virtual memory and resource
 
 ## [Beginner|High] What is RAM and why is it faster than disk? What is a cache?
 
-RAM is volatile main memory accessed electronically in ~100 ns; SSDs take tens of microseconds and HDDs milliseconds because of slower technology (and seek mechanics for HDDs). A cache is a small, faster copy of frequently used data closer to where it's needed — CPU L1/L2/L3 caches over RAM, SQL Server's buffer pool over disk, Redis over a database. Caches work because of locality: recently or nearby used data is likely to be used again.
+RAM is volatile main memory accessed electronically in ~100 ns; SSDs take tens of microseconds and HDDs milliseconds because of slower technology (and seek mechanics for HDDs). A cache is a small, faster copy of frequently used data closer to where it's needed: CPU L1/L2/L3 caches over RAM, SQL Server's buffer pool over disk, Redis over a database. Caches work because of locality: recently or nearby used data is likely to be used again.
 
 ## [Beginner|Medium] What is the difference between 32-bit and 64-bit?
 
@@ -334,7 +334,7 @@ The width of CPU registers and memory addresses. A 32-bit process can address at
 
 ## [Beginner|Medium] What are binary, hexadecimal, ASCII, UTF-8 and UTF-16?
 
-Binary is base 2 (how hardware stores data); hexadecimal is base 16, a compact way to write bytes (`0xFF` = 255). ASCII maps 128 characters to 7-bit codes. UTF-8 encodes all Unicode characters in 1–4 bytes and is backward-compatible with ASCII — the web standard. UTF-16 uses 2 or 4 bytes per character and is what .NET `string` and Windows APIs use internally.
+Binary is base 2 (how hardware stores data); hexadecimal is base 16, a compact way to write bytes (`0xFF` = 255). ASCII maps 128 characters to 7-bit codes. UTF-8 encodes all Unicode characters in 1–4 bytes and is backward-compatible with ASCII: the web standard. UTF-16 uses 2 or 4 bytes per character and is what .NET `string` and Windows APIs use internally.
 
 ## [Intermediate|High] What is virtual memory?
 
@@ -354,15 +354,15 @@ The OS saving the state (registers, program counter, stack pointer) of a running
 
 ## [Intermediate|Medium] Concurrency vs parallelism?
 
-Concurrency is dealing with many tasks at once (they make progress by interleaving, possibly on one core) — e.g. a web server handling many requests with async I/O. Parallelism is executing many tasks at the same instant on multiple cores — e.g. `Parallel.For` over CPU-heavy work. Async improves scalability for I/O-bound work; parallelism speeds up CPU-bound work.
+Concurrency is dealing with many tasks at once (they make progress by interleaving, possibly on one core): e.g. a web server handling many requests with async I/O. Parallelism is executing many tasks at the same instant on multiple cores, e.g. `Parallel.For` over CPU-heavy work. Async improves scalability for I/O-bound work; parallelism speeds up CPU-bound work.
 
 ## [Intermediate|Medium] What is the difference between a compiler, an interpreter and a JIT?
 
-A compiler translates the whole program to machine code ahead of time (fast start, platform-specific). An interpreter executes code step by step at runtime (portable, slower). A JIT compiles intermediate code (IL/bytecode) to machine code at runtime when methods are first used, optimising hot code — .NET, Java and modern JavaScript engines combine portability with near-native speed after warm-up.
+A compiler translates the whole program to machine code ahead of time (fast start, platform-specific). An interpreter executes code step by step at runtime (portable, slower). A JIT compiles intermediate code (IL/bytecode) to machine code at runtime when methods are first used, optimising hot code: .NET, Java and modern JavaScript engines combine portability with near-native speed after warm-up.
 
 ## [Advanced|Medium] Why is iterating an array faster than a linked list even though both are O(n)?
 
-Arrays store elements contiguously, so each 64-byte cache line brings several elements and the CPU prefetcher predicts the next access; linked-list nodes are scattered across the heap, so each step may be a cache miss costing ~100 ns. Big-O counts operations, not memory latency — cache locality often dominates real performance.
+Arrays store elements contiguously, so each 64-byte cache line brings several elements and the CPU prefetcher predicts the next access; linked-list nodes are scattered across the heap, so each step may be a cache miss costing ~100 ns. Big-O counts operations, not memory latency: cache locality often dominates real performance.
 
 ## [Advanced|Medium] What is a memory leak in a garbage-collected language?
 
@@ -374,11 +374,11 @@ Probably memory pressure and paging: processes (or SQL Server with no max memory
 
 ## [Scenario|Medium] A recursive method to process a folder tree crashes the process on a very deep structure. Why, and how do you fix it?
 
-Each recursive call adds a stack frame; very deep recursion exhausts the thread's stack (≈1 MB) and causes a `StackOverflowException`, which .NET can't catch — the process dies. Fix: rewrite iteratively using an explicit `Stack<T>`/`Queue<T>` on the heap, or limit depth. (`Directory.EnumerateFiles(..., SearchOption.AllDirectories)` already does it iteratively.)
+Each recursive call adds a stack frame; very deep recursion exhausts the thread's stack (≈1 MB) and causes a `StackOverflowException`, which .NET can't catch: the process dies. Fix: rewrite iteratively using an explicit `Stack<T>`/`Queue<T>` on the heap, or limit depth. (`Directory.EnumerateFiles(..., SearchOption.AllDirectories)` already does it iteratively.)
 
 ## [Scenario|Medium] A multithreaded counter in your app gives a different result each run. Explain and fix.
 
-A race condition: `counter++` is read-modify-write, so two threads can read the same value and both write back value+1, losing an increment. Fix with `Interlocked.Increment(ref counter)`, a `lock`, or by giving each thread its own local counter and summing at the end (`Parallel.For` with thread-local state) — the last is also fastest.
+A race condition: `counter++` is read-modify-write, so two threads can read the same value and both write back value+1, losing an increment. Fix with `Interlocked.Increment(ref counter)`, a `lock`, or by giving each thread its own local counter and summing at the end (`Parallel.For` with thread-local state): the last is also fastest.
 
 # Cheatsheet
 

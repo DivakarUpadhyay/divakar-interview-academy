@@ -3,7 +3,7 @@ import { pageMeta } from "@/lib/seo";
 import { getCourses, getTracks } from "@/lib/db";
 import InterviewPanel from "./InterviewPanel";
 
-export const metadata: Metadata = pageMeta({ title: "Interview Q&A Panel — Filter Every Question", description: "Search and filter more than 1,000 interview questions with answers by course, level (beginner to scenario) and priority, with must-know questions highlighted.", path: "/interview" });
+export const metadata: Metadata = pageMeta({ title: "Interview Q&A Panel: Filter Every Question", description: "Search and filter more than 1,000 interview questions with answers by course, level (beginner to scenario) and priority, with must-know questions highlighted.", path: "/interview" });
 
 export default function InterviewPage() {
   const tracks = getTracks();

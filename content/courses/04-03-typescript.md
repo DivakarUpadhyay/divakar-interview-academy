@@ -1,6 +1,6 @@
 ---
 slug: typescript
-title: TypeScript — Types, Generics and Real-World Patterns
+title: TypeScript: Types, Generics and Real-World Patterns
 track: frontend
 order: 3
 group: Web Basics
@@ -41,7 +41,7 @@ Why teams use it:
 | 2024 | 5.4–5.7 | `NoInfer`, inferred type predicates, `--erasableSyntaxOnly` prep |
 | 2025 | 5.8–5.9 | Node 18+ module modes, `import defer`; TypeScript 7 native compiler (Go port, ~10× faster) in preview |
 
-Node.js 22.6+/23+ can run `.ts` files directly by stripping types (no type checking) — type-check with `tsc --noEmit`.
+Node.js 22.6+/23+ can run `.ts` files directly by stripping types (no type checking): type-check with `tsc --noEmit`.
 
 # Lifecycle
 
@@ -49,9 +49,9 @@ Node.js 22.6+/23+ can run `.ts` files directly by stripping types (no type check
 
 1. Write `.ts`/`.tsx` with types.
 2. The **type checker** (`tsc` or the editor's language service) reports errors using `tsconfig.json` settings.
-3. **Transpile** to JavaScript (`tsc`, esbuild, SWC, Babel, Vite, Angular CLI) — types are erased; syntax down-levelled to the `target`.
+3. **Transpile** to JavaScript (`tsc`, esbuild, SWC, Babel, Vite, Angular CLI): types are erased; syntax down-levelled to the `target`.
 4. **Bundle** (Vite/Rollup/webpack/esbuild) with imports resolved per `module`/`moduleResolution`.
-5. Run in the browser or Node.js. At runtime there are **no types** — validate external data (API responses, forms) with code or a schema library (Zod).
+5. Run in the browser or Node.js. At runtime there are **no types**: validate external data (API responses, forms) with code or a schema library (Zod).
 
 # Tools
 
@@ -68,12 +68,12 @@ Node.js 22.6+/23+ can run `.ts` files directly by stripping types (no type check
 
 ```typescript
 let name: string = "Divakar";
-let age = 34;                    // inferred as number — annotate only when inference can't help
+let age = 34;                    // inferred as number: annotate only when inference can't help
 let active: boolean = true;
 let ids: number[] = [1, 2, 3];   // or Array<number>
 let pair: [string, number] = ["qty", 5];   // tuple
 
-let anything: any = 4;           // turns type checking OFF — avoid
+let anything: any = 4;           // turns type checking OFF, avoid
 let input: unknown = JSON.parse("{}");     // safe "any": must narrow before use
 function fail(msg: string): never { throw new Error(msg); }  // never returns
 function log(msg: string): void { console.log(msg); }
@@ -84,15 +84,15 @@ const status = "open" as const;  // literal type "open", not string
 
 | Type | Meaning |
 |---|---|
-| `any` | Opt out of checking — errors spread silently |
+| `any` | Opt out of checking: errors spread silently |
 | `unknown` | Anything, but you must check the type before using it |
 | `never` | No value possible (functions that throw, exhaustive checks) |
 | `void` | Function returns nothing useful |
 | `null` / `undefined` | Separate types under `strict` |
 
-> **Interview tip:** "Prefer `unknown` over `any` for data from outside (JSON, errors in `catch`) — it forces you to validate."
+> **Interview tip:** "Prefer `unknown` over `any` for data from outside (JSON, errors in `catch`), it forces you to validate."
 
-## Lesson: [Basic|High] Object types — interfaces vs type aliases
+## Lesson: [Basic|High] Object types: interfaces vs type aliases
 
 ```typescript
 interface Customer {
@@ -123,7 +123,7 @@ type Manager = Employee & { reports: Employee[] };              // intersect typ
 
 Common guidance: `interface` for public object contracts (and library augmentation), `type` for unions and computed types. Be consistent.
 
-**Structural typing:** TypeScript compares **shapes**, not names — any object with the right properties is assignable, unlike C#'s nominal types.
+**Structural typing:** TypeScript compares **shapes**, not names, any object with the right properties is assignable, unlike C#'s nominal types.
 
 ## Lesson: [Basic|High] Functions, unions and narrowing
 
@@ -177,7 +177,7 @@ interface Printable { print(): string; }
 
 // enum vs union
 enum Role { Admin = "ADMIN", User = "USER" }       // generates runtime JS object
-type RoleU = "ADMIN" | "USER";                       // zero runtime cost — usually preferred
+type RoleU = "ADMIN" | "USER";                       // zero runtime cost, usually preferred
 ```
 
 - `private` (TS-only, compile-time) vs `#field` (JavaScript private, enforced at runtime).
@@ -202,7 +202,7 @@ function byId<T extends { id: number }>(items: T[], id: number): T | undefined {
 function pluck<T, K extends keyof T>(items: T[], key: K): T[K][] {
   return items.map(i => i[key]);
 }
-pluck(orders, "status");   // OrderStatus[] — "statuz" would be a compile error
+pluck(orders, "status");   // OrderStatus[]: "statuz" would be a compile error
 
 // Generic class
 class Cache<K, V> {
@@ -212,7 +212,7 @@ class Cache<K, V> {
 }
 ```
 
-Generics let one function/type work with many types **while keeping type information** — unlike `any`, which loses it.
+Generics let one function/type work with many types **while keeping type information**: unlike `any`, which loses it.
 
 # Module: Advanced Types
 
@@ -280,14 +280,14 @@ config.retries.toFixed();   // still known to be number
 }
 ```
 
-`strict: true` turns on `noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`, `strictPropertyInitialization`, `useUnknownInCatchVariables` and more — always enable it in new projects.
+`strict: true` turns on `noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`, `strictPropertyInitialization`, `useUnknownInCatchVariables` and more, always enable it in new projects.
 
-Modules: ES modules (`import`/`export`); `import type { Order } from "./models"` imports types only (erased); declaration files (`.d.ts`) describe JavaScript libraries — types come from the package itself or `@types/*` (DefinitelyTyped).
+Modules: ES modules (`import`/`export`); `import type { Order } from "./models"` imports types only (erased); declaration files (`.d.ts`) describe JavaScript libraries, types come from the package itself or `@types/*` (DefinitelyTyped).
 
 ## Lesson: [Advanced|High] Typing real API calls in Angular and React
 
 ```typescript
-// models.ts — generated from the backend OpenAPI or written by hand
+// models.ts: generated from the backend OpenAPI or written by hand
 export interface OrderDto { id: number; orderDate: string; status: OrderStatus; total: number; }
 
 // Angular service
@@ -320,7 +320,7 @@ const [selected, setSelected] = useState<Order | null>(null);
 
 ## [Beginner|High] What is TypeScript and why use it over JavaScript?
 
-A typed superset of JavaScript that compiles to plain JavaScript. Static types catch errors at compile time, give IntelliSense and safe refactoring, document APIs and scale better for large teams. Types are erased at runtime, so there is no runtime cost — and no runtime checking.
+A typed superset of JavaScript that compiles to plain JavaScript. Static types catch errors at compile time, give IntelliSense and safe refactoring, document APIs and scale better for large teams. Types are erased at runtime, so there is no runtime cost, and no runtime checking.
 
 ## [Beginner|High] What is the difference between interface and type?
 
@@ -328,7 +328,7 @@ Both describe object shapes. `type` can also name unions, intersections, tuples,
 
 ## [Beginner|High] any vs unknown vs never?
 
-`any` disables type checking for that value (errors pass silently). `unknown` accepts any value but must be narrowed (typeof/guards/schema) before use — the safe choice for external data and `catch` errors. `never` represents values that never occur — functions that always throw, or the impossible branch in an exhaustive switch.
+`any` disables type checking for that value (errors pass silently). `unknown` accepts any value but must be narrowed (typeof/guards/schema) before use: the safe choice for external data and `catch` errors. `never` represents values that never occur, functions that always throw, or the impossible branch in an exhaustive switch.
 
 ## [Beginner|High] What are union types and how do you narrow them?
 
@@ -348,25 +348,25 @@ Type parameters that make code reusable while keeping types: `function first<T>(
 
 ## [Intermediate|High] What does strict mode enable and why should it be on?
 
-`strict: true` enables `noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `alwaysStrict`, `useUnknownInCatchVariables` and others. It catches the most common bugs — especially null/undefined access. New projects should always use it; legacy projects can turn flags on gradually.
+`strict: true` enables `noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `alwaysStrict`, `useUnknownInCatchVariables` and others. It catches the most common bugs, especially null/undefined access. New projects should always use it; legacy projects can turn flags on gradually.
 
 ## [Intermediate|High] What is a discriminated union?
 
-A union of object types that share a literal "tag" property (`kind`, `type`, `status`). Switching on the tag narrows to the exact member, and a `never` check in `default` makes the switch exhaustive — adding a new member produces compile errors wherever it isn't handled. Ideal for state (`{ status: "loading" } | { status: "error"; error: string } | { status: "ok"; data: T }`) and Redux/NgRx actions.
+A union of object types that share a literal "tag" property (`kind`, `type`, `status`). Switching on the tag narrows to the exact member, and a `never` check in `default` makes the switch exhaustive: adding a new member produces compile errors wherever it isn't handled. Ideal for state (`{ status: "loading" } | { status: "error"; error: string } | { status: "ok"; data: T }`) and Redux/NgRx actions.
 
 ## [Intermediate|Medium] What is the difference between `as` (type assertion) and `satisfies`?
 
-`as T` tells the compiler "trust me, it's T" — no runtime check and it can hide mistakes. `satisfies T` checks that a value matches T but keeps the more precise inferred type, so you get validation without losing literal types. Prefer `satisfies` for config objects and avoid `as` except at well-validated boundaries.
+`as T` tells the compiler "trust me, it's T": no runtime check and it can hide mistakes. `satisfies T` checks that a value matches T but keeps the more precise inferred type, so you get validation without losing literal types. Prefer `satisfies` for config objects and avoid `as` except at well-validated boundaries.
 
 ## [Intermediate|Medium] What are declaration files (.d.ts)?
 
-Files containing only type declarations that describe JavaScript code — they let TypeScript type-check calls into JS libraries. Libraries ship their own (`"types"` in package.json) or come from DefinitelyTyped (`npm i -D @types/lodash`). You can write `declare module "x"` or augment globals (e.g. `Window`) in your own `.d.ts`.
+Files containing only type declarations that describe JavaScript code: they let TypeScript type-check calls into JS libraries. Libraries ship their own (`"types"` in package.json) or come from DefinitelyTyped (`npm i -D @types/lodash`). You can write `declare module "x"` or augment globals (e.g. `Window`) in your own `.d.ts`.
 
 ## [Advanced|Medium] What are mapped and conditional types?
 
 Mapped types transform each property of another type: `{ [K in keyof T]: Readonly<T[K]> }` (with `as` to rename keys). Conditional types choose a type by condition: `T extends U ? X : Y`, with `infer` to extract parts (`T extends Promise<infer R> ? R : T`). Built-in utilities like `Partial`, `ReturnType` and `Awaited` are implemented with them.
 
-## [Advanced|Medium] Structural vs nominal typing — what does TypeScript use?
+## [Advanced|Medium] Structural vs nominal typing: what does TypeScript use?
 
 Structural: types are compatible if their shapes match, regardless of names, so `{ id: 1, name: "x" }` is assignable to any interface with those members. C# and Java are nominal. To simulate nominal types (e.g. `UserId` vs `OrderId` both numbers), use branded types: `type UserId = number & { readonly __brand: "UserId" }`.
 

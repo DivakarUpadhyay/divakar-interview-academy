@@ -1,12 +1,12 @@
 ---
 slug: exception-handling
-title: Exception Handling & Custom Error Handling in .NET — Every Way, Every App Type
+title: Exception Handling & Custom Error Handling in .NET: Every Way, Every App Type
 track: dotnet
 order: 16
 group: Errors, Logging & UI Components
 icon: Err
 color: #c92a2a
-summary: Exceptions from first principles to production — try/catch/finally, filters, rethrowing, custom exception hierarchies, exceptions vs Result pattern, async and parallel exceptions, global handlers (AppDomain, TaskScheduler, Application_Error), every way to handle errors in Web Forms, MVC 5, Web API 2, ASP.NET Core MVC and Web API (middleware, exception filters, IExceptionHandler, ProblemDetails, UseStatusCodePages), Blazor error boundaries, background services, SQL and HTTP error handling, retries with Polly, custom error pages, error codes and correlation ids.
+summary: Exceptions from first principles to production, try/catch/finally, filters, rethrowing, custom exception hierarchies, exceptions vs Result pattern, async and parallel exceptions, global handlers (AppDomain, TaskScheduler, Application_Error), every way to handle errors in Web Forms, MVC 5, Web API 2, ASP.NET Core MVC and Web API (middleware, exception filters, IExceptionHandler, ProblemDetails, UseStatusCodePages), Blazor error boundaries, background services, SQL and HTTP error handling, retries with Polly, custom error pages, error codes and correlation ids.
 ---
 
 # Overview
@@ -32,7 +32,7 @@ An **exception** is an object that represents an error and **interrupts normal f
 |---|---|
 | 2002 | Structured exception handling in C#/VB.NET; Web Forms `Page_Error`, `Application_Error`, `customErrors` |
 | 2009–2013 | MVC `[HandleError]`, `IExceptionFilter`; Web API 2 `IExceptionHandler`, `IExceptionLogger` (2014) |
-| 2012 | async/await — exceptions flow through `Task`; `AggregateException` from `Task.Wait` |
+| 2012 | async/await: exceptions flow through `Task`; `AggregateException` from `Task.Wait` |
 | 2015 | C# 6 exception filters (`catch (X ex) when (...)`) |
 | 2016 | ASP.NET Core `UseExceptionHandler`, `UseDeveloperExceptionPage`, `UseStatusCodePages` |
 | 2018 | `[ApiController]` automatic 400 ProblemDetails (Core 2.1) |
@@ -76,14 +76,14 @@ public async Task<Report> LoadReportAsync(string path, CancellationToken ct)
     {
         throw new ReportNotFoundException(path, ex);                    // wrap with context, keep inner exception
     }
-    catch (JsonException ex) when (ex.LineNumber is not null)           // exception filter — no unwinding if false
+    catch (JsonException ex) when (ex.LineNumber is not null)           // exception filter: no unwinding if false
     {
         logger.LogWarning(ex, "Bad report format at line {Line}", ex.LineNumber);
         throw;                                                          // rethrow, keeps original stack trace
     }
     catch (OperationCanceledException) when (ct.IsCancellationRequested)
     {
-        throw;                                                          // cancellation is not an error — let it flow
+        throw;                                                          // cancellation is not an error: let it flow
     }
     finally
     {
@@ -184,15 +184,15 @@ var all = Task.WhenAll(tasks);
 try { await all; }
 catch { foreach (var ex in all.Exception!.InnerExceptions) logger.LogError(ex, "Task failed"); }
 
-// .Wait() / .Result wrap in AggregateException (and can deadlock) — avoid
+// .Wait() / .Result wrap in AggregateException (and can deadlock): avoid
 // Parallel.ForEach collects exceptions into AggregateException
 try { Parallel.ForEach(items, Process); }
 catch (AggregateException ae) { ae.Handle(ex => ex is InvalidDataException); }   // handle some, rethrow the rest
 
-// async void: exceptions crash the process (can't be awaited/caught) — only for event handlers
+// async void: exceptions crash the process (can't be awaited/caught), only for event handlers
 ```
 
-**Background services** — an unhandled exception in `ExecuteAsync` stops the host by default (.NET 6+, `BackgroundServiceExceptionBehavior.StopHost`). Wrap each iteration:
+**Background services**: an unhandled exception in `ExecuteAsync` stops the host by default (.NET 6+, `BackgroundServiceExceptionBehavior.StopHost`). Wrap each iteration:
 
 ```csharp
 protected override async Task ExecuteAsync(CancellationToken ct)
@@ -224,7 +224,7 @@ TaskScheduler.UnobservedTaskException += (s, e) => { Log.Error(e.Exception, "Uno
 |---|---|
 | Code | `try/catch` in event handlers |
 | Page | `Page_Error` → `Server.GetLastError()`, `Server.ClearError()` |
-| Application | `Application_Error` in Global.asax — log everything unhandled |
+| Application | `Application_Error` in Global.asax: log everything unhandled |
 | Configuration | `<customErrors mode="On|RemoteOnly" defaultRedirect="~/Error.aspx">` + `<httpErrors>` in IIS |
 | Tools | ELMAH (logs + viewer at `/elmah.axd`), log4net/NLog |
 
@@ -252,15 +252,15 @@ public class ApiExceptionHandler : ExceptionHandler           // Web API 2
 config.Services.Replace(typeof(IExceptionHandler), new ApiExceptionHandler());
 ```
 
-## Lesson: [Intermediate|High] ASP.NET Core — every way to handle exceptions
+## Lesson: [Intermediate|High] ASP.NET Core: every way to handle exceptions
 
-**1. Developer exception page** (development only — shows stack traces):
+**1. Developer exception page** (development only: shows stack traces):
 
 ```csharp
 if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();   // on by default in Development with WebApplication
 ```
 
-**2. Exception handler middleware + `IExceptionHandler` (.NET 8+) — the recommended global handler:**
+**2. Exception handler middleware + `IExceptionHandler` (.NET 8+): the recommended global handler:**
 
 ```csharp
 builder.Services.AddProblemDetails(o =>
@@ -324,7 +324,7 @@ public sealed class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorH
 app.UseMiddleware<ErrorHandlingMiddleware>();                          // register FIRST so it wraps everything
 ```
 
-**4. MVC exception filters** — only for exceptions thrown inside controllers/actions/filters (not middleware, not routing):
+**4. MVC exception filters**: only for exceptions thrown inside controllers/actions/filters (not middleware, not routing):
 
 ```csharp
 public sealed class DomainExceptionFilter : IExceptionFilter
@@ -341,9 +341,9 @@ public sealed class DomainExceptionFilter : IExceptionFilter
 builder.Services.AddControllers(o => o.Filters.Add<DomainExceptionFilter>());
 ```
 
-**5. Validation errors** — `[ApiController]` automatically returns **400 ValidationProblemDetails** when model binding/validation fails; customise with `ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = ...)`.
+**5. Validation errors**: `[ApiController]` automatically returns **400 ValidationProblemDetails** when model binding/validation fails; customise with `ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = ...)`.
 
-**6. Status code pages for non-exception errors** — `UseStatusCodePagesWithReExecute("/Error/{0}")` renders a friendly page for 404/403 in MVC apps.
+**6. Status code pages for non-exception errors**: `UseStatusCodePagesWithReExecute("/Error/{0}")` renders a friendly page for 404/403 in MVC apps.
 
 | Mechanism | Catches | Best for |
 |---|---|---|
@@ -356,7 +356,7 @@ builder.Services.AddControllers(o => o.Filters.Add<DomainExceptionFilter>());
 
 ## Lesson: [Intermediate|Medium] Blazor, MAUI/WPF/WinForms and console apps
 
-- **Blazor:** `<ErrorBoundary>` around components shows fallback UI when a child component throws; unhandled errors in Blazor Server break the circuit — show the `#blazor-error-ui` and log on the server.
+- **Blazor:** `<ErrorBoundary>` around components shows fallback UI when a child component throws; unhandled errors in Blazor Server break the circuit, show the `#blazor-error-ui` and log on the server.
 
 ```razor
 <ErrorBoundary>
@@ -373,7 +373,7 @@ builder.Services.AddControllers(o => o.Filters.Add<DomainExceptionFilter>());
 
 ## Lesson: [Intermediate|High] Handling SQL, HTTP and transient errors (retries with Polly)
 
-**SQL Server errors** — inspect `SqlException.Number`:
+**SQL Server errors**: inspect `SqlException.Number`:
 
 | Number | Meaning | Handling |
 |---|---|---|
@@ -381,7 +381,7 @@ builder.Services.AddControllers(o => o.Filters.Add<DomainExceptionFilter>());
 | 547 | Foreign key / check constraint violation | 400/409 with a clear message |
 | 1205 | Deadlock victim | Retry the transaction |
 | -2 | Timeout | Retry carefully / optimise query |
-| 4060, 18456 | Can't open database / login failed | Configuration problem — alert |
+| 4060, 18456 | Can't open database / login failed | Configuration problem: alert |
 | 40613, 40501, 40197 (Azure SQL) | Transient service errors | Retry with backoff (`EnableRetryOnFailure` in EF Core) |
 
 ```csharp
@@ -395,7 +395,7 @@ catch (DbUpdateException ex) when (ex.InnerException is SqlException { Number: 2
 options.UseSqlServer(cs, sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null));
 ```
 
-**HTTP calls** — `HttpRequestException` (network/DNS/connection), non-success status codes (`EnsureSuccessStatusCode()` throws), `TaskCanceledException` (timeout). Use resilience pipelines:
+**HTTP calls**: `HttpRequestException` (network/DNS/connection), non-success status codes (`EnsureSuccessStatusCode()` throws), `TaskCanceledException` (timeout). Use resilience pipelines:
 
 ```csharp
 builder.Services.AddHttpClient<PaymentClient>(c => c.BaseAddress = new("https://pay.example.com"))
@@ -409,7 +409,7 @@ Retry only **transient** and **idempotent** operations; never retry a payment PO
 **Principles for what users see:**
 
 - Clear, polite message + what to do next ("We couldn't save your order. Please try again in a minute.").
-- A **reference/correlation id** the user can quote to support — the same id is in the logs.
+- A **reference/correlation id** the user can quote to support: the same id is in the logs.
 - **No** stack traces, SQL, server names or file paths (information disclosure).
 - Correct HTTP status codes (404 page returns 404, not 200).
 - Stable **error codes** for APIs (`"errorCode": "credit_limit_exceeded"`) so clients can react without parsing text; localise messages on the client.
@@ -458,7 +458,7 @@ Validate early with guard clauses; catch only specific exceptions you can handle
 
 ## [Beginner|High] What does finally do? When doesn't it run?
 
-`finally` runs after the try (and any catch) whether an exception occurred or not — for cleanup. It doesn't run if the process is killed, on `Environment.FailFast`, on a StackOverflowException, or if the thread hangs inside try. `using` statements compile to try/finally.
+`finally` runs after the try (and any catch) whether an exception occurred or not: for cleanup. It doesn't run if the process is killed, on `Environment.FailFast`, on a StackOverflowException, or if the thread hangs inside try. `using` statements compile to try/finally.
 
 ## [Beginner|High] How do you create a custom exception?
 
@@ -466,27 +466,27 @@ Derive from `Exception` (or your own base like `AppException`), name it `...Exce
 
 ## [Intermediate|High] How do you implement global exception handling in ASP.NET Core?
 
-Use `UseExceptionHandler()` with `AddProblemDetails()` and one or more `IExceptionHandler` implementations (.NET 8+) — or custom middleware registered first in older versions — to log the exception with a trace id and map exception types to status codes (404, 409, 422, 500) with ProblemDetails bodies. Add `UseStatusCodePages` for empty error responses, exception filters for MVC-specific mapping, and the developer exception page only in development.
+Use `UseExceptionHandler()` with `AddProblemDetails()` and one or more `IExceptionHandler` implementations (.NET 8+), or custom middleware registered first in older versions: to log the exception with a trace id and map exception types to status codes (404, 409, 422, 500) with ProblemDetails bodies. Add `UseStatusCodePages` for empty error responses, exception filters for MVC-specific mapping, and the developer exception page only in development.
 
-## [Intermediate|High] Middleware vs exception filter for handling exceptions — which and why?
+## [Intermediate|High] Middleware vs exception filter for handling exceptions: which and why?
 
-Exception middleware/handler wraps the whole pipeline, so it catches errors from routing, other middleware, controllers, minimal APIs and views — the right place for global logging and response shaping. Exception filters only see exceptions from MVC actions and filters but have access to MVC context (action, model state) — useful for controller-specific mapping. Typically: a global handler plus optional filters.
+Exception middleware/handler wraps the whole pipeline, so it catches errors from routing, other middleware, controllers, minimal APIs and views: the right place for global logging and response shaping. Exception filters only see exceptions from MVC actions and filters but have access to MVC context (action, model state), useful for controller-specific mapping. Typically: a global handler plus optional filters.
 
 ## [Intermediate|High] How are errors handled in ASP.NET MVC 5 and Web Forms?
 
 Web Forms: try/catch → `Page_Error` → `Application_Error` in Global.asax → `customErrors`/`httpErrors` in web.config (ELMAH or log frameworks for logging). MVC 5: try/catch → controller `OnException` → `[HandleError]`/custom `IExceptionFilter` (global in FilterConfig) → `Application_Error` (for routing/404 and non-MVC errors) → customErrors/httpErrors. Web API 2 adds `IExceptionHandler`/`IExceptionLogger`.
 
-## [Intermediate|High] Exceptions or Result objects — when to use which?
+## [Intermediate|High] Exceptions or Result objects: when to use which?
 
-Use exceptions for unexpected or exceptional conditions (bugs, infrastructure down, broken invariants) — they bubble to a global handler. Use Result objects for expected outcomes that callers must handle (validation failed, not found in a lookup, business rule rejected) — explicit in the signature and cheaper. Mixing them consistently (documented in the team) is common.
+Use exceptions for unexpected or exceptional conditions (bugs, infrastructure down, broken invariants): they bubble to a global handler. Use Result objects for expected outcomes that callers must handle (validation failed, not found in a lookup, business rule rejected), explicit in the signature and cheaper. Mixing them consistently (documented in the team) is common.
 
 ## [Intermediate|Medium] How do exceptions behave with async/await and Task.WhenAll?
 
-`await` unwraps and rethrows the task's exception directly (the first one). `Task.WhenAll` faults with all exceptions in `AggregateException`, but `await` rethrows only the first — inspect `task.Exception.InnerExceptions` for all. `.Result`/`.Wait()` wrap in `AggregateException` and risk deadlocks. `async void` exceptions can't be caught by callers and crash the process.
+`await` unwraps and rethrows the task's exception directly (the first one). `Task.WhenAll` faults with all exceptions in `AggregateException`, but `await` rethrows only the first: inspect `task.Exception.InnerExceptions` for all. `.Result`/`.Wait()` wrap in `AggregateException` and risk deadlocks. `async void` exceptions can't be caught by callers and crash the process.
 
 ## [Intermediate|Medium] What is ProblemDetails?
 
-A standard JSON format (RFC 9457, previously 7807) for HTTP API errors with `type`, `title`, `status`, `detail`, `instance` and extension fields (e.g. `traceId`, `errorCode`, validation `errors`). ASP.NET Core produces it for validation errors (`[ApiController]`) and, with `AddProblemDetails`, for exceptions and status codes — clients get one consistent error shape.
+A standard JSON format (RFC 9457, previously 7807) for HTTP API errors with `type`, `title`, `status`, `detail`, `instance` and extension fields (e.g. `traceId`, `errorCode`, validation `errors`). ASP.NET Core produces it for validation errors (`[ApiController]`) and, with `AddProblemDetails`, for exceptions and status codes: clients get one consistent error shape.
 
 ## [Intermediate|Medium] How do you handle a unique-key violation from SQL Server?
 
@@ -498,7 +498,7 @@ An unhandled exception on a thread (not a Task) terminates the process after rai
 
 ## [Advanced|Medium] Why should you not catch System.Exception everywhere?
 
-It hides bugs and unexpected states, makes the program continue with corrupted data, catches exceptions you can't handle (OutOfMemory, cancellation) and duplicates logging. Catch `Exception` only at boundaries — global handlers, top of background loops, plug-in hosts — where you log and fail safely.
+It hides bugs and unexpected states, makes the program continue with corrupted data, catches exceptions you can't handle (OutOfMemory, cancellation) and duplicates logging. Catch `Exception` only at boundaries: global handlers, top of background loops, plug-in hosts, where you log and fail safely.
 
 ## [Scenario|High] Users see a yellow error page with SQL details in production. What do you change?
 
@@ -506,11 +506,11 @@ Turn on custom errors (`customErrors mode="On"`/`RemoteOnly` and IIS `httpErrors
 
 ## [Scenario|High] An API returns 500 for "customer not found" and "invalid quantity". How do you improve it?
 
-Distinguish expected failures from bugs: validate input (400 via `[ApiController]`/FluentValidation), throw or return a NotFound result (404), map business rule violations to 409/422 with error codes — all through a global `IExceptionHandler` producing ProblemDetails. Keep 500 for real unexpected errors only, which then become meaningful alerts.
+Distinguish expected failures from bugs: validate input (400 via `[ApiController]`/FluentValidation), throw or return a NotFound result (404), map business rule violations to 409/422 with error codes, all through a global `IExceptionHandler` producing ProblemDetails. Keep 500 for real unexpected errors only, which then become meaningful alerts.
 
 ## [Scenario|Medium] Intermittent "deadlock victim" errors appear under load. How do you handle them in code?
 
-They are SQL error 1205 — transient by nature. Retry the whole transaction a few times with backoff (EF Core execution strategy / Polly), keeping the operation idempotent. In parallel fix the cause: consistent access order of tables, shorter transactions, proper indexes, RCSI isolation to reduce reader/writer blocking.
+They are SQL error 1205: transient by nature. Retry the whole transaction a few times with backoff (EF Core execution strategy / Polly), keeping the operation idempotent. In parallel fix the cause: consistent access order of tables, shorter transactions, proper indexes, RCSI isolation to reduce reader/writer blocking.
 
 # Cheatsheet
 

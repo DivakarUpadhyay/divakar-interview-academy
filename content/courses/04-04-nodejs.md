@@ -1,6 +1,6 @@
 ---
 slug: nodejs
-title: Node.js — Runtime Internals, Express, APIs and SQL Server
+title: Node.js: Runtime Internals, Express, APIs and SQL Server
 track: frontend
 order: 4
 group: Node.js
@@ -11,7 +11,7 @@ summary: What Node.js is and how it works inside (V8, libuv, the event loop phas
 
 # Overview
 
-**Node.js** is a JavaScript **runtime** that runs JavaScript outside the browser — on servers, build tools and CLIs. It uses Google's **V8** engine to execute JavaScript and **libuv** to provide non-blocking I/O through an **event loop**, so one process can handle thousands of concurrent connections with a single main thread.
+**Node.js** is a JavaScript **runtime** that runs JavaScript outside the browser: on servers, build tools and CLIs. It uses Google's **V8** engine to execute JavaScript and **libuv** to provide non-blocking I/O through an **event loop**, so one process can handle thousands of concurrent connections with a single main thread.
 
 | Used for | Examples |
 |---|---|
@@ -82,13 +82,13 @@ Between every callback: process.nextTick queue, then the Promise microtask queue
 
 # Module: Node.js Fundamentals
 
-## Lesson: [Basic|High] What Node.js is — V8, libuv and the single-threaded event loop
+## Lesson: [Basic|High] What Node.js is: V8, libuv and the single-threaded event loop
 
 ```text
 Your JavaScript
      │
 ┌────▼─────────────── Node.js ────────────────────────────┐
-│ Core modules (fs, http, crypto, stream …) — JS + C++ bindings │
+│ Core modules (fs, http, crypto, stream …): JS + C++ bindings │
 ├───────────────┬──────────────────────────────────────────┤
 │ V8            │ libuv                                     │
 │ JS engine:    │ event loop, non-blocking network I/O,      │
@@ -98,9 +98,9 @@ Your JavaScript
                  Operating system (epoll / kqueue / IOCP)
 ```
 
-- **Single-threaded** for your JavaScript: only one callback runs at a time — no locks needed for shared variables.
+- **Single-threaded** for your JavaScript: only one callback runs at a time, no locks needed for shared variables.
 - **Non-blocking I/O:** waiting for the network/disk doesn't block the thread; Node continues with other work.
-- Great for **I/O-bound** work (APIs, proxies, real-time). **CPU-bound** work (image processing, big JSON parsing, heavy loops) blocks the event loop for everyone — move it to **worker threads**, a separate service, or a queue.
+- Great for **I/O-bound** work (APIs, proxies, real-time). **CPU-bound** work (image processing, big JSON parsing, heavy loops) blocks the event loop for everyone: move it to **worker threads**, a separate service, or a queue.
 
 ```js
 // Blocking vs non-blocking
@@ -110,7 +110,7 @@ fs.readFile('big.log', (err, d) => { /* … */ });  // ✅ callback when done; l
 const text = await fs.promises.readFile('big.log', 'utf8');   // ✅ promise version
 ```
 
-## Lesson: [Basic|High] Modules — CommonJS vs ES modules, npm and package.json
+## Lesson: [Basic|High] Modules: CommonJS vs ES modules, npm and package.json
 
 ```js
 // CommonJS (default for .js unless "type": "module")
@@ -151,10 +151,10 @@ export default add;
 
 - **dependencies** ship to production; **devDependencies** only for development/build.
 - **Semantic versioning:** `^5.1.0` allows 5.x.x updates, `~5.1.0` allows 5.1.x, exact `5.1.0` pins.
-- **package-lock.json** records exact installed versions — commit it; use `npm ci` in CI for reproducible installs.
+- **package-lock.json** records exact installed versions: commit it; use `npm ci` in CI for reproducible installs.
 - `npm audit` checks known vulnerabilities; `npm outdated` shows updates.
 
-## Lesson: [Basic|High] Core modules — fs, path, http, events, buffer and process
+## Lesson: [Basic|High] Core modules: fs, path, http, events, buffer and process
 
 ```js
 import http from 'node:http';
@@ -171,7 +171,7 @@ const server = http.createServer((req, res) => {
 });
 server.listen(process.env.PORT ?? 3000, () => console.log('listening'));
 
-// EventEmitter — the pattern behind streams, servers and sockets
+// EventEmitter: the pattern behind streams, servers and sockets
 class OrderEvents extends EventEmitter {}
 const events = new OrderEvents();
 events.on('placed', (order) => console.log('send email for', order.id));
@@ -182,12 +182,12 @@ const file = path.join(import.meta.dirname, 'data', 'orders.json');
 console.log(process.env.NODE_ENV, process.argv, process.memoryUsage().heapUsed);
 process.on('SIGTERM', () => server.close(() => process.exit(0)));   // graceful shutdown
 
-// Buffer — raw binary data
+// Buffer: raw binary data
 const buf = Buffer.from('₹100', 'utf8');
 console.log(buf.length, buf.toString('base64'));
 ```
 
-## Lesson: [Intermediate|High] Asynchronous JavaScript in Node — callbacks, promises, async/await and the microtask queue
+## Lesson: [Intermediate|High] Asynchronous JavaScript in Node: callbacks, promises, async/await and the microtask queue
 
 ```js
 // 1. Callbacks (error-first convention)
@@ -196,7 +196,7 @@ fs.readFile('a.txt', 'utf8', (err, text) => { if (err) return console.error(err)
 // 2. Promises
 fs.promises.readFile('a.txt', 'utf8').then(console.log).catch(console.error);
 
-// 3. async/await — cleanest
+// 3. async/await: cleanest
 async function loadAll() {
   try {
     const [a, b] = await Promise.all([readFile('a.txt', 'utf8'), readFile('b.txt', 'utf8')]);   // in parallel
@@ -207,7 +207,7 @@ async function loadAll() {
   }
 }
 
-// Execution order puzzle — a classic interview question
+// Execution order puzzle: a classic interview question
 console.log('1 sync');
 setTimeout(() => console.log('5 timeout'), 0);
 setImmediate(() => console.log('6 immediate'));
@@ -224,11 +224,11 @@ console.log('2 sync');
 | `setTimeout(fn, 0)` | Timers phase of the next loop iteration (≥ ~1 ms) |
 | `setImmediate` | Check phase (after poll) |
 
-Unhandled promise rejections **crash** the process (default since Node 15) — always `await` or `.catch`, and add `process.on('unhandledRejection', …)` logging.
+Unhandled promise rejections **crash** the process (default since Node 15): always `await` or `.catch`, and add `process.on('unhandledRejection', …)` logging.
 
-## Lesson: [Intermediate|High] Streams and buffers — processing large data
+## Lesson: [Intermediate|High] Streams and buffers: processing large data
 
-Streams process data piece by piece — constant memory regardless of file size.
+Streams process data piece by piece: constant memory regardless of file size.
 
 | Type | Example |
 |---|---|
@@ -255,7 +255,7 @@ app.get('/export', (req, res) => {
 
 # Module: Building APIs
 
-## Lesson: [Basic|High] Express.js — routing, middleware and error handling
+## Lesson: [Basic|High] Express.js: routing, middleware and error handling
 
 ```js
 import express from 'express';
@@ -298,7 +298,7 @@ app.listen(3000);
 
 - Middleware runs **in registration order**; each calls `next()` or ends the response.
 - **Express 5** (stable 2024) forwards rejected promises from async handlers to the error middleware automatically (Express 4 needed `try/catch` or `express-async-errors`).
-- Validate input (zod/Joi/express-validator) — never trust `req.body`.
+- Validate input (zod/Joi/express-validator): never trust `req.body`.
 
 ## Lesson: [Basic|High] Node.js / Express project folder structure (with sample files)
 
@@ -401,7 +401,7 @@ import { poolPromise, sql } from '../../db/pool.js';
 export async function findById(id) {
   const pool = await poolPromise;
   const result = await pool.request()
-    .input('id', sql.Int, id)                    // parameterised — prevents SQL injection
+    .input('id', sql.Int, id)                    // parameterised: prevents SQL injection
     .query('SELECT Id, Name, Price FROM dbo.Products WHERE Id = @id');
   return result.recordset[0] ?? null;
 }
@@ -498,14 +498,14 @@ router.delete('/:id', requireAuth, requireRole('Admin'), controller.remove);
 
 # Module: Performance and Production
 
-## Lesson: [Advanced|High] Scaling Node — cluster, worker threads, child processes and PM2
+## Lesson: [Advanced|High] Scaling Node: cluster, worker threads, child processes and PM2
 
 | Tool | Use |
 |---|---|
-| **cluster** module / PM2 cluster mode | Run one Node process per CPU core sharing the port — scale an API on one machine |
+| **cluster** module / PM2 cluster mode | Run one Node process per CPU core sharing the port: scale an API on one machine |
 | **worker_threads** | Run CPU-heavy JavaScript in parallel threads (separate V8 isolates) without blocking the event loop |
 | **child_process** (`spawn`, `exec`, `fork`) | Run other programs/scripts as separate processes |
-| Horizontal scaling | Many containers behind a load balancer (Kubernetes, App Service, ECS) — keep the app stateless |
+| Horizontal scaling | Many containers behind a load balancer (Kubernetes, App Service, ECS): keep the app stateless |
 
 ```js
 // CPU-heavy work in a worker thread
@@ -523,12 +523,12 @@ pm2 start src/server.js -i max --name shop-api    # cluster mode, one process pe
 pm2 logs; pm2 reload shop-api                      # zero-downtime reload
 ```
 
-**Performance tips:** never block the event loop (sync fs/crypto in request paths, huge JSON.stringify), use streams for big data, connection pooling, caching (Redis), compression, `UV_THREADPOOL_SIZE` for heavy fs/crypto, measure with `clinic doctor`/`--prof`, watch event-loop lag and heap usage, avoid memory leaks (global caches, listeners never removed — `MaxListenersExceededWarning`).
+**Performance tips:** never block the event loop (sync fs/crypto in request paths, huge JSON.stringify), use streams for big data, connection pooling, caching (Redis), compression, `UV_THREADPOOL_SIZE` for heavy fs/crypto, measure with `clinic doctor`/`--prof`, watch event-loop lag and heap usage, avoid memory leaks (global caches, listeners never removed, `MaxListenersExceededWarning`).
 
 ## Lesson: [Intermediate|Medium] Testing, logging and deploying Node.js apps
 
 ```js
-// tests/products.test.js — node:test + supertest
+// tests/products.test.js: node:test + supertest
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';
@@ -558,7 +558,7 @@ Deploy targets: Docker on any cloud, Azure App Service (Linux, Node runtime), AW
 
 ## [Beginner|High] What is Node.js and why is it fast for I/O-heavy apps?
 
-A JavaScript runtime built on Chrome's V8 engine and libuv. It runs your JavaScript on a single main thread with an event loop and performs I/O (network, disk) asynchronously, so while one request waits for the database the thread serves other requests. Without thread-per-request overhead it handles many concurrent connections efficiently — ideal for APIs, proxies and real-time apps.
+A JavaScript runtime built on Chrome's V8 engine and libuv. It runs your JavaScript on a single main thread with an event loop and performs I/O (network, disk) asynchronously, so while one request waits for the database the thread serves other requests. Without thread-per-request overhead it handles many concurrent connections efficiently: ideal for APIs, proxies and real-time apps.
 
 ## [Beginner|High] Explain the event loop in Node.js.
 
@@ -570,7 +570,7 @@ Your JavaScript runs on one main thread, but Node itself is not: libuv uses a th
 
 ## [Beginner|High] What is the difference between CommonJS and ES modules?
 
-CommonJS uses `require()`/`module.exports`, loads synchronously at runtime and was Node's original system. ES modules use `import`/`export`, are statically analysable (tree-shaking), support top-level await and are the JavaScript standard — enabled with `.mjs` or `"type": "module"`. Modern Node supports both and recent versions can `require()` ES modules.
+CommonJS uses `require()`/`module.exports`, loads synchronously at runtime and was Node's original system. ES modules use `import`/`export`, are statically analysable (tree-shaking), support top-level await and are the JavaScript standard: enabled with `.mjs` or `"type": "module"`. Modern Node supports both and recent versions can `require()` ES modules.
 
 ## [Beginner|High] What is middleware in Express?
 
@@ -594,11 +594,11 @@ Use the `mssql` package (tedious driver): create one `ConnectionPool` at startup
 
 ## [Intermediate|High] What are streams and why are they useful?
 
-Objects for reading or writing data in chunks (Readable, Writable, Duplex, Transform). They keep memory constant for large files or responses, start delivering data before everything is loaded, and handle backpressure. Use `stream.pipeline` to connect streams with proper error handling — e.g. read a CSV, gzip it, write it to the HTTP response.
+Objects for reading or writing data in chunks (Readable, Writable, Duplex, Transform). They keep memory constant for large files or responses, start delivering data before everything is loaded, and handle backpressure. Use `stream.pipeline` to connect streams with proper error handling: e.g. read a CSV, gzip it, write it to the HTTP response.
 
 ## [Intermediate|Medium] What is the cluster module and how is it different from worker threads?
 
-Cluster forks multiple Node processes (one per core) that share the same server port, each with its own event loop and memory — scaling a stateless HTTP server on one machine (PM2 does this). Worker threads run JavaScript in parallel threads inside one process (separate V8 isolates, can share memory via SharedArrayBuffer) — for CPU-heavy tasks without blocking the main event loop.
+Cluster forks multiple Node processes (one per core) that share the same server port, each with its own event loop and memory: scaling a stateless HTTP server on one machine (PM2 does this). Worker threads run JavaScript in parallel threads inside one process (separate V8 isolates, can share memory via SharedArrayBuffer), for CPU-heavy tasks without blocking the main event loop.
 
 ## [Intermediate|Medium] How do you secure an Express API?
 
@@ -612,9 +612,9 @@ Long synchronous operations: big loops, synchronous fs/crypto (`readFileSync`, `
 
 Objects kept reachable: growing global arrays/maps used as caches without limits, event listeners added per request and never removed, closures capturing large data, timers not cleared, unclosed DB connections. Find them by watching heap usage over time, taking heap snapshots (`--inspect` + Chrome DevTools, `heapdump`) and comparing retained objects; fix by bounding caches (LRU), removing listeners and cleaning up timers.
 
-## [Advanced|Medium] Node.js vs ASP.NET Core — when would you choose each?
+## [Advanced|Medium] Node.js vs ASP.NET Core: when would you choose each?
 
-Node.js: JavaScript/TypeScript across front and back end, huge npm ecosystem, great for I/O-heavy APIs, real-time apps, BFFs and serverless functions, fast prototyping. ASP.NET Core: strong typing and tooling by default, true multithreading for CPU-heavy work, rich built-in framework (DI, auth, EF Core), excellent performance and long-term support — common in enterprises with SQL Server/Azure. Choose based on team skills, workload and ecosystem.
+Node.js: JavaScript/TypeScript across front and back end, huge npm ecosystem, great for I/O-heavy APIs, real-time apps, BFFs and serverless functions, fast prototyping. ASP.NET Core: strong typing and tooling by default, true multithreading for CPU-heavy work, rich built-in framework (DI, auth, EF Core), excellent performance and long-term support, common in enterprises with SQL Server/Azure. Choose based on team skills, workload and ecosystem.
 
 ## [Scenario|High] Your Node API becomes very slow when a user uploads a large CSV for import. What's wrong and how do you fix it?
 

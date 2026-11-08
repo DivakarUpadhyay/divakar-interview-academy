@@ -470,3 +470,12 @@ h2.home-title { font-size: 1.6rem; margin-top: 22px; }
   .admin-dash table { font-size: .85rem; }
   .admin-dash th, .admin-dash td { padding: 6px 8px; }
 }
+
+/* Layout stability: the content area always fills the screen, so the footer never jumps up under the header while
+   the next page is loading after a menu click. */
+main.container { min-height: calc(100vh - 120px); min-height: calc(100svh - 120px); }
+
+/* Equal left and right margins: content stays centred at a readable width on wide screens (industry-standard ~1440px),
+   and single-column pages are centred in that space instead of hugging the left edge. */
+.container { max-width: 1440px; }
+.policy, .narrow, .tool-page { margin-left: auto; margin-right: auto; }

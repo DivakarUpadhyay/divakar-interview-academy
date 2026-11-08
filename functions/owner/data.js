@@ -53,13 +53,13 @@ function recommend({ days, countries, referrers, pages }) {
 
   if (avg < 100) tips.push("Traffic is still very low: publish one new dev.to post every day and add 3–5 new lessons or tool pages a week.");
   else if (avg < 1000) tips.push("Traffic is growing: keep daily dev.to posts and add pages that answer specific searches (error messages, 'X vs Y').");
-  if (prev7.length && avg > prevAvg * 1.2) tips.push(`Page views are up ${Math.round((avg / Math.max(prevAvg, 1) - 1) * 100)}% on last week — repeat whatever you posted last week.`);
-  if (prev7.length && avg < prevAvg * 0.8) tips.push("Page views dropped more than 20% on last week — check Search Console for indexing problems and keep posting.");
-  if (search === 0) tips.push("No visitors from Google or Bing yet — normal for a new site; check Search Console → Pages to see how many pages are indexed.");
-  if (devto === 0) tips.push("No visitors from dev.to yet — reply to comments on your posts and add a 'Read the full lesson' link near the top.");
-  if (usEu / total < 0.3) tips.push("Under 30% of views come from the US/Europe, where ads pay most — post on dev.to at 13:00 UTC and write .NET/Azure topics popular there.");
+  if (prev7.length && avg > prevAvg * 1.2) tips.push(`Page views are up ${Math.round((avg / Math.max(prevAvg, 1) - 1) * 100)}% on last week: repeat whatever you posted last week.`);
+  if (prev7.length && avg < prevAvg * 0.8) tips.push("Page views dropped more than 20% on last week: check Search Console for indexing problems and keep posting.");
+  if (search === 0) tips.push("No visitors from Google or Bing yet: normal for a new site; check Search Console → Pages to see how many pages are indexed.");
+  if (devto === 0) tips.push("No visitors from dev.to yet: reply to comments on your posts and add a 'Read the full lesson' link near the top.");
+  if (usEu / total < 0.3) tips.push("Under 30% of views come from the US/Europe, where ads pay most: post on dev.to at 13:00 UTC and write .NET/Azure topics popular there.");
   const top = pages[0]?.path;
-  if (top && top !== "/") tips.push(`Most-read page is ${top} — write 2–3 related lessons and link them from it.`);
+  if (top && top !== "/") tips.push(`Most-read page is ${top}: write 2–3 related lessons and link them from it.`);
   tips.push("Once AdSense approves the site, publish the European consent message and update the AdSense status on the dashboard.");
   return tips.slice(0, 6);
 }
@@ -105,7 +105,7 @@ export async function onRequestGet({ env, request }) {
   const tips = recommend(data);
   for (const [k, name] of [["lcp", "LCP (loading)"], ["inp", "INP (responsiveness)"], ["cls", "CLS (layout shift)"]]) {
     const v = vitals?.[k];
-    if (v && v.good < 0.9) tips.unshift(`Speed alert: only ${Math.round(v.good * 100)}% of real visits have good ${name} (target 90%+) — run npm run vitals and fix before it hurts ranking.`);
+    if (v && v.good < 0.9) tips.unshift(`Speed alert: only ${Math.round(v.good * 100)}% of real visits have good ${name} (target 90%+), run npm run vitals and fix before it hurts ranking.`);
   }
   return json({ ...data, vitals, tips: tips.slice(0, 7) });
 }

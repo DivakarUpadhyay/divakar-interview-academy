@@ -6,7 +6,7 @@ const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 export default function RegexTester() {
   const [pattern, setPattern] = useState(String.raw`(\w+)@(\w+)\.com`);
   const [flags, setFlags] = useState("gi");
-  const [text, setText] = useState("Contact sales@devladder.com or support@example.com — not admin@site.org.");
+  const [text, setText] = useState("Contact sales@devladder.com or support@example.com, not admin@site.org.");
   const [replace, setReplace] = useState("$1 at $2");
 
   const result = useMemo(() => {
@@ -52,7 +52,7 @@ export default function RegexTester() {
           <thead><tr><th>#</th><th>Match</th><th>Index</th>{result.matches[0].length > 1 && <th>Groups</th>}</tr></thead>
           <tbody>{result.matches.slice(0, 50).map((m, i) => (
             <tr key={i}><td>{i + 1}</td><td><code>{m[0]}</code></td><td>{m.index}</td>
-              {m.length > 1 && <td>{m.slice(1).map((g, j) => <span key={j}><code>${j + 1}</code> {g ?? "—"} </span>)}</td>}</tr>
+              {m.length > 1 && <td>{m.slice(1).map((g, j) => <span key={j}><code>${j + 1}</code> {g ?? "-"} </span>)}</td>}</tr>
           ))}</tbody>
         </table></div>
       )}

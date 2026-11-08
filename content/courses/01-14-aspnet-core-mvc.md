@@ -13,11 +13,11 @@ summary: The MVC pattern, request lifecycle, routing, controllers, model binding
 
 **ASP.NET Core MVC** is a framework for building server-rendered web apps using the **Model–View–Controller** pattern on top of the ASP.NET Core pipeline.
 
-- **Model** — data and business rules (entities, view models, validation).
-- **View** — the UI, written in **Razor** (`.cshtml` — HTML + C#).
-- **Controller** — handles the request, calls services, picks a view or result.
+- **Model**: data and business rules (entities, view models, validation).
+- **View**: the UI, written in **Razor** (`.cshtml`: HTML + C#).
+- **Controller**: handles the request, calls services, picks a view or result.
 
-The same framework also offers **Razor Pages** (page-focused: each `.cshtml` has a `PageModel`), **Web API** controllers (JSON, no views — next course) and **Blazor** (component-based UI in C#).
+The same framework also offers **Razor Pages** (page-focused: each `.cshtml` has a `PageModel`), **Web API** controllers (JSON, no views, next course) and **Blazor** (component-based UI in C#).
 
 Interview focus areas: request lifecycle, routing, model binding/validation, filters, `ViewData`/`ViewBag`/`TempData`, partial views vs view components, tag helpers, authentication/authorisation, antiforgery.
 
@@ -43,11 +43,11 @@ Interview focus areas: request lifecycle, routing, model binding/validation, fil
 1. **Request arrives** at Kestrel (possibly via IIS/Nginx).
 2. **Middleware pipeline** runs in registration order: exception handler → HSTS/HTTPS redirection → static files → **routing** → CORS → **authentication** → **authorization** → session → endpoints.
 3. **Endpoint routing** matches the URL to a controller action (conventional or attribute routes).
-4. **Controller creation** — the controller factory creates the controller via DI.
+4. **Controller creation**: the controller factory creates the controller via DI.
 5. **Filter pipeline** begins: **authorization filters** → **resource filters** (before) → **model binding** → **model validation** → **action filters** (OnActionExecuting).
 6. **Action method executes** and returns an `IActionResult` (`View()`, `RedirectToAction()`, `Json()`, ...).
 7. **Action filters** (OnActionExecuted) → **result filters** (OnResultExecuting).
-8. **Result execution** — for `ViewResult`, the **view engine** finds the `.cshtml`, runs `_ViewStart`, layout, view, partials/view components, and writes HTML.
+8. **Result execution**: for `ViewResult`, the **view engine** finds the `.cshtml`, runs `_ViewStart`, layout, view, partials/view components, and writes HTML.
 9. **Result filters** (OnResultExecuted) → resource filters (after).
 10. **Exception filters** handle unhandled exceptions from controller/action stages.
 11. Response flows back out through middleware to the client.
@@ -56,16 +56,16 @@ Interview focus areas: request lifecycle, routing, model binding/validation, fil
 
 # Tools
 
-- **Visual Studio** — MVC templates, scaffolding (controllers + views from a model), Razor IntelliSense, Browser Link, Hot Reload.
+- **Visual Studio**: MVC templates, scaffolding (controllers + views from a model), Razor IntelliSense, Browser Link, Hot Reload.
 - **`dotnet new mvc`**, **`dotnet new webapp`** (Razor Pages), `dotnet aspnet-codegenerator` (scaffolding CLI).
-- **LibMan / npm** — client libraries (Bootstrap, jQuery validation).
+- **LibMan / npm**: client libraries (Bootstrap, jQuery validation).
 - **ASP.NET Core Identity** + scaffolded Identity UI.
-- **Browser DevTools**, **Fiddler**, **Postman** — inspect requests.
+- **Browser DevTools**, **Fiddler**, **Postman**: inspect requests.
 - **Glimpse-style diagnostics**: `app.UseDeveloperExceptionPage()` (default in Development), logging.
 
 # Module: MVC Basics
 
-## Lesson: [Basic|High] Project and folder structure — every folder and file explained
+## Lesson: [Basic|High] Project and folder structure: every folder and file explained
 
 `dotnet new mvc -n MyShop.Web` (or Visual Studio → "ASP.NET Core Web App (Model-View-Controller)") creates:
 
@@ -74,7 +74,7 @@ MyShop.Web/
 ├── Connected Services/               (VS only) service references
 ├── Dependencies/                     (VS only) view of NuGet packages, frameworks, analyzers
 ├── Properties/
-│   └── launchSettings.json           local run profiles: URLs/ports, environment (ASPNETCORE_ENVIRONMENT=Development) — NOT used in production
+│   └── launchSettings.json           local run profiles: URLs/ports, environment (ASPNETCORE_ENVIRONMENT=Development), NOT used in production
 ├── wwwroot/                          the web root: the ONLY folder served as static files
 │   ├── css/site.css
 │   ├── js/site.js
@@ -86,7 +86,7 @@ MyShop.Web/
 │   └── ErrorViewModel.cs             view models / DTOs (domain entities usually live in other projects)
 ├── Views/
 │   ├── _ViewImports.cshtml           @using namespaces + @addTagHelper for ALL views in this folder and below
-│   ├── _ViewStart.cshtml             code run before every view — normally sets Layout = "_Layout"
+│   ├── _ViewStart.cshtml             code run before every view: normally sets Layout = "_Layout"
 │   ├── Home/                         one folder per controller
 │   │   ├── Index.cshtml              view for HomeController.Index()
 │   │   └── Privacy.cshtml
@@ -117,7 +117,7 @@ Folders that real projects usually add:
 └── Properties/PublishProfiles/           publish settings (folder, IIS, Azure)
 ```
 
-**`Program.cs` — the whole app setup in one file (.NET 6+ minimal hosting):**
+**`Program.cs`: the whole app setup in one file (.NET 6+ minimal hosting):**
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);       // 1. host: configuration, logging, DI container, Kestrel
@@ -130,7 +130,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();                               // 3. build the app (service provider created)
 
-// 4. Middleware pipeline — ORDER MATTERS
+// 4. Middleware pipeline: ORDER MATTERS
 if (!app.Environment.IsDevelopment()) { app.UseExceptionHandler("/Home/Error"); app.UseHsts(); }
 app.UseHttpsRedirection();
 app.UseRouting();
@@ -149,19 +149,19 @@ app.Run();                                               // 6. start Kestrel and
 
 **Comparison with MVC 5:** `Global.asax` + `App_Start/*Config.cs` + `web.config` → `Program.cs` + `appsettings.json`; `Content/` + `Scripts/` → `wwwroot/`; `Views/web.config` → `_ViewImports.cshtml`; packages.config → `<PackageReference>` in the .csproj.
 
-> **Interview tip:** Only `wwwroot` is publicly served. Files like `appsettings.json` or `.cshtml` are never downloadable — Razor views are compiled into the app's assembly at build time.
+> **Interview tip:** Only `wwwroot` is publicly served. Files like `appsettings.json` or `.cshtml` are never downloadable: Razor views are compiled into the app's assembly at build time.
 
-## Lesson: [Intermediate|High] How ASP.NET Core MVC works inside — from Kestrel to HTML
+## Lesson: [Intermediate|High] How ASP.NET Core MVC works inside: from Kestrel to HTML
 
-**Phase 1 — Startup (once):**
+**Phase 1: Startup (once):**
 
 1. `WebApplication.CreateBuilder` creates the **generic host**: loads configuration (appsettings.json → appsettings.{Env}.json → user secrets → environment variables → command line), sets up logging, creates the `IServiceCollection` and configures **Kestrel** as the `IServer`.
 2. You register services; `builder.Build()` creates the root **`IServiceProvider`**.
 3. `Use...` calls compose the **middleware pipeline** into a single `RequestDelegate` (each middleware wraps the next).
-4. `MapControllerRoute`/`MapControllers` registers **endpoint data sources**: at startup MVC discovers controllers (public classes ending in `Controller` in the app's assemblies — the *application parts*), builds an `ActionDescriptor` for every action (routes, HTTP methods, filters, parameters) and turns them into **endpoints**.
+4. `MapControllerRoute`/`MapControllers` registers **endpoint data sources**: at startup MVC discovers controllers (public classes ending in `Controller` in the app's assemblies, the *application parts*), builds an `ActionDescriptor` for every action (routes, HTTP methods, filters, parameters) and turns them into **endpoints**.
 5. `app.Run()` starts hosted services and Kestrel, which listens on the configured ports.
 
-**Phase 2 — Each request:**
+**Phase 2: Each request:**
 
 ```text
 Kestrel (socket → HTTP parser) ──► HttpContext created (Request, Response, Features, RequestServices = new DI SCOPE)
@@ -174,7 +174,7 @@ Kestrel (socket → HTTP parser) ──► HttpContext created (Request, Respons
    ─► UseAuthorization: reads [Authorize] metadata from the selected endpoint → allow / 401 / 403
    ─► Endpoint middleware: invokes the endpoint's RequestDelegate
         │
-        ▼ MVC: ControllerActionInvoker (ResourceInvoker) — the filter pipeline
+        ▼ MVC: ControllerActionInvoker (ResourceInvoker), the filter pipeline
         1. Authorization filters
         2. Resource filters (before)      ← e.g. caching can short-circuit here
         3. Controller created by the controller activator (constructor dependencies resolved from the request scope)
@@ -200,11 +200,11 @@ Kestrel writes the response bytes; the request's DI scope is disposed (scoped se
 | Piece | What it really is |
 |---|---|
 | `HttpContext` | Per-request object: `Request`, `Response`, `User`, `Items`, `Features`, `RequestServices` |
-| Middleware | `Func<RequestDelegate, RequestDelegate>` — each calls `next(context)` or short-circuits |
+| Middleware | `Func<RequestDelegate, RequestDelegate>`: each calls `next(context)` or short-circuits |
 | Endpoint | A `RequestDelegate` + **metadata** (route pattern, `[Authorize]`, CORS policy, action descriptor) |
-| Routing | Two steps: **match** in `UseRouting`, **execute** in the endpoint middleware — middleware between them (auth, CORS) can read the selected endpoint |
+| Routing | Two steps: **match** in `UseRouting`, **execute** in the endpoint middleware, middleware between them (auth, CORS) can read the selected endpoint |
 | Controller lifetime | A **new controller instance per request** (transient), created from the request's DI scope |
-| Scoped services | One instance per request (DbContext) — disposed at the end of the request |
+| Scoped services | One instance per request (DbContext): disposed at the end of the request |
 | Model binding | Value providers + model binder providers (`[FromRoute]`, `[FromQuery]`, `[FromForm]`, `[FromBody]`, `[FromServices]`, `[FromHeader]`) |
 | Razor views | Compiled at **build time** by the Razor SDK into classes deriving from `RazorPage<TModel>` inside the app assembly (runtime compilation only if you add the package for development) |
 | Tag helpers | Classes executed while the view renders, turning `<input asp-for>` into HTML |
@@ -294,7 +294,7 @@ public IActionResult Search(
     [FromForm] string sort,
     [FromHeader(Name = "X-Tenant")] string tenant,
     [FromServices] IClock clock,
-    [FromBody] SearchFilter filter)   // body (JSON) — typical in Web API, only one [FromBody] per action
+    [FromBody] SearchFilter filter)   // body (JSON): typical in Web API, only one [FromBody] per action
 { ... }
 ```
 
@@ -323,7 +323,7 @@ public class ProductInput
 }
 ```
 
-- Server-side: `ModelState.IsValid` (always check — client validation can be bypassed).
+- Server-side: `ModelState.IsValid` (always check, client validation can be bypassed).
 - Client-side: jQuery Validation + Unobtrusive (`_ValidationScriptsPartial`) reads `data-val-*` attributes generated by tag helpers.
 - Custom rules: a `ValidationAttribute` subclass or `IValidatableObject.Validate()` for cross-field rules; FluentValidation library for complex rules.
 - Add errors manually: `ModelState.AddModelError(nameof(input.Sku), "SKU already exists");`
@@ -332,7 +332,7 @@ public class ProductInput
 
 | | Type | Lifetime | Use |
 |---|---|---|---|
-| Strongly typed `@model` | Any class | Current request | **Preferred** — compile-time checked |
+| Strongly typed `@model` | Any class | Current request | **Preferred**: compile-time checked |
 | `ViewData` | `ViewDataDictionary` (string keys) | Current request | Small extras, e.g. page title |
 | `ViewBag` | `dynamic` wrapper over ViewData | Current request | Same as ViewData, no casting |
 | `TempData` | Dictionary backed by cookie (default) or session | Until **read** (survives one redirect) | Flash messages after PRG |
@@ -385,7 +385,7 @@ TempData["Message"] = "Saved";           // read once on next request; TempData.
 </html>
 ```
 
-- `@` outputs **HTML-encoded** values (XSS protection); `@Html.Raw()` disables encoding — avoid with user input.
+- `@` outputs **HTML-encoded** values (XSS protection); `@Html.Raw()` disables encoding: avoid with user input.
 - `_ViewStart.cshtml` sets the default layout; `_ViewImports.cshtml` holds `@using` and `@addTagHelper`.
 
 ## Lesson: [Intermediate|High] Tag helpers vs HTML helpers
@@ -414,7 +414,7 @@ Custom tag helper: a class deriving from `TagHelper` overriding `Process(TagHelp
 
 | | Partial view | View component |
 |---|---|---|
-| Logic | None (just markup with a model you pass) | Has its own C# class with `InvokeAsync` — can call services |
+| Logic | None (just markup with a model you pass) | Has its own C# class with `InvokeAsync`: can call services |
 | Data | Parent must supply the model | Fetches its own data |
 | Use | Reusable markup fragments (product card) | Widgets: shopping cart summary, menu, recent posts |
 | Invoke | `<partial name="_Card" model="x" />` | `@await Component.InvokeAsync("Cart")` or `<vc:cart></vc:cart>` |
@@ -427,7 +427,7 @@ public class CartViewComponent(ICartService cart) : ViewComponent
 // View: Views/Shared/Components/Cart/Default.cshtml
 ```
 
-Child actions (`@Html.Action`) from MVC 5 no longer exist — view components replace them.
+Child actions (`@Html.Action`) from MVC 5 no longer exist: view components replace them.
 
 # Module: Filters, State and Security
 
@@ -557,9 +557,9 @@ Data annotations (`[Required]`, `[StringLength]`, `[Range]`, `[EmailAddress]`, `
 
 ## [Beginner|Medium] What are `_Layout`, `_ViewStart` and `_ViewImports`?
 
-`_Layout.cshtml` is the master template (header, nav, footer) with `@RenderBody()` and optional `@RenderSection`. `_ViewStart.cshtml` runs before every view in its folder and usually sets `Layout = "_Layout"`. `_ViewImports.cshtml` holds shared directives — `@using`, `@addTagHelper`, `@inject` — for all views in that folder hierarchy.
+`_Layout.cshtml` is the master template (header, nav, footer) with `@RenderBody()` and optional `@RenderSection`. `_ViewStart.cshtml` runs before every view in its folder and usually sets `Layout = "_Layout"`. `_ViewImports.cshtml` holds shared directives: `@using`, `@addTagHelper`, `@inject`: for all views in that folder hierarchy.
 
-## [Intermediate|High] Partial view vs view component — when do you use which?
+## [Intermediate|High] Partial view vs view component: when do you use which?
 
 Use a **partial view** to reuse markup when the parent already has the data (e.g. a product card in a list). Use a **view component** when the widget needs its own logic and data from services, independent of the page's model (shopping cart badge, navigation menu, "latest posts"). View components replace MVC 5 child actions and can be invoked as tag helpers (`<vc:cart />`).
 
@@ -609,7 +609,7 @@ Inject dependencies through interfaces and mock them (Moq/NSubstitute). Instanti
 
 ## [Scenario|High] Users double-click "Place Order" and two orders are created. How do you fix it?
 
-Defence in layers: (1) disable the button on submit with JavaScript; (2) use **Post-Redirect-Get**; (3) make the server **idempotent** — generate an order token (GUID) when rendering the form, store it in a hidden field, and enforce a unique constraint on it in the DB, so a second POST with the same token is rejected or returns the existing order. The DB unique constraint is the only fully reliable guard.
+Defence in layers: (1) disable the button on submit with JavaScript; (2) use **Post-Redirect-Get**; (3) make the server **idempotent**: generate an order token (GUID) when rendering the form, store it in a hidden field, and enforce a unique constraint on it in the DB, so a second POST with the same token is rejected or returns the existing order. The DB unique constraint is the only fully reliable guard.
 
 ## [Scenario|High] A product page shows another customer's order when the URL ID is changed. What is the bug and the fix?
 
@@ -647,7 +647,7 @@ app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
 | | Lifetime |
 |---|---|
-| Model (`@model`) | Request — preferred |
+| Model (`@model`) | Request: preferred |
 | ViewData / ViewBag | Request |
 | TempData | Until read (one redirect) |
 | Session | Across requests |

@@ -5,7 +5,7 @@ import { tool } from "@/lib/tools";
 import GuidGenerator from "./GuidGenerator";
 
 const t = tool("guid-generator");
-export const metadata: Metadata = pageMeta({ title: `${t.name} — Free Online UUID v4`, description: t.description, path: `/tools/${t.slug}` });
+export const metadata: Metadata = pageMeta({ title: `${t.name}: Free Online UUID v4`, description: t.description, path: `/tools/${t.slug}` });
 
 export default function Page() {
   return (

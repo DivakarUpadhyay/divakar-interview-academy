@@ -15,9 +15,9 @@ Two topics make many candidates nervous: **gaps or unusual career moves**, and *
 
 Principles:
 
-- **Honesty** — background verification checks employment dates, designations and sometimes salary. Never fake experience, payslips or relieving letters (it's grounds for offer withdrawal or termination, and fake documents can be a criminal offence).
-- **Brevity + forward focus** — explain a gap in 2–3 sentences, then move to what you learned and why you're ready now.
-- **Data-driven negotiation** — research the market, know your numbers, negotiate the whole package, stay polite.
+- **Honesty**: background verification checks employment dates, designations and sometimes salary. Never fake experience, payslips or relieving letters (it's grounds for offer withdrawal or termination, and fake documents can be a criminal offence).
+- **Brevity + forward focus**: explain a gap in 2–3 sentences, then move to what you learned and why you're ready now.
+- **Data-driven negotiation**: research the market, know your numbers, negotiate the whole package, stay polite.
 
 # Versions
 
@@ -27,7 +27,7 @@ How expectations have changed:
 |---|---|
 | Before 2020 | Gaps often viewed with suspicion; long tenures valued |
 | 2020–2021 | COVID-19 layoffs and caregiving made gaps common and more accepted; remote work expanded |
-| 2021–2022 | "Great Resignation"/talent shortage — big hikes and counter-offers in tech |
+| 2021–2022 | "Great Resignation"/talent shortage: big hikes and counter-offers in tech |
 | 2022–2024 | Large tech layoffs worldwide; LinkedIn added a "Career break" option (2022) to profiles |
 | 2023–2025 | Pay-transparency laws spread (several US states; EU Pay Transparency Directive adopted 2023, to apply from 2026); skills-based hiring; more scrutiny of moonlighting in India |
 | 2025–2026 | AI-related restructuring; more contract/freelance work; hiring focused on proven skills and recent hands-on projects |
@@ -64,25 +64,25 @@ Formula: **Reason (1 sentence) → What I did (proof) → Why I'm ready now.**
 
 Common honest reasons: layoff/restructuring, health (no details needed), family/caregiving, relocation (e.g. moving countries), higher studies or exam preparation, starting a business/freelancing, visa or work-permit waiting period, deliberate upskilling, burnout recovery.
 
-> **Layoff:** "My position was eliminated in a company-wide restructuring in March. Since then I completed the AZ-204 certification and built an order-management API with .NET 10, EF Core and Azure Container Apps — it's on my GitHub. I'm now looking for a stable, long-term role."
+> **Layoff:** "My position was eliminated in a company-wide restructuring in March. Since then I completed the AZ-204 certification and built an order-management API with .NET 10, EF Core and Azure Container Apps: it's on my GitHub. I'm now looking for a stable, long-term role."
 
-> **Family:** "I took 10 months off to care for a family member. That's fully resolved now. During the last three months I refreshed my skills — I built a React + ASP.NET Core project and revised SQL Server performance tuning — and I'm ready to commit full-time."
+> **Family:** "I took 10 months off to care for a family member. That's fully resolved now. During the last three months I refreshed my skills: I built a React + ASP.NET Core project and revised SQL Server performance tuning, and I'm ready to commit full-time."
 
 > **Relocation:** "I relocated to Taiwan and waited for my work authorisation. I used the time to study cloud architecture and contribute to an open-source project, and I'm fully eligible to work now."
 
-Don'ts: don't lie or invent a company; don't over-share medical or personal details; don't sound apologetic or bitter; don't leave the gap unexplained on your resume if it's longer than ~6 months — a one-line "Career break: upskilling in Azure and React (projects on GitHub)" helps.
+Don'ts: don't lie or invent a company; don't over-share medical or personal details; don't sound apologetic or bitter; don't leave the gap unexplained on your resume if it's longer than ~6 months, a one-line "Career break: upskilling in Azure and React (projects on GitHub)" helps.
 
 ## Lesson: [Basic|High] Frequent job changes, short stints and layoffs
 
 - **Short stints**: give the reason briefly and show a pattern of growth, not escape. "My first company was acquired and the project shut down after 8 months; at my second job I've been 3 years and led two releases."
-- **Contract roles**: label them clearly ("Contract — 6 months") so they don't look like quitting.
-- **Many changes**: emphasise what each move added (skills, scope) and why you now want stability — and mean it.
-- **Layoffs**: say it plainly — it's common and not a performance judgement. Offer references.
+- **Contract roles**: label them clearly ("Contract, 6 months") so they don't look like quitting.
+- **Many changes**: emphasise what each move added (skills, scope) and why you now want stability, and mean it.
+- **Layoffs**: say it plainly, it's common and not a performance judgement. Offer references.
 - **Terminated for performance**: be honest if asked directly, take responsibility without excessive detail, show what you learned and changed.
 
 ## Lesson: [Intermediate|High] Switching technology, domain or role
 
-- **Tech switch** (e.g. .NET → React, support → development, manual testing → automation, data → cloud): show **evidence** of the new skill — projects, certifications, internal contributions — and connect transferable skills.
+- **Tech switch** (e.g. .NET → React, support → development, manual testing → automation, data → cloud): show **evidence** of the new skill, projects, certifications, internal contributions, and connect transferable skills.
 - **Domain switch** (banking → healthcare): highlight domain-agnostic strengths (data handling, compliance awareness, client communication) and a learning plan.
 - **Service company → product company**: product companies focus more on DSA/coding rounds and system design; prepare those explicitly (see Coding Practice).
 - **Developer → lead/manager**: show examples of informal leadership (mentoring, reviews, running stand-ups).
@@ -99,15 +99,15 @@ Don'ts: don't lie or invent a company; don't over-share medical or personal deta
 
 ## Lesson: [Basic|High] Understanding an offer (India: CTC, fixed, variable, in-hand)
 
-**CTC (Cost to Company)** is the total annual cost to the employer — not what you receive monthly.
+**CTC (Cost to Company)** is the total annual cost to the employer, not what you receive monthly.
 
 | Component | Notes |
 |---|---|
 | Basic salary | Often 40–50% of fixed pay; drives PF and gratuity |
 | HRA | House rent allowance (tax-exempt portion under the old tax regime if you pay rent) |
 | Special/other allowances | Taxable balancing component |
-| **Variable pay / performance bonus** | Paid based on company and individual performance — not guaranteed |
-| Employer PF contribution | 12% of basic (often capped on ₹15,000 basic) — part of CTC but goes to your PF account |
+| **Variable pay / performance bonus** | Paid based on company and individual performance, not guaranteed |
+| Employer PF contribution | 12% of basic (often capped on ₹15,000 basic): part of CTC but goes to your PF account |
 | Gratuity | Typically 4.81% of basic, payable after 5 years of continuous service (Payment of Gratuity Act) |
 | Insurance (health, term) | Group policies; sometimes included in CTC |
 | Joining bonus | One-time; often clawed back if you leave within 12 months |
@@ -116,12 +116,12 @@ Don'ts: don't lie or invent a company; don't over-share medical or personal deta
 
 **In-hand (take-home)** = fixed monthly gross − employee PF (12% of basic) − professional tax (state-dependent, e.g. ₹200/month in several states) − income tax (TDS). Ask HR for the **CTC breakup** and calculate in-hand under the **new vs old tax regime**.
 
-Typical hike expectations when switching in Indian IT vary widely with skills, demand and company type — research rather than assume a fixed percentage.
+Typical hike expectations when switching in Indian IT vary widely with skills, demand and company type: research rather than assume a fixed percentage.
 
 ## Lesson: [Basic|Medium] Understanding an offer in Taiwan
 
-- Salaries are quoted **monthly** (月薪) — annual pay is usually **12 months + bonuses**. Many companies pay a **year-end bonus** (年終獎金) and some pay festival bonuses or profit sharing (員工分紅); these vary widely and aren't guaranteed by law — ask how many months were actually paid in recent years.
-- Mandatory **labour insurance** and **national health insurance** — employee contributes a portion, employer the rest.
+- Salaries are quoted **monthly** (月薪): annual pay is usually **12 months + bonuses**. Many companies pay a **year-end bonus** (年終獎金) and some pay festival bonuses or profit sharing (員工分紅); these vary widely and aren't guaranteed by law, ask how many months were actually paid in recent years.
+- Mandatory **labour insurance** and **national health insurance**: employee contributes a portion, employer the rest.
 - **Labour pension** (new system): employer contributes **at least 6%** of monthly wage to your individual pension account; you may voluntarily add up to 6% (tax-deductible).
 - Statutory minimum wage for 2026: **NT$29,500/month** (adjusted yearly; verify current figures).
 - Foreign professionals: employer-sponsored **work permits** usually require a minimum monthly salary for white-collar roles (commonly cited as NT$47,971, but check the Ministry of Labor's current rules); the **Taiwan Employment Gold Card** is an alternative open work permit for qualified professionals.
@@ -130,17 +130,17 @@ Typical hike expectations when switching in Indian IT vary widely with skills, d
 ## Lesson: [Intermediate|High] Researching your market value
 
 1. Define your profile: role, years of relevant experience, key skills (e.g. .NET + Azure + SQL), location, company type (service vs product vs startup vs MNC/GCC).
-2. Collect data from several sources (salary sites, recent offers of peers, recruiters, job ads with salary ranges — common in Taiwan on 104).
+2. Collect data from several sources (salary sites, recent offers of peers, recruiters, job ads with salary ranges: common in Taiwan on 104).
 3. Build a **range**: market low / median / high for your profile.
 4. Decide your numbers:
    - **Walk-away** (minimum you'd accept, considering current pay, cost of living, risk).
    - **Target** (realistic for market and your strengths).
-   - **Anchor** (what you'll state — at or slightly above target, justified).
+   - **Anchor** (what you'll state: at or slightly above target, justified).
 5. Consider total compensation, not only base: bonus, equity, benefits, learning, commute/remote, stability.
 
 ## Lesson: [Intermediate|High] Answering "What is your current/expected salary?"
 
-- **Current salary**: answer truthfully if asked (it can be verified); you may add context ("My current fixed is ₹14 LPA plus variable; my expectation is based on the role and market, not just my current pay"). In some regions, asking about salary history is restricted by law — know your local rules.
+- **Current salary**: answer truthfully if asked (it can be verified); you may add context ("My current fixed is ₹14 LPA plus variable; my expectation is based on the role and market, not just my current pay"). In some regions, asking about salary history is restricted by law: know your local rules.
 - **Expected salary**: give a **researched range** or a number with justification, ideally after you understand the role.
 
 > "Based on the scope of this role, my experience with .NET microservices on Azure and current market data for similar roles in Bengaluru, I'm looking for a fixed component in the range of ₹24–27 lakhs. I'm flexible depending on the overall package, including variable pay and growth opportunities."
@@ -152,22 +152,22 @@ Typical hike expectations when switching in Indian IT vary widely with skills, d
 
 Steps:
 
-1. **Thank and show enthusiasm** — they should know you want to join.
+1. **Thank and show enthusiasm**: they should know you want to join.
 2. **Ask for time** to review the written offer and CTC breakup (24–72 hours is reasonable).
 3. **Identify gaps** vs your target and the market.
-4. **Make one clear, justified request** — by phone/video if possible, followed up in email.
+4. **Make one clear, justified request**: by phone/video if possible, followed up in email.
 
-> "Thank you — I'm excited about the role and the team. Having reviewed the offer, the fixed component is about 12% below what I'm seeing for similar senior roles, and below another offer I'm considering. Given my Azure and payments experience that you highlighted in the interviews, would it be possible to bring the fixed pay to ₹26 lakhs? If that's difficult on base, a joining bonus or an earlier performance review would also help."
+> "Thank you: I'm excited about the role and the team. Having reviewed the offer, the fixed component is about 12% below what I'm seeing for similar senior roles, and below another offer I'm considering. Given my Azure and payments experience that you highlighted in the interviews, would it be possible to bring the fixed pay to ₹26 lakhs? If that's difficult on base, a joining bonus or an earlier performance review would also help."
 
 5. **Negotiate the package**, not just base: joining bonus, notice-period buyout, relocation, designation/level, ESOPs, remote days, review timing (e.g. revision after 6 months), learning budget, start date.
 6. **Get the final offer in writing** before resigning.
-7. **Know when to stop** — after one or two rounds, decide. Don't bluff with fake offers.
+7. **Know when to stop**: after one or two rounds, decide. Don't bluff with fake offers.
 
 ## Lesson: [Intermediate|Medium] Comparing offers and counter-offers
 
 Offer comparison factors: fixed pay, variable (and its realistic payout), equity, benefits, role/level, tech stack and learning, team and manager, company stability/funding, work-life balance, commute/remote, location and cost of living, visa/relocation support, notice and bond terms.
 
-**Counter-offers** from your current employer: consider why you wanted to leave — money rarely fixes growth, culture or manager issues. Common risks: being seen as a flight risk, the raise coming from future increments, reasons for leaving remaining. If you accept a counter-offer, inform the new company promptly and politely. If you decline, thank your employer.
+**Counter-offers** from your current employer: consider why you wanted to leave, money rarely fixes growth, culture or manager issues. Common risks: being seen as a flight risk, the raise coming from future increments, reasons for leaving remaining. If you accept a counter-offer, inform the new company promptly and politely. If you decline, thank your employer.
 
 ## Lesson: [Basic|Medium] Resignation and notice period etiquette
 
@@ -176,13 +176,13 @@ Offer comparison factors: fixed pay, variable (and its realistic payout), equity
 - Offer a **handover plan**: documentation, knowledge-transfer sessions, finishing or reassigning tasks.
 - Serve the notice professionally; buyout or early release must be agreed in writing.
 - Collect: relieving letter, experience letter, final settlement, Form 16 (India), PF transfer via the UAN portal, and return company assets.
-- Never burn bridges — industries are small, and references matter.
+- Never burn bridges: industries are small, and references matter.
 
 # Interview
 
 ## [Beginner|High] I see a gap of a year in your resume. Can you explain it?
 
-Answer in three parts: reason, activity, readiness. Example: "My role was affected by a restructuring in early 2025. I used the time to deepen my skills — I completed the AZ-204 certification and built a full-stack project with ASP.NET Core, React and Azure that's on my GitHub — and I also did a three-month freelance contract building APIs for a logistics client. I'm now fully ready and looking for a long-term role where I can contribute from day one." Keep it calm, factual and short, then move on.
+Answer in three parts: reason, activity, readiness. Example: "My role was affected by a restructuring in early 2025. I used the time to deepen my skills: I completed the AZ-204 certification and built a full-stack project with ASP.NET Core, React and Azure that's on my GitHub, and I also did a three-month freelance contract building APIs for a logistics client. I'm now fully ready and looking for a long-term role where I can contribute from day one." Keep it calm, factual and short, then move on.
 
 ## [Beginner|High] What is your expected salary?
 
@@ -202,7 +202,7 @@ Explain briefly and show a positive pattern: "My first role was a 10-month contr
 
 ## [Intermediate|High] You were laid off. Was it because of performance?
 
-"No — it was part of a company-wide restructuring that affected about 20% of the engineering team after a client contract ended. My last review rated me 'exceeds expectations', and my manager is happy to give a reference. I've stayed active since — I completed a certification and built a project with the latest .NET." Only say this if it's true; offer references.
+"No: it was part of a company-wide restructuring that affected about 20% of the engineering team after a client contract ended. My last review rated me 'exceeds expectations', and my manager is happy to give a reference. I've stayed active since, I completed a certification and built a project with the latest .NET." Only say this if it's true; offer references.
 
 ## [Intermediate|High] How do you justify switching from support/testing to development?
 
@@ -214,15 +214,15 @@ Respond politely and with data: "Thank you. I'm keen on this role. However, a 15
 
 ## [Intermediate|Medium] Do you have other offers?
 
-Be honest. If yes: "Yes, I have one offer from a product company and I'm in final rounds with another. This role is my preferred option because of the team and the Azure work, so I'd like to see if we can align on the package." Don't invent offers — companies sometimes ask for proof, and it damages trust. If no: "I'm in process with a couple of companies, but this role is a strong fit for me."
+Be honest. If yes: "Yes, I have one offer from a product company and I'm in final rounds with another. This role is my preferred option because of the team and the Azure work, so I'd like to see if we can align on the package." Don't invent offers: companies sometimes ask for proof, and it damages trust. If no: "I'm in process with a couple of companies, but this role is a strong fit for me."
 
 ## [Intermediate|Medium] What is your notice period, and will you be able to join early?
 
-"My notice period is 90 days. My company allows a buyout of up to 45 days, so I could join in about 45–60 days. If the buyout amount is a concern, would you be able to support it?" Be accurate — commitments you can't keep damage trust.
+"My notice period is 90 days. My company allows a buyout of up to 45 days, so I could join in about 45–60 days. If the buyout amount is a concern, would you be able to support it?" Be accurate: commitments you can't keep damage trust.
 
 ## [Advanced|Medium] How would you respond to a counter-offer from your current employer?
 
-Thank them, and evaluate against the reasons you wanted to leave — growth, technology, team, location — not only the money. If those reasons remain, decline respectfully: "I appreciate the offer and everything I've learned here, but I've decided to take this new role for the learning opportunity. I'll make sure the handover is smooth." If you accept a counter-offer, inform the new employer immediately and courteously.
+Thank them, and evaluate against the reasons you wanted to leave: growth, technology, team, location, not only the money. If those reasons remain, decline respectfully: "I appreciate the offer and everything I've learned here, but I've decided to take this new role for the learning opportunity. I'll make sure the handover is smooth." If you accept a counter-offer, inform the new employer immediately and courteously.
 
 ## [Scenario|High] You receive a written offer below your expectation, but you really want the job. What do you do?
 
@@ -230,11 +230,11 @@ Express enthusiasm and ask for time to review. Calculate the in-hand amount and 
 
 ## [Scenario|High] Background verification shows a mismatch in your previous employment dates. What should you do?
 
-Contact HR immediately and explain transparently — for example, the resume used the project start date while the official joining date was a month later, or a notice period was shortened. Provide documents (offer and relieving letters, payslips, PF/UAN service history). Small honest discrepancies can usually be resolved; deliberate misrepresentation usually leads to offer withdrawal. Prevent it by using official dates on your resume.
+Contact HR immediately and explain transparently, for example, the resume used the project start date while the official joining date was a month later, or a notice period was shortened. Provide documents (offer and relieving letters, payslips, PF/UAN service history). Small honest discrepancies can usually be resolved; deliberate misrepresentation usually leads to offer withdrawal. Prevent it by using official dates on your resume.
 
 ## [Scenario|Medium] You were freelancing for two years. The interviewer worries you won't fit into a team. How do you answer?
 
-"Freelancing taught me to own outcomes end to end — requirements, delivery, deployment and support — and to communicate directly with clients. I also worked in teams on most projects: for example, with a client's in-house developers using Git and pull requests, and with designers and QA. I'm moving to full-time because I want deeper long-term product ownership and to grow with a team. I've closed my freelance engagements, so there's no conflict of interest."
+"Freelancing taught me to own outcomes end to end: requirements, delivery, deployment and support, and to communicate directly with clients. I also worked in teams on most projects: for example, with a client's in-house developers using Git and pull requests, and with designers and QA. I'm moving to full-time because I want deeper long-term product ownership and to grow with a team. I've closed my freelance engagements, so there's no conflict of interest."
 
 ## [Scenario|Medium] An HR person asks for your expected salary before the technical rounds, and the posting has no range. What do you say?
 

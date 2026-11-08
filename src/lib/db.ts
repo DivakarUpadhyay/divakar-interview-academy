@@ -100,7 +100,7 @@ export function getQuestionIndex(): QuestionIndexRow[] {
       CASE q.level WHEN 'Beginner' THEN 1 WHEN 'Intermediate' THEN 2 WHEN 'Advanced' THEN 3 ELSE 4 END, q.ord`).all() as QuestionIndexRow[];
 }
 
-/** Every question in the default list order (course, then High → Low priority) — served as a static JSON file. */
+/** Every question in the default list order (course, then High → Low priority): served as a static JSON file. */
 export function getAllQuestions(): Question[] {
   return conn().prepare(`SELECT q.id, c.slug AS course_slug, c.title AS course_title, q.ord, q.level, q.priority, q.question, q.question_html, q.answer_html
     FROM questions q JOIN courses c ON c.id = q.course_id
@@ -109,7 +109,7 @@ export function getAllQuestions(): Question[] {
 
 export type SearchDoc = { kind: string; course_slug: string; course_title: string; ref: string; title: string; body: string };
 
-/** The full-text search rows (plain text) — searched in the browser so the site can be hosted as static files. */
+/** The full-text search rows (plain text): searched in the browser so the site can be hosted as static files. */
 export function getSearchDocs(): SearchDoc[] {
   return conn().prepare(`SELECT s.kind, s.course_slug, c.title AS course_title, s.ref, s.title, s.body
     FROM search s JOIN courses c ON c.slug = s.course_slug`).all() as SearchDoc[];

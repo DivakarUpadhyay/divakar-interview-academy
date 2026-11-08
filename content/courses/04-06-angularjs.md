@@ -1,6 +1,6 @@
 ---
 slug: angularjs
-title: AngularJS (1.x) — Legacy
+title: AngularJS (1.x): Legacy
 track: frontend
 order: 6
 group: Libraries & Frameworks
@@ -13,7 +13,7 @@ summary: Modules, controllers, $scope, two-way data binding, directives, filters
 
 **AngularJS** (Angular 1.x) is the original JavaScript MVC/MVVM framework from Google (2010) that popularised **two-way data binding**, **directives** and **dependency injection** in the browser.
 
-**Important fact:** AngularJS reached **end of life on 31 December 2021** — Google no longer provides updates or security fixes. It is **different** from **Angular** (2+), a complete TypeScript rewrite. Interviews ask about AngularJS when a company maintains or is migrating a legacy app.
+**Important fact:** AngularJS reached **end of life on 31 December 2021**: Google no longer provides updates or security fixes. It is **different** from **Angular** (2+), a complete TypeScript rewrite. Interviews ask about AngularJS when a company maintains or is migrating a legacy app.
 
 Core building blocks:
 
@@ -38,7 +38,7 @@ Core building blocks:
 | 1.2 | 2013 | `ngAnimate`, controller-as syntax, `$sce` strict contextual escaping |
 | 1.3 | 2014 | One-time binding `::`, dropped IE8, `ngMessages`, performance |
 | 1.4 | 2015 | New router attempts, `ngCookies` rewrite |
-| **1.5** | 2016 | **`.component()`** API, one-way bindings `<`, lifecycle hooks (`$onInit`, `$onChanges`, `$onDestroy`) — eases migration to Angular |
+| **1.5** | 2016 | **`.component()`** API, one-way bindings `<`, lifecycle hooks (`$onInit`, `$onChanges`, `$onDestroy`): eases migration to Angular |
 | 1.6 | 2016 | `$http` success/error removed, hash prefix `#!` default, pre-assigned bindings off |
 | 1.7 | 2018 | Long Term Support period started (July 2018) |
 | **1.8.x** | 2020–2022 | Final versions (1.8.3); **end of LTS: 31 December 2021** |
@@ -52,21 +52,21 @@ After EOL, commercial extended support exists from third parties (e.g. HeroDevs 
 1. Browser loads `angular.js`, then app scripts.
 2. On DOMContentLoaded, AngularJS finds `ng-app` (or you call `angular.bootstrap(element, ["app"])`).
 3. The **injector** is created; module **config** blocks run (providers only), then **run** blocks.
-4. **Compile phase** — `$compile` walks the DOM, collects directives, runs their `compile` functions (template manipulation).
-5. **Link phase** — each directive's `link` function (pre-link and post-link) connects scope to DOM and sets up `$watch`es and event listeners.
-6. **Runtime** — events (`ng-click`, `$http` response, `$timeout`) trigger `$scope.$apply()` → **$digest loop**: all watchers are dirty-checked repeatedly until no values change (max 10 iterations, otherwise `infdig` error) → DOM updated.
-7. **Destroy** — when a scope is removed (route change, `ng-if` false), `$destroy` event fires; clean up listeners/timers.
+4. **Compile phase**: `$compile` walks the DOM, collects directives, runs their `compile` functions (template manipulation).
+5. **Link phase**: each directive's `link` function (pre-link and post-link) connects scope to DOM and sets up `$watch`es and event listeners.
+6. **Runtime**: events (`ng-click`, `$http` response, `$timeout`) trigger `$scope.$apply()` → **$digest loop**: all watchers are dirty-checked repeatedly until no values change (max 10 iterations, otherwise `infdig` error) → DOM updated.
+7. **Destroy**: when a scope is removed (route change, `ng-if` false), `$destroy` event fires; clean up listeners/timers.
 
 **Component lifecycle hooks (1.5+):** `$onInit` → `$onChanges(changesObj)` (one-way binding changes) → `$doCheck` → `$postLink` → `$onDestroy`.
 
 # Tools
 
 - `angular.js` / `angular.min.js` (CDN or npm `angular`), modules `angular-route`, `angular-animate`, `angular-messages`, `angular-sanitize`.
-- **UI-Router** (`@uirouter/angularjs`) — state-based routing (more popular than ngRoute).
+- **UI-Router** (`@uirouter/angularjs`): state-based routing (more popular than ngRoute).
 - **Batarang** (old Chrome extension) and browser DevTools (`angular.element($0).scope()` in the console).
-- **Karma** (test runner) + **Jasmine** + **angular-mocks** (`ngMock`, `$httpBackend`); **Protractor** for E2E (deprecated in 2022–2023 — use Playwright/Cypress).
+- **Karma** (test runner) + **Jasmine** + **angular-mocks** (`ngMock`, `$httpBackend`); **Protractor** for E2E (deprecated in 2022–2023: use Playwright/Cypress).
 - Grunt/Gulp/Bower historically; webpack later.
-- **ngUpgrade** / `@angular/upgrade` — run AngularJS and Angular side by side during migration.
+- **ngUpgrade** / `@angular/upgrade`: run AngularJS and Angular side by side during migration.
 
 # Module: Fundamentals
 
@@ -80,7 +80,7 @@ After EOL, commercial extended support exists from third parties (e.g. HeroDevs 
   <p>Hello {{ vm.customer }}</p>                         <!-- updates as you type: two-way binding -->
   <ul>
     <li ng-repeat="o in vm.orders | filter:{status:'paid'} | orderBy:'-total' track by o.id">
-      #{{ o.id }} — {{ o.total | currency:'₹' }}
+      #{{ o.id }}: {{ o.total | currency:'₹' }}
     </li>
   </ul>
   <button ng-click="vm.add()" ng-disabled="!vm.customer">Add</button>
@@ -137,9 +137,9 @@ angular.module("shopApp").filter("statusLabel", () => status =>
   ({ paid: "✅ Paid", pending: "⏳ Pending" }[status] || status));
 ```
 
-Filters in templates run on **every digest** — expensive filters on large `ng-repeat` lists hurt performance; pre-compute in the controller instead.
+Filters in templates run on **every digest**: expensive filters on large `ng-repeat` lists hurt performance; pre-compute in the controller instead.
 
-## Lesson: [Basic|High] AngularJS (1.x) project folder structure — with sample files
+## Lesson: [Basic|High] AngularJS (1.x) project folder structure: with sample files
 
 AngularJS apps (2010–2021) usually have no CLI; files are loaded by `<script>` tags or bundled with Gulp/Grunt/webpack. Two common layouts: **by type** (small apps) and **by feature** (recommended by the John Papa style guide).
 
@@ -155,7 +155,7 @@ shop-web/                              (often inside an ASP.NET MVC 5 project's 
 │   │   └── logger.service.js
 │   ├── products/                      feature folder
 │   │   ├── products.controller.js     ProductsController (controllerAs syntax)
-│   │   ├── products.service.js        productService — $http calls
+│   │   ├── products.service.js        productService: $http calls
 │   │   ├── products.html              view template
 │   │   └── product-card.directive.js  (or .component.js in 1.5+)
 │   └── orders/ …
@@ -205,7 +205,7 @@ angular.module('shopApp').controller('ProductsController', ['productService', fu
 
 <!-- app/products/products.html -->
 <p ng-if="vm.loading">Loading…</p>
-<ul><li ng-repeat="p in vm.products track by p.id">{{ p.name }} — {{ p.price | currency:'₹' }}</li></ul>
+<ul><li ng-repeat="p in vm.products track by p.id">{{ p.name }}: {{ p.price | currency:'₹' }}</li></ul>
 ```
 
 Script order matters: the module file first, then everything that registers into it.
@@ -215,7 +215,7 @@ Script order matters: the module file first, then everything that registers into
 The classic stack: **AngularJS → ASP.NET Web API 2 (or MVC 5 JSON actions) → ADO.NET/EF6 → SQL Server**, often hosted together in one IIS site.
 
 ```csharp
-// ASP.NET Web API 2 (.NET Framework) — Controllers/ProductsController.cs
+// ASP.NET Web API 2 (.NET Framework): Controllers/ProductsController.cs
 public class ProductsController : ApiController
 {
     private readonly string _cs = ConfigurationManager.ConnectionStrings["Shop"].ConnectionString;   // Web.config
@@ -297,7 +297,7 @@ app.config(themeProvider => themeProvider.setColor("green"));
 
 ## Lesson: [Intermediate|High] Dependency injection and minification
 
-AngularJS reads function **parameter names** to know what to inject. Minifiers rename parameters, which breaks DI — use an annotation style:
+AngularJS reads function **parameter names** to know what to inject. Minifiers rename parameters, which breaks DI: use an annotation style:
 
 ```js
 // Inline array annotation (most common)
@@ -336,7 +336,7 @@ app.factory("authInterceptor", ["$q", "$window", function ($q, $window) {
 app.config(["$httpProvider", $httpProvider => $httpProvider.interceptors.push("authInterceptor")]);
 ```
 
-`$http`'s `.success()`/`.error()` were removed in 1.6 — use `.then()`. Use `$q`, `$timeout`, `$interval` (not native promises/setTimeout) so changes trigger a digest — or call `$scope.$applyAsync()`.
+`$http`'s `.success()`/`.error()` were removed in 1.6: use `.then()`. Use `$q`, `$timeout`, `$interval` (not native promises/setTimeout) so changes trigger a digest, or call `$scope.$applyAsync()`.
 
 # Module: Scope, Digest and Directives
 
@@ -344,9 +344,9 @@ app.config(["$httpProvider", $httpProvider => $httpProvider.interceptors.push("a
 
 - Each binding (`{{ }}`, `ng-model`, `$watch`) registers a **watcher**.
 - `$digest()` loops over all watchers on a scope and its children, comparing current vs last values (**dirty checking**); if anything changed, it runs listeners and loops again until stable (max 10 → `10 $digest() iterations reached` error).
-- `$apply(fn)` runs `fn` then `$rootScope.$digest()` — needed when changing the model **outside** AngularJS (jQuery events, `setTimeout`, third-party callbacks).
-- `$watch(expr, listener)` — reference/value check; `$watchCollection` — shallow array/object; `$watch(expr, fn, true)` — deep (expensive).
-- `$scope.$on/$emit/$broadcast` — events up (`$emit`) or down (`$broadcast`) the scope tree.
+- `$apply(fn)` runs `fn` then `$rootScope.$digest()`: needed when changing the model **outside** AngularJS (jQuery events, `setTimeout`, third-party callbacks).
+- `$watch(expr, listener)`: reference/value check; `$watchCollection`: shallow array/object; `$watch(expr, fn, true)`: deep (expensive).
+- `$scope.$on/$emit/$broadcast`: events up (`$emit`) or down (`$broadcast`) the scope tree.
 
 ```js
 $scope.$watch(() => vm.filter, (newVal, oldVal) => { if (newVal !== oldVal) vm.reload(); });
@@ -360,12 +360,12 @@ Rule of thumb: keep watchers under ~2,000 per page for smooth performance.
 ## Lesson: [Advanced|High] Custom directives and components
 
 ```js
-// Component (1.5+) — preferred: isolated scope, controller-as, lifecycle hooks
+// Component (1.5+): preferred: isolated scope, controller-as, lifecycle hooks
 app.component("orderCard", {
   bindings: { order: "<", onSelect: "&" },           // < one-way, @ string, & callback, = two-way (avoid)
   template: `
     <div class="card" ng-click="$ctrl.onSelect({ id: $ctrl.order.id })">
-      #{{ $ctrl.order.id }} — {{ $ctrl.order.total | currency }}
+      #{{ $ctrl.order.id }}: {{ $ctrl.order.total | currency }}
     </div>`,
   controller: function () {
     this.$onInit = () => { /* init */ };
@@ -375,7 +375,7 @@ app.component("orderCard", {
 });
 // <order-card order="o" on-select="vm.open(id)"></order-card>
 
-// Directive — for DOM manipulation / attribute behaviour
+// Directive: for DOM manipulation / attribute behaviour
 app.directive("autoFocus", ["$timeout", function ($timeout) {
   return {
     restrict: "A",                                    // E element, A attribute, C class, M comment
@@ -403,7 +403,7 @@ angular.module("shopApp", ["ngRoute"])
   }]);
 ```
 
-**UI-Router** uses **states** (`$stateProvider.state("orders.detail", {...})`), nested views and named views — better for complex apps. `resolve` loads data before the route activates.
+**UI-Router** uses **states** (`$stateProvider.state("orders.detail", {...})`), nested views and named views: better for complex apps. `resolve` loads data before the route activates.
 
 ## Lesson: [Intermediate|Medium] Forms and validation
 
@@ -449,7 +449,7 @@ Directives are markers on DOM elements (attributes, elements, classes, comments)
 
 ## [Beginner|High] What is $scope? What is $rootScope?
 
-`$scope` is the object that glues a controller to its view — properties and functions on it are available in the template. Scopes form a hierarchy mirroring the DOM, with prototypal inheritance (child scopes from `ng-repeat`, `ng-if`, `ng-include`). `$rootScope` is the top-level scope of the app; every other scope descends from it. Avoid storing state on `$rootScope` — use services.
+`$scope` is the object that glues a controller to its view: properties and functions on it are available in the template. Scopes form a hierarchy mirroring the DOM, with prototypal inheritance (child scopes from `ng-repeat`, `ng-if`, `ng-include`). `$rootScope` is the top-level scope of the app; every other scope descends from it. Avoid storing state on `$rootScope`: use services.
 
 ## [Beginner|Medium] What is the difference between ng-if and ng-show?
 
@@ -469,11 +469,11 @@ The `$injector` looks at a function's parameter names (or explicit annotations) 
 
 ## [Intermediate|Medium] What are the scope binding types in a component/directive (@, =, <, &)?
 
-`@` — one-way string/interpolated attribute value. `=` — two-way binding (expensive, avoid in components). `<` — one-way binding of an expression (1.5+, preferred for inputs). `&` — callback expression bound to the parent's function, used for outputs (`on-select="vm.open(id)"` invoked as `$ctrl.onSelect({ id: 5 })`).
+`@`: one-way string/interpolated attribute value. `=`: two-way binding (expensive, avoid in components). `<`: one-way binding of an expression (1.5+, preferred for inputs). `&`: callback expression bound to the parent's function, used for outputs (`on-select="vm.open(id)"` invoked as `$ctrl.onSelect({ id: 5 })`).
 
 ## [Intermediate|Medium] What is the difference between $emit and $broadcast?
 
-Both dispatch scope events. `$emit` sends an event **upwards** from the current scope through its parents to `$rootScope`. `$broadcast` sends it **downwards** to all child scopes. Listen with `$on`. Overusing events makes data flow hard to follow — prefer services or component bindings; always deregister `$rootScope.$on` listeners on `$destroy`.
+Both dispatch scope events. `$emit` sends an event **upwards** from the current scope through its parents to `$rootScope`. `$broadcast` sends it **downwards** to all child scopes. Listen with `$on`. Overusing events makes data flow hard to follow: prefer services or component bindings; always deregister `$rootScope.$on` listeners on `$destroy`.
 
 ## [Intermediate|Medium] What are filters? How do you create a custom filter?
 
@@ -489,7 +489,7 @@ Prepare the codebase (latest 1.8, components with one-way bindings, controller-a
 
 ## [Scenario|High] You change a model value inside a jQuery datepicker callback but the view doesn't update. Why?
 
-The callback runs outside AngularJS's digest, so no dirty check happens. Wrap the update in `$scope.$apply(() => vm.date = value)` (or `$scope.$applyAsync`), or better, wrap the datepicker in a custom directive that uses `ngModel.$setViewValue` inside `$apply`. Avoid calling `$apply` when a digest is already in progress (`$digest already in progress` error) — `$applyAsync` or `$timeout` avoids that.
+The callback runs outside AngularJS's digest, so no dirty check happens. Wrap the update in `$scope.$apply(() => vm.date = value)` (or `$scope.$applyAsync`), or better, wrap the datepicker in a custom directive that uses `ngModel.$setViewValue` inside `$apply`. Avoid calling `$apply` when a digest is already in progress (`$digest already in progress` error): `$applyAsync` or `$timeout` avoids that.
 
 ## [Scenario|High] An ng-repeat over 3,000 rows makes the page freeze on every keystroke in a search box. Fix it.
 
@@ -497,7 +497,7 @@ Each keystroke triggers a digest over thousands of watchers plus filter re-evalu
 
 ## [Scenario|Medium] Your company still runs a business-critical AngularJS app. What risks do you raise and what plan do you propose?
 
-Risks: no security patches since Dec 2021 (compliance/pen-test findings), dwindling developer pool, incompatible modern libraries, browser changes. Plan: short-term — upgrade to 1.8.3, add a strict Content-Security-Policy, review `$sce`/`ng-bind-html` usage, consider commercial extended support; medium-term — incremental migration (Angular via ngUpgrade, or React/Vue via micro-frontends/route-by-route strangler), starting with the most-changed or riskiest screens; keep feature parity tests (Playwright) as a safety net.
+Risks: no security patches since Dec 2021 (compliance/pen-test findings), dwindling developer pool, incompatible modern libraries, browser changes. Plan: short-term, upgrade to 1.8.3, add a strict Content-Security-Policy, review `$sce`/`ng-bind-html` usage, consider commercial extended support; medium-term, incremental migration (Angular via ngUpgrade, or React/Vue via micro-frontends/route-by-route strangler), starting with the most-changed or riskiest screens; keep feature parity tests (Playwright) as a safety net.
 
 # Cheatsheet
 

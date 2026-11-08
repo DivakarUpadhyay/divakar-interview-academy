@@ -1,6 +1,6 @@
 ---
 slug: adonet
-title: ADO.NET — Connected & Disconnected Data Access
+title: ADO.NET: Connected & Disconnected Data Access
 track: dotnet
 order: 7
 group: Data Access
@@ -11,14 +11,14 @@ summary: Connected vs disconnected architecture, SqlConnection, SqlCommand, Data
 
 # Overview
 
-**ADO.NET** is the low-level data access API in .NET (`System.Data`). Every ORM — Entity Framework, Dapper — is built on it. Interviews ask about it because it shows you understand what happens between your code and the database.
+**ADO.NET** is the low-level data access API in .NET (`System.Data`). Every ORM: Entity Framework, Dapper, is built on it. Interviews ask about it because it shows you understand what happens between your code and the database.
 
 Two architectures:
 
-- **Connected** — `DbConnection` + `DbCommand` + `DbDataReader`: open a connection, stream rows forward-only, close. Fast, low memory.
-- **Disconnected** — `DataAdapter` fills an in-memory `DataSet`/`DataTable`; the connection is closed while you work; changes are pushed back with `Update()`.
+- **Connected**: `DbConnection` + `DbCommand` + `DbDataReader`: open a connection, stream rows forward-only, close. Fast, low memory.
+- **Disconnected**: `DataAdapter` fills an in-memory `DataSet`/`DataTable`; the connection is closed while you work; changes are pushed back with `Update()`.
 
-Providers: `Microsoft.Data.SqlClient` (SQL Server — the current, recommended package; `System.Data.SqlClient` is deprecated), `Npgsql` (PostgreSQL), `MySqlConnector`, `Oracle.ManagedDataAccess.Core`, `Microsoft.Data.Sqlite`.
+Providers: `Microsoft.Data.SqlClient` (SQL Server, the current, recommended package; `System.Data.SqlClient` is deprecated), `Npgsql` (PostgreSQL), `MySqlConnector`, `Oracle.ManagedDataAccess.Core`, `Microsoft.Data.Sqlite`.
 
 **Dapper** (Stack Overflow, 2011) is a micro-ORM: extension methods on `IDbConnection` that map query results to objects, keeping SQL fully in your control with near-ADO.NET speed.
 
@@ -31,7 +31,7 @@ Providers: `Microsoft.Data.SqlClient` (SQL Server — the current, recommended p
 | 2008 | .NET 3.5: LINQ to SQL, LINQ to DataSet; EF 1.0 (SP1) |
 | 2012 | .NET 4.5: real `async` (`OpenAsync`, `ExecuteReaderAsync`) |
 | 2011 | Dapper released by Stack Overflow |
-| 2019 | **Microsoft.Data.SqlClient** 1.0 — new SQL Server driver shipped via NuGet |
+| 2019 | **Microsoft.Data.SqlClient** 1.0: new SQL Server driver shipped via NuGet |
 | 2022–2025 | Microsoft.Data.SqlClient 5.x/6.x: TDS 8 / strict encryption, `Encrypt=true` by default (4.0+), Entra ID (Azure AD) authentication, `SqlBatch` (.NET 6 `DbBatch`) |
 
 > **Breaking-change gotcha:** Microsoft.Data.SqlClient 4.0+ defaults to `Encrypt=True`. Local dev servers with self-signed certificates need `TrustServerCertificate=True` (dev only).
@@ -41,11 +41,11 @@ Providers: `Microsoft.Data.SqlClient` (SQL Server — the current, recommended p
 **Connected access lifecycle:**
 
 1. Create `SqlConnection` with a connection string.
-2. `Open()`/`OpenAsync()` — gets a physical connection **from the pool** (or creates one).
+2. `Open()`/`OpenAsync()`: gets a physical connection **from the pool** (or creates one).
 3. Create `SqlCommand` (SQL text or stored procedure) + **parameters**.
 4. Execute: `ExecuteReader` (rows), `ExecuteScalar` (single value), `ExecuteNonQuery` (rows affected).
 5. Read with `SqlDataReader.Read()` forward-only, column by column.
-6. Close/Dispose reader → command → connection (with `using`) — the connection **returns to the pool**, not physically closed.
+6. Close/Dispose reader → command → connection (with `using`): the connection **returns to the pool**, not physically closed.
 
 **Disconnected lifecycle:** `SqlDataAdapter.Fill(dataSet)` (opens and closes the connection automatically) → work offline (edit rows; each `DataRow` has a `RowState`: Added, Modified, Deleted, Unchanged) → `adapter.Update(dataSet)` generates INSERT/UPDATE/DELETE (via `SqlCommandBuilder` or explicit commands) → `AcceptChanges()`.
 
@@ -53,12 +53,12 @@ Providers: `Microsoft.Data.SqlClient` (SQL Server — the current, recommended p
 
 # Tools
 
-- **SQL Server Management Studio (SSMS)** / **Azure Data Studio** (retiring Feb 2026 in favour of the VS Code MSSQL extension) — write and test SQL.
-- **SQL Server Profiler / Extended Events** — see what your app sends.
+- **SQL Server Management Studio (SSMS)** / **Azure Data Studio** (retiring Feb 2026 in favour of the VS Code MSSQL extension): write and test SQL.
+- **SQL Server Profiler / Extended Events**: see what your app sends.
 - **Visual Studio Server Explorer / SQL Server Object Explorer**.
 - **Dapper**, **Dapper.Contrib**, **DbUp** (migrations as SQL scripts), **RepoDB**.
-- **Testcontainers for .NET** — real SQL Server in Docker for tests.
-- **Polly** — retry transient SQL errors (or `SqlRetryLogicProvider` in SqlClient 3.0+).
+- **Testcontainers for .NET**: real SQL Server in Docker for tests.
+- **Polly**: retry transient SQL errors (or `SqlRetryLogicProvider` in SqlClient 3.0+).
 
 # Module: Connected Architecture
 
@@ -68,7 +68,7 @@ Providers: `Microsoft.Data.SqlClient` (SQL Server — the current, recommended p
 |---|---|
 | `SqlConnection` | Connection to the DB (pooled) |
 | `SqlCommand` | SQL statement or stored procedure |
-| `SqlParameter` | Typed parameter value — prevents SQL injection |
+| `SqlParameter` | Typed parameter value: prevents SQL injection |
 | `SqlDataReader` | Fast, forward-only, read-only stream of rows |
 | `SqlDataAdapter` | Bridge between DB and `DataSet` |
 | `DataSet` / `DataTable` | In-memory relational data |
@@ -100,10 +100,10 @@ Use ordinal getters (`GetInt32(0)`) or cache `reader.GetOrdinal("Name")` for spe
 ## Lesson: [Basic|High] ExecuteReader vs ExecuteScalar vs ExecuteNonQuery
 
 ```csharp
-// ExecuteScalar — first column of first row
+// ExecuteScalar: first column of first row
 var count = (int)(await new SqlCommand("SELECT COUNT(*) FROM Orders", conn).ExecuteScalarAsync())!;
 
-// ExecuteNonQuery — INSERT/UPDATE/DELETE/DDL; returns rows affected
+// ExecuteNonQuery: INSERT/UPDATE/DELETE/DDL; returns rows affected
 var cmd = new SqlCommand("UPDATE Products SET Price = Price * 1.1 WHERE CategoryId = @c", conn);
 cmd.Parameters.AddWithValue("@c", 3);
 int affected = await cmd.ExecuteNonQueryAsync();
@@ -119,7 +119,7 @@ Multiple result sets: `reader.NextResult()` / `NextResultAsync()` moves to the n
 ## Lesson: [Basic|High] Parameters and SQL injection
 
 ```csharp
-// ❌ NEVER — SQL injection: name = "x'; DROP TABLE Users;--"
+// ❌ NEVER: SQL injection: name = "x'; DROP TABLE Users;--"
 var bad = new SqlCommand("SELECT * FROM Users WHERE Name = '" + name + "'", conn);
 
 // ✅ Parameterised
@@ -127,10 +127,10 @@ var good = new SqlCommand("SELECT * FROM Users WHERE Name = @name", conn);
 good.Parameters.Add("@name", SqlDbType.NVarChar, 50).Value = name;
 ```
 
-- Parameters send values separately from SQL text — they are never executed as code.
+- Parameters send values separately from SQL text: they are never executed as code.
 - Prefer `Parameters.Add(name, SqlDbType, size)` over `AddWithValue`: `AddWithValue` infers the type (e.g. `nvarchar(4000)` for strings), which can cause **implicit conversions** that prevent index seeks (varchar column vs nvarchar parameter) and plan-cache bloat.
 - Pass `DBNull.Value` for nulls, not `null`.
-- Dynamic table/column names can't be parameters — validate against an allow-list or use `QUOTENAME` in SQL.
+- Dynamic table/column names can't be parameters: validate against an allow-list or use `QUOTENAME` in SQL.
 
 ## Lesson: [Intermediate|High] Stored procedures and output parameters
 
@@ -218,7 +218,7 @@ catch
 }
 ```
 
-`TransactionScope` (System.Transactions) gives ambient transactions across multiple connections/resources: create with `TransactionScopeAsyncFlowOption.Enabled` for async code; it can escalate to a distributed transaction (MSDTC) if several connections are involved — avoid that in cloud apps.
+`TransactionScope` (System.Transactions) gives ambient transactions across multiple connections/resources: create with `TransactionScopeAsyncFlowOption.Enabled` for async code; it can escalate to a distributed transaction (MSDTC) if several connections are involved, avoid that in cloud apps.
 
 ## Lesson: [Intermediate|High] Connection pooling
 
@@ -226,7 +226,7 @@ catch
 - `Open()` takes a connection from the pool; `Close()`/`Dispose()` returns it.
 - Defaults (SqlClient): `Min Pool Size=0`, `Max Pool Size=100`, `Pooling=true`, `Connection Timeout=15`.
 - **Pool exhaustion** ("Timeout expired. The timeout period elapsed prior to obtaining a connection from the pool") = connections not disposed, long-running transactions, or too many concurrent requests.
-- Different connection strings (even a different space/order) create separate pools — build them once from config.
+- Different connection strings (even a different space/order) create separate pools: build them once from config.
 - Keep connections open as **briefly** as possible: open late, close early, always with `using`.
 
 ## Lesson: [Intermediate|Medium] Bulk operations and async
@@ -286,7 +286,7 @@ await conn.ExecuteAsync("INSERT ...", param, tx);
 await tx.CommitAsync();
 ```
 
-**Dapper vs EF Core:** Dapper — full SQL control, fastest mapping, great for reads/reports/stored procedures; no change tracking, migrations or LINQ. EF Core — productivity, LINQ, change tracking, migrations, relationships. Many systems use **both**: EF Core for writes (commands), Dapper for complex reads (queries) — a light CQRS.
+**Dapper vs EF Core:** Dapper, full SQL control, fastest mapping, great for reads/reports/stored procedures; no change tracking, migrations or LINQ. EF Core: productivity, LINQ, change tracking, migrations, relationships. Many systems use **both**: EF Core for writes (commands), Dapper for complex reads (queries), a light CQRS.
 
 # Interview
 
@@ -296,7 +296,7 @@ ADO.NET is .NET's core data access library (`System.Data` + provider packages). 
 
 ## [Beginner|High] What is the difference between connected and disconnected architecture?
 
-Connected: the connection stays open while you read with a `DataReader` — forward-only, read-only, very fast, minimal memory. Disconnected: a `DataAdapter` fills a `DataSet`/`DataTable`, then closes the connection; you can navigate, edit and later push changes back with `Update()` — more memory, more flexibility. Modern apps mostly use the connected model (directly or via Dapper/EF).
+Connected: the connection stays open while you read with a `DataReader`: forward-only, read-only, very fast, minimal memory. Disconnected: a `DataAdapter` fills a `DataSet`/`DataTable`, then closes the connection; you can navigate, edit and later push changes back with `Update()`: more memory, more flexibility. Modern apps mostly use the connected model (directly or via Dapper/EF).
 
 ## [Beginner|High] What is the difference between ExecuteReader, ExecuteScalar and ExecuteNonQuery?
 
@@ -304,11 +304,11 @@ Connected: the connection stays open while you read with a `DataReader` — forw
 
 ## [Beginner|High] DataReader vs DataSet?
 
-DataReader: connected, forward-only, read-only, one row at a time, fastest and lowest memory — use for streaming results to APIs. DataSet: disconnected, in-memory collection of DataTables with relations and constraints, random access and editable, can be serialised to XML — heavier; used in legacy WinForms/reporting. EF/Dapper map to objects instead.
+DataReader: connected, forward-only, read-only, one row at a time, fastest and lowest memory, use for streaming results to APIs. DataSet: disconnected, in-memory collection of DataTables with relations and constraints, random access and editable, can be serialised to XML, heavier; used in legacy WinForms/reporting. EF/Dapper map to objects instead.
 
 ## [Beginner|High] How do you prevent SQL injection in ADO.NET?
 
-Always use parameters (`@name` placeholders + `SqlParameter` with explicit type/size) or stored procedures with parameters — never concatenate user input into SQL. Validate input, use least-privilege DB accounts, and for dynamic identifiers (table/column names) use an allow-list. ORMs (EF, Dapper) parameterise automatically.
+Always use parameters (`@name` placeholders + `SqlParameter` with explicit type/size) or stored procedures with parameters: never concatenate user input into SQL. Validate input, use least-privilege DB accounts, and for dynamic identifiers (table/column names) use an allow-list. ORMs (EF, Dapper) parameterise automatically.
 
 ## [Beginner|Medium] What is the `using` statement's role with SqlConnection?
 
@@ -332,7 +332,7 @@ Set `CommandType = CommandType.StoredProcedure`, add input parameters, add an ou
 
 ## [Intermediate|Medium] What is SqlBulkCopy and when do you use it?
 
-A class that streams large volumes of rows into a SQL Server table using the bulk insert protocol — from a `DataTable`, `DataReader` or `DataRow[]`. It's orders of magnitude faster than individual INSERTs. Configure `BatchSize`, `BulkCopyTimeout`, column mappings and `TableLock`. Typical use: ETL staging loads, imports from CSV/Excel. Load into a staging table, then MERGE into the final table.
+A class that streams large volumes of rows into a SQL Server table using the bulk insert protocol: from a `DataTable`, `DataReader` or `DataRow[]`. It's orders of magnitude faster than individual INSERTs. Configure `BatchSize`, `BulkCopyTimeout`, column mappings and `TableLock`. Typical use: ETL staging loads, imports from CSV/Excel. Load into a staging table, then MERGE into the final table.
 
 ## [Intermediate|Medium] What is MARS?
 
@@ -340,7 +340,7 @@ Multiple Active Result Sets (`MultipleActiveResultSets=True` in the connection s
 
 ## [Intermediate|High] What is Dapper and how does it compare with EF Core and raw ADO.NET?
 
-Dapper is a micro-ORM: extension methods (`Query<T>`, `Execute`, `QueryMultiple`) on `IDbConnection` that map rows to objects using cached IL. Compared with raw ADO.NET it removes mapping boilerplate with almost the same speed; compared with EF Core it has no change tracking, LINQ, migrations or relationship management — you write all SQL. Use Dapper for read-heavy, performance-critical or complex SQL/stored procedures; EF Core for domain-rich write models. They combine well.
+Dapper is a micro-ORM: extension methods (`Query<T>`, `Execute`, `QueryMultiple`) on `IDbConnection` that map rows to objects using cached IL. Compared with raw ADO.NET it removes mapping boilerplate with almost the same speed; compared with EF Core it has no change tracking, LINQ, migrations or relationship management: you write all SQL. Use Dapper for read-heavy, performance-critical or complex SQL/stored procedures; EF Core for domain-rich write models. They combine well.
 
 ## [Advanced|Medium] How do you handle transient errors (e.g. Azure SQL failovers) in ADO.NET?
 
@@ -348,11 +348,11 @@ Use retry logic for transient error numbers (e.g. 40613, 40501, 40197, 10928/109
 
 ## [Advanced|Medium] How would you pass a list of 5,000 IDs to a SQL query efficiently?
 
-Options: a **table-valued parameter** (TVP; best for SQL Server; plan-stable), `STRING_SPLIT` on a delimited string or `OPENJSON` on a JSON array parameter (EF Core 8 does this for `Contains`), or bulk-insert into a temp/staging table and join. Avoid building `IN (1,2,3,...)` strings — injection risk, plan-cache pollution and the 2,100-parameter limit for individual parameters.
+Options: a **table-valued parameter** (TVP; best for SQL Server; plan-stable), `STRING_SPLIT` on a delimited string or `OPENJSON` on a JSON array parameter (EF Core 8 does this for `Contains`), or bulk-insert into a temp/staging table and join. Avoid building `IN (1,2,3,...)` strings: injection risk, plan-cache pollution and the 2,100-parameter limit for individual parameters.
 
 ## [Scenario|High] Under load the API logs "Timeout expired. The timeout period elapsed prior to obtaining a connection from the pool." How do you fix it?
 
-Pool exhaustion. 1) Search for connections/readers not in `using` blocks and for code holding connections across slow calls (HTTP, file I/O) or long transactions. 2) Check sync-over-async blocking that keeps connections open longer. 3) Check slow queries (Query Store) — slow queries hold connections. 4) Monitor active connections (`sys.dm_exec_sessions` by program name). 5) Only then tune `Max Pool Size`, and consider caching or fewer round trips (batching). Also ensure one consistent connection string.
+Pool exhaustion. 1) Search for connections/readers not in `using` blocks and for code holding connections across slow calls (HTTP, file I/O) or long transactions. 2) Check sync-over-async blocking that keeps connections open longer. 3) Check slow queries (Query Store): slow queries hold connections. 4) Monitor active connections (`sys.dm_exec_sessions` by program name). 5) Only then tune `Max Pool Size`, and consider caching or fewer round trips (batching). Also ensure one consistent connection string.
 
 ## [Scenario|High] You must import a 2-million-row CSV into SQL Server nightly. How would you do it in .NET?
 
@@ -360,7 +360,7 @@ Stream the file (don't load it all) with a CSV reader (CsvHelper) exposing an `I
 
 ## [Scenario|Medium] A query is fast in SSMS but slow from the application. Why?
 
-Common causes: (1) **different SET options** — SSMS uses `ARITHABORT ON`, apps usually OFF, so they get different cached plans; (2) **parameter sniffing** — the app's cached plan was compiled for an atypical parameter value; (3) parameter **type mismatch** (nvarchar parameter vs varchar column → implicit conversion, scan); (4) app reading huge result sets slowly or network latency. Investigate with Query Store / actual execution plans, fix types, consider `OPTION (RECOMPILE)` or `OPTIMIZE FOR`, update statistics, add proper indexes.
+Common causes: (1) **different SET options**: SSMS uses `ARITHABORT ON`, apps usually OFF, so they get different cached plans; (2) **parameter sniffing**: the app's cached plan was compiled for an atypical parameter value; (3) parameter **type mismatch** (nvarchar parameter vs varchar column → implicit conversion, scan); (4) app reading huge result sets slowly or network latency. Investigate with Query Store / actual execution plans, fix types, consider `OPTION (RECOMPILE)` or `OPTIMIZE FOR`, update statistics, add proper indexes.
 
 # Cheatsheet
 

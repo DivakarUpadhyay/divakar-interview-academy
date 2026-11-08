@@ -1,5 +1,5 @@
 """Page-speed watcher: loads key DevLadder pages in Chrome like a mid-range phone on 4G and measures the Core Web
-Vitals Google ranks on — LCP (main content shown), CLS (layout jumping) and TBT (main-thread blocking, the lab stand-in
+Vitals Google ranks on: LCP (main content shown), CLS (layout jumping) and TBT (main-thread blocking, the lab stand-in
 for INP). Prints a report and exits 1 if any page is outside Google's "good" range, so it can fail a deploy or a
 scheduled CI run.
 

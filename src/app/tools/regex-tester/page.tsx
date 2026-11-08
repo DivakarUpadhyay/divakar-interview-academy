@@ -5,7 +5,7 @@ import { tool } from "@/lib/tools";
 import RegexTester from "./RegexTester";
 
 const t = tool("regex-tester");
-export const metadata: Metadata = pageMeta({ title: `${t.name} — Free Online Regular Expression Tester`, description: t.description, path: `/tools/${t.slug}` });
+export const metadata: Metadata = pageMeta({ title: `${t.name}: Free Online Regular Expression Tester`, description: t.description, path: `/tools/${t.slug}` });
 
 export default function Page() {
   return (

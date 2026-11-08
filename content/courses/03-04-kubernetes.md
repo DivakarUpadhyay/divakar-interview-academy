@@ -11,7 +11,7 @@ summary: Cluster architecture, pods, deployments, services, ingress, ConfigMaps 
 
 # Overview
 
-**Kubernetes** is an open-source **container orchestration** platform: you declare the desired state (e.g. "run 3 replicas of shop-api:1.4, expose them on port 80"), and Kubernetes continuously makes the actual state match — scheduling containers onto machines, restarting failed ones, scaling, rolling out updates and load balancing.
+**Kubernetes** is an open-source **container orchestration** platform: you declare the desired state (e.g. "run 3 replicas of shop-api:1.4, expose them on port 80"), and Kubernetes continuously makes the actual state match, scheduling containers onto machines, restarting failed ones, scaling, rolling out updates and load balancing.
 
 Created at **Google** (inspired by its internal Borg system), open-sourced in 2014, donated to the **CNCF** (Cloud Native Computing Foundation) in 2015. "K8s" = K + 8 letters + s.
 
@@ -33,11 +33,11 @@ What Kubernetes gives you: self-healing, horizontal scaling, service discovery a
 | 1.27–1.30 | 2023–2024 | In-place pod resize (alpha), sidecar containers (beta 1.29), Gateway API v1.0 (separate project) |
 | 1.31–1.34 | 2024–2025 | Sidecars GA (1.33), in-place pod resize beta, Dynamic Resource Allocation for GPUs (GA 1.34) |
 
-Kubernetes releases **three minor versions per year**, each supported upstream for about **14 months** (≈ the three latest minors). AKS supports roughly the latest three GA minor versions (plus Long-Term Support for selected versions on Premium tier) — clusters must be upgraded regularly.
+Kubernetes releases **three minor versions per year**, each supported upstream for about **14 months** (≈ the three latest minors). AKS supports roughly the latest three GA minor versions (plus Long-Term Support for selected versions on Premium tier): clusters must be upgraded regularly.
 
 # Lifecycle
 
-**Pod lifecycle phases:** **Pending** (accepted, waiting for scheduling/image pull) → **Running** (bound to a node, at least one container running) → **Succeeded** (all containers exited 0 — Jobs) or **Failed** (a container exited non-zero and won't restart) — plus **Unknown** (node unreachable).
+**Pod lifecycle phases:** **Pending** (accepted, waiting for scheduling/image pull) → **Running** (bound to a node, at least one container running) → **Succeeded** (all containers exited 0, Jobs) or **Failed** (a container exited non-zero and won't restart), plus **Unknown** (node unreachable).
 
 Container states: Waiting (e.g. `ContainerCreating`, `ImagePullBackOff`, `CrashLoopBackOff`), Running, Terminated.
 
@@ -74,7 +74,7 @@ Container states: Waiting (e.g. `ContainerCreating`, `ImagePullBackOff`, `CrashL
 
 | Component | Role |
 |---|---|
-| **kube-apiserver** | Front door — all reads/writes go through the REST API; authentication, authorisation, admission |
+| **kube-apiserver** | Front door: all reads/writes go through the REST API; authentication, authorisation, admission |
 | **etcd** | Consistent key-value store holding all cluster state |
 | **kube-scheduler** | Assigns new pods to nodes (resources, affinity, taints) |
 | **kube-controller-manager** | Runs controllers (Deployment, ReplicaSet, Node, Job...) that reconcile desired vs actual state |
@@ -92,9 +92,9 @@ Everything is **declarative**: you `kubectl apply` YAML manifests describing des
 
 ## Lesson: [Basic|High] Pods, ReplicaSets and Deployments
 
-- **Pod** — smallest deployable unit: one or more containers sharing network (same IP, localhost) and volumes. Pods are **ephemeral** — never manage them directly in production.
-- **ReplicaSet** — keeps N identical pods running.
-- **Deployment** — manages ReplicaSets for stateless apps; adds rolling updates, rollbacks and history.
+- **Pod**: smallest deployable unit: one or more containers sharing network (same IP, localhost) and volumes. Pods are **ephemeral**: never manage them directly in production.
+- **ReplicaSet**: keeps N identical pods running.
+- **Deployment**: manages ReplicaSets for stateless apps; adds rolling updates, rollbacks and history.
 
 ```yaml
 apiVersion: apps/v1
@@ -162,7 +162,7 @@ spec:
 
 ## Lesson: [Intermediate|High] Ingress and the Gateway API
 
-An **Ingress** routes external HTTP(S) traffic to Services by host and path, with TLS termination — one load balancer for many services. It needs an **ingress controller** (ingress-nginx, Azure Application Gateway Ingress Controller / Application Gateway for Containers, Traefik, HAProxy).
+An **Ingress** routes external HTTP(S) traffic to Services by host and path, with TLS termination: one load balancer for many services. It needs an **ingress controller** (ingress-nginx, Azure Application Gateway Ingress Controller / Application Gateway for Containers, Traefik, HAProxy).
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -188,7 +188,7 @@ spec:
             backend: { service: { name: shop-web, port: { number: 80 } } }
 ```
 
-The **Gateway API** (GatewayClass, Gateway, HTTPRoute) is the more expressive successor to Ingress (traffic splitting, header matching, role separation). Note: the community ingress-nginx project announced retirement (maintenance ends March 2026) — new clusters should evaluate Gateway API implementations or other controllers.
+The **Gateway API** (GatewayClass, Gateway, HTTPRoute) is the more expressive successor to Ingress (traffic splitting, header matching, role separation). Note: the community ingress-nginx project announced retirement (maintenance ends March 2026), new clusters should evaluate Gateway API implementations or other controllers.
 
 ## Lesson: [Basic|High] ConfigMaps and Secrets
 
@@ -218,7 +218,7 @@ volumeMounts:
 # volumes: - name: cfg  configMap: { name: shop-config }
 ```
 
-Secrets are only **base64-encoded**, not encrypted, by default — enable etcd encryption at rest, restrict access with RBAC, and prefer external secret stores: **Azure Key Vault via the Secrets Store CSI Driver**, External Secrets Operator, plus **Workload Identity** so pods authenticate to Azure without stored credentials. Env vars from ConfigMaps don't update in running pods (restart needed); mounted files do update.
+Secrets are only **base64-encoded**, not encrypted, by default: enable etcd encryption at rest, restrict access with RBAC, and prefer external secret stores: **Azure Key Vault via the Secrets Store CSI Driver**, External Secrets Operator, plus **Workload Identity** so pods authenticate to Azure without stored credentials. Env vars from ConfigMaps don't update in running pods (restart needed); mounted files do update.
 
 # Module: Running Workloads Well
 
@@ -230,17 +230,17 @@ Secrets are only **base64-encoded**, not encrypted, by default — enable etcd e
 | **Readiness** | Can it serve traffic now? | Removed from Service endpoints (not restarted) |
 | **Startup** | Has it finished starting? | Liveness/readiness wait until it succeeds; failure → restart |
 
-Probe types: `httpGet`, `tcpSocket`, `exec`, `grpc`. In ASP.NET Core map separate endpoints: `/health/live` (process OK — don't check dependencies, or a DB blip restarts every pod) and `/health/ready` (dependencies like DB reachable).
+Probe types: `httpGet`, `tcpSocket`, `exec`, `grpc`. In ASP.NET Core map separate endpoints: `/health/live` (process OK, don't check dependencies, or a DB blip restarts every pod) and `/health/ready` (dependencies like DB reachable).
 
 ## Lesson: [Intermediate|High] Resources, QoS and autoscaling
 
-- **requests** — what the scheduler reserves (placement decisions). **limits** — the maximum: CPU over limit is **throttled**; memory over limit → container **OOMKilled**.
-- QoS classes: **Guaranteed** (requests = limits for all), **Burstable** (requests < limits), **BestEffort** (none — evicted first).
-- **HPA** (Horizontal Pod Autoscaler) — scales replicas on CPU/memory or custom/external metrics.
-- **VPA** — recommends/adjusts requests. **Cluster Autoscaler** / AKS **Node Auto Provisioning (Karpenter)** — adds/removes nodes when pods can't be scheduled.
-- **KEDA** — scale on events (Service Bus queue length, Kafka lag, cron), including to zero.
-- **PodDisruptionBudget** — keep minimum replicas available during voluntary disruptions (node upgrades/drains).
-- **ResourceQuota / LimitRange** — per-namespace caps and defaults.
+- **requests**: what the scheduler reserves (placement decisions). **limits**: the maximum: CPU over limit is **throttled**; memory over limit → container **OOMKilled**.
+- QoS classes: **Guaranteed** (requests = limits for all), **Burstable** (requests < limits), **BestEffort** (none, evicted first).
+- **HPA** (Horizontal Pod Autoscaler): scales replicas on CPU/memory or custom/external metrics.
+- **VPA**: recommends/adjusts requests. **Cluster Autoscaler** / AKS **Node Auto Provisioning (Karpenter)**: adds/removes nodes when pods can't be scheduled.
+- **KEDA**: scale on events (Service Bus queue length, Kafka lag, cron), including to zero.
+- **PodDisruptionBudget**: keep minimum replicas available during voluntary disruptions (node upgrades/drains).
+- **ResourceQuota / LimitRange**: per-namespace caps and defaults.
 
 ```yaml
 apiVersion: autoscaling/v2
@@ -268,7 +268,7 @@ spec:
 ## Lesson: [Intermediate|Medium] Storage: volumes, PV, PVC and StorageClass
 
 - **Volume** types: `emptyDir` (scratch, lives with the pod), `configMap`, `secret`, `hostPath` (avoid), `persistentVolumeClaim`, CSI volumes.
-- **PersistentVolume (PV)** — a piece of storage in the cluster. **PersistentVolumeClaim (PVC)** — a pod's request for storage (size, access mode). **StorageClass** — how to provision dynamically (AKS: `managed-csi` Azure Disk, `azurefile-csi` Azure Files).
+- **PersistentVolume (PV)**: a piece of storage in the cluster. **PersistentVolumeClaim (PVC)**: a pod's request for storage (size, access mode). **StorageClass**: how to provision dynamically (AKS: `managed-csi` Azure Disk, `azurefile-csi` Azure Files).
 - Access modes: ReadWriteOnce (one node), ReadOnlyMany, ReadWriteMany (Azure Files), ReadWriteOncePod.
 - Reclaim policy: Delete or Retain.
 
@@ -276,10 +276,10 @@ For production databases, prefer managed services (Azure SQL, Cosmos DB, Azure D
 
 ## Lesson: [Intermediate|High] Namespaces, RBAC and security
 
-- **Namespaces** — logical partitions (dev/test/team-a) for names, quotas, RBAC and network policies.
-- **RBAC** — `Role`/`ClusterRole` (verbs on resources) bound to users/groups/ServiceAccounts with `RoleBinding`/`ClusterRoleBinding`. AKS integrates with **Microsoft Entra ID** and Azure RBAC.
-- **ServiceAccounts** — identities for pods; with AKS **Workload Identity** they map to Entra managed identities to access Key Vault, Storage, SQL without secrets.
-- **NetworkPolicies** — firewall rules between pods (default: all pods can talk to each other).
+- **Namespaces**: logical partitions (dev/test/team-a) for names, quotas, RBAC and network policies.
+- **RBAC**: `Role`/`ClusterRole` (verbs on resources) bound to users/groups/ServiceAccounts with `RoleBinding`/`ClusterRoleBinding`. AKS integrates with **Microsoft Entra ID** and Azure RBAC.
+- **ServiceAccounts**: identities for pods; with AKS **Workload Identity** they map to Entra managed identities to access Key Vault, Storage, SQL without secrets.
+- **NetworkPolicies**: firewall rules between pods (default: all pods can talk to each other).
 - **Pod Security Standards** (Privileged/Baseline/Restricted) via Pod Security Admission; run as non-root, read-only root FS, drop capabilities.
 - Image hygiene: private registry (ACR attached to AKS), scanning, admission policies (Azure Policy/Gatekeeper/Kyverno).
 
@@ -312,7 +312,7 @@ kubectl explain deployment.spec.strategy
 
 | Strategy | How | Trade-off |
 |---|---|---|
-| **Rolling update** (default) | Replace pods gradually (`maxSurge`, `maxUnavailable`) | Zero downtime; old and new run side by side briefly — keep APIs/DB backward compatible |
+| **Rolling update** (default) | Replace pods gradually (`maxSurge`, `maxUnavailable`) | Zero downtime; old and new run side by side briefly: keep APIs/DB backward compatible |
 | **Recreate** | Kill all old, then start new | Downtime; for apps that can't run two versions |
 | **Blue-green** | Two full environments; switch the Service selector/ingress | Instant switch and rollback; double resources |
 | **Canary** | Send a small % of traffic to the new version, then increase | Low-risk; needs ingress/mesh traffic splitting (Argo Rollouts, Flagger, Gateway API weights) |
@@ -375,7 +375,7 @@ az aks nodepool add -g rg-shop --cluster-name aks-shop -n gpupool --node-vm-size
 
 ## [Beginner|High] What is Kubernetes and what problems does it solve?
 
-Kubernetes is an open-source container orchestrator (from Google, now CNCF). It automates deploying, scaling and operating containers across a cluster: scheduling pods onto nodes, self-healing (restarting/rescheduling failed containers), service discovery and load balancing, rolling updates and rollbacks, horizontal autoscaling, configuration and secret management, and storage orchestration — all driven by declarative desired state.
+Kubernetes is an open-source container orchestrator (from Google, now CNCF). It automates deploying, scaling and operating containers across a cluster: scheduling pods onto nodes, self-healing (restarting/rescheduling failed containers), service discovery and load balancing, rolling updates and rollbacks, horizontal autoscaling, configuration and secret management, and storage orchestration, all driven by declarative desired state.
 
 ## [Beginner|High] Explain the Kubernetes architecture.
 
@@ -387,7 +387,7 @@ A Pod is the smallest deployable unit: one or more tightly coupled containers sh
 
 ## [Beginner|High] What is the difference between a Deployment, a ReplicaSet and a StatefulSet?
 
-A ReplicaSet keeps a set number of identical pod replicas running. A Deployment manages ReplicaSets to provide declarative updates, rolling updates, rollbacks and revision history for stateless apps — you normally use Deployments, not ReplicaSets directly. A StatefulSet is for stateful apps: pods get stable names (`app-0`, `app-1`), stable network identities via a headless Service, ordered start/stop, and their own persistent volumes.
+A ReplicaSet keeps a set number of identical pod replicas running. A Deployment manages ReplicaSets to provide declarative updates, rolling updates, rollbacks and revision history for stateless apps: you normally use Deployments, not ReplicaSets directly. A StatefulSet is for stateful apps: pods get stable names (`app-0`, `app-1`), stable network identities via a headless Service, ordered start/stop, and their own persistent volumes.
 
 ## [Beginner|High] What are the Service types in Kubernetes?
 
@@ -403,7 +403,7 @@ Both inject configuration into pods as environment variables or mounted files. C
 
 ## [Intermediate|High] Explain liveness, readiness and startup probes.
 
-Liveness checks whether the container is alive; failing it causes a restart (use for deadlocks/hangs; don't include dependency checks). Readiness checks whether it can serve traffic; failing removes the pod from Service endpoints without restarting (use for warm-up and dependency availability). Startup probes protect slow-starting apps — liveness and readiness don't run until the startup probe succeeds.
+Liveness checks whether the container is alive; failing it causes a restart (use for deadlocks/hangs; don't include dependency checks). Readiness checks whether it can serve traffic; failing removes the pod from Service endpoints without restarting (use for warm-up and dependency availability). Startup probes protect slow-starting apps: liveness and readiness don't run until the startup probe succeeds.
 
 ## [Intermediate|High] What is the difference between resource requests and limits? What happens when exceeded?
 
@@ -415,7 +415,7 @@ When the pod template changes (e.g. new image), the Deployment creates a new Rep
 
 ## [Intermediate|High] What is an Ingress? How is it different from a LoadBalancer Service?
 
-A LoadBalancer Service exposes one service with its own cloud load balancer at layer 4. An Ingress is a layer-7 (HTTP/HTTPS) routing rule set — host and path based routing, TLS termination — handled by an ingress controller behind a single load balancer for many services. The Gateway API is the newer, more powerful successor.
+A LoadBalancer Service exposes one service with its own cloud load balancer at layer 4. An Ingress is a layer-7 (HTTP/HTTPS) routing rule set: host and path based routing, TLS termination, handled by an ingress controller behind a single load balancer for many services. The Gateway API is the newer, more powerful successor.
 
 ## [Intermediate|Medium] What is Helm?
 
@@ -443,7 +443,7 @@ kubectl sends the manifest to the API server → authentication, authorisation (
 
 ## [Scenario|High] After deploying a new version, users get errors for a few seconds on every release. How do you get true zero-downtime deployments?
 
-Ensure readiness probes reflect real readiness so traffic only reaches ready pods; set `maxUnavailable: 0` and `maxSurge: 1+`; handle SIGTERM gracefully (ASP.NET Core does — finish in-flight requests) and add a short `preStop` sleep so endpoints are removed from load balancers before shutdown; set an adequate `terminationGracePeriodSeconds`; run ≥ 2–3 replicas with a PodDisruptionBudget; keep API and DB changes backward compatible (expand-contract) because old and new versions overlap.
+Ensure readiness probes reflect real readiness so traffic only reaches ready pods; set `maxUnavailable: 0` and `maxSurge: 1+`; handle SIGTERM gracefully (ASP.NET Core does, finish in-flight requests) and add a short `preStop` sleep so endpoints are removed from load balancers before shutdown; set an adequate `terminationGracePeriodSeconds`; run ≥ 2–3 replicas with a PodDisruptionBudget; keep API and DB changes backward compatible (expand-contract) because old and new versions overlap.
 
 ## [Scenario|High] Pods are Pending with "0/3 nodes are available: insufficient memory". What do you do?
 
@@ -489,7 +489,7 @@ Requests (scheduling) · Limits (CPU throttle, memory OOMKill) · QoS: Guarantee
 
 ## Pod phases & errors
 
-Pending · Running · Succeeded · Failed · Unknown — `ImagePullBackOff` · `CrashLoopBackOff` · `OOMKilled` · `CreateContainerConfigError`.
+Pending · Running · Succeeded · Failed · Unknown: `ImagePullBackOff` · `CrashLoopBackOff` · `OOMKilled` · `CreateContainerConfigError`.
 
 ## Deploy strategies
 

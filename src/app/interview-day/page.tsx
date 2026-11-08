@@ -14,7 +14,7 @@ const PLAN: { when: string; items: string[] }[] = [
       "Do the High priority questions of each mapped course in the Practice panel until you score 80%+.",
       "Prepare 2 project walkthroughs and 5 STAR stories (conflict, failure, tight deadline, leadership, learning something fast).",
       "Research the company: product, customers, tech stack, recent news, Glassdoor/AmbitionBox interview reviews.",
-      "Decide your salary range from market data (see Career gaps & salary course) — never go in without a number.",
+      "Decide your salary range from market data (see Career gaps & salary course): never go in without a number.",
     ],
   },
   {
@@ -22,7 +22,7 @@ const PLAN: { when: string; items: string[] }[] = [
     items: [
       "Revise the cheat sheets of the 3–4 core courses for the role (e.g. C#, ASP.NET Core, SQL Server, Azure).",
       "Run one timed mock interview (10 questions, 2 minutes each, Scenario level included).",
-      "Rehearse 'Tell me about yourself' out loud — 60 to 90 seconds.",
+      "Rehearse 'Tell me about yourself' out loud: 60 to 90 seconds.",
       "Online interview: test camera, mic, internet, screen sharing, IDE and the meeting link. Charge the laptop.",
       "Keep your resume, the job description and your pitch notes (Demo kit → My pitch) open in tabs.",
       "Sleep. Tired recall is worse than one more hour of revision.",
@@ -31,7 +31,7 @@ const PLAN: { when: string; items: string[] }[] = [
   {
     when: "Interview morning / 1 hour before",
     items: [
-      "Skim High priority cheat-sheet sections only — no new topics.",
+      "Skim High priority cheat-sheet sections only: no new topics.",
       "Re-read your two project stories and the numbers in them.",
       "Have water, a pen and paper. Close notifications. Join 5 minutes early.",
     ],
@@ -50,7 +50,7 @@ const PLAN: { when: string; items: string[] }[] = [
   {
     when: "After",
     items: [
-      "Write down every question you were asked the same day — they repeat across companies.",
+      "Write down every question you were asked the same day: they repeat across companies.",
       "Send a short thank-you note to the recruiter within 24 hours.",
       "Mark the questions you struggled with as bookmarks (☆) and revise them in the Interview panel.",
     ],

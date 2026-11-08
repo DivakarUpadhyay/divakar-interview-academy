@@ -44,11 +44,11 @@ Azure is continuously updated rather than versioned. Key milestones:
 | 2023 | Azure OpenAI Service GA; Microsoft Fabric GA; Entra ID rename |
 | 2024–2025 | Azure AI Foundry, Flex Consumption plan for Functions, .NET Aspire integration, Azure Developer CLI updates |
 
-Cloud Services (classic) were retired in **August 2024**; the classic deployment model and Azure AD Graph were retired too — always use ARM-based resources.
+Cloud Services (classic) were retired in **August 2024**; the classic deployment model and Azure AD Graph were retired too: always use ARM-based resources.
 
 # Lifecycle
 
-**Azure resource hierarchy:** Microsoft Entra tenant → **Management groups** → **Subscriptions** (billing and access boundary) → **Resource groups** (lifecycle container — deploy, manage and delete together) → **Resources**.
+**Azure resource hierarchy:** Microsoft Entra tenant → **Management groups** → **Subscriptions** (billing and access boundary) → **Resource groups** (lifecycle container, deploy, manage and delete together) → **Resources**.
 
 **Resource lifecycle:** plan (region, SKU, naming, tags) → provision via **ARM** (portal, CLI, PowerShell, Bicep/Terraform) → configure (identity, networking, scaling) → deploy app → monitor (Azure Monitor, alerts) → scale/optimise → update/patch (PaaS: automatic) → decommission (delete resource group).
 
@@ -78,17 +78,17 @@ Cloud Services (classic) were retired in **August 2024**; the classic deployment
 
 ## Lesson: [Basic|High] Regions, availability zones and the resource hierarchy
 
-- **Region** — a set of datacenters in a geography (e.g. Central India — Pune). Choose for latency, data residency, service availability, price.
-- **Availability zones** — physically separate datacenters within a region (own power, cooling, network); zone-redundant services survive a datacenter failure.
-- **Region pairs** — regions paired for disaster recovery and staggered updates.
-- **Subscription** — billing + access boundary; **resource group** — logical container (same lifecycle); **management groups** — apply policies across subscriptions.
+- **Region**: a set of datacenters in a geography (e.g. Central India: Pune). Choose for latency, data residency, service availability, price.
+- **Availability zones**: physically separate datacenters within a region (own power, cooling, network); zone-redundant services survive a datacenter failure.
+- **Region pairs**: regions paired for disaster recovery and staggered updates.
+- **Subscription**: billing + access boundary; **resource group**: logical container (same lifecycle); **management groups**: apply policies across subscriptions.
 - **Tags** (env, owner, cost-centre), **naming conventions**, **resource locks** (CanNotDelete, ReadOnly), **Azure Policy** (enforce rules: allowed regions, required tags), **RBAC** (who can do what).
 
 ## Lesson: [Basic|High] Identity: Microsoft Entra ID, RBAC and managed identities
 
-- **Microsoft Entra ID** (formerly Azure Active Directory) — cloud identity provider: users, groups, app registrations (OAuth 2.0/OIDC), conditional access, MFA. **Entra External ID** for customer-facing apps (successor of Azure AD B2C for new projects).
-- **Azure RBAC** — role assignments = security principal + role definition (Owner, Contributor, Reader, or data roles like *Storage Blob Data Reader*, *Key Vault Secrets User*) + scope (management group/subscription/RG/resource).
-- **Managed identities** — Azure-managed service principals for Azure resources; no secrets in code or config. **System-assigned** (tied to one resource's lifecycle) or **user-assigned** (standalone, shareable).
+- **Microsoft Entra ID** (formerly Azure Active Directory): cloud identity provider: users, groups, app registrations (OAuth 2.0/OIDC), conditional access, MFA. **Entra External ID** for customer-facing apps (successor of Azure AD B2C for new projects).
+- **Azure RBAC**: role assignments = security principal + role definition (Owner, Contributor, Reader, or data roles like *Storage Blob Data Reader*, *Key Vault Secrets User*) + scope (management group/subscription/RG/resource).
+- **Managed identities**: Azure-managed service principals for Azure resources; no secrets in code or config. **System-assigned** (tied to one resource's lifecycle) or **user-assigned** (standalone, shareable).
 
 ```csharp
 // Same code works locally (Visual Studio/Azure CLI login) and in Azure (managed identity)
@@ -173,12 +173,12 @@ Triggers: HTTP, Timer, Queue Storage, Blob, Service Bus, Event Grid, Event Hubs,
 
 | Service | Stores | Use |
 |---|---|---|
-| **Blob Storage** | Objects (files) — block, append, page blobs | Images, documents, backups, data lake (ADLS Gen2 with hierarchical namespace) |
+| **Blob Storage** | Objects (files): block, append, page blobs | Images, documents, backups, data lake (ADLS Gen2 with hierarchical namespace) |
 | **Queue Storage** | Simple messages (64 KB) | Basic background work |
 | **Table Storage** | NoSQL key-attribute | Cheap structured data |
 | **Azure Files** | SMB/NFS file shares | Lift-and-shift shared folders |
 
-- Access tiers for blobs: **Hot**, **Cool** (30-day min), **Cold** (90-day min), **Archive** (180-day min, offline — rehydrate hours); lifecycle management policies move/delete automatically.
+- Access tiers for blobs: **Hot**, **Cool** (30-day min), **Cold** (90-day min), **Archive** (180-day min, offline, rehydrate hours); lifecycle management policies move/delete automatically.
 - Redundancy: **LRS** (3 copies in one datacenter), **ZRS** (across zones), **GRS/RA-GRS** (plus secondary region), **GZRS/RA-GZRS**.
 - Secure access: Entra ID RBAC + managed identity (preferred), **SAS tokens** (time-limited, scoped; user delegation SAS best), account keys (avoid), private endpoints, firewall.
 
@@ -190,13 +190,13 @@ await container.GetBlobClient($"{invoiceId}.pdf").UploadAsync(pdfStream, overwri
 
 ## Lesson: [Intermediate|High] Azure SQL and Cosmos DB
 
-**Azure SQL family:** Azure SQL Database (single DB or elastic pool; vCore or DTU; serverless auto-pause; Hyperscale up to 128 TB), Azure SQL Managed Instance (near-100% SQL Server compatibility — SQL Agent, cross-DB queries; lift-and-shift), SQL Server on Azure VMs (full control). Built-in HA, automated backups with point-in-time restore, geo-replication/failover groups, Entra authentication, Defender for SQL, read replicas.
+**Azure SQL family:** Azure SQL Database (single DB or elastic pool; vCore or DTU; serverless auto-pause; Hyperscale up to 128 TB), Azure SQL Managed Instance (near-100% SQL Server compatibility, SQL Agent, cross-DB queries; lift-and-shift), SQL Server on Azure VMs (full control). Built-in HA, automated backups with point-in-time restore, geo-replication/failover groups, Entra authentication, Defender for SQL, read replicas.
 
 **Azure Cosmos DB:** globally distributed, multi-model NoSQL with single-digit-millisecond latency SLA.
 
 - APIs: **NoSQL** (native), MongoDB (RU and vCore), Apache Cassandra, Gremlin (graph), Table, plus PostgreSQL (distributed, Citus).
 - **Partition key** choice is critical: high cardinality, evenly distributed, used in most queries (avoid hot partitions; cross-partition queries cost more).
-- **Request Units (RU/s)** — throughput currency: provisioned (manual/autoscale) or serverless.
+- **Request Units (RU/s)**: throughput currency: provisioned (manual/autoscale) or serverless.
 - **Consistency levels** (strongest → weakest): **Strong, Bounded Staleness, Session (default), Consistent Prefix, Eventual**.
 - Change feed for event-driven processing; TTL; multi-region writes.
 
@@ -238,14 +238,14 @@ processor.ProcessErrorAsync += args => Task.CompletedTask;
 await processor.StartProcessingAsync();
 ```
 
-**Logic Apps** — low-code workflows with hundreds of connectors (Office 365, SAP, Salesforce). **API Management (APIM)** — API gateway: publish, secure (JWT validation, subscription keys), throttle (rate-limit policies), transform, cache, version, developer portal.
+**Logic Apps**: low-code workflows with hundreds of connectors (Office 365, SAP, Salesforce). **API Management (APIM)**: API gateway: publish, secure (JWT validation, subscription keys), throttle (rate-limit policies), transform, cache, version, developer portal.
 
 # Module: Security, Networking and Operations
 
 ## Lesson: [Intermediate|High] Key Vault and app configuration
 
-- **Azure Key Vault** — secrets, keys (HSM-backed option) and certificates; RBAC access, soft delete + purge protection, versioning, rotation, private endpoint, logging.
-- **Azure App Configuration** — central feature flags and settings with labels per environment, dynamic refresh; reference Key Vault secrets.
+- **Azure Key Vault**: secrets, keys (HSM-backed option) and certificates; RBAC access, soft delete + purge protection, versioning, rotation, private endpoint, logging.
+- **Azure App Configuration**: central feature flags and settings with labels per environment, dynamic refresh; reference Key Vault secrets.
 - Access with managed identity + `DefaultAzureCredential`; App Service/Functions **Key Vault references** avoid code changes.
 
 ## Lesson: [Intermediate|Medium] Networking basics
@@ -257,8 +257,8 @@ await processor.StartProcessingAsync();
 
 ## Lesson: [Intermediate|High] Monitoring with Azure Monitor and Application Insights
 
-- **Azure Monitor** — metrics and logs platform; **Log Analytics workspace** stores logs queried with **KQL**; **alerts** (metric, log, activity log) → action groups (email, SMS, Teams, webhooks, Functions).
-- **Application Insights** — APM for apps: requests, dependencies (SQL/HTTP), exceptions, traces, live metrics, application map, availability tests, distributed tracing. In .NET use the **Azure Monitor OpenTelemetry Distro** (`builder.Services.AddOpenTelemetry().UseAzureMonitor()`).
+- **Azure Monitor**: metrics and logs platform; **Log Analytics workspace** stores logs queried with **KQL**; **alerts** (metric, log, activity log) → action groups (email, SMS, Teams, webhooks, Functions).
+- **Application Insights**: APM for apps: requests, dependencies (SQL/HTTP), exceptions, traces, live metrics, application map, availability tests, distributed tracing. In .NET use the **Azure Monitor OpenTelemetry Distro** (`builder.Services.AddOpenTelemetry().UseAzureMonitor()`).
 
 ```kusto
 requests
@@ -282,7 +282,7 @@ exceptions
 
 ```
 Users → Azure Front Door (WAF, CDN, TLS)
-      → App Service (or Container Apps) — autoscale, deployment slots, managed identity
+      → App Service (or Container Apps): autoscale, deployment slots, managed identity
           → Azure SQL (zone-redundant, failover group to paired region) via private endpoint
           → Azure Managed Redis (cache, sessions)
           → Blob Storage (files) via private endpoint
@@ -298,7 +298,7 @@ Reliability: zones + multi-region (active-passive with Front Door failover), hea
 
 ## [Beginner|High] What are IaaS, PaaS and SaaS? Give Azure examples.
 
-IaaS provides virtualised infrastructure — you manage OS and above (Azure VMs, VM Scale Sets). PaaS provides a managed platform — you deploy code and data, Azure handles OS, patching and scaling (App Service, Azure SQL Database, Functions, Container Apps). SaaS is complete software you just use (Microsoft 365). Serverless (Functions, Logic Apps) is PaaS that scales to zero and bills per use.
+IaaS provides virtualised infrastructure: you manage OS and above (Azure VMs, VM Scale Sets). PaaS provides a managed platform, you deploy code and data, Azure handles OS, patching and scaling (App Service, Azure SQL Database, Functions, Container Apps). SaaS is complete software you just use (Microsoft 365). Serverless (Functions, Logic Apps) is PaaS that scales to zero and bills per use.
 
 ## [Beginner|High] Explain the Azure resource hierarchy.
 
@@ -310,19 +310,19 @@ An automatically managed identity in Entra ID for an Azure resource (App Service
 
 ## [Beginner|High] What are deployment slots in App Service?
 
-Live apps with their own hostnames (e.g. `app-staging.azurewebsites.net`) within the same App Service plan (Standard tier and above). You deploy to staging, warm it up and test, then **swap** with production — near-zero downtime and instant rollback by swapping back. Slot-specific (sticky) settings stay with the slot (e.g. connection strings for staging).
+Live apps with their own hostnames (e.g. `app-staging.azurewebsites.net`) within the same App Service plan (Standard tier and above). You deploy to staging, warm it up and test, then **swap** with production: near-zero downtime and instant rollback by swapping back. Slot-specific (sticky) settings stay with the slot (e.g. connection strings for staging).
 
 ## [Beginner|Medium] What are availability zones and region pairs?
 
 Availability zones are physically separate datacenters within a region with independent power, cooling and networking; deploying across zones (zone-redundant services) protects against a datacenter failure (99.99% SLA for VMs across zones). Region pairs are two regions in the same geography used for disaster recovery (geo-redundant storage replication, sequential platform updates, prioritised recovery).
 
-## [Intermediate|High] Service Bus vs Event Grid vs Event Hubs — when do you use each?
+## [Intermediate|High] Service Bus vs Event Grid vs Event Hubs: when do you use each?
 
-Service Bus is for high-value business **messages** between services where every message must be processed: queues/topics, FIFO with sessions, transactions, duplicate detection, dead-lettering (orders, payments). Event Grid routes discrete **events** (something happened) to subscribers via push with filtering — reacting to blob uploads, resource changes or custom app events. Event Hubs ingests high-volume **event streams** (telemetry, logs, IoT) with partitions, retention and replay for stream processing.
+Service Bus is for high-value business **messages** between services where every message must be processed: queues/topics, FIFO with sessions, transactions, duplicate detection, dead-lettering (orders, payments). Event Grid routes discrete **events** (something happened) to subscribers via push with filtering: reacting to blob uploads, resource changes or custom app events. Event Hubs ingests high-volume **event streams** (telemetry, logs, IoT) with partitions, retention and replay for stream processing.
 
 ## [Intermediate|High] What are Azure Functions triggers and bindings? Which hosting plan would you choose?
 
-A trigger starts the function (HTTP, Timer, Service Bus, Blob, Queue, Event Grid, Event Hubs, Cosmos DB change feed); exactly one per function. Bindings declaratively connect to data as inputs/outputs (read a blob, write to a queue) without SDK code. Plans: Flex Consumption (serverless, scale to zero, VNet — the default choice for new apps), Premium (pre-warmed, no cold start, long runs), Dedicated/App Service plan (predictable cost), Container Apps. For .NET, use the isolated worker model.
+A trigger starts the function (HTTP, Timer, Service Bus, Blob, Queue, Event Grid, Event Hubs, Cosmos DB change feed); exactly one per function. Bindings declaratively connect to data as inputs/outputs (read a blob, write to a queue) without SDK code. Plans: Flex Consumption (serverless, scale to zero, VNet, the default choice for new apps), Premium (pre-warmed, no cold start, long runs), Dedicated/App Service plan (predictable cost), Container Apps. For .NET, use the isolated worker model.
 
 ## [Intermediate|High] What are Durable Functions?
 
@@ -330,11 +330,11 @@ An extension of Azure Functions for stateful workflows in code. An orchestrator 
 
 ## [Intermediate|High] How do you choose between Azure SQL Database and Cosmos DB?
 
-Azure SQL: relational data, complex joins and transactions, strong consistency, reporting, existing SQL skills — most line-of-business apps. Cosmos DB: globally distributed apps needing low latency at any scale, flexible schema JSON documents, massive throughput with predictable performance, multi-region writes, tunable consistency — e.g. catalogues, IoT, user profiles, gaming. Cosmos requires careful partition key design and RU cost planning.
+Azure SQL: relational data, complex joins and transactions, strong consistency, reporting, existing SQL skills, most line-of-business apps. Cosmos DB: globally distributed apps needing low latency at any scale, flexible schema JSON documents, massive throughput with predictable performance, multi-region writes, tunable consistency, e.g. catalogues, IoT, user profiles, gaming. Cosmos requires careful partition key design and RU cost planning.
 
 ## [Intermediate|High] What are Cosmos DB consistency levels?
 
-From strongest to weakest: Strong (linearizable reads — always latest), Bounded Staleness (reads lag by at most K versions or T time), Session (default — read-your-own-writes within a session), Consistent Prefix (never see out-of-order writes), Eventual (no ordering guarantee, lowest latency/cost). Stronger consistency means higher latency and RU cost, and Strong limits multi-region writes.
+From strongest to weakest: Strong (linearizable reads, always latest), Bounded Staleness (reads lag by at most K versions or T time), Session (default, read-your-own-writes within a session), Consistent Prefix (never see out-of-order writes), Eventual (no ordering guarantee, lowest latency/cost). Stronger consistency means higher latency and RU cost, and Strong limits multi-region writes.
 
 ## [Intermediate|Medium] What is the difference between blob access tiers?
 
@@ -366,7 +366,7 @@ The API saves the order and writes an outbox record in the same transaction; a b
 
 ## [Scenario|High] A developer's connection string with the SQL admin password was found in appsettings.json in the repo. How do you fix the design?
 
-Rotate the password immediately. Switch the app to **Entra ID authentication** for Azure SQL with a managed identity (`Authentication=Active Directory Default` in the connection string, create a contained user `FROM EXTERNAL PROVIDER` with minimal roles) — no password at all. Put any remaining secrets in Key Vault with Key Vault references. Enable secret scanning in the repo and remove SQL admin usage from apps.
+Rotate the password immediately. Switch the app to **Entra ID authentication** for Azure SQL with a managed identity (`Authentication=Active Directory Default` in the connection string, create a contained user `FROM EXTERNAL PROVIDER` with minimal roles): no password at all. Put any remaining secrets in Key Vault with Key Vault references. Enable secret scanning in the repo and remove SQL admin usage from apps.
 
 ## [Scenario|Medium] Users in Europe complain the India-hosted site is slow. What can you do?
 

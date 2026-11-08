@@ -11,7 +11,7 @@ summary: Boards, Repos, Pipelines, Test Plans and Artifacts; YAML pipelines (sta
 
 # Overview
 
-**DevOps** is a culture and set of practices that unite development and operations to deliver software **faster, more reliably and continuously** — automation (CI/CD, infrastructure as code), collaboration, monitoring and feedback.
+**DevOps** is a culture and set of practices that unite development and operations to deliver software **faster, more reliably and continuously**: automation (CI/CD, infrastructure as code), collaboration, monitoring and feedback.
 
 **Azure DevOps** (cloud: **Azure DevOps Services**; on-prem: **Azure DevOps Server**) is Microsoft's suite of DevOps tools:
 
@@ -23,13 +23,13 @@ summary: Boards, Repos, Pipelines, Test Plans and Artifacts; YAML pipelines (sta
 | **Azure Test Plans** | Manual and exploratory testing, test cases and suites |
 | **Azure Artifacts** | Package feeds: NuGet, npm, Maven, Python, Universal packages |
 
-Key DevOps terms: **CI** (continuous integration — every commit is built and tested), **CD** (continuous delivery — always releasable, deploy with approval; continuous deployment — automatically to production), **IaC** (infrastructure as code — Bicep, ARM, Terraform), **shift-left** (test and secure early), **DORA metrics** (deployment frequency, lead time for changes, change failure rate, time to restore service).
+Key DevOps terms: **CI** (continuous integration, every commit is built and tested), **CD** (continuous delivery, always releasable, deploy with approval; continuous deployment, automatically to production), **IaC** (infrastructure as code, Bicep, ARM, Terraform), **shift-left** (test and secure early), **DORA metrics** (deployment frequency, lead time for changes, change failure rate, time to restore service).
 
 # Versions
 
 | Year | Milestone |
 |---|---|
-| 2005 | **Team Foundation Server (TFS)** 2005 — on-prem ALM with TFVC |
+| 2005 | **Team Foundation Server (TFS)** 2005: on-prem ALM with TFVC |
 | 2012 | Team Foundation Service (cloud preview) |
 | 2013 | Git support in TFS; **Visual Studio Online** |
 | 2015 | Renamed **Visual Studio Team Services (VSTS)**; new build system |
@@ -38,7 +38,7 @@ Key DevOps terms: **CI** (continuous integration — every commit is built and t
 | 2019–2022 | Azure DevOps Server 2019, 2020, 2022; environments, approvals and checks; deprecated classic release features in new orgs gradually |
 | 2023–2025 | Workload identity federation for service connections (GA 2024), GitHub Advanced Security for Azure DevOps, Managed DevOps Pools (2024), Azure DevOps Server (2025, version-less "modern lifecycle" release) |
 
-Microsoft also owns **GitHub**; GitHub Actions is the other major CI/CD option — many organisations use GitHub repos with Azure Boards/Pipelines, or migrate to GitHub entirely.
+Microsoft also owns **GitHub**; GitHub Actions is the other major CI/CD option: many organisations use GitHub repos with Azure Boards/Pipelines, or migrate to GitHub entirely.
 
 # Lifecycle
 
@@ -50,8 +50,8 @@ Microsoft also owns **GitHub**; GitHub Actions is the other major CI/CD option �
 
 **YAML pipeline run lifecycle:**
 
-1. **Trigger** — CI (push to branch/path), PR trigger, schedule (cron), pipeline completion, manual.
-2. **Template expansion** — compile-time expressions `${{ }}` and templates are expanded.
+1. **Trigger**: CI (push to branch/path), PR trigger, schedule (cron), pipeline completion, manual.
+2. **Template expansion**: compile-time expressions `${{ }}` and templates are expanded.
 3. **Stages** run (sequentially by default, or by `dependsOn`).
 4. Each **job** is queued to an **agent pool**; the agent downloads the repo (`checkout`), runs **steps** (tasks/scripts), with runtime expressions `$[ ]` and macro variables `$( )`.
 5. **Artifacts** published between stages.
@@ -202,7 +202,7 @@ variables:
 | `$[ variables.x ]` | **Runtime**, before a job/stage | `condition`, variables based on dependencies |
 | `$(x)` | **Macro**, just before a task runs | task inputs, scripts |
 
-- **Secret variables** are masked in logs and not passed to scripts automatically — map them via `env:`.
+- **Secret variables** are masked in logs and not passed to scripts automatically: map them via `env:`.
 - **Predefined variables**: `Build.BuildId`, `Build.SourceBranch`, `Build.Reason`, `System.DefaultWorkingDirectory`, `Pipeline.Workspace`, `Agent.OS`.
 - Set variables from scripts: `echo "##vso[task.setvariable variable=ver;isOutput=true]1.2.3"`; output variables are used across jobs via `dependencies.Job.outputs['step.ver']`.
 - **Runtime parameters** (`parameters:` at top) let users pick values when running manually (typed: string, boolean, number, object).
@@ -227,15 +227,15 @@ steps:
   parameters: { project: src/Shop.sln }
 ```
 
-Template types: **step**, **job**, **stage**, **variable** templates, and **extends** templates (a pipeline must extend an approved template — enforce security/compliance via the "required template" check). Share templates across repos with `resources: repositories:`.
+Template types: **step**, **job**, **stage**, **variable** templates, and **extends** templates (a pipeline must extend an approved template, enforce security/compliance via the "required template" check). Share templates across repos with `resources: repositories:`.
 
 ## Lesson: [Intermediate|Medium] Agents, pools and service connections
 
-- **Microsoft-hosted agents** — fresh VM per job, preinstalled tools, no maintenance; limited free minutes/parallel jobs; no access to private networks.
-- **Self-hosted agents** — your VM/container; persistent caches; reach on-prem/private resources; you patch them. Scale with **VM scale set agents** or **Managed DevOps Pools**.
-- **Parallel jobs** — licensed concurrency.
-- **Service connections** — secure, reusable credentials to external systems: Azure Resource Manager (prefer **workload identity federation** — no secrets to rotate), Docker registry, Kubernetes, GitHub, generic. Restrict per pipeline and add approvals.
-- **Agent capabilities/demands** — route jobs to agents with required tools.
+- **Microsoft-hosted agents**: fresh VM per job, preinstalled tools, no maintenance; limited free minutes/parallel jobs; no access to private networks.
+- **Self-hosted agents**: your VM/container; persistent caches; reach on-prem/private resources; you patch them. Scale with **VM scale set agents** or **Managed DevOps Pools**.
+- **Parallel jobs**: licensed concurrency.
+- **Service connections**: secure, reusable credentials to external systems: Azure Resource Manager (prefer **workload identity federation**: no secrets to rotate), Docker registry, Kubernetes, GitHub, generic. Restrict per pipeline and add approvals.
+- **Agent capabilities/demands**: route jobs to agents with required tools.
 
 ## Lesson: [Intermediate|High] Container and Kubernetes pipelines
 
@@ -296,7 +296,7 @@ Azure Boards (work tracking, Kanban, sprints), Azure Repos (Git repos, PRs, bran
 
 ## [Beginner|High] Explain the structure of a YAML pipeline.
 
-A pipeline has triggers, optional variables/parameters/resources, and **stages** (e.g. Build, DeployDev, DeployProd); each stage contains **jobs** that run on an agent; each job has **steps** — tasks (prebuilt, like `DotNetCoreCLI@2`, `AzureWebApp@1`) or scripts. Deployment jobs target environments with approvals. Artifacts pass outputs between stages.
+A pipeline has triggers, optional variables/parameters/resources, and **stages** (e.g. Build, DeployDev, DeployProd); each stage contains **jobs** that run on an agent; each job has **steps**: tasks (prebuilt, like `DotNetCoreCLI@2`, `AzureWebApp@1`) or scripts. Deployment jobs target environments with approvals. Artifacts pass outputs between stages.
 
 ## [Beginner|High] YAML pipelines vs classic pipelines?
 
@@ -316,11 +316,11 @@ Store them as secret variables or in variable groups linked to **Azure Key Vault
 
 ## [Intermediate|High] What are environments, approvals and checks?
 
-An environment represents a deployment target (dev, test, prod — or Kubernetes namespaces/VMs) with deployment history and traceability. Approvals and checks configured on the environment gate deployment jobs: manual approvers, branch control (only from main), business hours, Azure Monitor alert queries, REST/Function checks, exclusive lock (one deployment at a time), required templates. They replace classic release gates.
+An environment represents a deployment target (dev, test, prod, or Kubernetes namespaces/VMs) with deployment history and traceability. Approvals and checks configured on the environment gate deployment jobs: manual approvers, branch control (only from main), business hours, Azure Monitor alert queries, REST/Function checks, exclusive lock (one deployment at a time), required templates. They replace classic release gates.
 
 ## [Intermediate|High] What is the difference between `${{ }}`, `$[ ]` and `$( )`?
 
-`${{ }}` are template (compile-time) expressions, evaluated when the YAML is parsed — used for parameters, conditional insertion and template logic. `$[ ]` are runtime expressions evaluated before a job/stage runs — used in conditions and variables depending on other jobs' outputs. `$( )` is macro syntax replaced just before a task executes — used in task inputs and scripts.
+`${{ }}` are template (compile-time) expressions, evaluated when the YAML is parsed: used for parameters, conditional insertion and template logic. `$[ ]` are runtime expressions evaluated before a job/stage runs, used in conditions and variables depending on other jobs' outputs. `$( )` is macro syntax replaced just before a task executes, used in task inputs and scripts.
 
 ## [Intermediate|Medium] How do you reuse pipeline logic across projects?
 
@@ -328,7 +328,7 @@ YAML templates (step, job, stage, variable templates) with typed parameters, sto
 
 ## [Intermediate|Medium] What branching strategy would you recommend and why?
 
-For most web/cloud teams: trunk-based development or GitHub flow — short-lived branches, PRs with build validation, frequent merges to main, feature flags for incomplete work, automated deployment through environments with approvals. It reduces merge conflicts and supports CI/CD. GitFlow suits products with scheduled releases and multiple supported versions but adds overhead.
+For most web/cloud teams: trunk-based development or GitHub flow, short-lived branches, PRs with build validation, frequent merges to main, feature flags for incomplete work, automated deployment through environments with approvals. It reduces merge conflicts and supports CI/CD. GitFlow suits products with scheduled releases and multiple supported versions but adds overhead.
 
 ## [Intermediate|Medium] How do you deploy database changes in a pipeline?
 
@@ -344,11 +344,11 @@ Four key metrics from the DevOps Research and Assessment program: **Deployment f
 
 ## [Scenario|High] The build is green but production broke after deployment. How do you prevent this next time?
 
-Find the gap: missing tests (add integration/contract tests for the failure), environment differences (config, data, secrets — use the same artifact and IaC everywhere), no smoke tests (add post-deploy health checks that fail the stage), big-bang releases (use canary/blue-green or slot swaps with warm-up, feature flags), and no automatic rollback (monitor key metrics and roll back on alerts). Run a blameless post-mortem and add the fix to the pipeline.
+Find the gap: missing tests (add integration/contract tests for the failure), environment differences (config, data, secrets, use the same artifact and IaC everywhere), no smoke tests (add post-deploy health checks that fail the stage), big-bang releases (use canary/blue-green or slot swaps with warm-up, feature flags), and no automatic rollback (monitor key metrics and roll back on alerts). Run a blameless post-mortem and add the fix to the pipeline.
 
 ## [Scenario|High] Pipelines take 40 minutes and developers are frustrated. How do you speed them up?
 
-Measure each step. Then: cache NuGet/npm packages (`Cache@2`), run independent jobs in parallel (split test projects), use incremental builds and only build changed services (path filters), use faster/self-hosted or Managed DevOps Pool agents with warm caches, avoid rebuilding — build once and promote the same artifact, move slow end-to-end tests to a nightly or post-merge stage, use Docker layer caching, and remove redundant steps.
+Measure each step. Then: cache NuGet/npm packages (`Cache@2`), run independent jobs in parallel (split test projects), use incremental builds and only build changed services (path filters), use faster/self-hosted or Managed DevOps Pool agents with warm caches, avoid rebuilding, build once and promote the same artifact, move slow end-to-end tests to a nightly or post-merge stage, use Docker layer caching, and remove redundant steps.
 
 ## [Scenario|Medium] A teammate committed a production connection string to the repo. What do you do?
 

@@ -18,8 +18,8 @@ It is still found in a huge number of existing websites, WordPress, Bootstrap 3/
 Core ideas:
 
 - `$` (alias of `jQuery`) wraps DOM elements in a **jQuery object** (array-like collection).
-- **Implicit iteration** — methods apply to every matched element.
-- **Chaining** — most methods return the jQuery object.
+- **Implicit iteration**: methods apply to every matched element.
+- **Chaining**: most methods return the jQuery object.
 - `$(document).ready()` / `$(function(){ })` runs code when the DOM is ready.
 
 # Versions
@@ -32,7 +32,7 @@ Core ideas:
 | 1.7 | 2011 | **`.on()` / `.off()`** unified event API |
 | 1.9 / 2.0 | 2013 | Removal of deprecated APIs; 2.x dropped IE 6–8 |
 | **3.0** | 2016 | Promises/A+ compatible deferreds, `requestAnimationFrame`, strict mode compatible |
-| 3.5 | 2020 | Security fix for `htmlPrefilter` (XSS in `.html()`) — upgrade if below 3.5 |
+| 3.5 | 2020 | Security fix for `htmlPrefilter` (XSS in `.html()`): upgrade if below 3.5 |
 | 3.7.1 | 2023 | Last 3.x feature release |
 | **4.0** | 2026 | Drops IE ≤ 10 and old Edge, removes deprecated APIs (e.g. `jQuery.trim`, `isArray`), ES modules, Trusted Types support |
 
@@ -44,7 +44,7 @@ Companion projects: **jQuery UI** (widgets, interactions; maintenance mode), **j
 
 1. Browser loads HTML; `<script src="jquery.min.js">` defines `window.jQuery`/`$` (load before plugins and your code).
 2. Plugins (`jquery.validate.js`, `jquery.validate.unobtrusive.js`, Bootstrap JS) attach to `$.fn`.
-3. `$(function () { ... })` — the **DOM ready** callback runs after the DOM is parsed (before images load).
+3. `$(function () { ... })`: the **DOM ready** callback runs after the DOM is parsed (before images load).
 4. Your code selects elements, binds events (`.on()`), initialises plugins.
 5. User interacts → event handlers → DOM updates / AJAX calls.
 6. AJAX lifecycle: `beforeSend` → request → `done/success` or `fail/error` → `always/complete`; global events `ajaxStart`, `ajaxStop`, `ajaxError`.
@@ -57,7 +57,7 @@ Companion projects: **jQuery UI** (widgets, interactions; maintenance mode), **j
 - **jQuery Migrate** for upgrading between majors.
 - Browser DevTools (inspect handlers in Elements → Event Listeners).
 - **jQuery UI**, **jQuery Validation** + **Microsoft jQuery Unobtrusive Validation**, DataTables, Select2, Bootstrap (≤ 4).
-- **You Might Not Need jQuery** (website) — modern JavaScript equivalents.
+- **You Might Not Need jQuery** (website): modern JavaScript equivalents.
 - ESLint plugin `eslint-plugin-jquery` / `no-jquery` to find and remove jQuery usage.
 
 # Module: Basics
@@ -88,7 +88,7 @@ $(".order-row")                 // class
 $("table tr:even")              // jQuery extension pseudo-selector (avoid for performance; use CSS where possible)
 $("input[type='email']")        // attribute
 $("ul > li:first-child")        // CSS
-$("#orders").find(".paid")      // descendant search — faster than one complex selector
+$("#orders").find(".paid")      // descendant search: faster than one complex selector
 $(".item").filter(".active")    // narrow a set
 $(".item").not(".disabled")
 $(".item").eq(2)                // third element
@@ -110,7 +110,7 @@ $(this).children(); $(this).siblings(); $(this).next(); $(this).prev();
 
 // Content
 $("#title").text("New title");            // safe text
-$("#box").html("<b>Bold</b>");            // parses HTML — never with untrusted input (XSS)
+$("#box").html("<b>Bold</b>");            // parses HTML: never with untrusted input (XSS)
 $("#name").val();                          // get form value
 $("#name").val("Divakar");                 // set
 
@@ -189,7 +189,7 @@ $.when($.getJSON("/api/user"), $.getJSON("/api/orders")).done((userRes, ordersRe
 $(document).ajaxStart(() => $("#spinner").show()).ajaxStop(() => $("#spinner").hide());
 ```
 
-jqXHR objects are **thenable** (Promises/A+ compatible since 3.0), so they work with `await`. `.success/.error/.complete` callbacks were removed in 3.0 — use `.done/.fail/.always`.
+jqXHR objects are **thenable** (Promises/A+ compatible since 3.0), so they work with `await`. `.success/.error/.complete` callbacks were removed in 3.0: use `.done/.fail/.always`.
 
 ## Lesson: [Basic|Medium] Effects and animations
 
@@ -201,7 +201,7 @@ $("#box").animate({ left: "+=50px", opacity: 0.5 }, 400, "swing", () => console.
 $("#box").stop(true, true);     // stop queued animations
 ```
 
-Modern alternative: CSS transitions/animations toggled with classes (`classList.toggle`) — smoother (GPU) and easier to maintain.
+Modern alternative: CSS transitions/animations toggled with classes (`classList.toggle`), smoother (GPU) and easier to maintain.
 
 ## Lesson: [Intermediate|Medium] Writing a jQuery plugin
 
@@ -248,13 +248,13 @@ $.validator.unobtrusive.adapters.addBool("notweekend");
 if ($form.valid()) { /* submit via AJAX */ }
 ```
 
-Server-side validation must still run — client validation is just for UX.
+Server-side validation must still run: client validation is just for UX.
 
 ## Lesson: [Intermediate|High] Performance and best practices
 
 - **Cache selectors** (`const $list = $("#list")`) instead of re-querying in loops.
 - Use **ID selectors** or scope searches with `.find()`; avoid jQuery-only pseudo-selectors (`:visible`, `:even`) on large sets.
-- **Batch DOM changes** — build an HTML string/fragment and append once instead of appending in a loop.
+- **Batch DOM changes**: build an HTML string/fragment and append once instead of appending in a loop.
 - Use **event delegation** for lists and tables.
 - Use `.text()` and `$("<tag>", { text })` for user content (XSS-safe); avoid `.html()` with untrusted data; keep jQuery ≥ 3.5.
 - Prefer CSS classes over many `.css()` calls.
@@ -286,7 +286,7 @@ A fast, small JavaScript library that simplifies HTML DOM traversal and manipula
 
 ## [Beginner|High] What is the difference between `$(document).ready()` and `window.onload`?
 
-`$(document).ready()` (or `$(fn)`) runs as soon as the DOM is parsed and ready to manipulate, before images and stylesheets finish loading; you can have many ready handlers. `window.onload` (or `$(window).on("load")`) waits until all resources, including images and iframes, have loaded — later. Use ready for DOM setup, load for things needing image dimensions.
+`$(document).ready()` (or `$(fn)`) runs as soon as the DOM is parsed and ready to manipulate, before images and stylesheets finish loading; you can have many ready handlers. `window.onload` (or `$(window).on("load")`) waits until all resources, including images and iframes, have loaded: later. Use ready for DOM setup, load for things needing image dimensions.
 
 ## [Beginner|High] What is the `$` sign in jQuery? What does `noConflict` do?
 
@@ -294,7 +294,7 @@ A fast, small JavaScript library that simplifies HTML DOM traversal and manipula
 
 ## [Beginner|High] What is the difference between `.text()`, `.html()` and `.val()`?
 
-`.text()` gets/sets the text content (HTML-escaped, safe for user input). `.html()` gets/sets inner HTML (parses markup — XSS risk with untrusted data). `.val()` gets/sets the value of form elements (input, select, textarea).
+`.text()` gets/sets the text content (HTML-escaped, safe for user input). `.html()` gets/sets inner HTML (parses markup: XSS risk with untrusted data). `.val()` gets/sets the value of form elements (input, select, textarea).
 
 ## [Beginner|Medium] What is method chaining?
 
@@ -306,7 +306,7 @@ Most jQuery methods return the same jQuery object, so you can call multiple meth
 
 ## [Intermediate|High] What is event delegation in jQuery and why use it?
 
-Binding a handler to a static ancestor with a selector argument — `$("#table").on("click", ".delete", fn)` — so events bubbling from matching descendants are handled. It works for elements added dynamically after binding (e.g. rows inserted via AJAX) and uses one handler instead of hundreds.
+Binding a handler to a static ancestor with a selector argument: `$("#table").on("click", ".delete", fn)`: so events bubbling from matching descendants are handled. It works for elements added dynamically after binding (e.g. rows inserted via AJAX) and uses one handler instead of hundreds.
 
 ## [Intermediate|High] What is the difference between `.attr()` and `.prop()`?
 
@@ -334,7 +334,7 @@ Usually not: modern browsers have standard equivalents (querySelector, classList
 
 ## [Scenario|High] Click handlers don't work for table rows added after an AJAX refresh. Why and how to fix?
 
-The handlers were bound directly (`$(".delete").on("click", ...)`) to rows existing at bind time; new rows don't have them. Use delegation on a static container: `$("#ordersTable").on("click", ".delete", handler)` — or rebind after each refresh (worse). Make sure the container itself isn't replaced by the AJAX refresh.
+The handlers were bound directly (`$(".delete").on("click", ...)`) to rows existing at bind time; new rows don't have them. Use delegation on a static container: `$("#ordersTable").on("click", ".delete", handler)`: or rebind after each refresh (worse). Make sure the container itself isn't replaced by the AJAX refresh.
 
 ## [Scenario|High] An old site uses jQuery 1.11 and a security scan flags XSS vulnerabilities. What do you do?
 

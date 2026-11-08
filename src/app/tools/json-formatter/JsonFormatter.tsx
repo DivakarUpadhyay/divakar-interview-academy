@@ -32,7 +32,7 @@ export default function JsonFormatter() {
       if (sorted) value = sortKeys(value);
       const space = indent === "tab" ? "\t" : Number(indent);
       setOutput(mode === "minify" ? JSON.stringify(value) : JSON.stringify(value, null, space));
-      setStatus({ ok: true, text: `Valid JSON${mode === "minify" ? " — minified" : ""}.` });
+      setStatus({ ok: true, text: `Valid JSON${mode === "minify" ? ", minified" : ""}.` });
     } catch (e) {
       const msg = (e as Error).message;
       const where = locate(input, msg);

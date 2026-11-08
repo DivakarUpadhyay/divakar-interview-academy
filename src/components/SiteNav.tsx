@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import type { MenuLink, MenuTrack } from "@/lib/menu";
 import { TOOLS } from "@/lib/tools";
 
@@ -23,6 +23,8 @@ const MORE = [
 
 export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
   const path = usePathname();
+  const router = useRouter();
+  const prefetched = useRef(new Set<string>());
   const [open, setOpen] = useState(false);
   const [drop, setDrop] = useState<string | null>(null);
   useEffect(() => { setOpen(false); setDrop(null); }, [path]);
@@ -35,8 +37,18 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
   };
   const isActive = (href: string) => path === href || path.startsWith(href + "/");
   const trackActive = (t: MenuTrack) => t.groups.some((g) => g.links.some((l) => isActive(l.href)));
+  // Start loading a menu's pages as soon as the pointer or keyboard reaches it, so the click itself feels instant
+  // (dropdown links are hidden until hover, so Next.js would otherwise only fetch them after the click).
+  const prefetchMenu = (el: HTMLElement) => {
+    el.querySelectorAll<HTMLAnchorElement>("a[href^='/']").forEach((a) => {
+      const href = a.getAttribute("href")!;
+      if (!prefetched.current.has(href)) { prefetched.current.add(href); router.prefetch(href); }
+    });
+  };
   const itemProps = (key: string, mega = false) => ({
     className: `menu-item${mega ? " mega" : ""}${drop === key ? " show" : ""}`,
+    onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => prefetchMenu(e.currentTarget),
+    onFocus: (e: React.FocusEvent<HTMLDivElement>) => prefetchMenu(e.currentTarget),
     onMouseLeave: () => setDrop((d) => (d === key ? null : d)),
   });
   const trigger = (key: string, label: string, active: boolean) => (
@@ -63,7 +75,7 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
           <input type="search" name="q" placeholder="Search tutorials, questions, cheat sheets…" aria-label="Search" />
           <button type="submit" aria-label="Search">⌕</button>
         </form>
-        <Link href="/notebook" className={`notebook-btn${isActive("/notebook") ? " active" : ""}`} title="My Notebook — revise list, notes, interview-day checklist">📒 <span>My Notebook</span></Link>
+        <Link href="/notebook" className={`notebook-btn${isActive("/notebook") ? " active" : ""}`} title="My Notebook: revise list, notes, interview-day checklist">📒 <span>My Notebook</span></Link>
         <button className="theme-btn" onClick={toggleTheme} title="Toggle dark mode">◐</button>
         <button className="menu-toggle" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Menu">☰</button>
       </div>
@@ -76,7 +88,7 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
               <div key={t.slug} {...itemProps(t.slug, mega)}>
                 {trigger(t.slug, t.label, trackActive(t))}
                 <div className="dropdown">
-                  {mega && <div className="drop-title">{t.title} <span className="hint">— basics to advanced, left to right</span></div>}
+                  {mega && <div className="drop-title">{t.title} <span className="hint">, basics to advanced, left to right</span></div>}
                   <div className="drop-cols">
                     {t.groups.map((g, i) => (
                       <div key={g.title} className="drop-col">

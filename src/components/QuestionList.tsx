@@ -41,7 +41,7 @@ export function QuestionCard({ q, n, open, onToggle, showCourse }: {
           <div className="prose" dangerouslySetInnerHTML={{ __html: q.answer_html }} />
           <button className={`btn small ${isKnown ? "" : "primary"}`}
             onClick={() => setKnown(isKnown ? known.filter((k) => k !== key) : [...known, key])}>
-            {isKnown ? "✓ I know this — undo" : "✓ I know this"}
+            {isKnown ? "✓ I know this: undo" : "✓ I know this"}
           </button>
           <StudyActions item={{ key: questionKey(q), kind: "question", title: q.question, href: `/courses/${q.course_slug}/interview`, course: q.course_title }} />
         </div>
@@ -116,7 +116,7 @@ export default function QuestionList({ questions, showCourse = false, courses, i
       <div className="practice-progress">
         <div className="row">
           <b>You know {knownCount} of {shown.length}</b>
-          <span className="muted small">{pct === 100 ? "All done — great work! 🎉" : "Open a question, read the answer, then tap “✓ I know this”."}</span>
+          <span className="muted small">{pct === 100 ? "All done: great work! 🎉" : "Open a question, read the answer, then tap “✓ I know this”."}</span>
         </div>
         <div className="progress"><div style={{ width: `${pct}%` }} /></div>
       </div>

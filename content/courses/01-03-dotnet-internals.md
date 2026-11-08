@@ -1,6 +1,6 @@
 ---
 slug: dotnet-internals
-title: .NET Internals — CLR, CTS, CLS, IL, JIT, Memory Management & Garbage Collection
+title: .NET Internals: CLR, CTS, CLS, IL, JIT, Memory Management & Garbage Collection
 track: dotnet
 order: 3
 group: Languages & Internals
@@ -33,14 +33,14 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 | Term | Full form | One line |
 |---|---|---|
 | **CLR** | Common Language Runtime | The virtual machine that loads, compiles (JIT), runs and manages .NET code |
-| **CTS** | Common Type System | Rules for how types are defined and behave — shared by all .NET languages |
+| **CTS** | Common Type System | Rules for how types are defined and behave: shared by all .NET languages |
 | **CLS** | Common Language Specification | Subset of CTS every language must support so libraries work across languages |
 | **IL / MSIL / CIL** | (Microsoft/Common) Intermediate Language | CPU-independent instructions produced by the compiler |
 | **JIT** | Just-In-Time compiler | Converts IL to native machine code at runtime (RyuJIT) |
 | **BCL / FCL** | Base / Framework Class Library | Built-in libraries |
 | **GC** | Garbage Collector | Automatic memory management |
-| Managed code | — | Code executed under the CLR (memory, safety managed) |
-| Unmanaged code | — | Native code outside the CLR (C/C++ DLLs, COM, Win32) — called via P/Invoke or COM interop |
+| Managed code |: | Code executed under the CLR (memory, safety managed) |
+| Unmanaged code |: | Native code outside the CLR (C/C++ DLLs, COM, Win32), called via P/Invoke or COM interop |
 
 # Versions
 
@@ -69,15 +69,15 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 
 | Version | Year | Type | Headline features |
 |---|---|---|---|
-| 1.0 | 2016 | — | Cross-platform runtime, ASP.NET Core 1.0, EF Core 1.0, `project.json` |
-| 1.1 | 2016 | — | More APIs |
-| 2.0 | 2017 | — | .NET Standard 2.0 (~32k APIs), Razor Pages, back to `.csproj` |
+| 1.0 | 2016 |: | Cross-platform runtime, ASP.NET Core 1.0, EF Core 1.0, `project.json` |
+| 1.1 | 2016 |: | More APIs |
+| 2.0 | 2017 |: | .NET Standard 2.0 (~32k APIs), Razor Pages, back to `.csproj` |
 | 2.1 | 2018 | LTS | `Span<T>`, SignalR, `HttpClientFactory`, global tools |
-| 2.2 | 2018 | — | Health checks, IIS in-process hosting |
-| 3.0 | 2019 | — | WinForms & WPF on Windows, C# 8, Blazor Server, gRPC, endpoint routing, `System.Text.Json` |
+| 2.2 | 2018 |: | Health checks, IIS in-process hosting |
+| 3.0 | 2019 |: | WinForms & WPF on Windows, C# 8, Blazor Server, gRPC, endpoint routing, `System.Text.Json` |
 | 3.1 | 2019 | LTS | Long-term support version of 3.0; Blazor improvements |
 
-**.NET 5 and later ("one .NET" — the successor of both Framework and Core):**
+**.NET 5 and later ("one .NET": the successor of both Framework and Core):**
 
 | Version | Release | Support | C# | Headline features |
 |---|---|---|---|---|
@@ -89,20 +89,20 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 | .NET 10 | Nov 2025 | **LTS** | 14 | Extension members, `field` keyword, file-based apps (`dotnet run app.cs`), JIT de-virtualisation and stack allocation improvements, EF Core 10, ASP.NET Core 10 |
 | .NET 11 | Nov 2026 (expected) | STS | 15 | In preview during 2026 |
 
-**Support policy:** a new version every November; **LTS** (even numbers) = 3 years of support, **STS** (odd numbers) = 2 years (extended from 18 months starting with .NET 9). **.NET Standard** (1.0–2.1) was a specification of APIs shared by Framework, Core, Xamarin and Unity — target `netstandard2.0` only for libraries that must still run on .NET Framework.
+**Support policy:** a new version every November; **LTS** (even numbers) = 3 years of support, **STS** (odd numbers) = 2 years (extended from 18 months starting with .NET 9). **.NET Standard** (1.0–2.1) was a specification of APIs shared by Framework, Core, Xamarin and Unity: target `netstandard2.0` only for libraries that must still run on .NET Framework.
 
 # Lifecycle
 
 **From source code to running program:**
 
 1. **Write** C#/VB.NET/F# source.
-2. **Compile** — Roslyn (`csc`/`vbc`, run by `dotnet build`/MSBuild) produces an **assembly** (`.dll`/`.exe`) containing **IL** + **metadata** (types, members, references) + **manifest** (assembly name, version, culture, references, resources).
-3. **Launch** — the host (`dotnet.exe`/apphost/IIS ANCM) reads `*.runtimeconfig.json`, locates the right runtime version and starts the CLR (`coreclr.dll` / `libcoreclr.so`).
-4. **Load** — the assembly loader loads the assembly and its dependencies (`*.deps.json`) into an AssemblyLoadContext.
-5. **Type loading** — the first use of a type builds its **MethodTable** (type info, method slots), runs its static constructor.
-6. **JIT** — the first call to a method compiles its IL to native code (tier 0, quick), replaces the stub; hot methods are recompiled with full optimisations (tier 1, possibly using profile data — Dynamic PGO).
-7. **Execute** — native code runs on the CPU; allocations go to the managed heap; the GC reclaims unreachable objects; exceptions unwind stack frames.
-8. **Shutdown** — finalizers may run, the process exits and the OS frees everything.
+2. **Compile**: Roslyn (`csc`/`vbc`, run by `dotnet build`/MSBuild) produces an **assembly** (`.dll`/`.exe`) containing **IL** + **metadata** (types, members, references) + **manifest** (assembly name, version, culture, references, resources).
+3. **Launch**: the host (`dotnet.exe`/apphost/IIS ANCM) reads `*.runtimeconfig.json`, locates the right runtime version and starts the CLR (`coreclr.dll` / `libcoreclr.so`).
+4. **Load**: the assembly loader loads the assembly and its dependencies (`*.deps.json`) into an AssemblyLoadContext.
+5. **Type loading**: the first use of a type builds its **MethodTable** (type info, method slots), runs its static constructor.
+6. **JIT**: the first call to a method compiles its IL to native code (tier 0, quick), replaces the stub; hot methods are recompiled with full optimisations (tier 1, possibly using profile data, Dynamic PGO).
+7. **Execute**: native code runs on the CPU; allocations go to the managed heap; the GC reclaims unreachable objects; exceptions unwind stack frames.
+8. **Shutdown**: finalizers may run, the process exits and the OS frees everything.
 
 # Tools
 
@@ -114,7 +114,7 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 
 # Module: Platform and Compilation
 
-## Lesson: [Basic|High] .NET Framework vs .NET Core vs .NET 5+ — the history explained
+## Lesson: [Basic|High] .NET Framework vs .NET Core vs .NET 5+: the history explained
 
 | | .NET Framework | .NET Core 1–3.1 | .NET 5+ |
 |---|---|---|---|
@@ -128,9 +128,9 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 
 **Mono** (2004, open source, by Ximian → Xamarin → Microsoft) ran .NET on Linux/macOS/mobile and powers Unity and Xamarin; today its runtime is used inside .NET for mobile and WebAssembly.
 
-> **Interview tip:** "Why did they skip .NET 4?" — to avoid confusion with .NET Framework 4.x; .NET 5 dropped "Core" from the name because it became *the* .NET going forward.
+> **Interview tip:** "Why did they skip .NET 4?", to avoid confusion with .NET Framework 4.x; .NET 5 dropped "Core" from the name because it became *the* .NET going forward.
 
-## Lesson: [Basic|High] CLR, CTS, CLS — what each one does
+## Lesson: [Basic|High] CLR, CTS, CLS: what each one does
 
 **CLR responsibilities:**
 
@@ -139,14 +139,14 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 | Class loader | Loads assemblies and types, builds MethodTables |
 | JIT compiler | IL → native code |
 | Garbage collector | Allocates and frees managed memory |
-| Type checker / verifier | Type safety — no invalid casts or reading random memory |
+| Type checker / verifier | Type safety: no invalid casts or reading random memory |
 | Exception manager | Structured exception handling across frames and languages |
 | Thread support | Managed threads, thread pool, synchronisation |
-| Security | Type safety, (Framework: Code Access Security — removed in Core) |
+| Security | Type safety, (Framework: Code Access Security, removed in Core) |
 | Interop | P/Invoke, COM interop, marshalling |
 | Debugging / profiling APIs | Debuggers, profilers, diagnostics |
 
-**CTS — the type system all languages share:**
+**CTS: the type system all languages share:**
 
 ```text
 System.Object
@@ -156,7 +156,7 @@ System.Object
 
 The CTS defines visibility (public, private, internal, protected), inheritance rules (single class inheritance, multiple interfaces), members (fields, methods, properties, events) and how values are boxed. Because C# `int` and VB.NET `Integer` are both **`System.Int32`**, the languages interoperate perfectly.
 
-**CLS — the common subset for cross-language libraries.** Examples of non-CLS-compliant features: unsigned types in public APIs (`uint` — VB.NET historically lacked them), names differing only by case (`Name` and `name` — VB.NET is case-insensitive), pointers. Mark libraries with `[assembly: CLSCompliant(true)]` and the compiler warns about violations.
+**CLS: the common subset for cross-language libraries.** Examples of non-CLS-compliant features: unsigned types in public APIs (`uint`: VB.NET historically lacked them), names differing only by case (`Name` and `name`: VB.NET is case-insensitive), pointers. Mark libraries with `[assembly: CLSCompliant(true)]` and the compiler warns about violations.
 
 ## Lesson: [Basic|High] Compilation: Roslyn, IL, JIT, tiered compilation, ReadyToRun and Native AOT
 
@@ -205,12 +205,12 @@ An **assembly** is the unit of deployment, versioning and security: a `.dll` or 
 |---|---|
 | PE header | Windows/OS executable format |
 | CLR header | Runtime version, entry point, flags |
-| **Metadata** | Every type, method, field, parameter, attribute and referenced member — what reflection and IntelliSense read |
+| **Metadata** | Every type, method, field, parameter, attribute and referenced member: what reflection and IntelliSense read |
 | **IL code** | Method bodies |
 | **Manifest** | Assembly identity (name, **version**, culture, public key token), list of files, referenced assemblies |
 | Resources | Embedded files, localised strings |
 
-Kinds: **private** assemblies (in the app folder — the norm today), **shared** assemblies in the **GAC** (Global Assembly Cache, .NET Framework only — `C:\Windows\Microsoft.NET\assembly`), **satellite** assemblies (localised resources, `fr\MyApp.resources.dll`).
+Kinds: **private** assemblies (in the app folder, the norm today), **shared** assemblies in the **GAC** (Global Assembly Cache, .NET Framework only, `C:\Windows\Microsoft.NET\assembly`), **satellite** assemblies (localised resources, `fr\MyApp.resources.dll`).
 
 **Strong name** = name + version + culture + public key token, signed with a key pair; required for the GAC in .NET Framework. Version format: `major.minor.build.revision`. Binding redirects in `app.config`/`web.config` solved "DLL hell" version conflicts in Framework; modern .NET resolves versions via NuGet and `deps.json` (no GAC).
 
@@ -222,7 +222,7 @@ Kinds: **private** assemblies (in the app folder — the norm today), **shared**
 </dependentAssembly>
 ```
 
-**AppDomain vs AssemblyLoadContext:** .NET Framework used **AppDomains** to isolate and unload code inside one process (IIS used one per web app). .NET Core removed multiple AppDomains; use **AssemblyLoadContext** (collectible contexts can be unloaded — plugins) or separate processes/containers for isolation.
+**AppDomain vs AssemblyLoadContext:** .NET Framework used **AppDomains** to isolate and unload code inside one process (IIS used one per web app). .NET Core removed multiple AppDomains; use **AssemblyLoadContext** (collectible contexts can be unloaded: plugins) or separate processes/containers for isolation.
 
 # Module: Memory Management
 
@@ -237,13 +237,13 @@ Reference variable (8 bytes on 64-bit) ──▶ [ Object header / sync block in
                                                                                         └▶ MethodTable: type info, base type, interface map, vtable slots for methods
 ```
 
-So an empty object costs ~24 bytes on 64-bit. A `struct` has **no header** — its fields are stored inline wherever it lives (stack frame, inside an array, inside another object).
+So an empty object costs ~24 bytes on 64-bit. A `struct` has **no header**: its fields are stored inline wherever it lives (stack frame, inside an array, inside another object).
 
 ```csharp
 class PointClass { public int X, Y; }      // heap object: header + MT pointer + 8 bytes of fields (+ padding) ≈ 24 bytes
 struct PointStruct { public int X, Y; }    // 8 bytes, inline
 
-var a = new PointStruct[1000];   // one array object, 8,000 bytes of data inline — cache friendly
+var a = new PointStruct[1000];   // one array object, 8,000 bytes of data inline: cache friendly
 var b = new PointClass[1000];    // one array of 1000 references + up to 1000 separate objects
 ```
 
@@ -252,21 +252,21 @@ Where things live:
 | Thing | Location |
 |---|---|
 | Local `int` / struct variable | Stack (or a CPU register) |
-| Reference variable (local) | Stack — the object it points to is on the heap |
+| Reference variable (local) | Stack: the object it points to is on the heap |
 | Object fields (including value-type fields) | Inside the object on the heap |
 | Array elements | Inside the array object on the heap |
 | Static fields | Special heap area associated with the type (live as long as the AssemblyLoadContext) |
 | Locals captured by a lambda or used across `await` | Moved into a heap object (closure class / async state machine) |
 
-## Lesson: [Intermediate|High] The garbage collector in depth — generations, LOH, POH and GC modes
+## Lesson: [Intermediate|High] The garbage collector in depth: generations, LOH, POH and GC modes
 
-**Allocation:** the GC hands each thread an allocation context; `new` just bumps a pointer — allocation is very cheap.
+**Allocation:** the GC hands each thread an allocation context; `new` just bumps a pointer, allocation is very cheap.
 
-**Collection — mark, (sweep), compact:**
+**Collection: mark, (sweep), compact:**
 
 1. **Suspend** managed threads at safe points (for blocking GCs).
-2. **Mark** — starting from **roots** (stack slots and registers, static fields, GC handles, finalization queue), follow references and mark reachable objects.
-3. **Plan/compact** — slide surviving objects together, update all references; free space becomes one contiguous block (no fragmentation). Sometimes it only **sweeps** (builds a free list) when compaction isn't worth it.
+2. **Mark**: starting from **roots** (stack slots and registers, static fields, GC handles, finalization queue), follow references and mark reachable objects.
+3. **Plan/compact**: slide surviving objects together, update all references; free space becomes one contiguous block (no fragmentation). Sometimes it only **sweeps** (builds a free list) when compaction isn't worth it.
 4. **Resume** threads.
 
 **Generations** (the "weak generational hypothesis": most objects die young):
@@ -274,10 +274,10 @@ Where things live:
 | Generation | Holds | Collected |
 |---|---|---|
 | **Gen 0** | Newly allocated small objects | Very often, very fast (ms or less) |
-| **Gen 1** | Survivors of one gen-0 GC — buffer between young and old | Often |
-| **Gen 2** | Long-lived objects (caches, singletons, static data) | Rarely; a "full GC" — most expensive |
-| **LOH** — Large Object Heap | Objects ≥ **85,000 bytes** (big arrays, big strings) | Only with gen 2; **not compacted by default** (can fragment) |
-| **POH** — Pinned Object Heap (.NET 5+) | Objects allocated as pinned (`GC.AllocateArray(..., pinned: true)`) | With gen 2, never moved |
+| **Gen 1** | Survivors of one gen-0 GC: buffer between young and old | Often |
+| **Gen 2** | Long-lived objects (caches, singletons, static data) | Rarely; a "full GC": most expensive |
+| **LOH**: Large Object Heap | Objects ≥ **85,000 bytes** (big arrays, big strings) | Only with gen 2; **not compacted by default** (can fragment) |
+| **POH**: Pinned Object Heap (.NET 5+) | Objects allocated as pinned (`GC.AllocateArray(..., pinned: true)`) | With gen 2, never moved |
 
 Objects that survive a collection are **promoted** to the next generation. Gen-2 objects referencing gen-0 objects are tracked with a **card table** so gen-0 GCs don't have to scan all of gen 2.
 
@@ -288,7 +288,7 @@ Objects that survive a collection are **promoted** to the next generation. Gen-2
 | **Workstation** | One heap; collections on the triggering thread; low pause, less throughput | Desktop/console apps |
 | **Server** | One heap + GC thread **per core**; higher throughput, more memory | ASP.NET Core apps |
 | **Concurrent / Background GC** | Gen-2 marking runs concurrently with the app; gen 0/1 still pause briefly | On by default |
-| **DATAS** (dynamic adaptation, .NET 8 opt-in, on by default with Server GC in .NET 9) | Server GC that grows/shrinks heap count to the load — less memory for small containers | Containers |
+| **DATAS** (dynamic adaptation, .NET 8 opt-in, on by default with Server GC in .NET 9) | Server GC that grows/shrinks heap count to the load: less memory for small containers | Containers |
 
 ```xml
 <!-- .csproj -->
@@ -309,7 +309,7 @@ var info = GC.GetGCMemoryInfo();   // heap size, fragmentation, pause durations
 
 ## Lesson: [Intermediate|High] Finalization, IDisposable and the Dispose pattern
 
-The GC frees **managed memory** only. **Unmanaged resources** (file handles, sockets, database connections, OS handles, native memory) must be released explicitly — that's what `IDisposable` is for.
+The GC frees **managed memory** only. **Unmanaged resources** (file handles, sockets, database connections, OS handles, native memory) must be released explicitly: that's what `IDisposable` is for.
 
 ```csharp
 public sealed class ReportWriter : IDisposable
@@ -334,7 +334,7 @@ using var writer = new ReportWriter();     // Dispose() called at end of scope, 
 
 - Objects with a finalizer survive at least one extra GC (they go to the **f-reachable queue**), so they are more expensive.
 - Order and timing are not guaranteed; finalizers may never run on process crash.
-- Use them only as a safety net for **directly owned unmanaged handles** — and prefer `SafeHandle`, which already implements this correctly.
+- Use them only as a safety net for **directly owned unmanaged handles**: and prefer `SafeHandle`, which already implements this correctly.
 
 The full **Dispose pattern** (for non-sealed classes that own unmanaged resources):
 
@@ -398,14 +398,14 @@ Take two snapshots some minutes apart, compare object counts by type, then use *
 - When a type is first used, the CLR loads its metadata and builds an **EEClass** (static type info) and a **MethodTable** (per-type runtime structure: size, base type, interfaces, **vtable** of method slots).
 - **Static constructor** (`static Foo() { }`) runs once before first use of the type (thread-safe, guaranteed by the CLR).
 - **Non-virtual call:** direct call to the method's code address (after JIT).
-- **Virtual call:** load the object's MethodTable pointer → read the slot for that method → call it. Overrides replace the slot in the derived type's vtable — that's runtime polymorphism.
+- **Virtual call:** load the object's MethodTable pointer → read the slot for that method → call it. Overrides replace the slot in the derived type's vtable: that's runtime polymorphism.
 - **Interface call:** resolved through virtual stub dispatch (cached per call site).
-- **Sealed classes** and the JIT's **devirtualisation** (helped by PGO) turn virtual calls into direct calls and allow inlining — a reason to mark classes `sealed` when not designed for inheritance.
-- **Generics:** for reference-type arguments the JIT shares one native implementation (`List<string>` and `List<Customer>` share code); for value types it generates specialised code (`List<int>`, `List<double>`) — no boxing and full speed.
+- **Sealed classes** and the JIT's **devirtualisation** (helped by PGO) turn virtual calls into direct calls and allow inlining: a reason to mark classes `sealed` when not designed for inheritance.
+- **Generics:** for reference-type arguments the JIT shares one native implementation (`List<string>` and `List<Customer>` share code); for value types it generates specialised code (`List<int>`, `List<double>`), no boxing and full speed.
 
 ## Lesson: [Intermediate|High] Threads, the thread pool and how async/await works inside
 
-**Managed threads** map 1:1 to OS threads. Creating them is expensive, so .NET uses the **ThreadPool**: worker threads that run queued work items (`Task.Run`, timers, continuations) plus I/O completion handling. It **injects threads gradually** (hill-climbing) when work is queued faster than it completes — blocking calls cause **thread-pool starvation** (slow responses, growing queues).
+**Managed threads** map 1:1 to OS threads. Creating them is expensive, so .NET uses the **ThreadPool**: worker threads that run queued work items (`Task.Run`, timers, continuations) plus I/O completion handling. It **injects threads gradually** (hill-climbing) when work is queued faster than it completes: blocking calls cause **thread-pool starvation** (slow responses, growing queues).
 
 **async/await under the hood:**
 
@@ -418,7 +418,7 @@ public async Task<int> GetCountAsync()
 ```
 
 1. The compiler rewrites the method into a **state machine** struct (`IAsyncStateMachine`) with a `MoveNext()` method; locals become fields.
-2. At `await`, if the task isn't complete, the state machine registers a continuation and **returns to the caller** — the thread goes back to the pool (no thread waits for the network).
+2. At `await`, if the task isn't complete, the state machine registers a continuation and **returns to the caller**: the thread goes back to the pool (no thread waits for the network).
 3. When the I/O completes (signalled by the OS via IOCP/epoll), a pool thread runs `MoveNext()` again from the saved state.
 4. **SynchronizationContext:** UI apps and classic ASP.NET resume on the original context (UI thread/request context); ASP.NET Core has **no** SynchronizationContext, so continuations run on any pool thread. `ConfigureAwait(false)` in libraries avoids capturing a context.
 5. Blocking on async (`.Result`, `.Wait()`) holds a thread and, with a single-threaded context, can **deadlock**.
@@ -427,15 +427,15 @@ public async Task<int> GetCountAsync()
 
 ## Lesson: [Advanced|Medium] Exceptions, boxing, strings and other runtime behaviours
 
-**Exceptions inside the CLR:** `throw` creates the exception object and captures the stack trace; the runtime does a **two-pass** unwind — first finds a matching `catch` (running exception filters `when (...)` without unwinding), then unwinds frames running `finally` blocks. Throwing is expensive (stack walk) — don't use exceptions for normal control flow. Unhandled exceptions on any thread terminate the process (after `AppDomain.UnhandledException` fires).
+**Exceptions inside the CLR:** `throw` creates the exception object and captures the stack trace; the runtime does a **two-pass** unwind, first finds a matching `catch` (running exception filters `when (...)` without unwinding), then unwinds frames running `finally` blocks. Throwing is expensive (stack walk): don't use exceptions for normal control flow. Unhandled exceptions on any thread terminate the process (after `AppDomain.UnhandledException` fires).
 
 **Boxing:** converting a value type to `object`/interface allocates a heap object with a header and copies the value; unboxing type-checks and copies back. Generics avoid it.
 
-**Strings:** immutable UTF-16 reference types; literals are **interned** (one instance per value per process); concatenation in loops creates garbage — use `StringBuilder`, `string.Create`, interpolation handlers, or `Span<char>`.
+**Strings:** immutable UTF-16 reference types; literals are **interned** (one instance per value per process); concatenation in loops creates garbage, use `StringBuilder`, `string.Create`, interpolation handlers, or `Span<char>`.
 
 **Type safety and verification:** the CLR prevents treating memory as the wrong type; `unsafe` code with pointers opts out (requires `AllowUnsafeBlocks`).
 
-**Reflection and metadata:** `typeof(T).GetMethods()` reads the assembly metadata at runtime — flexible but slow and AOT-unfriendly; **source generators** (System.Text.Json, logging, regex) do the work at compile time instead.
+**Reflection and metadata:** `typeof(T).GetMethods()` reads the assembly metadata at runtime, flexible but slow and AOT-unfriendly; **source generators** (System.Text.Json, logging, regex) do the work at compile time instead.
 
 **Interop:** P/Invoke (`[LibraryImport("user32.dll")]` source-generated in .NET 7+, `[DllImport]` before) calls native functions with marshalling of parameters; COM interop for Office automation and legacy components.
 
@@ -447,7 +447,7 @@ The Common Language Runtime is .NET's execution engine. It loads assemblies, ver
 
 ## [Beginner|High] What are CTS and CLS?
 
-CTS (Common Type System) defines how types are declared and used in .NET — value vs reference types, inheritance, members, visibility — so all languages share one type system (C# `int` = VB.NET `Integer` = `System.Int32`). CLS (Common Language Specification) is a subset of CTS rules that every .NET language supports, so a CLS-compliant library can be used from any language (e.g. avoid public unsigned types or names differing only in case).
+CTS (Common Type System) defines how types are declared and used in .NET: value vs reference types, inheritance, members, visibility, so all languages share one type system (C# `int` = VB.NET `Integer` = `System.Int32`). CLS (Common Language Specification) is a subset of CTS rules that every .NET language supports, so a CLS-compliant library can be used from any language (e.g. avoid public unsigned types or names differing only in case).
 
 ## [Beginner|High] What is IL (MSIL/CIL) and what does the JIT do?
 
@@ -459,17 +459,17 @@ IL is the CPU-independent, stack-based intermediate code the C#/VB.NET compilers
 
 ## [Beginner|High] What is managed vs unmanaged code?
 
-Managed code runs under the CLR, which handles memory (GC), type safety and exceptions — C#, VB.NET, F#. Unmanaged code runs directly on the OS without the CLR — C/C++ DLLs, Win32 APIs, COM components — and manages its own memory. .NET calls unmanaged code via P/Invoke or COM interop; resources from it must be released with `IDisposable`/`SafeHandle`.
+Managed code runs under the CLR, which handles memory (GC), type safety and exceptions: C#, VB.NET, F#. Unmanaged code runs directly on the OS without the CLR, C/C++ DLLs, Win32 APIs, COM components, and manages its own memory. .NET calls unmanaged code via P/Invoke or COM interop; resources from it must be released with `IDisposable`/`SafeHandle`.
 
 ## [Beginner|High] What is an assembly? What does it contain?
 
-The unit of deployment and versioning in .NET — a `.dll` or `.exe` containing IL code, metadata describing all types and members, a manifest (name, version, culture, public key token, references) and optional resources. Assemblies can be private (in the app folder), shared in the GAC (.NET Framework) or satellite (localised resources).
+The unit of deployment and versioning in .NET: a `.dll` or `.exe` containing IL code, metadata describing all types and members, a manifest (name, version, culture, public key token, references) and optional resources. Assemblies can be private (in the app folder), shared in the GAC (.NET Framework) or satellite (localised resources).
 
 ## [Intermediate|High] Explain how the garbage collector works. What are generations?
 
 The GC allocates objects by bumping a pointer and, when the gen-0 budget is used up, suspends threads, marks all objects reachable from roots (stack, statics, handles), compacts survivors and updates references. Generations: gen 0 for new objects (collected often and cheaply), gen 1 as a buffer, gen 2 for long-lived objects (full, expensive collections). Large objects (≥ 85,000 bytes) go to the LOH, collected with gen 2 and not compacted by default.
 
-## [Intermediate|High] Dispose vs Finalize — what's the difference? What is the Dispose pattern?
+## [Intermediate|High] Dispose vs Finalize: what's the difference? What is the Dispose pattern?
 
 `Dispose` (from `IDisposable`) is called deterministically by your code (`using`) to release resources early; a finalizer (`~Class()`) is called non-deterministically by the GC's finalizer thread as a safety net for unmanaged resources and makes objects survive an extra GC. The Dispose pattern: `Dispose()` calls `Dispose(true)` and `GC.SuppressFinalize(this)`; the finalizer calls `Dispose(false)`; `Dispose(bool disposing)` frees managed resources only when `disposing` is true and unmanaged resources always. Prefer `SafeHandle` over writing finalizers.
 
@@ -479,7 +479,7 @@ Reference-type objects are always on the managed heap; variables hold references
 
 ## [Intermediate|High] Workstation vs Server GC?
 
-Workstation GC uses one heap and runs collections on the allocating thread — lower memory and shorter pauses, suited to desktop apps. Server GC creates one heap and one dedicated GC thread per logical core and collects in parallel — higher throughput and allocation rates, more memory, the default for ASP.NET Core. Both support background (concurrent) gen-2 collection; .NET 9 enables DATAS to adapt Server GC heap count to load.
+Workstation GC uses one heap and runs collections on the allocating thread: lower memory and shorter pauses, suited to desktop apps. Server GC creates one heap and one dedicated GC thread per logical core and collects in parallel, higher throughput and allocation rates, more memory, the default for ASP.NET Core. Both support background (concurrent) gen-2 collection; .NET 9 enables DATAS to adapt Server GC heap count to load.
 
 ## [Intermediate|Medium] What is the GAC and is it used in .NET Core?
 
@@ -487,15 +487,15 @@ The Global Assembly Cache is a machine-wide store for strong-named shared assemb
 
 ## [Intermediate|Medium] AppDomain vs AssemblyLoadContext?
 
-AppDomains (.NET Framework) isolated code within one process and could be unloaded — IIS ran each web app in its own AppDomain. .NET Core supports only one AppDomain; isolation and unloading of plugins use `AssemblyLoadContext` (collectible contexts can be unloaded), and strong isolation uses separate processes or containers.
+AppDomains (.NET Framework) isolated code within one process and could be unloaded: IIS ran each web app in its own AppDomain. .NET Core supports only one AppDomain; isolation and unloading of plugins use `AssemblyLoadContext` (collectible contexts can be unloaded), and strong isolation uses separate processes or containers.
 
 ## [Intermediate|Medium] What is tiered compilation, ReadyToRun and Native AOT?
 
-Tiered compilation JITs methods quickly at tier 0 and recompiles frequently used methods with full optimisation (tier 1, with Dynamic PGO) — fast startup and fast steady state. ReadyToRun ships precompiled native code inside assemblies for faster startup while keeping the JIT. Native AOT compiles the entire app ahead of time into a self-contained native executable — fastest startup and lowest memory, but no runtime code generation and limited reflection.
+Tiered compilation JITs methods quickly at tier 0 and recompiles frequently used methods with full optimisation (tier 1, with Dynamic PGO): fast startup and fast steady state. ReadyToRun ships precompiled native code inside assemblies for faster startup while keeping the JIT. Native AOT compiles the entire app ahead of time into a self-contained native executable, fastest startup and lowest memory, but no runtime code generation and limited reflection.
 
 ## [Intermediate|Medium] How does async/await work internally?
 
-The compiler turns an async method into a state-machine struct; each `await` checks whether the awaited task has completed — if not, it stores the current state, registers a continuation and returns an incomplete Task to the caller, releasing the thread. When the operation completes (the OS signals I/O completion), the continuation runs `MoveNext()` from the saved state on a thread-pool thread (or the captured SynchronizationContext). No thread is blocked while waiting for I/O.
+The compiler turns an async method into a state-machine struct; each `await` checks whether the awaited task has completed: if not, it stores the current state, registers a continuation and returns an incomplete Task to the caller, releasing the thread. When the operation completes (the OS signals I/O completion), the continuation runs `MoveNext()` from the saved state on a thread-pool thread (or the captured SynchronizationContext). No thread is blocked while waiting for I/O.
 
 ## [Advanced|High] How do you find a memory leak in a production .NET application?
 
@@ -507,7 +507,7 @@ Objects of 85,000 bytes or more are allocated on the LOH, which is collected onl
 
 ## [Advanced|Medium] How does virtual method dispatch work in the CLR?
 
-Each type has a MethodTable with a vtable of slots for its virtual methods; derived types copy the base slots and replace those they override. A virtual call loads the object's MethodTable pointer, reads the slot for the method and calls that address — so the runtime type decides which implementation runs. Sealed types and JIT devirtualisation (with PGO) can turn these into direct calls and enable inlining.
+Each type has a MethodTable with a vtable of slots for its virtual methods; derived types copy the base slots and replace those they override. A virtual call loads the object's MethodTable pointer, reads the slot for the method and calls that address, so the runtime type decides which implementation runs. Sealed types and JIT devirtualisation (with PGO) can turn these into direct calls and enable inlining.
 
 ## [Scenario|High] An ASP.NET Core API's memory grows steadily until the container is OOM-killed every few hours. What do you do?
 

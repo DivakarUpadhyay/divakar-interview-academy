@@ -25,7 +25,7 @@ What interviewers evaluate:
 | Stability | Reasons for job changes, long-term fit |
 | Logistics | Notice period, location/relocation, salary, visa/work permit |
 
-The golden rule: **be honest, specific and positive** — and prepare stories in advance.
+The golden rule: **be honest, specific and positive**: and prepare stories in advance.
 
 # Versions
 
@@ -34,7 +34,7 @@ Interview practices have evolved:
 | Era | Practice |
 |---|---|
 | Traditional | Unstructured chats, "What are your strengths?" |
-| 1970s–80s | **Behavioural interviewing** popularised (Tom Janz and others) — "Tell me about a time…" |
+| 1970s–80s | **Behavioural interviewing** popularised (Tom Janz and others): "Tell me about a time…" |
 | 1990s–2000s | Competency frameworks; **STAR** method widely adopted |
 | 2010s | Structured interviews with scoring rubrics; values-based interviews (e.g. Amazon Leadership Principles) |
 | 2020 onwards | Remote/video interviews become standard; asynchronous video screening (HireVue-style) and AI-assisted screening; skills-based hiring |
@@ -43,13 +43,13 @@ Interview practices have evolved:
 
 **Typical hiring process (varies by company):**
 
-1. **Application / referral** → resume screening (often an ATS — applicant tracking system — keyword match).
+1. **Application / referral** → resume screening (often an ATS: applicant tracking system, keyword match).
 2. **Recruiter / HR screening call** (15–30 min): background, notice period, current/expected CTC, location, interest.
-3. **Online assessment** (aptitude, coding, MCQs) — common in service companies and for freshers.
-4. **Technical round(s)** — 1 to 3 rounds (concepts, coding, system design, project discussion).
-5. **Managerial / techno-managerial round** — ownership, team fit, scenarios.
-6. **HR round** — behavioural questions, culture fit, salary discussion.
-7. **Offer** — verbal offer → written offer letter → negotiation → acceptance.
+3. **Online assessment** (aptitude, coding, MCQs): common in service companies and for freshers.
+4. **Technical round(s)**: 1 to 3 rounds (concepts, coding, system design, project discussion).
+5. **Managerial / techno-managerial round**: ownership, team fit, scenarios.
+6. **HR round**: behavioural questions, culture fit, salary discussion.
+7. **Offer**: verbal offer → written offer letter → negotiation → acceptance.
 8. **Background verification** (employment, education, address, criminal check) → **onboarding**.
 
 **Answer lifecycle (how to handle any HR question):** listen fully → pause briefly → structure (STAR or point-reason-example) → answer in 60–120 seconds → connect back to the role → stop and let them ask follow-ups.
@@ -57,7 +57,7 @@ Interview practices have evolved:
 # Tools
 
 - **Your resume** (one or two pages, tailored to the job description, achievements with numbers).
-- **STAR story bank** — 8–10 stories (spreadsheet/notes) covering conflict, failure, success, leadership, deadline, learning, mistake, disagreement, customer focus, innovation.
+- **STAR story bank**: 8–10 stories (spreadsheet/notes) covering conflict, failure, success, leadership, deadline, learning, mistake, disagreement, customer focus, innovation.
 - **Company research**: company website, annual report/investor pages, news, LinkedIn, Glassdoor, AmbitionBox (India), job description.
 - **Mock interviews**: this site's Practice panel, a friend, recording yourself on video.
 - **Online setup**: quiet room, good light, headphones with mic, stable internet, Zoom/Teams/Meet tested.
@@ -71,18 +71,18 @@ Structure every behavioural answer as:
 
 | Step | What to say | Share of the answer |
 |---|---|---|
-| **S — Situation** | Context: where, when, what was going on | ~15% |
-| **T — Task** | Your responsibility or goal | ~10% |
-| **A — Action** | What **you** did — specific steps, decisions, why | ~60% |
-| **R — Result** | Outcome with numbers + what you learned | ~15% |
+| **S: Situation** | Context: where, when, what was going on | ~15% |
+| **T: Task** | Your responsibility or goal | ~10% |
+| **A: Action** | What **you** did, specific steps, decisions, why | ~60% |
+| **R: Result** | Outcome with numbers + what you learned | ~15% |
 
 Tips: use **"I"** for your actions (not only "we"); quantify results (time saved, % improvement, money, users); keep it to about 2 minutes; prepare stories that can be adapted to several questions; end with the learning.
 
 **Example (tight deadline):**
 
-> **S:** In my last project, the client moved a regulatory reporting release forward by two weeks. **T:** I owned the SSIS and SQL Server part — 14 reports had to be validated. **A:** I listed the reports by risk, automated the reconciliation checks with T-SQL scripts instead of manual Excel comparisons, split work with two colleagues, and gave the client daily status with risks. **R:** We delivered 3 days early with zero defects in UAT, and the reconciliation scripts became part of the standard release checklist.
+> **S:** In my last project, the client moved a regulatory reporting release forward by two weeks. **T:** I owned the SSIS and SQL Server part, 14 reports had to be validated. **A:** I listed the reports by risk, automated the reconciliation checks with T-SQL scripts instead of manual Excel comparisons, split work with two colleagues, and gave the client daily status with risks. **R:** We delivered 3 days early with zero defects in UAT, and the reconciliation scripts became part of the standard release checklist.
 
-## Lesson: [Basic|High] "Tell me about yourself" — the 60–90 second pitch
+## Lesson: [Basic|High] "Tell me about yourself": the 60–90 second pitch
 
 Formula: **Present → Past → Future** (or Who you are → What you've done → What you want and why here).
 
@@ -92,13 +92,13 @@ Do: tailor it to the job description, include 1–2 measurable achievements, fin
 
 ## Lesson: [Basic|High] Strengths, weaknesses and self-awareness
 
-**Strengths** — pick 2–3 relevant to the role, each with **proof**:
+**Strengths**: pick 2–3 relevant to the role, each with **proof**:
 
-> "My strength is debugging production issues systematically. Last quarter I traced a recurring timeout to parameter sniffing in a stored procedure using Query Store, fixed it, and added monitoring — incidents for that service dropped to zero."
+> "My strength is debugging production issues systematically. Last quarter I traced a recurring timeout to parameter sniffing in a stored procedure using Query Store, fixed it, and added monitoring: incidents for that service dropped to zero."
 
-**Weakness** — real, not disqualifying for the role, and show **what you are doing about it**:
+**Weakness**: real, not disqualifying for the role, and show **what you are doing about it**:
 
-> "I used to take on too much myself instead of delegating, because I wanted things done perfectly. It slowed the team down in one release. Since then I break work into tasks in Jira early, pair with juniors, and review instead of rewriting — our last sprint finished all committed stories."
+> "I used to take on too much myself instead of delegating, because I wanted things done perfectly. It slowed the team down in one release. Since then I break work into tasks in Jira early, pair with juniors, and review instead of rewriting: our last sprint finished all committed stories."
 
 Avoid clichés ("I'm a perfectionist", "I work too hard") and fatal weaknesses ("I miss deadlines", "I don't like teamwork").
 
@@ -108,7 +108,7 @@ Research: products/services, customers, industry, recent news (funding, launches
 
 Answer formula: **Company → Role → You**.
 
-> "Your company builds payment infrastructure used by thousands of merchants — I've worked on reconciliation and settlement for 3 years, so the domain is familiar and I want to go deeper. The role focuses on .NET services on Azure with high transaction volumes, which matches my experience and is where I want to grow. And from your engineering blog, the focus on observability and automated testing is how I like to work."
+> "Your company builds payment infrastructure used by thousands of merchants: I've worked on reconciliation and settlement for 3 years, so the domain is familiar and I want to go deeper. The role focuses on .NET services on Azure with high transaction volumes, which matches my experience and is where I want to grow. And from your engineering blog, the focus on observability and automated testing is how I like to work."
 
 # Module: Common HR Questions
 
@@ -118,9 +118,9 @@ Be honest but **positive and forward-looking**; never criticise your current emp
 
 Good reasons: growth/learning, bigger scope or responsibility, new technology/domain, relocation, project ended, company restructuring, stability after a contract role.
 
-> "I've learned a lot at my current company and delivered two major releases. The product is now in maintenance mode, and I want to work on building new cloud-native systems at a larger scale — which this role offers."
+> "I've learned a lot at my current company and delivered two major releases. The product is now in maintenance mode, and I want to work on building new cloud-native systems at a larger scale, which this role offers."
 
-If you were laid off: "My role was part of a company-wide restructuring affecting 15% of staff. It wasn't performance-related — I have a reference from my manager. I used the time to complete AZ-204 and build a project with .NET 10 and Azure Container Apps."
+If you were laid off: "My role was part of a company-wide restructuring affecting 15% of staff. It wasn't performance-related: I have a reference from my manager. I used the time to complete AZ-204 and build a project with .NET 10 and Azure Container Apps."
 
 ## Lesson: [Basic|High] Where do you see yourself in five years?
 
@@ -134,8 +134,8 @@ Show ambition aligned with the company, not a plan to leave:
 - **Relocation**: be clear about willingness and timing; ask about relocation support.
 - **Shifts / on-call / travel**: answer honestly; ask how often.
 - **Bond / service agreement**: read the terms before accepting.
-- **Documents**: relieving letters, payslips, Form 16 (India), degree certificates — keep them ready for background verification.
-- **Work permits**: e.g. for Taiwan, foreign professionals need a work permit (or a Taiwan Employment Gold Card) — know your status and timeline.
+- **Documents**: relieving letters, payslips, Form 16 (India), degree certificates, keep them ready for background verification.
+- **Work permits**: e.g. for Taiwan, foreign professionals need a work permit (or a Taiwan Employment Gold Card): know your status and timeline.
 
 ## Lesson: [Basic|Medium] Body language, voice and online interview etiquette
 
@@ -159,21 +159,21 @@ Always ask 2–3. Good ones:
 - "How are performance reviews and promotions handled?"
 - "What are the next steps in the process?"
 
-Avoid asking first about leave, perks or "How soon can I get promoted?" — and never say "No questions".
+Avoid asking first about leave, perks or "How soon can I get promoted?", and never say "No questions".
 
 # Interview
 
 ## [Beginner|High] Tell me about yourself.
 
-Use Present → Past → Future in 60–90 seconds. Example: "I'm a .NET developer with 5 years' experience in C#, ASP.NET Core, SQL Server and Azure. Currently I build payment reconciliation APIs at ABC, where I cut the nightly batch from 3 hours to 25 minutes by moving row-by-row processing to set-based T-SQL and parallel jobs. Earlier at XYZ I built SSIS/SSRS reporting for a banking client and set up Azure DevOps CI/CD. I'm looking for a role building cloud-native, high-scale services — which is why this Azure platform role interests me." Tailor the achievements to the job description.
+Use Present → Past → Future in 60–90 seconds. Example: "I'm a .NET developer with 5 years' experience in C#, ASP.NET Core, SQL Server and Azure. Currently I build payment reconciliation APIs at ABC, where I cut the nightly batch from 3 hours to 25 minutes by moving row-by-row processing to set-based T-SQL and parallel jobs. Earlier at XYZ I built SSIS/SSRS reporting for a banking client and set up Azure DevOps CI/CD. I'm looking for a role building cloud-native, high-scale services, which is why this Azure platform role interests me." Tailor the achievements to the job description.
 
 ## [Beginner|High] Why should we hire you?
 
-Connect three things: the role's needs, your proof, and your attitude. "You need someone who can build and run .NET services on Azure and improve performance. I've done exactly that — for example, I reduced API p95 latency by 60% with caching and query tuning, and I set up the CI/CD pipeline my team uses today. I also communicate well with business users, and I'm keen to keep learning, as my recent AZ-204 certification shows. I can contribute from the first month."
+Connect three things: the role's needs, your proof, and your attitude. "You need someone who can build and run .NET services on Azure and improve performance. I've done exactly that, for example, I reduced API p95 latency by 60% with caching and query tuning, and I set up the CI/CD pipeline my team uses today. I also communicate well with business users, and I'm keen to keep learning, as my recent AZ-204 certification shows. I can contribute from the first month."
 
 ## [Beginner|High] What are your strengths?
 
-Pick two or three that matter for the role and prove each with a short example. "First, problem-solving under pressure — I led the fix for a production payment outage within 40 minutes by isolating a failing dependency and switching to a fallback. Second, ownership — I don't stop at 'code complete'; I add monitoring and documentation. Third, learning quickly — I picked up Angular in a month to help our frontend team meet a release."
+Pick two or three that matter for the role and prove each with a short example. "First, problem-solving under pressure: I led the fix for a production payment outage within 40 minutes by isolating a failing dependency and switching to a fallback. Second, ownership, I don't stop at 'code complete'; I add monitoring and documentation. Third, learning quickly, I picked up Angular in a month to help our frontend team meet a release."
 
 ## [Beginner|High] What is your greatest weakness?
 
@@ -193,7 +193,7 @@ Show realistic ambition aligned with the company's path: "I see myself as a seni
 
 ## [Beginner|Medium] What do you know about our company?
 
-Summarise in four points: what they do (products/services and customers), scale or market position (from public sources), recent news (launch, expansion, acquisition, results), and the tech/culture aspects relevant to you. Then connect: "That's why this role appeals to me…". Only use facts you've verified — don't guess numbers.
+Summarise in four points: what they do (products/services and customers), scale or market position (from public sources), recent news (launch, expansion, acquisition, results), and the tech/culture aspects relevant to you. Then connect: "That's why this role appeals to me…". Only use facts you've verified: don't guess numbers.
 
 ## [Beginner|Medium] Are you willing to relocate or work in shifts?
 
@@ -201,15 +201,15 @@ Answer honestly with any conditions: "Yes, I'm open to relocating to Hyderabad; 
 
 ## [Beginner|Medium] What is your notice period? Can you join earlier?
 
-State it exactly and what flexibility exists: "My notice period is 60 days. My company allows buyout of part of it, so I could join in about 30–45 days if needed, and I'm finishing my handover documentation early to make that possible." Don't claim an immediate joining you can't deliver — background checks will confirm dates.
+State it exactly and what flexibility exists: "My notice period is 60 days. My company allows buyout of part of it, so I could join in about 30–45 days if needed, and I'm finishing my handover documentation early to make that possible." Don't claim an immediate joining you can't deliver: background checks will confirm dates.
 
 ## [Intermediate|High] Tell me about a time you had a conflict with a colleague.
 
-STAR, showing empathy and resolution — not blame. "S: A senior QA and I disagreed on releasing a hotfix — he wanted a full regression; I worried about the client's outage. T: We needed a decision within the hour. A: I spoke with him privately, understood his concern about a past incident, and proposed a targeted regression of affected modules plus a rollback plan, then we presented both options to the lead together. R: We released in 90 minutes with no new defects; since then we keep a 'hotfix test checklist' we built together, and we work well."
+STAR, showing empathy and resolution, not blame. "S: A senior QA and I disagreed on releasing a hotfix, he wanted a full regression; I worried about the client's outage. T: We needed a decision within the hour. A: I spoke with him privately, understood his concern about a past incident, and proposed a targeted regression of affected modules plus a rollback plan, then we presented both options to the lead together. R: We released in 90 minutes with no new defects; since then we keep a 'hotfix test checklist' we built together, and we work well."
 
 ## [Intermediate|High] Tell me about a failure or mistake you made.
 
-Choose a genuine mistake with low-to-moderate impact, own it, and show learning. "I once deployed a database migration that locked a large table during business hours, causing 10 minutes of slow responses. I rolled back immediately, informed my manager and the client, and redid it off-hours in batches. I then added a pre-deployment checklist for migrations — size checks, off-peak scheduling and a tested rollback script — and we haven't had a repeat."
+Choose a genuine mistake with low-to-moderate impact, own it, and show learning. "I once deployed a database migration that locked a large table during business hours, causing 10 minutes of slow responses. I rolled back immediately, informed my manager and the client, and redid it off-hours in batches. I then added a pre-deployment checklist for migrations: size checks, off-peak scheduling and a tested rollback script, and we haven't had a repeat."
 
 ## [Intermediate|High] Describe a situation where you worked under pressure or a tight deadline.
 
@@ -229,7 +229,7 @@ Pick a professional achievement relevant to the role, with a measurable result a
 
 ## [Intermediate|Medium] What motivates you?
 
-Be specific and genuine: "Solving real problems for users and seeing measurable impact — like a report that used to take 20 minutes running in 30 seconds. I'm also motivated by learning new things, such as moving our services to containers, and by working with a team where people help each other."
+Be specific and genuine: "Solving real problems for users and seeing measurable impact, like a report that used to take 20 minutes running in 30 seconds. I'm also motivated by learning new things, such as moving our services to containers, and by working with a team where people help each other."
 
 ## [Intermediate|Medium] Do you prefer working alone or in a team?
 
@@ -241,7 +241,7 @@ Show respectful disagreement backed by data, then commitment. "My manager wanted
 
 ## [Intermediate|Medium] How do you keep your skills up to date?
 
-Give concrete, recent examples: "I follow the .NET and Azure blogs and release notes, did the AZ-204 certification last year, build small side projects to try new features — recently Minimal APIs with .NET 10 and Azure Container Apps — and share learnings in our team's monthly tech talk."
+Give concrete, recent examples: "I follow the .NET and Azure blogs and release notes, did the AZ-204 certification last year, build small side projects to try new features, recently Minimal APIs with .NET 10 and Azure Container Apps, and share learnings in our team's monthly tech talk."
 
 ## [Advanced|Medium] Tell me about a time you went beyond your job description.
 
@@ -249,7 +249,7 @@ Give concrete, recent examples: "I follow the .NET and Azure blogs and release n
 
 ## [Scenario|High] You are offered a role, but another company is also likely to make an offer next week. What do you do?
 
-Be honest and professional: thank the first company, express genuine interest, and ask for a reasonable timeline to decide ("Could I confirm by next Friday?"). Inform the second company that you have an offer and a deadline to see if they can speed up. Compare on role, learning, team, stability, compensation and location — not just salary. Once you accept, honour it; reneging after accepting damages your reputation (and in India some companies share data on offer drop-outs).
+Be honest and professional: thank the first company, express genuine interest, and ask for a reasonable timeline to decide ("Could I confirm by next Friday?"). Inform the second company that you have an offer and a deadline to see if they can speed up. Compare on role, learning, team, stability, compensation and location, not just salary. Once you accept, honour it; reneging after accepting damages your reputation (and in India some companies share data on offer drop-outs).
 
 ## [Scenario|High] Your manager asks you to finish a task that you believe will cause a production problem. What do you do?
 
@@ -257,11 +257,11 @@ Raise the concern immediately with facts: explain the risk, likely impact and ev
 
 ## [Scenario|Medium] A teammate isn't contributing and you're doing their work. How do you handle it?
 
-First talk to them privately and without blame — there may be a reason (overload, personal issues, unclear tasks). Offer help and agree on clear ownership and deadlines. Make work visible on the board. If nothing changes and delivery is at risk, raise it factually with the lead, focusing on the impact on the work rather than on the person.
+First talk to them privately and without blame: there may be a reason (overload, personal issues, unclear tasks). Offer help and agree on clear ownership and deadlines. Make work visible on the board. If nothing changes and delivery is at risk, raise it factually with the lead, focusing on the impact on the work rather than on the person.
 
 ## [Scenario|Medium] What would you do in your first 30–60–90 days here?
 
-"First 30 days: learn the product, architecture, codebase, deployment process and people; fix small bugs to learn the workflow. 60 days: own a feature end to end, contribute to code reviews and on-call. 90 days: deliver a meaningful improvement — for example in performance, testing or tooling — and agree on goals with my manager." Adjust to the role and ask what they expect.
+"First 30 days: learn the product, architecture, codebase, deployment process and people; fix small bugs to learn the workflow. 60 days: own a feature end to end, contribute to code reviews and on-call. 90 days: deliver a meaningful improvement, for example in performance, testing or tooling, and agree on goals with my manager." Adjust to the role and ask what they expect.
 
 # Cheatsheet
 

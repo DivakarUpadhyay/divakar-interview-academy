@@ -1,12 +1,12 @@
 ---
 slug: project-architecture
-title: .NET Project Architectures & Folder Structures — Layered, Clean, Onion, Vertical Slice
+title: .NET Project Architectures & Folder Structures: Layered, Clean, Onion, Vertical Slice
 track: dotnet
 order: 19
 group: Architecture & Quality
 icon: Arc
 color: #364fc7
-summary: How real .NET solutions are organised — solution and project structure, 3-tier and N-layer architecture, Onion, Hexagonal (ports and adapters) and Clean Architecture, Vertical Slice architecture, modular monolith, DDD building blocks, CQRS, the folder structure of each style with naming conventions, shared build settings (Directory.Build.props, central package management), test projects, where cross-cutting concerns live, and how to choose an architecture.
+summary: How real .NET solutions are organised, solution and project structure, 3-tier and N-layer architecture, Onion, Hexagonal (ports and adapters) and Clean Architecture, Vertical Slice architecture, modular monolith, DDD building blocks, CQRS, the folder structure of each style with naming conventions, shared build settings (Directory.Build.props, central package management), test projects, where cross-cutting concerns live, and how to choose an architecture.
 ---
 
 # Overview
@@ -43,7 +43,7 @@ summary: How real .NET solutions are organised — solution and project structur
 HTTP request
  → Api (controller / minimal endpoint, model binding, auth)            [Presentation]
  → Application (use case / command handler, validation, DTO mapping)  [Application]
- → Domain (entities enforce business rules, domain events)            [Domain — no dependencies]
+ → Domain (entities enforce business rules, domain events)            [Domain: no dependencies]
  → Application calls interfaces (IOrderRepository, IEmailSender, IClock)
  → Infrastructure implements them (EF Core DbContext, SMTP, Azure Blob) [Infrastructure]
  → database / external services
@@ -132,7 +132,7 @@ ShopSolution/
 ├── Shop.Web/                 Web Forms or MVC 5 (UI)
 ├── Shop.BLL/                 ProductService.cs, OrderService.cs
 ├── Shop.DAL/                 ProductRepository.cs (ADO.NET), ShopEntities.edmx (EF6)
-├── Shop.Entities/ (Models)   Product.cs, Order.cs — shared by all layers
+├── Shop.Entities/ (Models)   Product.cs, Order.cs: shared by all layers
 └── Shop.Common/              helpers, constants, logging
 ```
 
@@ -163,7 +163,7 @@ All three share one idea: **the domain and use cases are the centre; frameworks,
 ```
 
 - **Hexagonal (ports & adapters):** the application exposes **ports** (interfaces like `IOrderRepository`, `IPaymentGateway`); **adapters** implement them (SQL adapter, Stripe adapter) or drive the app (REST controller, message consumer).
-- **Onion:** concentric rings — Domain Model → Domain Services → Application Services → outer ring (UI, infrastructure, tests).
+- **Onion:** concentric rings, Domain Model → Domain Services → Application Services → outer ring (UI, infrastructure, tests).
 - **Clean Architecture:** Entities → Use Cases → Interface Adapters → Frameworks & Drivers; same dependency rule.
 
 **Clean Architecture folder structure (ASP.NET Core):**
@@ -216,7 +216,7 @@ public sealed class SmtpEmailSender(IOptions<SmtpOptions> o) : IEmailSender { /*
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 ```
 
-Benefits: domain logic testable without a database, swap infrastructure (SQL → Cosmos, SMTP → SendGrid) without touching use cases, framework upgrades isolated. Costs: more projects and mapping code — overkill for small CRUD apps.
+Benefits: domain logic testable without a database, swap infrastructure (SQL → Cosmos, SMTP → SendGrid) without touching use cases, framework upgrades isolated. Costs: more projects and mapping code, overkill for small CRUD apps.
 
 ## Lesson: [Intermediate|High] Vertical Slice architecture
 
@@ -268,11 +268,11 @@ public static class PlaceOrder
 
 ## Lesson: [Intermediate|Medium] Modular monolith and DDD building blocks
 
-**Modular monolith** — one deployable application, divided into **modules** by business capability; each module has its own folders/projects, its own database schema and a small public API; modules communicate via interfaces or in-process events.
+**Modular monolith**: one deployable application, divided into **modules** by business capability; each module has its own folders/projects, its own database schema and a small public API; modules communicate via interfaces or in-process events.
 
 ```text
 src/
-├── Shop.Host/                      ASP.NET Core host — registers all modules
+├── Shop.Host/                      ASP.NET Core host: registers all modules
 ├── Modules/
 │   ├── Catalog/   Catalog.Api (endpoints) · Catalog.Core (domain + use cases) · Catalog.Infrastructure (schema "catalog")
 │   ├── Ordering/  Ordering.Api · Ordering.Core · Ordering.Infrastructure (schema "ordering")
@@ -307,7 +307,7 @@ public sealed class GetOrdersHandler(IDbConnectionFactory db) : IRequestHandler<
 // Controller: return Ok(await mediator.Send(new GetOrdersQuery(id, page)));
 ```
 
-MediatR (commercial licence from v13, 2025) or similar mediators add **pipeline behaviours** for validation, logging, transactions. You can also call handlers directly via DI — the pattern doesn't require a library.
+MediatR (commercial licence from v13, 2025) or similar mediators add **pipeline behaviours** for validation, logging, transactions. You can also call handlers directly via DI: the pattern doesn't require a library.
 
 **Where do cross-cutting concerns go?**
 
@@ -361,7 +361,7 @@ Rule of thumb: **group by feature at the top level when the app grows**; keep te
 
 | Situation | Recommendation |
 |---|---|
-| Small CRUD app, short life, 1–2 developers | Single project with folders (Controllers, Services, Data) — keep it simple |
+| Small CRUD app, short life, 1–2 developers | Single project with folders (Controllers, Services, Data): keep it simple |
 | Business-heavy app, long life, several developers | Clean/Onion architecture or Vertical Slice + rich domain where needed |
 | API with many independent features | Vertical Slice (+ CQRS) |
 | Growing product, several teams | Modular monolith |
@@ -378,7 +378,7 @@ Presentation (UI), business logic (services/BLL) and data access (DAL/repositori
 
 ## [Beginner|High] What is Clean Architecture? What is the dependency rule?
 
-An architecture that places the domain (entities, business rules) and application use cases at the centre and frameworks, UI and databases at the outside. The dependency rule: source-code dependencies only point inward — the domain depends on nothing; the application defines interfaces that infrastructure implements; the web project is the composition root that wires everything with DI.
+An architecture that places the domain (entities, business rules) and application use cases at the centre and frameworks, UI and databases at the outside. The dependency rule: source-code dependencies only point inward, the domain depends on nothing; the application defines interfaces that infrastructure implements; the web project is the composition root that wires everything with DI.
 
 ## [Beginner|High] How do you structure a typical ASP.NET Core Web API solution?
 
@@ -390,11 +390,11 @@ Same core idea with different vocabulary: business logic at the centre, independ
 
 ## [Intermediate|High] Vertical Slice vs layered architecture?
 
-Layered organises by technical concern (controllers, services, repositories) so one feature spans many folders and projects. Vertical Slice organises by feature/use case — request, validation, handler, endpoint together — so changes are local and each slice can choose its data access. Slices can still share a domain model. Vertical slices suit CQRS-style APIs with many independent use cases.
+Layered organises by technical concern (controllers, services, repositories) so one feature spans many folders and projects. Vertical Slice organises by feature/use case: request, validation, handler, endpoint together, so changes are local and each slice can choose its data access. Slices can still share a domain model. Vertical slices suit CQRS-style APIs with many independent use cases.
 
 ## [Intermediate|High] Where do you put the repository interfaces and why?
 
-In the Application (or Domain) layer — the inner layer defines what it needs (`IOrderRepository`), and Infrastructure implements it. This is Dependency Inversion: the business logic doesn't depend on EF Core or SQL, can be unit-tested with fakes, and the implementation can change without touching use cases.
+In the Application (or Domain) layer: the inner layer defines what it needs (`IOrderRepository`), and Infrastructure implements it. This is Dependency Inversion: the business logic doesn't depend on EF Core or SQL, can be unit-tested with fakes, and the implementation can change without touching use cases.
 
 ## [Intermediate|Medium] What is a modular monolith?
 
@@ -418,7 +418,7 @@ An aggregate is a cluster of domain objects treated as one unit for changes, wit
 
 ## [Beginner|Medium] What is the composition root?
 
-The single place where the application's object graph is wired together — in ASP.NET Core, `Program.cs` (often via `AddApplication()`/`AddInfrastructure()` extension methods) registers interfaces with their implementations in the DI container. Only the composition root knows about all projects; inner layers depend only on abstractions.
+The single place where the application's object graph is wired together: in ASP.NET Core, `Program.cs` (often via `AddApplication()`/`AddInfrastructure()` extension methods) registers interfaces with their implementations in the DI container. Only the composition root knows about all projects; inner layers depend only on abstractions.
 
 ## [Scenario|High] You join a project where controllers contain SQL, business rules and email sending. How do you restructure it safely?
 

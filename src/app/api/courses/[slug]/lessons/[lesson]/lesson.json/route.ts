@@ -6,7 +6,7 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 export const generateStaticParams = getAllLessonParams;
 
-/** GET /api/courses/:slug/lessons/:lesson/lesson.json — one lesson (HTML body). */
+/** GET /api/courses/:slug/lessons/:lesson/lesson.json, one lesson (HTML body). */
 export async function GET(_req: Request, ctx: RouteContext<"/api/courses/[slug]/lessons/[lesson]/lesson.json">) {
   const { slug, lesson } = await ctx.params;
   const course = getCourse(slug);

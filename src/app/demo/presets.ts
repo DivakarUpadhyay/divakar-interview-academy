@@ -8,10 +8,10 @@ setTimeout(() => console.log("5 macrotask: setTimeout"), 0);
 Promise.resolve().then(() => console.log("3 microtask: promise"));
 queueMicrotask(() => console.log("4 microtask: queueMicrotask"));
 console.log("2 sync");
-// Output order: 1, 2, 3, 4, 5 — the call stack empties, then ALL microtasks run, then one macrotask.`,
+// Output order: 1, 2, 3, 4, 5, the call stack empties, then ALL microtasks run, then one macrotask.`,
   },
   {
-    title: "Closures — private counter",
+    title: "Closures: private counter",
     code: `function makeCounter() {
   let count = 0;                 // captured by the inner functions
   return { inc: () => ++count, get: () => count };
@@ -19,7 +19,7 @@ console.log("2 sync");
 const c = makeCounter();
 c.inc(); c.inc();
 console.log(c.get());            // 2
-console.log(c.count);            // undefined — not reachable from outside`,
+console.log(c.count);            // undefined, not reachable from outside`,
   },
   {
     title: "var vs let in loops",
@@ -27,7 +27,7 @@ console.log(c.count);            // undefined — not reachable from outside`,
 for (let j = 0; j < 3; j++) setTimeout(() => console.log("let", j));   // 0 1 2 (new binding per iteration)`,
   },
   {
-    title: "this binding — regular vs arrow functions",
+    title: "this binding: regular vs arrow functions",
     code: `const user = {
   name: "Divakar",
   regular() { return this.name; },
@@ -67,7 +67,7 @@ const fail = (e, ms) => new Promise((_, r) => setTimeout(() => r(new Error(e)), 
 })();`,
   },
   {
-    title: "Array methods — map / filter / reduce / groupBy",
+    title: "Array methods: map / filter / reduce / groupBy",
     code: `const orders = [
   { id: 1, customer: "Asha", total: 1200 },
   { id: 2, customer: "Ravi", total: 300 },
@@ -85,7 +85,7 @@ console.log(Object.groupBy ? Object.groupBy(orders, o => o.customer) : "Object.g
 const shallow = { ...a };
 const deep = structuredClone(a);
 a.tags.push("two");
-console.log(shallow.tags);  // ["one","two"] — nested array is shared
+console.log(shallow.tags);  // ["one","two"]: nested array is shared
 console.log(deep.tags);     // ["one"]`,
   },
   {
@@ -168,7 +168,7 @@ FROM Employees;` },
   { title: "Employee and manager (self join)", sql: `SELECT e.Name AS Employee, m.Name AS Manager
 FROM Employees e
 LEFT JOIN Employees m ON m.EmpId = e.ManagerId;` },
-  { title: "Org chart with a recursive CTE", sql: `WITH RECURSIVE org AS (           -- T-SQL: WITH org AS (...) — no RECURSIVE keyword
+  { title: "Org chart with a recursive CTE", sql: `WITH RECURSIVE org AS (           -- T-SQL: WITH org AS (...): no RECURSIVE keyword
   SELECT EmpId, Name, ManagerId, 0 AS Level, Name AS Path FROM Employees WHERE ManagerId IS NULL AND DeptId IS NOT NULL
   UNION ALL
   SELECT e.EmpId, e.Name, e.ManagerId, o.Level + 1, o.Path || ' > ' || e.Name
@@ -209,7 +209,7 @@ export const PITCH_TEMPLATES = {
 Most recently at <company> I <one result with a number, e.g. "cut report run time from 40 to 6 minutes by rewriting SSIS loads as set-based T-SQL">.
 Before that I <second highlight>.
 I'm looking for <what you want next>, and this role fits because <one specific thing about this company/role>.`,
-  project: `Project: <name> — <one-line purpose, users, scale>
+  project: `Project: <name>, <one-line purpose, users, scale>
 Stack: <ASP.NET Core / EF Core / SQL Server / Azure / React …>
 My role: <what YOU owned>
 Architecture: <client → API → services → DB; queues; caching; CI/CD>
@@ -218,7 +218,7 @@ Result: <metric: latency, cost, defects, time saved>
 What I'd do differently: <honest improvement>`,
   star: `Situation: <context in 1–2 sentences>
 Task: <what you were responsible for>
-Action: <what YOU did — 3 concrete steps, "I" not "we">
+Action: <what YOU did, 3 concrete steps, "I" not "we">
 Result: <measurable outcome + what you learned>`,
   questions: `- What does success look like in the first 90 days for this role?
 - What are the biggest technical challenges the team is facing right now?

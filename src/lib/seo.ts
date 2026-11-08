@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 // Public site address used for canonical URLs, the sitemap and structured data.
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://devladder.pages.dev").replace(/\/$/, "");
 export const SITE_NAME = "DevLadder";
-const OG_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: "DevLadder — tutorials from basics to advanced" };
+const OG_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: "DevLadder: tutorials from basics to advanced" };
 
 /** Plain-text summary for meta descriptions: strips HTML, collapses whitespace, cuts at a word boundary. */
 export function describe(text: string, max = 158) {

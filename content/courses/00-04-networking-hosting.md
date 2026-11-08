@@ -1,12 +1,12 @@
 ---
 slug: networking-hosting
-title: Networking & Hosting — How a Website Works, End to End
+title: Networking & Hosting: How a Website Works, End to End
 track: foundations
 order: 4
 group: How the Web Works
 icon: NET
 color: #1c7ed6
-summary: The complete life cycle of a web request — OSI and TCP/IP models, IP addresses, subnets and ports, DNS, TCP vs UDP, TLS/HTTPS, HTTP/1.1, HTTP/2 and HTTP/3, browser rendering, cookies and sessions, proxies, load balancers and CDNs, web servers (IIS, Kestrel, Nginx), hosting options from shared hosting to cloud and containers, domains and SSL certificates, deploying an ASP.NET site to IIS and Azure, and troubleshooting network problems.
+summary: The complete life cycle of a web request, OSI and TCP/IP models, IP addresses, subnets and ports, DNS, TCP vs UDP, TLS/HTTPS, HTTP/1.1, HTTP/2 and HTTP/3, browser rendering, cookies and sessions, proxies, load balancers and CDNs, web servers (IIS, Kestrel, Nginx), hosting options from shared hosting to cloud and containers, domains and SSL certificates, deploying an ASP.NET site to IIS and Azure, and troubleshooting network problems.
 ---
 
 # Overview
@@ -28,7 +28,7 @@ When you type `https://www.shop.com/orders` and press Enter, a dozen systems coo
 
 | Year | Milestone |
 |---|---|
-| 1969 | ARPANET — the first packet-switched network |
+| 1969 | ARPANET: the first packet-switched network |
 | 1974–1983 | TCP/IP designed (Cerf & Kahn); ARPANET switches to TCP/IP on 1 Jan 1983 |
 | 1983–1987 | DNS (RFC 882/883, then 1034/1035) |
 | 1989–1991 | Tim Berners-Lee invents the World Wide Web: HTML, HTTP, URLs, first browser and server |
@@ -44,33 +44,33 @@ When you type `https://www.shop.com/orders` and press Enter, a dozen systems coo
 
 # Lifecycle
 
-**What happens when you open `https://www.shop.com/orders` — the complete request life cycle:**
+**What happens when you open `https://www.shop.com/orders`: the complete request life cycle:**
 
-1. **URL parsing** — the browser splits scheme (`https`), host (`www.shop.com`), port (default 443), path (`/orders`). If it's not a URL, it becomes a search.
-2. **Caches first** — HSTS list (forces HTTPS), browser cache, service worker; maybe no network is needed at all.
-3. **DNS lookup** — browser cache → OS cache/hosts file → configured resolver (ISP, 8.8.8.8, 1.1.1.1) → root servers → `.com` TLD servers → `shop.com` authoritative servers → returns an IP (often a CDN's).
-4. **TCP connection** — three-way handshake (SYN, SYN-ACK, ACK) to IP:443. (HTTP/3 uses QUIC over UDP instead.)
-5. **TLS handshake** — agree cipher, server sends its certificate, browser validates the chain and hostname, keys are exchanged; from now on everything is encrypted.
-6. **HTTP request** — `GET /orders HTTP/2` with headers (Host, cookies, Accept, User-Agent…).
-7. **Edge** — CDN serves cached static files; otherwise forwards to the origin. A WAF filters attacks.
-8. **Load balancer / reverse proxy** — picks a healthy server instance, may terminate TLS.
-9. **Web server + application** — IIS/Kestrel passes the request through the pipeline: authentication, routing, controller, business logic, database queries.
-10. **Database** — SQL Server runs the query (buffer pool, indexes) and returns rows.
-11. **HTTP response** — status (200), headers (Content-Type, Cache-Control, Set-Cookie), body (HTML/JSON), compressed (gzip/Brotli).
-12. **Browser rendering** — parse HTML → DOM, CSS → CSSOM, run JavaScript, layout, paint; fetch images/scripts in parallel (more requests, reusing the connection).
-13. **After load** — JavaScript calls APIs (fetch/XHR), WebSockets for live data; the connection is kept alive for reuse or closed after idle time.
+1. **URL parsing**: the browser splits scheme (`https`), host (`www.shop.com`), port (default 443), path (`/orders`). If it's not a URL, it becomes a search.
+2. **Caches first**: HSTS list (forces HTTPS), browser cache, service worker; maybe no network is needed at all.
+3. **DNS lookup**: browser cache → OS cache/hosts file → configured resolver (ISP, 8.8.8.8, 1.1.1.1) → root servers → `.com` TLD servers → `shop.com` authoritative servers → returns an IP (often a CDN's).
+4. **TCP connection**: three-way handshake (SYN, SYN-ACK, ACK) to IP:443. (HTTP/3 uses QUIC over UDP instead.)
+5. **TLS handshake**: agree cipher, server sends its certificate, browser validates the chain and hostname, keys are exchanged; from now on everything is encrypted.
+6. **HTTP request**: `GET /orders HTTP/2` with headers (Host, cookies, Accept, User-Agent…).
+7. **Edge**: CDN serves cached static files; otherwise forwards to the origin. A WAF filters attacks.
+8. **Load balancer / reverse proxy**: picks a healthy server instance, may terminate TLS.
+9. **Web server + application**: IIS/Kestrel passes the request through the pipeline: authentication, routing, controller, business logic, database queries.
+10. **Database**: SQL Server runs the query (buffer pool, indexes) and returns rows.
+11. **HTTP response**: status (200), headers (Content-Type, Cache-Control, Set-Cookie), body (HTML/JSON), compressed (gzip/Brotli).
+12. **Browser rendering**: parse HTML → DOM, CSS → CSSOM, run JavaScript, layout, paint; fetch images/scripts in parallel (more requests, reusing the connection).
+13. **After load**: JavaScript calls APIs (fetch/XHR), WebSockets for live data; the connection is kept alive for reuse or closed after idle time.
 
 # Tools
 
-- **Browser DevTools** — Network tab (timing waterfall: DNS, connect, TLS, TTFB, download), Security tab (certificate), Application tab (cookies, storage, service workers).
-- **Command line** — `ping`, `tracert`/`traceroute`, `nslookup`/`dig`, `ipconfig /all`/`ip a`, `netstat -ano`/`ss -tlnp`, `curl -v`, `Test-NetConnection host -Port 443` (PowerShell), `telnet`.
-- **Packet analysis** — Wireshark, Fiddler, Charles Proxy.
-- **Online** — SSL Labs (TLS grading), DNS checker (propagation), WebPageTest, PageSpeed Insights, downforeveryoneorjustme.
-- **Hosting** — IIS Manager, Azure Portal (App Service, Front Door), Cloudflare dashboard, Nginx, Certbot / win-acme (Let's Encrypt).
+- **Browser DevTools**: Network tab (timing waterfall: DNS, connect, TLS, TTFB, download), Security tab (certificate), Application tab (cookies, storage, service workers).
+- **Command line**: `ping`, `tracert`/`traceroute`, `nslookup`/`dig`, `ipconfig /all`/`ip a`, `netstat -ano`/`ss -tlnp`, `curl -v`, `Test-NetConnection host -Port 443` (PowerShell), `telnet`.
+- **Packet analysis**: Wireshark, Fiddler, Charles Proxy.
+- **Online**: SSL Labs (TLS grading), DNS checker (propagation), WebPageTest, PageSpeed Insights, downforeveryoneorjustme.
+- **Hosting**: IIS Manager, Azure Portal (App Service, Front Door), Cloudflare dashboard, Nginx, Certbot / win-acme (Let's Encrypt).
 
 # Module: Network Foundations
 
-## Lesson: [Basic|High] OSI and TCP/IP models — layers of a network
+## Lesson: [Basic|High] OSI and TCP/IP models: layers of a network
 
 | OSI layer | TCP/IP layer | What it does | Examples |
 |---|---|---|---|
@@ -88,24 +88,24 @@ When you type `https://www.shop.com/orders` and press Enter, a dozen systems coo
 [ Ethernet header | IP header (src/dst IP) | TCP header (src/dst port) | HTTP: GET /orders ... | trailer ]
 ```
 
-> **Interview tip:** Asked "which layer?": a switch works at layer 2 (MAC), a router at layer 3 (IP), a load balancer at layer 4 (TCP/UDP) or layer 7 (HTTP — can route by URL/header), a firewall at 3–4 (WAF at 7).
+> **Interview tip:** Asked "which layer?": a switch works at layer 2 (MAC), a router at layer 3 (IP), a load balancer at layer 4 (TCP/UDP) or layer 7 (HTTP, can route by URL/header), a firewall at 3–4 (WAF at 7).
 
 ## Lesson: [Basic|High] IP addresses, subnets, ports, NAT and IPv6
 
-**IPv4** — 32 bits written as four numbers `192.168.1.25` (≈4.3 billion addresses — exhausted). **IPv6** — 128 bits `2001:db8::1` (practically unlimited).
+**IPv4**: 32 bits written as four numbers `192.168.1.25` (≈4.3 billion addresses, exhausted). **IPv6**: 128 bits `2001:db8::1` (practically unlimited).
 
 | Range | Meaning |
 |---|---|
-| `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16` | **Private** addresses (home/office/cloud VNets) — not routable on the internet |
-| `127.0.0.1` / `::1` | Loopback — "this machine" (`localhost`) |
+| `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16` | **Private** addresses (home/office/cloud VNets), not routable on the internet |
+| `127.0.0.1` / `::1` | Loopback, "this machine" (`localhost`) |
 | `0.0.0.0` | "All interfaces" when a server listens |
-| `169.254.x.x` | No DHCP answer — self-assigned |
+| `169.254.x.x` | No DHCP answer: self-assigned |
 
 **Subnet / CIDR:** `192.168.1.0/24` = the first 24 bits are the network part → 256 addresses (254 usable hosts). `/16` = 65,536 addresses. Cloud virtual networks (Azure VNet, AWS VPC) are designed with CIDR blocks and subnets for web, app and database tiers.
 
 **DHCP** gives devices an IP, gateway and DNS automatically. **Default gateway** = the router to other networks.
 
-**NAT (network address translation):** your home router has one public IP; it rewrites many private addresses to it and tracks connections — that's why your laptop isn't directly reachable from the internet. Port forwarding opens a hole for a specific port.
+**NAT (network address translation):** your home router has one public IP; it rewrites many private addresses to it and tracks connections, that's why your laptop isn't directly reachable from the internet. Port forwarding opens a hole for a specific port.
 
 **Ports** (0–65535) identify the program:
 
@@ -123,7 +123,7 @@ When you type `https://www.shop.com/orders` and press Enter, a dozen systems coo
 
 A **socket** = IP + port + protocol; a TCP connection is identified by (client IP, client port, server IP, server port).
 
-## Lesson: [Basic|High] DNS — how names become IP addresses
+## Lesson: [Basic|High] DNS: how names become IP addresses
 
 ```text
 Browser → OS resolver → Recursive resolver (ISP / 8.8.8.8 / 1.1.1.1)
@@ -138,11 +138,11 @@ Answer cached at each level for TTL seconds
 | **A** / **AAAA** | Name → IPv4 / IPv6 | `www → 20.43.10.5` |
 | **CNAME** | Alias to another name | `www → shop.azurewebsites.net` |
 | **MX** | Mail servers | `shop.com → mail.protection.outlook.com` |
-| **TXT** | Text — domain verification, SPF/DKIM/DMARC for email | `v=spf1 include:...` |
+| **TXT** | Text: domain verification, SPF/DKIM/DMARC for email | `v=spf1 include:...` |
 | **NS** | Which servers are authoritative | `ns1.cloudflare.com` |
 | ALIAS/ANAME | CNAME-like at the root domain (provider feature) | `shop.com → CDN` |
 
-**TTL** (time to live) — how long resolvers cache the answer. Lower it (e.g. 300 s) before migrating a site so the change propagates quickly. "DNS propagation" = waiting for old cached answers to expire.
+**TTL** (time to live): how long resolvers cache the answer. Lower it (e.g. 300 s) before migrating a site so the change propagates quickly. "DNS propagation" = waiting for old cached answers to expire.
 
 ```bash
 nslookup www.shop.com
@@ -154,28 +154,28 @@ ipconfig /flushdns             # clear Windows DNS cache
 
 | | TCP | UDP |
 |---|---|---|
-| Connection | Yes — three-way handshake | No — just send datagrams |
-| Reliability | Acknowledgements, retransmission, ordering | None — packets may be lost/reordered |
+| Connection | Yes: three-way handshake | No, just send datagrams |
+| Reliability | Acknowledgements, retransmission, ordering | None: packets may be lost/reordered |
 | Flow/congestion control | Yes | No (app decides) |
 | Overhead / latency | Higher | Lower |
 | Used by | HTTP/1.1, HTTP/2, SQL Server (TDS), SMTP, SSH | DNS, video calls, gaming, streaming, **QUIC (HTTP/3)** |
 
-**TCP three-way handshake:** client `SYN` → server `SYN-ACK` → client `ACK` (one round trip before any data). Closing: `FIN`/`ACK` exchange; the closing side keeps `TIME_WAIT` for a while — why creating a new `HttpClient` per request can exhaust ports.
+**TCP three-way handshake:** client `SYN` → server `SYN-ACK` → client `ACK` (one round trip before any data). Closing: `FIN`/`ACK` exchange; the closing side keeps `TIME_WAIT` for a while, why creating a new `HttpClient` per request can exhaust ports.
 
 **TLS 1.3 handshake (simplified, one round trip):**
 
-1. Client Hello — supported ciphers, key share, SNI (which hostname it wants).
-2. Server Hello — chosen cipher, its key share, **certificate**, signature.
+1. Client Hello: supported ciphers, key share, SNI (which hostname it wants).
+2. Server Hello: chosen cipher, its key share, **certificate**, signature.
 3. Client verifies the certificate: issued by a trusted CA (chain to a root in the OS/browser store), not expired, hostname matches, not revoked.
 4. Both derive the same session keys (Diffie-Hellman) → encrypted HTTP flows.
 
 HTTPS gives **confidentiality** (encryption), **integrity** (no tampering) and **authentication** (you're talking to the real `shop.com`). It does **not** make the application itself secure.
 
-Certificates: **DV** (domain validated — Let's Encrypt, free, 90 days), OV/EV (organisation checks). Wildcard `*.shop.com`; SAN certificates list several names. Private key must stay secret on the server/Key Vault.
+Certificates: **DV** (domain validated, Let's Encrypt, free, 90 days), OV/EV (organisation checks). Wildcard `*.shop.com`; SAN certificates list several names. Private key must stay secret on the server/Key Vault.
 
 # Module: HTTP and the Browser
 
-## Lesson: [Basic|High] HTTP in depth — methods, status codes, headers, versions
+## Lesson: [Basic|High] HTTP in depth: methods, status codes, headers, versions
 
 ```http
 GET /api/orders?page=1 HTTP/1.1
@@ -209,14 +209,14 @@ Status classes: **1xx** info, **2xx** success (200, 201, 204), **3xx** redirect 
 | Version | Transport | Key point |
 |---|---|---|
 | HTTP/1.1 | TCP | Text; one request at a time per connection (browsers open ~6 per host); keep-alive |
-| HTTP/2 | TCP + TLS | Binary, **multiplexing** many requests on one connection, header compression (HPACK) — but a lost TCP packet blocks all streams |
+| HTTP/2 | TCP + TLS | Binary, **multiplexing** many requests on one connection, header compression (HPACK), but a lost TCP packet blocks all streams |
 | HTTP/3 | **QUIC over UDP** | No TCP head-of-line blocking, faster handshake (0-RTT/1-RTT), survives network changes (Wi-Fi → 4G) |
 
-HTTP is **stateless** — each request stands alone; state is carried by cookies, tokens or server-side sessions.
+HTTP is **stateless**: each request stands alone; state is carried by cookies, tokens or server-side sessions.
 
 ## Lesson: [Intermediate|High] Cookies, sessions, caching and CORS
 
-**Cookies** — small key/value data the server asks the browser to store and send back:
+**Cookies**: small key/value data the server asks the browser to store and send back:
 
 | Attribute | Meaning |
 |---|---|
@@ -225,7 +225,7 @@ HTTP is **stateless** — each request stands alone; state is carried by cookies
 | `SameSite=Lax/Strict/None` | Controls sending on cross-site requests (CSRF protection) |
 | `Domain`, `Path`, `Expires/Max-Age` | Scope and lifetime |
 
-**Session** — the server keeps data (in memory, Redis, SQL) keyed by a session id stored in a cookie. In a web farm, sessions must be shared (distributed cache) or the load balancer must use sticky sessions.
+**Session**: the server keeps data (in memory, Redis, SQL) keyed by a session id stored in a cookie. In a web farm, sessions must be shared (distributed cache) or the load balancer must use sticky sessions.
 
 **HTTP caching:**
 
@@ -236,7 +236,7 @@ HTTP is **stateless** — each request stands alone; state is carried by cookies
 | `ETag` + `If-None-Match` | Revalidate: server answers `304 Not Modified` without a body |
 | `Last-Modified` + `If-Modified-Since` | Same with dates |
 
-**CORS** — a browser rule: JavaScript on origin A may read responses from origin B only if B allows A via `Access-Control-Allow-Origin`. Non-simple requests send an `OPTIONS` preflight first.
+**CORS**: a browser rule: JavaScript on origin A may read responses from origin B only if B allows A via `Access-Control-Allow-Origin`. Non-simple requests send an `OPTIONS` preflight first.
 
 ## Lesson: [Intermediate|High] How the browser renders a page
 
@@ -267,9 +267,9 @@ Speed-ups: fewer/smaller requests, compression (Brotli/gzip), HTTP/2/3, CDN, cac
 User ─▶ DNS ─▶ CDN/WAF (edge) ─▶ Load balancer ─▶ [Web server 1 | Web server 2 | Web server 3] ─▶ SQL Server
 ```
 
-Behind a proxy the app sees the proxy's IP — read the original client IP and scheme from `X-Forwarded-For` / `X-Forwarded-Proto` (ASP.NET Core: `UseForwardedHeaders`).
+Behind a proxy the app sees the proxy's IP: read the original client IP and scheme from `X-Forwarded-For` / `X-Forwarded-Proto` (ASP.NET Core: `UseForwardedHeaders`).
 
-## Lesson: [Intermediate|High] Web servers — IIS, Kestrel, Nginx and how ASP.NET is hosted
+## Lesson: [Intermediate|High] Web servers: IIS, Kestrel, Nginx and how ASP.NET is hosted
 
 | Server | Platform | Notes |
 |---|---|---|
@@ -280,11 +280,11 @@ Behind a proxy the app sees the proxy's IP — read the original client IP and s
 
 **IIS key concepts:**
 
-- **Site** — bindings (protocol + IP + port + host name, e.g. `https *:443 www.shop.com` with a certificate).
-- **Application pool** — the worker process (`w3wp.exe`) running your app; isolation, identity (ApplicationPoolIdentity), recycling, .NET CLR version ("No Managed Code" for ASP.NET Core).
+- **Site**: bindings (protocol + IP + port + host name, e.g. `https *:443 www.shop.com` with a certificate).
+- **Application pool**: the worker process (`w3wp.exe`) running your app; isolation, identity (ApplicationPoolIdentity), recycling, .NET CLR version ("No Managed Code" for ASP.NET Core).
 - **HTTP.sys** receives requests in the kernel and queues them per app pool.
-- **ASP.NET Core Module (ANCM)** — runs ASP.NET Core **in-process** (inside w3wp, fastest) or **out-of-process** (IIS proxies to Kestrel).
-- **web.config** — module and handler settings; for Core it points IIS at `dotnet YourApp.dll` or the app's exe.
+- **ASP.NET Core Module (ANCM)**: runs ASP.NET Core **in-process** (inside w3wp, fastest) or **out-of-process** (IIS proxies to Kestrel).
+- **web.config**: module and handler settings; for Core it points IIS at `dotnet YourApp.dll` or the app's exe.
 
 ```xml
 <!-- web.config generated by dotnet publish for ASP.NET Core on IIS -->
@@ -296,7 +296,7 @@ Behind a proxy the app sees the proxy's IP — read the original client IP and s
 </configuration>
 ```
 
-## Lesson: [Intermediate|High] Hosting options — shared, VPS, dedicated, cloud PaaS, containers, serverless
+## Lesson: [Intermediate|High] Hosting options: shared, VPS, dedicated, cloud PaaS, containers, serverless
 
 | Option | You manage | Good for | Examples |
 |---|---|---|---|
@@ -308,23 +308,23 @@ Behind a proxy the app sees the proxy's IP — read the original client IP and s
 | **Containers** | Image + orchestration config | Microservices, portability | Azure Container Apps, AKS, ECS, Cloud Run |
 | **Serverless functions** | Function code | Event-driven, spiky workloads | Azure Functions, AWS Lambda, Vercel Functions |
 
-Trade-off: the less you manage, the less control you have — but also less patching, scaling and security work. A typical .NET stack today: React/Angular on Static Web Apps or a CDN, API on App Service/Container Apps, Azure SQL Database, Key Vault for secrets, Application Insights for monitoring.
+Trade-off: the less you manage, the less control you have, but also less patching, scaling and security work. A typical .NET stack today: React/Angular on Static Web Apps or a CDN, API on App Service/Container Apps, Azure SQL Database, Key Vault for secrets, Application Insights for monitoring.
 
-**Scaling:** vertical (bigger machine) vs horizontal (more instances behind a load balancer — app must be stateless). **High availability:** multiple instances across availability zones, health checks, database replicas, backups and a tested restore.
+**Scaling:** vertical (bigger machine) vs horizontal (more instances behind a load balancer, app must be stateless). **High availability:** multiple instances across availability zones, health checks, database replicas, backups and a tested restore.
 
 # Module: Putting a Site Live
 
 ## Lesson: [Intermediate|High] Domains, DNS setup and SSL certificates in practice
 
 1. **Buy a domain** from a registrar (GoDaddy, Namecheap, Cloudflare Registrar, Google Domains successor Squarespace). You rent it yearly.
-2. **Choose DNS hosting** — the registrar's DNS, Cloudflare, or Azure DNS; set NS records accordingly.
-3. **Point the domain** — `A` record for the root to the server IP (or ALIAS), `CNAME www` to the platform hostname (`shop.azurewebsites.net`); add TXT records the platform asks for to prove ownership.
-4. **Certificate** — free managed certificates (App Service managed certificate, Cloudflare, Let's Encrypt with Certbot/win-acme for IIS) or buy one; bind it to the site on 443.
+2. **Choose DNS hosting**: the registrar's DNS, Cloudflare, or Azure DNS; set NS records accordingly.
+3. **Point the domain**: `A` record for the root to the server IP (or ALIAS), `CNAME www` to the platform hostname (`shop.azurewebsites.net`); add TXT records the platform asks for to prove ownership.
+4. **Certificate**: free managed certificates (App Service managed certificate, Cloudflare, Let's Encrypt with Certbot/win-acme for IIS) or buy one; bind it to the site on 443.
 5. **Redirect HTTP → HTTPS** and add HSTS (`UseHttpsRedirection`, `UseHsts`, or an IIS URL Rewrite rule).
-6. **Email records** — MX, SPF, DKIM, DMARC so your mail isn't marked as spam.
-7. **Verify** — `nslookup`, SSL Labs test, browser padlock, check `www` and root both work.
+6. **Email records**: MX, SPF, DKIM, DMARC so your mail isn't marked as spam.
+7. **Verify**: `nslookup`, SSL Labs test, browser padlock, check `www` and root both work.
 
-Common mistakes: certificate for `www` only but users type the root domain; forgetting renewals (automate them); CNAME at the root (not allowed — use ALIAS/A); long TTLs during migration.
+Common mistakes: certificate for `www` only but users type the root domain; forgetting renewals (automate them); CNAME at the root (not allowed, use ALIAS/A); long TTLs during migration.
 
 ## Lesson: [Intermediate|High] Deploying an ASP.NET Core site to IIS and to Azure App Service
 
@@ -367,7 +367,7 @@ Then: custom domain + managed certificate, connection string to Azure SQL (prefe
 | `DNS_PROBE_FINISHED_NXDOMAIN` | DNS record missing/wrong or not propagated |
 | Connection timed out | Firewall/NSG blocks the port, server down, wrong IP |
 | Certificate warning | Wrong hostname, expired, missing intermediate certificate |
-| 502.5 / 500.30 on IIS | ASP.NET Core app failed to start — Hosting Bundle missing, wrong runtime, startup exception (enable stdout log, check Event Viewer) |
+| 502.5 / 500.30 on IIS | ASP.NET Core app failed to start: Hosting Bundle missing, wrong runtime, startup exception (enable stdout log, check Event Viewer) |
 | 503 Service Unavailable | App pool stopped/crashing, overloaded |
 | 404 for deep links on an SPA | Server not rewriting unknown paths to `index.html` |
 | Works locally, slow live | Database latency (different region), no caching, small plan |
@@ -388,7 +388,7 @@ HTTPS is HTTP over TLS: the connection is encrypted (confidentiality), protected
 
 ## [Beginner|High] TCP vs UDP?
 
-TCP is connection-oriented and reliable: handshake, acknowledgements, retransmission, ordering, flow and congestion control — used for the web, databases, email. UDP is connectionless with no delivery guarantees but lower latency and overhead — used for DNS, voice/video, games and QUIC (HTTP/3), where the application handles reliability.
+TCP is connection-oriented and reliable: handshake, acknowledgements, retransmission, ordering, flow and congestion control, used for the web, databases, email. UDP is connectionless with no delivery guarantees but lower latency and overhead: used for DNS, voice/video, games and QUIC (HTTP/3), where the application handles reliability.
 
 ## [Beginner|High] What are the main HTTP methods and status codes?
 
@@ -408,7 +408,7 @@ A Content Delivery Network caches content at edge servers around the world, so u
 
 ## [Intermediate|High] Forward proxy vs reverse proxy?
 
-A forward proxy acts for clients (they connect out through it — corporate filtering, anonymity). A reverse proxy acts for servers (clients connect to it and it forwards to backend servers — TLS termination, load balancing, caching, compression, hiding internal servers). Nginx, IIS ARR, YARP and Azure Application Gateway are reverse proxies.
+A forward proxy acts for clients (they connect out through it: corporate filtering, anonymity). A reverse proxy acts for servers (clients connect to it and it forwards to backend servers, TLS termination, load balancing, caching, compression, hiding internal servers). Nginx, IIS ARR, YARP and Azure Application Gateway are reverse proxies.
 
 ## [Intermediate|High] How is an ASP.NET Core app hosted on IIS?
 
@@ -420,7 +420,7 @@ HTTP/1.1: text protocol, one outstanding request per connection (browsers open ~
 
 ## [Intermediate|Medium] Cookies vs session vs local storage?
 
-Cookies are small values sent automatically with every request to the domain (can be HttpOnly/Secure/SameSite) — used for session ids and auth. A session is server-side data keyed by a session id cookie. localStorage/sessionStorage are browser-only key-value stores readable by JavaScript and never sent automatically — fine for preferences, not for tokens (XSS risk).
+Cookies are small values sent automatically with every request to the domain (can be HttpOnly/Secure/SameSite): used for session ids and auth. A session is server-side data keyed by a session id cookie. localStorage/sessionStorage are browser-only key-value stores readable by JavaScript and never sent automatically, fine for preferences, not for tokens (XSS risk).
 
 ## [Intermediate|Medium] IaaS vs PaaS vs SaaS vs serverless?
 
@@ -432,13 +432,13 @@ The client and server negotiate a cipher suite, exchange keys with (elliptic-cur
 
 ## [Scenario|High] Users report your site is down, but it works on your machine. How do you troubleshoot?
 
-Check from outside (another network, downforeveryoneorjustme, mobile data). DNS: `nslookup` from different resolvers — wrong/expired record or propagation. Connectivity: `Test-NetConnection host -Port 443`, firewall/NSG, load balancer health probes. TLS: expired certificate or missing intermediate (SSL Labs). Server: app pool/process running, logs (Event Viewer, stdout, Application Insights), 5xx errors, resource limits. Recent changes: deployment, certificate renewal, DNS edits. Your machine may use a cached DNS entry or hosts-file entry.
+Check from outside (another network, downforeveryoneorjustme, mobile data). DNS: `nslookup` from different resolvers, wrong/expired record or propagation. Connectivity: `Test-NetConnection host -Port 443`, firewall/NSG, load balancer health probes. TLS: expired certificate or missing intermediate (SSL Labs). Server: app pool/process running, logs (Event Viewer, stdout, Application Insights), 5xx errors, resource limits. Recent changes: deployment, certificate renewal, DNS edits. Your machine may use a cached DNS entry or hosts-file entry.
 
 ## [Scenario|High] After moving the site to a new server, some users still reach the old server for hours. Why?
 
 DNS caching: resolvers and clients cache the old A record until its TTL expires (and some ignore TTLs). Next time lower the TTL (e.g. to 300 s) a day before the move, then change the record, keep the old server running (or redirecting) until traffic drains, and raise the TTL afterwards.
 
-## [Scenario|Medium] An ASP.NET Core app on IIS shows "HTTP Error 500.30 — ASP.NET Core app failed to start". What do you check?
+## [Scenario|Medium] An ASP.NET Core app on IIS shows "HTTP Error 500.30: ASP.NET Core app failed to start". What do you check?
 
 The app crashed during startup. Enable `stdoutLogEnabled="true"` in web.config (create the logs folder with write permission) or check Event Viewer → Application; run the app from the command line on the server (`dotnet Shop.Web.dll`) to see the exception. Common causes: wrong/missing .NET runtime or Hosting Bundle, missing config/connection string for the environment, file permissions for the app pool identity, database unreachable at startup, wrong `ASPNETCORE_ENVIRONMENT`.
 

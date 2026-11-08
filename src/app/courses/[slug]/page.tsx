@@ -14,7 +14,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/courses/[slug]">): Promise<Metadata> {
   const c = getCourse((await params).slug);
   if (!c) return { title: "Course" };
-  return pageMeta({ title: `${c.title} — Tutorial & Syllabus`, description: `Learn ${c.title} step by step: ${c.summary}`, path: `/courses/${c.slug}` });
+  return pageMeta({ title: `${c.title}: Tutorial & Syllabus`, description: `Learn ${c.title} step by step: ${c.summary}`, path: `/courses/${c.slug}` });
 }
 
 export default async function CoursePage({ params }: PageProps<"/courses/[slug]">) {

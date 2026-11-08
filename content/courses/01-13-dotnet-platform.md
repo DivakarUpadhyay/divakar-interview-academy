@@ -1,6 +1,6 @@
 ---
 slug: dotnet-platform
-title: Modern .NET — Hosting, Configuration, DI & Deployment
+title: Modern .NET: Hosting, Configuration, DI & Deployment
 track: dotnet
 order: 13
 group: ASP.NET Core
@@ -28,10 +28,10 @@ Building blocks: **runtime** (CLR, GC, JIT), **libraries** (BCL), **SDK** (compi
 
 | Version | Released | Type | Notes / support end |
 |---|---|---|---|
-| .NET Framework 1.0 | 2002 | — | First release with C# 1.0 |
-| .NET Framework 2.0 / 3.5 | 2005 / 2007 | — | Generics; LINQ, WCF, WPF (3.0) |
-| .NET Framework 4.0 → 4.8.1 | 2010 → 2022 | — | TPL, async (4.5); 4.8.1 is the last version, supported with Windows |
-| .NET Core 1.0 | Jun 2016 | — | Cross-platform rewrite |
+| .NET Framework 1.0 | 2002 |: | First release with C# 1.0 |
+| .NET Framework 2.0 / 3.5 | 2005 / 2007 |: | Generics; LINQ, WCF, WPF (3.0) |
+| .NET Framework 4.0 → 4.8.1 | 2010 → 2022 |: | TPL, async (4.5); 4.8.1 is the last version, supported with Windows |
+| .NET Core 1.0 | Jun 2016 |: | Cross-platform rewrite |
 | .NET Core 2.1 / 3.1 | 2018 / 2019 | LTS | 3.1 added WPF/WinForms on Windows; 3.1 ended Dec 2022 |
 | .NET 5 | Nov 2020 | STS | "Core" dropped from the name; one .NET |
 | .NET 6 | Nov 2021 | LTS | Minimal APIs, hot reload, MAUI (later); ended Nov 2024 |
@@ -80,7 +80,7 @@ Building blocks: **runtime** (CLR, GC, JIT), **libraries** (BCL), **SDK** (compi
 
 - **.NET Framework** (2002–): Windows-only, installed machine-wide, tied to Windows updates. Last version 4.8.1. Still supported for existing apps, but receives no new features. ASP.NET Web Forms, WCF server and Windows Workflow live here.
 - **.NET Core** (2016–2019): open source, cross-platform, modular, side-by-side versions, high performance.
-- **.NET 5+** (2020–): the unification — one .NET for cloud, web, desktop, mobile (MAUI), games and IoT. Version 4 was skipped to avoid confusion with .NET Framework 4.x.
+- **.NET 5+** (2020–): the unification, one .NET for cloud, web, desktop, mobile (MAUI), games and IoT. Version 4 was skipped to avoid confusion with .NET Framework 4.x.
 - **.NET Standard** (2.0, 2.1): a *specification* of APIs shared across implementations; target `netstandard2.0` only when a library must also run on .NET Framework. New libraries target `net8.0`/`net10.0`.
 
 ```xml
@@ -99,9 +99,9 @@ Building blocks: **runtime** (CLR, GC, JIT), **libraries** (BCL), **SDK** (compi
 
 ## Lesson: [Basic|High] Assemblies, namespaces, NuGet and project structure
 
-- **Assembly** — the unit of deployment and versioning (`.dll`/`.exe`) containing IL, metadata and a manifest. No GAC in modern .NET (the GAC exists only in .NET Framework).
-- **Namespace** — logical grouping of types; one assembly can contain many namespaces and vice versa.
-- **NuGet package** (`.nupkg`) — zip with assemblies for one or more target frameworks plus dependencies.
+- **Assembly**: the unit of deployment and versioning (`.dll`/`.exe`) containing IL, metadata and a manifest. No GAC in modern .NET (the GAC exists only in .NET Framework).
+- **Namespace**: logical grouping of types; one assembly can contain many namespaces and vice versa.
+- **NuGet package** (`.nupkg`): zip with assemblies for one or more target frameworks plus dependencies.
 - **Solution** (`.sln` or the newer `.slnx`) contains projects; a project produces one assembly.
 
 ```bash
@@ -220,7 +220,7 @@ Hosting ASP.NET Core: **Kestrel** (built-in cross-platform web server) behind II
 
 ## Lesson: [Advanced|Medium] Performance features of modern .NET
 
-- `Span<T>`/`Memory<T>`, `ArrayPool<T>`, `stackalloc` — fewer allocations.
+- `Span<T>`/`Memory<T>`, `ArrayPool<T>`, `stackalloc`: fewer allocations.
 - `System.Text.Json` (fast, source-generated) instead of Newtonsoft for new code.
 - Tiered compilation + Dynamic PGO, ReadyToRun, Native AOT.
 - `ValueTask`, `IAsyncEnumerable`, `System.IO.Pipelines`, `Channel<T>`.
@@ -234,7 +234,7 @@ Hosting ASP.NET Core: **Kestrel** (built-in cross-platform web server) behind II
 2. Upgrade dependencies to versions that support .NET Standard 2.0 / modern .NET.
 3. Convert projects to **SDK-style** `.csproj`; move class libraries to `netstandard2.0` or multi-target first.
 4. Use **.NET Upgrade Assistant** (or GitHub Copilot app modernization) to automate conversions.
-5. ASP.NET MVC/Web API → ASP.NET Core (incrementally with **YARP** reverse proxy + **System.Web adapters** — Strangler Fig).
+5. ASP.NET MVC/Web API → ASP.NET Core (incrementally with **YARP** reverse proxy + **System.Web adapters**: Strangler Fig).
 6. Replace: `web.config` app settings → `appsettings.json` + Options; `HttpContext.Current` → injected `IHttpContextAccessor`; Global.asax → Program.cs middleware; WCF server → gRPC/REST or CoreWCF; EF6 → EF Core (or keep EF6, which runs on .NET Core 3.1+).
 7. Test thoroughly, benchmark, deploy side by side, switch traffic gradually.
 

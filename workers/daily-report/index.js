@@ -1,6 +1,6 @@
 // DevLadder daily report: every day at 20:00 Taiwan time, read the owner stats from the Pages Function and email a
-// formatted summary (HTML with a plain-text fallback) — today, 30 days, month forecast, goals, real-visitor speed,
-// top pages/countries/sources and recommended next steps — to REPORT_EMAIL through Resend (secret RESEND_API_KEY).
+// formatted summary (HTML with a plain-text fallback): today, 30 days, month forecast, goals, real-visitor speed,
+// top pages/countries/sources and recommended next steps: to REPORT_EMAIL through Resend (secret RESEND_API_KEY).
 // The owner key is never included in the message.
 const RPM = { low: 1, typical: 3.5, high: 8 };   // keep in sync with src/app/owner/AdminDashboard.tsx
 const GOALS = [500, 3000, 5000];
@@ -27,7 +27,7 @@ function summarize(d) {
 
 function text(d, s, site) {
   return [
-    `DevLadder daily report — ${s.today.date}`,
+    `DevLadder daily report: ${s.today.date}`,
     `Today: ${num(s.today.visits)} visits, ${num(s.today.pageViews)} page views`,
     `Last 30 days: ${num(s.total.v)} visits, ${num(s.total.pv)} page views (avg ${num(s.avgPv)}/day, last 7 days)`,
     `This month (${s.monthKey}): ${num(s.soFar)} so far, ~${num(s.projected)} projected, est. ${usd(s.projected / 1000 * RPM.low)}–${usd(s.projected / 1000 * RPM.high)}`,
@@ -51,7 +51,7 @@ function html(d, s, site) {
     const good = v ? Math.round(v.good * 100) : null;
     const color = good === null ? "#5b6475" : good >= 90 ? "#2b8a3e" : "#c92a2a";
     const label = { lcp: "LCP · loading", inp: "INP · responsiveness", cls: "CLS · layout" }[k];
-    return card(label, `<span style="color:${color}">${good === null ? "—" : good + "% good"}</span>`, v ? `${Math.round(v.poor * 100)}% poor · ${num(v.samples)} loads` : "");
+    return card(label, `<span style="color:${color}">${good === null ? "-" : good + "% good"}</span>`, v ? `${Math.round(v.poor * 100)}% poor · ${num(v.samples)} loads` : "");
   };
   return `<!doctype html><html><body style="margin:0;background:#f6f7fb;font-family:Segoe UI,Arial,sans-serif">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f7fb"><tr><td align="center" style="padding:20px 10px">
@@ -76,10 +76,10 @@ function html(d, s, site) {
     ${h2("Recommended next steps")}
     ${list(d.tips.map(esc))}
     ${h2("Top pages")}
-    ${list(d.pages.slice(0, 5).map((p) => `${esc(p.path)} <span style="color:#5b6475">— ${num(p.pageViews)}</span>`))}
+    ${list(d.pages.slice(0, 5).map((p) => `${esc(p.path)} <span style="color:#5b6475">- ${num(p.pageViews)}</span>`))}
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-      <td valign="top" style="width:50%;padding-right:8px">${h2("Countries")}${list(d.countries.slice(0, 5).map((c) => `${esc(c.name)} <span style="color:#5b6475">— ${num(c.pageViews)}</span>`))}</td>
-      <td valign="top" style="width:50%;padding-left:8px">${h2("Traffic sources")}${list(d.referrers.slice(0, 5).map((r) => `${esc(r.host)} <span style="color:#5b6475">— ${num(r.pageViews)}</span>`))}</td>
+      <td valign="top" style="width:50%;padding-right:8px">${h2("Countries")}${list(d.countries.slice(0, 5).map((c) => `${esc(c.name)} <span style="color:#5b6475">- ${num(c.pageViews)}</span>`))}</td>
+      <td valign="top" style="width:50%;padding-left:8px">${h2("Traffic sources")}${list(d.referrers.slice(0, 5).map((r) => `${esc(r.host)} <span style="color:#5b6475">- ${num(r.pageViews)}</span>`))}</td>
     </tr></table>
     <p style="margin:22px 0 0;font-size:13px;color:#5b6475">Full details: open your bookmarked private dashboard link (${esc(site)}/owner#k=…).</p>
   </td></tr>

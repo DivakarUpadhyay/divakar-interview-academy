@@ -1,12 +1,12 @@
 ---
 slug: dotnet-fullstack-interview
-title: .NET Full Stack Developer Interview — End to End
+title: .NET Full Stack Developer Interview: End to End
 track: interview
 order: 1
 group: Role Preparation
 icon: FS
 color: #512bd4
-summary: How .NET full stack interviews run, the end-to-end request flow (Angular/React → ASP.NET Core → EF Core → SQL Server), authentication, a feature built across every layer, performance, deployment, architecture and system design — with the questions interviewers ask most.
+summary: How .NET full stack interviews run, the end-to-end request flow (Angular/React → ASP.NET Core → EF Core → SQL Server), authentication, a feature built across every layer, performance, deployment, architecture and system design, with the questions interviewers ask most.
 ---
 
 # Overview
@@ -48,21 +48,21 @@ Interview tip: say which version you used in your last project and one feature f
 
 **How a full stack feature moves from ticket to production:**
 
-1. **Requirement** — user story with acceptance criteria (Jira / Azure Boards).
-2. **Design** — API contract (endpoint, request/response DTOs, status codes), DB change (table, index, migration), UI screens.
-3. **Database** — migration script or EF Core migration; seed data; indexes for the new queries.
-4. **API** — DTOs, validation, service/business logic, repository or DbContext query, controller/endpoint, unit tests.
-5. **UI** — service that calls the API, component, form with validation, routing, error and loading states.
-6. **Integration** — CORS, auth token flow, end-to-end test (Playwright/Cypress).
-7. **Review & CI** — pull request, code review, pipeline runs build + tests + static analysis.
-8. **Deploy** — CD pipeline to dev → QA → UAT → production; config per environment; feature flags if needed.
-9. **Operate** — logs (Serilog / Application Insights), metrics, alerts; fix and iterate.
+1. **Requirement**: user story with acceptance criteria (Jira / Azure Boards).
+2. **Design**: API contract (endpoint, request/response DTOs, status codes), DB change (table, index, migration), UI screens.
+3. **Database**: migration script or EF Core migration; seed data; indexes for the new queries.
+4. **API**: DTOs, validation, service/business logic, repository or DbContext query, controller/endpoint, unit tests.
+5. **UI**: service that calls the API, component, form with validation, routing, error and loading states.
+6. **Integration**: CORS, auth token flow, end-to-end test (Playwright/Cypress).
+7. **Review & CI**: pull request, code review, pipeline runs build + tests + static analysis.
+8. **Deploy**: CD pipeline to dev → QA → UAT → production; config per environment; feature flags if needed.
+9. **Operate**: logs (Serilog / Application Insights), metrics, alerts; fix and iterate.
 
 # Tools
 
 - **IDE:** Visual Studio 2022/2026, VS Code, JetBrains Rider.
 - **API testing:** Swagger UI / Scalar, Postman, `.http` files in Visual Studio, curl.
-- **Database:** SQL Server Management Studio (SSMS), Azure Data Studio (retired 2026 — use VS Code MSSQL extension), SQL Profiler / Extended Events.
+- **Database:** SQL Server Management Studio (SSMS), Azure Data Studio (retired 2026, use VS Code MSSQL extension), SQL Profiler / Extended Events.
 - **Frontend:** Angular CLI, Vite, Chrome DevTools, Redux DevTools, Angular DevTools, React DevTools.
 - **Testing:** xUnit / NUnit, Moq / NSubstitute, FluentAssertions, Jasmine/Karma or Jest/Vitest, Playwright.
 - **Delivery:** Git, GitHub / Azure Repos, Azure DevOps Pipelines / GitHub Actions, Docker Desktop, Azure Portal, Azure CLI.
@@ -92,17 +92,17 @@ Most companies (product companies, service companies and startups) use some mix 
 
 > **Interview tip:** When asked any definition question, finish with "In my last project we used it for …". It turns a textbook answer into evidence.
 
-## Lesson: [Basic|High] "Explain your project architecture" — the end-to-end answer
+## Lesson: [Basic|High] "Explain your project architecture": the end-to-end answer
 
 This is asked in almost every round. Prepare a 2-minute answer using this skeleton:
 
-1. **Business** — "An order-management portal for distributors; ~300 internal users, ~20k orders/day."
-2. **Frontend** — "Angular 17 SPA with standalone components, reactive forms, an HTTP interceptor that adds the JWT and handles 401."
-3. **API** — "ASP.NET Core 8 Web API, layered: Controllers → Services → Repositories (EF Core). FluentValidation for input, global exception middleware returning ProblemDetails, Serilog to Application Insights."
-4. **Database** — "SQL Server 2019; ~60 tables; stored procedures for heavy reports; indexes tuned using execution plans."
-5. **Security** — "Azure AD (Entra ID) login; API validates JWT bearer tokens; role-based policies."
-6. **Delivery** — "Git with feature branches and PRs; Azure DevOps pipelines build, test and deploy to Azure App Service; separate dev/QA/prod."
-7. **Your part** — "I owned the orders module end to end: API, EF queries, the Angular screens, and I cut the order search from 6 s to 300 ms by adding a covering index and paging."
+1. **Business**: "An order-management portal for distributors; ~300 internal users, ~20k orders/day."
+2. **Frontend**: "Angular 17 SPA with standalone components, reactive forms, an HTTP interceptor that adds the JWT and handles 401."
+3. **API**: "ASP.NET Core 8 Web API, layered: Controllers → Services → Repositories (EF Core). FluentValidation for input, global exception middleware returning ProblemDetails, Serilog to Application Insights."
+4. **Database**: "SQL Server 2019; ~60 tables; stored procedures for heavy reports; indexes tuned using execution plans."
+5. **Security**: "Azure AD (Entra ID) login; API validates JWT bearer tokens; role-based policies."
+6. **Delivery**: "Git with feature branches and PRs; Azure DevOps pipelines build, test and deploy to Azure App Service; separate dev/QA/prod."
+7. **Your part**: "I owned the orders module end to end: API, EF queries, the Angular screens, and I cut the order search from 6 s to 300 ms by adding a covering index and paging."
 
 Draw it as you talk:
 
@@ -118,9 +118,9 @@ Draw it as you talk:
 
 ## Lesson: [Intermediate|High] From a button click to SQL Server and back
 
-Follow one request — "Load page 1 of orders for customer 42":
+Follow one request: "Load page 1 of orders for customer 42":
 
-**1. UI (Angular)** — the component asks a service; the service calls the API:
+**1. UI (Angular)**: the component asks a service; the service calls the API:
 
 ```typescript
 // order.service.ts
@@ -133,11 +133,11 @@ export class OrderService {
 }
 ```
 
-**2. Browser → server** — HTTPS request; an interceptor adds `Authorization: Bearer <token>`; for another origin the browser first sends a CORS preflight (`OPTIONS`).
+**2. Browser → server**: HTTPS request; an interceptor adds `Authorization: Bearer <token>`; for another origin the browser first sends a CORS preflight (`OPTIONS`).
 
-**3. ASP.NET Core pipeline** — Kestrel receives it → middleware in order: exception handler → HTTPS redirection → routing → CORS → authentication → authorization → endpoint.
+**3. ASP.NET Core pipeline**: Kestrel receives it → middleware in order: exception handler → HTTPS redirection → routing → CORS → authentication → authorization → endpoint.
 
-**4. Controller / endpoint** — model binding, validation, call the service:
+**4. Controller / endpoint**: model binding, validation, call the service:
 
 ```csharp
 [ApiController]
@@ -150,7 +150,7 @@ public class OrdersController(IOrderService orders) : ControllerBase
 }
 ```
 
-**5. Service + EF Core** — LINQ is translated to one SQL query; `AsNoTracking` for read-only; project to a DTO so only needed columns travel:
+**5. Service + EF Core**: LINQ is translated to one SQL query; `AsNoTracking` for read-only; project to a DTO so only needed columns travel:
 
 ```csharp
 public async Task<PagedResult<OrderDto>> GetPageAsync(int customerId, int page, int size, CancellationToken ct)
@@ -165,13 +165,13 @@ public async Task<PagedResult<OrderDto>> GetPageAsync(int customerId, int page, 
 }
 ```
 
-**6. SQL Server** — runs the generated query (`ORDER BY ... OFFSET ... FETCH`), ideally an index seek on `(CustomerId, OrderDate DESC)`.
+**6. SQL Server**: runs the generated query (`ORDER BY ... OFFSET ... FETCH`), ideally an index seek on `(CustomerId, OrderDate DESC)`.
 
-**7. Back up the stack** — DTOs serialised to JSON by `System.Text.Json` → `200 OK` → Angular deserialises → the template renders with `@for`.
+**7. Back up the stack**: DTOs serialised to JSON by `System.Text.Json` → `200 OK` → Angular deserialises → the template renders with `@for`.
 
 > **Interview tip:** Mention **async all the way** (frees threads while waiting for SQL), **CancellationToken** (stops work when the user navigates away), **AsNoTracking** and **projection**. These four show production experience.
 
-## Lesson: [Intermediate|High] Authentication end to end — JWT, refresh tokens, CORS
+## Lesson: [Intermediate|High] Authentication end to end: JWT, refresh tokens, CORS
 
 **Typical flow (token-based, SPA + API):**
 
@@ -207,12 +207,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 |---|---|
 | Where to store tokens in the browser? | Best: keep tokens out of JS (BFF pattern + HttpOnly, Secure, SameSite cookie). If in JS, keep the access token in memory, not `localStorage` (XSS can read it). |
 | Authentication vs authorization | Authentication = who you are (401 if missing/invalid). Authorization = what you may do (403 if not allowed). |
-| What is CORS? | A **browser** rule: a page from origin A may call origin B only if B returns `Access-Control-Allow-Origin` for A. It is not a server security feature — Postman ignores it. |
-| JWT contents | Header (alg), payload (claims: `sub`, `exp`, `aud`, `iss`, roles), signature. Base64Url-encoded, **not encrypted** — never put secrets in it. |
+| What is CORS? | A **browser** rule: a page from origin A may call origin B only if B returns `Access-Control-Allow-Origin` for A. It is not a server security feature: Postman ignores it. |
+| JWT contents | Header (alg), payload (claims: `sub`, `exp`, `aud`, `iss`, roles), signature. Base64Url-encoded, **not encrypted**: never put secrets in it. |
 
 ## Lesson: [Intermediate|High] Validation, error handling and logging across the layers
 
-**Validate at every boundary — for different reasons:**
+**Validate at every boundary: for different reasons:**
 
 | Layer | Validation | Why |
 |---|---|---|
@@ -252,7 +252,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log) 
 
 # Module: Building a Feature Full Stack
 
-## Lesson: [Intermediate|High] Worked example — "Products" CRUD with search and paging
+## Lesson: [Intermediate|High] Worked example: "Products" CRUD with search and paging
 
 The classic live-coding / take-home task. Build it layer by layer.
 
@@ -340,7 +340,7 @@ function Products() {
 
 ## Lesson: [Advanced|High] Performance across the stack
 
-Find the slow layer first — measure, don't guess (browser Network tab → API timings/Application Insights → SQL execution plan).
+Find the slow layer first: measure, don't guess (browser Network tab → API timings/Application Insights → SQL execution plan).
 
 | Layer | Common problem | Fix |
 |---|---|---|
@@ -358,9 +358,9 @@ foreach (var o in await db.Orders.ToListAsync()) total += o.Lines.Sum(l => l.Qty
 var totals = await db.Orders.Select(o => new { o.Id, Qty = o.Lines.Sum(l => l.Qty) }).ToListAsync();
 ```
 
-> **Interview tip:** Tell a real story: "Search took 6 s; the plan showed a clustered index scan on 4M rows; I added a covering index on (CustomerId, OrderDate) INCLUDE (Status, Total) and server-side paging — 300 ms."
+> **Interview tip:** Tell a real story: "Search took 6 s; the plan showed a clustered index scan on 4M rows; I added a covering index on (CustomerId, OrderDate) INCLUDE (Status, Total) and server-side paging, 300 ms."
 
-## Lesson: [Advanced|Medium] Deployment — config, secrets, Docker, CI/CD, Azure
+## Lesson: [Advanced|Medium] Deployment: config, secrets, Docker, CI/CD, Azure
 
 **Configuration per environment:** `appsettings.json` → `appsettings.{Environment}.json` → environment variables → Azure App Configuration / Key Vault. Bind to options classes (`IOptions<T>`). Never commit secrets; use User Secrets locally and **Key Vault + Managed Identity** in Azure.
 
@@ -401,7 +401,7 @@ web/
   shop-ui/              Angular or React app
 ```
 
-**Dependency rule:** dependencies point **inwards** — Api → Application → Domain; Infrastructure implements interfaces defined in Application. That is the **Dependency Inversion Principle** in practice, and it is what makes services unit-testable (mock `IOrderRepository`).
+**Dependency rule:** dependencies point **inwards**: Api → Application → Domain; Infrastructure implements interfaces defined in Application. That is the **Dependency Inversion Principle** in practice, and it is what makes services unit-testable (mock `IOrderRepository`).
 
 | Question | Answer |
 |---|---|
@@ -414,14 +414,14 @@ web/
 
 You are not expected to design Netflix. Expect: "Design an e-commerce order system / a URL shortener / a notification service." Use this structure:
 
-1. **Clarify requirements** — functional (place order, track status) and non-functional (users, requests/sec, latency, availability, consistency).
-2. **Estimate** — e.g. 10k orders/day ≈ 0.1/sec average, peaks ×20; data ~5 GB/year → one SQL database is fine.
-3. **API design** — `POST /orders`, `GET /orders/{id}`, idempotency key on create.
-4. **Data model** — Orders, OrderLines, Products, Customers; indexes for the main queries.
-5. **High-level design** — SPA → CDN; API behind a load balancer (stateless, scale out); SQL primary + read replica; Redis cache; Service Bus queue for emails/invoices.
-6. **Deep dive** — one hard part: payment + stock consistency (outbox pattern, idempotency), or caching strategy.
-7. **Reliability & ops** — retries with backoff (Polly / `Microsoft.Extensions.Http.Resilience`), health checks, logging, monitoring, alerts.
-8. **Trade-offs** — say what you would do differently at 100× scale.
+1. **Clarify requirements**: functional (place order, track status) and non-functional (users, requests/sec, latency, availability, consistency).
+2. **Estimate**: e.g. 10k orders/day ≈ 0.1/sec average, peaks ×20; data ~5 GB/year → one SQL database is fine.
+3. **API design**: `POST /orders`, `GET /orders/{id}`, idempotency key on create.
+4. **Data model**: Orders, OrderLines, Products, Customers; indexes for the main queries.
+5. **High-level design**: SPA → CDN; API behind a load balancer (stateless, scale out); SQL primary + read replica; Redis cache; Service Bus queue for emails/invoices.
+6. **Deep dive**: one hard part: payment + stock consistency (outbox pattern, idempotency), or caching strategy.
+7. **Reliability & ops**: retries with backoff (Polly / `Microsoft.Extensions.Http.Resilience`), health checks, logging, monitoring, alerts.
+8. **Trade-offs**: say what you would do differently at 100× scale.
 
 ```text
 Browser ─ CDN (SPA files)
@@ -447,7 +447,7 @@ Authentication proves **who** the caller is (token, cookie); failure → **401 U
 
 ## [Beginner|High] What is CORS and why do you get a CORS error only in the browser?
 
-CORS (Cross-Origin Resource Sharing) is a browser protection: JavaScript from origin A (e.g. `http://localhost:4200`) may read a response from origin B (`https://api.example.com`) only if B sends `Access-Control-Allow-Origin` allowing A. Non-simple requests trigger an `OPTIONS` preflight. Postman and server-to-server calls don't enforce it. Fix: `builder.Services.AddCors(...)` with the exact SPA origins and `app.UseCors(...)` before auth — never `AllowAnyOrigin` together with credentials.
+CORS (Cross-Origin Resource Sharing) is a browser protection: JavaScript from origin A (e.g. `http://localhost:4200`) may read a response from origin B (`https://api.example.com`) only if B sends `Access-Control-Allow-Origin` allowing A. Non-simple requests trigger an `OPTIONS` preflight. Postman and server-to-server calls don't enforce it. Fix: `builder.Services.AddCors(...)` with the exact SPA origins and `app.UseCors(...)` before auth, never `AllowAnyOrigin` together with credentials.
 
 ## [Beginner|High] Why do you return DTOs instead of EF entities from an API?
 
@@ -459,7 +459,7 @@ Server-side: the API takes `page`, `size` (clamped to a maximum, e.g. 100), `sor
 
 ## [Intermediate|High] Where do you store the JWT in an SPA, and how do you refresh it?
 
-Safest: don't expose tokens to JavaScript — use a **Backend-for-Frontend** that keeps tokens server-side and gives the browser an HttpOnly, Secure, SameSite cookie. If the SPA holds tokens, keep the short-lived access token **in memory** (not `localStorage`, which XSS can read) and use refresh-token rotation via the identity provider (MSAL / oidc-client handle this). On a 401 the interceptor refreshes once and retries; if refresh fails, redirect to login.
+Safest: don't expose tokens to JavaScript, use a **Backend-for-Frontend** that keeps tokens server-side and gives the browser an HttpOnly, Secure, SameSite cookie. If the SPA holds tokens, keep the short-lived access token **in memory** (not `localStorage`, which XSS can read) and use refresh-token rotation via the identity provider (MSAL / oidc-client handle this). On a 401 the interceptor refreshes once and retries; if refresh fails, redirect to login.
 
 ## [Intermediate|High] How do you handle errors globally in both the API and the UI?
 
@@ -467,7 +467,7 @@ API: `AddProblemDetails()` + an `IExceptionHandler` (or exception middleware) ma
 
 ## [Intermediate|High] Explain the N+1 problem and how you detect and fix it.
 
-One query loads N parents, then one more query runs per parent to load children (often through lazy loading or a query inside a loop) — 1 + N round trips. Detect it with EF Core logging / Application Insights dependency telemetry / SQL Profiler showing many identical queries. Fix: eager load with `Include`, or better project only what you need in one query (`Select`), use `AsSplitQuery` for large graphs, and never query inside a loop.
+One query loads N parents, then one more query runs per parent to load children (often through lazy loading or a query inside a loop): 1 + N round trips. Detect it with EF Core logging / Application Insights dependency telemetry / SQL Profiler showing many identical queries. Fix: eager load with `Include`, or better project only what you need in one query (`Select`), use `AsSplitQuery` for large graphs, and never query inside a loop.
 
 ## [Intermediate|High] How do you make an API call from Angular and show loading and error states?
 
@@ -475,11 +475,11 @@ Inject `HttpClient` into a service that returns an `Observable<T>`; in the compo
 
 ## [Intermediate|High] How do you secure an ASP.NET Core Web API?
 
-HTTPS only (HSTS); authentication with JWT bearer from a trusted identity provider; authorization with policies and resource checks (user may only see their own orders — prevents IDOR); input validation; parameterised queries (EF/Dapper do this — never concatenate SQL); rate limiting (`AddRateLimiter`); CORS restricted to known origins; secrets in Key Vault; security headers; no stack traces to clients; dependency scanning in CI; logging without sensitive data.
+HTTPS only (HSTS); authentication with JWT bearer from a trusted identity provider; authorization with policies and resource checks (user may only see their own orders: prevents IDOR); input validation; parameterised queries (EF/Dapper do this, never concatenate SQL); rate limiting (`AddRateLimiter`); CORS restricted to known origins; secrets in Key Vault; security headers; no stack traces to clients; dependency scanning in CI; logging without sensitive data.
 
 ## [Intermediate|Medium] How do you handle two users editing the same record at the same time?
 
-Optimistic concurrency: a `ROWVERSION` column mapped as a concurrency token (`[Timestamp]`). The UI sends back the version it loaded; EF Core adds `WHERE Id = @id AND RowVersion = @v` to the UPDATE. If no row is updated, EF throws `DbUpdateConcurrencyException`; the API returns **409 Conflict** and the UI shows "this record changed — reload". Pessimistic locking (holding locks) is rarely right for web apps.
+Optimistic concurrency: a `ROWVERSION` column mapped as a concurrency token (`[Timestamp]`). The UI sends back the version it loaded; EF Core adds `WHERE Id = @id AND RowVersion = @v` to the UPDATE. If no row is updated, EF throws `DbUpdateConcurrencyException`; the API returns **409 Conflict** and the UI shows "this record changed: reload". Pessimistic locking (holding locks) is rarely right for web apps.
 
 ## [Intermediate|Medium] How do you manage configuration and secrets across dev, QA and production?
 
@@ -499,7 +499,7 @@ Measure layer by layer: browser DevTools Network (is it the API call or renderin
 
 ## [Advanced|High] Monolith or microservices for a new product? Justify.
 
-Usually a **modular monolith** first: one deployable, clear module boundaries, one database with separate schemas, in-process calls — simpler to build, test, deploy and debug. Move a module to a microservice when it needs independent scaling, release cadence, technology or team ownership. Microservices add network failures, distributed data and transactions (sagas/outbox), observability and DevOps cost — accept that only for a concrete benefit.
+Usually a **modular monolith** first: one deployable, clear module boundaries, one database with separate schemas, in-process calls, simpler to build, test, deploy and debug. Move a module to a microservice when it needs independent scaling, release cadence, technology or team ownership. Microservices add network failures, distributed data and transactions (sagas/outbox), observability and DevOps cost: accept that only for a concrete benefit.
 
 ## [Advanced|Medium] How do you keep the API and the frontend contract in sync?
 
@@ -511,15 +511,15 @@ Don't do it inside the HTTP request. Return `202 Accepted` with a job id, push a
 
 ## [Scenario|High] The UI shows "CORS error" after you deployed the API to Azure, but it worked locally. What do you check?
 
-The CORS policy must include the **production SPA origin** exactly (scheme + host + port, no trailing slash); `UseCors` must run before `UseAuthentication`/`UseAuthorization` and before the endpoints; Azure App Service's own CORS setting can override the app — use one or the other; the "CORS error" can also hide a 500 or 404 (a failed preflight or an error page without CORS headers) — check the API logs and the Network tab for the actual status.
+The CORS policy must include the **production SPA origin** exactly (scheme + host + port, no trailing slash); `UseCors` must run before `UseAuthentication`/`UseAuthorization` and before the endpoints; Azure App Service's own CORS setting can override the app: use one or the other; the "CORS error" can also hide a 500 or 404 (a failed preflight or an error page without CORS headers), check the API logs and the Network tab for the actual status.
 
 ## [Scenario|High] A user can see another customer's orders by changing the id in the URL. What is wrong and how do you fix it?
 
-That is an **IDOR** (Insecure Direct Object Reference) — broken object-level authorization, the #1 item in the OWASP API Security Top 10. Authentication alone is not enough: the API must check ownership on every request, e.g. filter by the current user's customer id from the token (`Where(o => o.CustomerId == currentUser.CustomerId)`) or use resource-based authorization (`IAuthorizationService.AuthorizeAsync(User, order, "OwnsOrder")`). Return 404 (not 403) to avoid revealing that the id exists, and add tests for it.
+That is an **IDOR** (Insecure Direct Object Reference): broken object-level authorization, the #1 item in the OWASP API Security Top 10. Authentication alone is not enough: the API must check ownership on every request, e.g. filter by the current user's customer id from the token (`Where(o => o.CustomerId == currentUser.CustomerId)`) or use resource-based authorization (`IAuthorizationService.AuthorizeAsync(User, order, "OwnsOrder")`). Return 404 (not 403) to avoid revealing that the id exists, and add tests for it.
 
 ## [Scenario|High] After a release the API is slow and SQL CPU is at 100%. What do you do?
 
-Stabilise first: roll back or scale up if users are blocked. Then find the top queries by CPU (Query Store / `sys.dm_exec_query_stats`), compare plans before and after the release — usually a new query without an index, a changed LINQ query producing a bad plan, an N+1 loop, or parameter sniffing. Fix with an index, a rewritten query, forcing the last good plan in Query Store as a stop-gap, and add a performance test or alert so it is caught earlier next time.
+Stabilise first: roll back or scale up if users are blocked. Then find the top queries by CPU (Query Store / `sys.dm_exec_query_stats`), compare plans before and after the release, usually a new query without an index, a changed LINQ query producing a bad plan, an N+1 loop, or parameter sniffing. Fix with an index, a rewritten query, forcing the last good plan in Query Store as a stop-gap, and add a performance test or alert so it is caught earlier next time.
 
 ## [Scenario|High] You are asked to add a "bulk upload products from Excel" feature. Walk through your design.
 
@@ -548,12 +548,12 @@ Order and stock in the **same database transaction** (`SaveChangesAsync` on one 
 | Code | Use |
 |---|---|
 | 200 / 201 / 204 | OK / Created (+ Location) / No content (delete, update) |
-| 202 | Accepted — background job started |
+| 202 | Accepted: background job started |
 | 400 | Validation failed (ProblemDetails with errors) |
 | 401 / 403 | Not authenticated / authenticated but not allowed |
 | 404 / 409 | Not found / conflict (concurrency, duplicate) |
 | 429 | Rate limited |
-| 500 | Unhandled error — log with correlation id |
+| 500 | Unhandled error: log with correlation id |
 
 ## Performance checklist
 

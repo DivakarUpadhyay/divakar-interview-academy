@@ -5,7 +5,7 @@ import { tool } from "@/lib/tools";
 import Base64Tool from "./Base64Tool";
 
 const t = tool("base64");
-export const metadata: Metadata = pageMeta({ title: `${t.name} — Free Online, UTF-8 Safe`, description: t.description, path: `/tools/${t.slug}` });
+export const metadata: Metadata = pageMeta({ title: `${t.name}: Free Online, UTF-8 Safe`, description: t.description, path: `/tools/${t.slug}` });
 
 export default function Page() {
   return (

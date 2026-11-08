@@ -12,9 +12,9 @@ import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: `${SITE_NAME} — Step-by-Step Tutorials & Interview Questions`, template: `%s · ${SITE_NAME}` },
+  title: { default: `${SITE_NAME}: Step-by-Step Tutorials & Interview Questions`, template: `%s · ${SITE_NAME}` },
   description:
-    "Free step-by-step tutorials from fundamentals to advanced: C#, .NET internals, ASP.NET Core MVC & Web API, Entity Framework, Dapper, SQL Server, system design, DSA, Azure, Angular, React, automation and Industry 4.0 — with interview questions and cheat sheets.",
+    "Free step-by-step tutorials from fundamentals to advanced: C#, .NET internals, ASP.NET Core MVC & Web API, Entity Framework, Dapper, SQL Server, system design, DSA, Azure, Angular, React, automation and Industry 4.0, with interview questions and cheat sheets.",
   applicationName: SITE_NAME,
   keywords: [".NET interview questions", "C# tutorial", "ASP.NET Core MVC", "SQL Server internals", "system design", "low level design",
     "Entity Framework", "Dapper", "Web Forms", "VB.NET", "Azure", "full stack developer interview", "Industry 4.0", "test automation"],

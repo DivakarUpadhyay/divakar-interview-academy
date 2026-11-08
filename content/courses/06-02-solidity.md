@@ -15,7 +15,7 @@ summary: Solidity syntax, data types and data locations, functions, visibility a
 
 A contract is like a class: **state variables** (stored permanently on-chain), **functions**, **modifiers**, **events**, **errors**, and can inherit from other contracts. Code is compiled with **solc** into EVM bytecode plus an **ABI**.
 
-Smart contract development is high-stakes: deployed code is public, usually immutable, and often holds money — bugs are exploited quickly. Interviews focus heavily on **security**, **gas costs** and **testing**.
+Smart contract development is high-stakes: deployed code is public, usually immutable, and often holds money, bugs are exploited quickly. Interviews focus heavily on **security**, **gas costs** and **testing**.
 
 # Versions
 
@@ -27,9 +27,9 @@ Smart contract development is high-stakes: deployed code is public, usually immu
 | 0.6.0 | 2019 | `virtual`/`override` required, `receive()`/`fallback()` split, try/catch for external calls |
 | 0.7.0 | 2020 | `now` removed (use `block.timestamp`), constructor visibility removed |
 | **0.8.0** | Dec 2020 | **Checked arithmetic** (overflow/underflow reverts by default; `unchecked {}` to opt out), ABI coder v2 default |
-| 0.8.4 | 2021 | **Custom errors** (`error InsufficientBalance(...)` — cheaper than revert strings) |
+| 0.8.4 | 2021 | **Custom errors** (`error InsufficientBalance(...)`: cheaper than revert strings) |
 | 0.8.18–0.8.30 | 2023–2025 | User-defined operators, named mapping parameters, transient storage (`transient` keyword, 0.8.28, after Dencun's EIP-1153), new EVM version defaults (Cancun, Prague) |
-| 0.9 (planned) | — | Further breaking cleanups |
+| 0.9 (planned) |: | Further breaking cleanups |
 
 Always pin the compiler: `pragma solidity 0.8.28;` (or `^0.8.24`) and use a recent 0.8.x release. Library versions: OpenZeppelin Contracts 4.x (2021–2023) → **5.x** (2023+, custom errors, `Ownable(initialOwner)`, namespaced storage).
 
@@ -37,16 +37,16 @@ Always pin the compiler: `pragma solidity 0.8.28;` (or `^0.8.24`) and use a rece
 
 **Development lifecycle:**
 
-1. **Specify** — requirements, roles, invariants ("total supply equals sum of balances"), threat model.
-2. **Write** — Solidity using audited building blocks (OpenZeppelin).
-3. **Compile** — `forge build` / `npx hardhat compile` → bytecode + ABI.
-4. **Test** — unit tests, fuzz tests, invariant tests, fork tests against mainnet state; coverage.
-5. **Static analysis** — Slither, compiler warnings, linters (solhint).
-6. **Audit** — internal review + external audit; bug bounty.
-7. **Deploy** — testnet (Sepolia) → mainnet with a script; record addresses; deploy through a multisig where possible.
-8. **Verify** — publish source on Etherscan/Blockscout.
-9. **Operate** — monitoring (events, Defender/Forta), admin actions via multisig + timelock, incident response (pause).
-10. **Upgrade or migrate** — through a proxy (if designed) or by deploying a new contract and migrating state.
+1. **Specify**: requirements, roles, invariants ("total supply equals sum of balances"), threat model.
+2. **Write**: Solidity using audited building blocks (OpenZeppelin).
+3. **Compile**: `forge build` / `npx hardhat compile` → bytecode + ABI.
+4. **Test**: unit tests, fuzz tests, invariant tests, fork tests against mainnet state; coverage.
+5. **Static analysis**: Slither, compiler warnings, linters (solhint).
+6. **Audit**: internal review + external audit; bug bounty.
+7. **Deploy**: testnet (Sepolia) → mainnet with a script; record addresses; deploy through a multisig where possible.
+8. **Verify**: publish source on Etherscan/Blockscout.
+9. **Operate**: monitoring (events, Defender/Forta), admin actions via multisig + timelock, incident response (pause).
+10. **Upgrade or migrate**: through a proxy (if designed) or by deploying a new contract and migrating state.
 
 **Contract execution lifecycle (per call):** transaction/call reaches the contract → EVM loads bytecode → function selector (first 4 bytes of calldata = `keccak256("transfer(address,uint256)")[0:4]`) dispatches to the function → modifiers run → body executes reading/writing **storage**, using **memory**/**stack**, possibly calling other contracts → emits events → returns data, or **reverts** (all state changes undone, remaining gas returned except for what was used).
 
@@ -56,7 +56,7 @@ Always pin the compiler: `pragma solidity 0.8.28;` (or `^0.8.24`) and use a rece
 
 | Tool | Use |
 |---|---|
-| **Remix IDE** (remix.ethereum.org) | Browser IDE — learning, quick tests |
+| **Remix IDE** (remix.ethereum.org) | Browser IDE: learning, quick tests |
 | **Foundry** (forge, cast, anvil, chisel) | Rust-based toolkit; tests in Solidity; fast fuzzing |
 | **Hardhat** (v3) | JS/TS toolkit; plugins; Hardhat Network; Ignition deployments |
 | **OpenZeppelin Contracts / Wizard / Upgrades plugin / Defender** | Audited contracts, generator, proxy tooling, ops |
@@ -122,9 +122,9 @@ contract SimpleBank {
 
 **Value types:** `bool`, `uint8…uint256` (`uint` = `uint256`), `int8…int256`, `address` (20 bytes) / `address payable`, `bytes1…bytes32`, `enum`. **Reference types:** arrays (`uint[]`, `uint[10]`), `bytes`, `string`, `struct`, `mapping(K => V)` (no iteration, no length; every key exists with a default zero value).
 
-**Units:** `1 ether = 1e18 wei`, `gwei`; time units `seconds`, `minutes`, `hours`, `days`, `weeks`. No floating point — use integers with fixed decimals.
+**Units:** `1 ether = 1e18 wei`, `gwei`; time units `seconds`, `minutes`, `hours`, `days`, `weeks`. No floating point: use integers with fixed decimals.
 
-**Global variables:** `msg.sender` (immediate caller), `msg.value` (wei sent), `msg.data`, `block.timestamp`, `block.number`, `block.chainid`, `tx.origin` (original EOA — never use for auth), `gasleft()`, `address(this).balance`.
+**Global variables:** `msg.sender` (immediate caller), `msg.value` (wei sent), `msg.data`, `block.timestamp`, `block.number`, `block.chainid`, `tx.origin` (original EOA, never use for auth), `gasleft()`, `address(this).balance`.
 
 ## Lesson: [Basic|High] Functions: visibility, state mutability and modifiers
 
@@ -133,7 +133,7 @@ contract SimpleBank {
 | `public` | Anywhere (internally and externally); public state vars get getters |
 | `external` | Only from outside (other contracts/EOAs), or `this.f()` |
 | `internal` | This contract and derived contracts (default for state variables) |
-| `private` | Only this contract (still **visible on-chain** — not secret!) |
+| `private` | Only this contract (still **visible on-chain**: not secret!) |
 
 | Mutability | Meaning |
 |---|---|
@@ -197,7 +197,7 @@ catch Error(string memory reason) { emit OracleFailed(reason); }
 catch (bytes memory) { emit OracleFailed("unknown"); }
 ```
 
-On revert, **all state changes in the call are undone**; gas used so far is consumed. **Events** (`emit Transfer(from, to, amount)`) write to transaction logs — cheap, not readable by contracts, but indexed by off-chain apps; up to 3 `indexed` parameters become searchable topics.
+On revert, **all state changes in the call are undone**; gas used so far is consumed. **Events** (`emit Transfer(from, to, amount)`) write to transaction logs: cheap, not readable by contracts, but indexed by off-chain apps; up to 3 `indexed` parameters become searchable topics.
 
 # Module: Object-Oriented Solidity
 
@@ -271,7 +271,7 @@ contract CourseCertificate is ERC721, AccessControl {
 }
 ```
 
-Use **OpenZeppelin** instead of writing token logic yourself — audited, standard-compliant. **Ownable** (single owner) vs **AccessControl** (roles) vs **AccessManager** (centralised permissions, OZ 5).
+Use **OpenZeppelin** instead of writing token logic yourself: audited, standard-compliant. **Ownable** (single owner) vs **AccessControl** (roles) vs **AccessManager** (centralised permissions, OZ 5).
 
 ## Lesson: [Intermediate|High] Sending and receiving Ether safely
 
@@ -280,7 +280,7 @@ Use **OpenZeppelin** instead of writing token logic yourself — audited, standa
 (bool ok, ) = payable(to).call{value: amount}("");
 require(ok, "ETH transfer failed");
 
-// transfer/send forward only 2,300 gas — can break with smart-contract wallets; generally avoid
+// transfer/send forward only 2,300 gas: can break with smart-contract wallets; generally avoid
 payable(to).transfer(amount);            // reverts on failure
 bool sent = payable(to).send(amount);    // returns false on failure
 ```
@@ -336,7 +336,7 @@ Contracts are immutable, so upgradeability uses a **proxy** that holds storage a
 | Beacon proxy | Beacon contract shared by many proxies | Upgrade many instances at once |
 | Diamond (ERC-2535) | Multiple facets | Very large/modular systems; complex |
 
-Rules: use **initializers** instead of constructors (`initialize()` with `initializer` modifier; call `_disableInitializers()` in the implementation's constructor), never change the order/types of existing storage variables (append only, or use ERC-7201 namespaced storage), protect upgrades with a **multisig + timelock**, and validate with the OpenZeppelin Upgrades plugin. Upgradeability trades trustlessness for fixability — be transparent with users.
+Rules: use **initializers** instead of constructors (`initialize()` with `initializer` modifier; call `_disableInitializers()` in the implementation's constructor), never change the order/types of existing storage variables (append only, or use ERC-7201 namespaced storage), protect upgrades with a **multisig + timelock**, and validate with the OpenZeppelin Upgrades plugin. Upgradeability trades trustlessness for fixability: be transparent with users.
 
 ## Lesson: [Advanced|Medium] Gas optimisation
 
@@ -352,7 +352,7 @@ Rules: use **initializers** instead of constructors (`initialize()` with `initia
 10. Batch operations; use transient storage for in-transaction flags.
 11. Enable the optimizer (`runs` tuned: low for deploy cost, high for call cost); compare with `forge snapshot` / gas reports.
 
-Readability and security beat micro-optimisation — measure first.
+Readability and security beat micro-optimisation: measure first.
 
 ## Lesson: [Intermediate|High] Testing with Foundry and Hardhat, deployment
 
@@ -402,7 +402,7 @@ npx hardhat test
 npx hardhat ignition deploy ./ignition/modules/Bank.ts --network sepolia --verify
 ```
 
-Test types: unit, **fuzz**, **invariant** (properties that must always hold across random call sequences), **fork tests** (against real mainnet state), integration with frontends. Keep deployer keys in an encrypted keystore or hardware wallet — never in `.env` committed to Git.
+Test types: unit, **fuzz**, **invariant** (properties that must always hold across random call sequences), **fork tests** (against real mainnet state), integration with frontends. Keep deployer keys in an encrypted keystore or hardware wallet: never in `.env` committed to Git.
 
 # Interview
 
@@ -412,7 +412,7 @@ Solidity is a statically typed, contract-oriented programming language for writi
 
 ## [Beginner|High] Explain function visibility in Solidity.
 
-`public` — callable internally and externally (state variables get automatic getters). `external` — callable only from outside the contract (or via `this.`). `internal` — this contract and contracts that inherit from it (default for state variables). `private` — only this contract. Note: `private` doesn't hide data — all on-chain storage is publicly readable.
+`public`: callable internally and externally (state variables get automatic getters). `external`: callable only from outside the contract (or via `this.`). `internal`: this contract and contracts that inherit from it (default for state variables). `private`: only this contract. Note: `private` doesn't hide data, all on-chain storage is publicly readable.
 
 ## [Beginner|High] What is the difference between view and pure functions?
 
@@ -420,19 +420,19 @@ Solidity is a statically typed, contract-oriented programming language for writi
 
 ## [Beginner|High] What are storage, memory and calldata?
 
-They're data locations. `storage` is persistent contract state on the blockchain (expensive to write). `memory` is temporary, modifiable data that exists for the duration of a function call. `calldata` is a read-only, non-persistent area holding the arguments of external calls — the cheapest choice for external function array/string/struct parameters. Assigning storage to a local `storage` variable creates a reference; to `memory` creates a copy.
+They're data locations. `storage` is persistent contract state on the blockchain (expensive to write). `memory` is temporary, modifiable data that exists for the duration of a function call. `calldata` is a read-only, non-persistent area holding the arguments of external calls: the cheapest choice for external function array/string/struct parameters. Assigning storage to a local `storage` variable creates a reference; to `memory` creates a copy.
 
 ## [Beginner|High] What is msg.sender vs tx.origin?
 
-`msg.sender` is the immediate caller of the current function — an EOA or another contract. `tx.origin` is always the EOA that originally signed the transaction. Using `tx.origin` for authorisation is a vulnerability: a malicious contract the user interacts with can call your contract and pass a `tx.origin == owner` check. Always use `msg.sender`.
+`msg.sender` is the immediate caller of the current function: an EOA or another contract. `tx.origin` is always the EOA that originally signed the transaction. Using `tx.origin` for authorisation is a vulnerability: a malicious contract the user interacts with can call your contract and pass a `tx.origin == owner` check. Always use `msg.sender`.
 
 ## [Beginner|Medium] What are events and why use them?
 
-Events (`event Transfer(address indexed from, address indexed to, uint256 value)`) emitted with `emit` are stored in transaction logs, not contract storage — much cheaper. Off-chain apps (frontends, indexers, The Graph, .NET backends) subscribe to and filter them (up to 3 `indexed` topics). Contracts can't read logs. Use them for activity history, notifications and indexing.
+Events (`event Transfer(address indexed from, address indexed to, uint256 value)`) emitted with `emit` are stored in transaction logs, not contract storage: much cheaper. Off-chain apps (frontends, indexers, The Graph, .NET backends) subscribe to and filter them (up to 3 `indexed` topics). Contracts can't read logs. Use them for activity history, notifications and indexing.
 
 ## [Intermediate|High] What is a reentrancy attack and how do you prevent it?
 
-When a contract makes an external call (e.g. sending Ether) before updating its own state, the recipient's code (fallback/receive or a token hook) can call back into the contract and repeat the action — for example withdrawing again before the balance is reduced (The DAO hack, 2016, ~3.6M ETH). Prevent it with the Checks-Effects-Interactions pattern (validate, update state, then call out), OpenZeppelin `ReentrancyGuard` (`nonReentrant`), pull-payment designs, and care with token callbacks (ERC-777/721/1155 hooks).
+When a contract makes an external call (e.g. sending Ether) before updating its own state, the recipient's code (fallback/receive or a token hook) can call back into the contract and repeat the action, for example withdrawing again before the balance is reduced (The DAO hack, 2016, ~3.6M ETH). Prevent it with the Checks-Effects-Interactions pattern (validate, update state, then call out), OpenZeppelin `ReentrancyGuard` (`nonReentrant`), pull-payment designs, and care with token callbacks (ERC-777/721/1155 hooks).
 
 ## [Intermediate|High] require vs revert vs assert vs custom errors?
 
@@ -440,7 +440,7 @@ When a contract makes an external call (e.g. sending Ether) before updating its 
 
 ## [Intermediate|High] How do you send Ether from a contract? transfer vs send vs call?
 
-`transfer` forwards 2,300 gas and reverts on failure; `send` forwards 2,300 gas and returns false on failure; `call{value: x}("")` forwards all available gas (configurable) and returns (success, data). Since gas costs changed (EIP-1884) and smart-contract wallets need more gas, `call` with a checked return value is recommended — combined with reentrancy protection and the pull-payment pattern.
+`transfer` forwards 2,300 gas and reverts on failure; `send` forwards 2,300 gas and returns false on failure; `call{value: x}("")` forwards all available gas (configurable) and returns (success, data). Since gas costs changed (EIP-1884) and smart-contract wallets need more gas, `call` with a checked return value is recommended: combined with reentrancy protection and the pull-payment pattern.
 
 ## [Intermediate|High] What changed in Solidity 0.8?
 
@@ -448,7 +448,7 @@ Arithmetic is checked by default: overflow/underflow reverts (Panic 0x11) instea
 
 ## [Intermediate|Medium] What is the difference between an interface, an abstract contract and a library?
 
-An interface declares only external function signatures (no state, no implementation, no constructor) — used to interact with other contracts and define standards (IERC20). An abstract contract can contain state and implemented functions but has at least one unimplemented function or is marked abstract — it can't be deployed, only inherited. A library holds reusable functions without state (internal functions are inlined; public ones are deployed and called via delegatecall), attached to types with `using X for Y`.
+An interface declares only external function signatures (no state, no implementation, no constructor): used to interact with other contracts and define standards (IERC20). An abstract contract can contain state and implemented functions but has at least one unimplemented function or is marked abstract, it can't be deployed, only inherited. A library holds reusable functions without state (internal functions are inlined; public ones are deployed and called via delegatecall), attached to types with `using X for Y`.
 
 ## [Intermediate|Medium] What are modifiers? Give an example.
 
@@ -468,11 +468,11 @@ Everything on-chain is deterministic and visible: `block.timestamp`, `blockhash`
 
 ## [Advanced|Medium] What is the difference between call, delegatecall and staticcall?
 
-`call` executes code in the target contract's context (its storage; `msg.sender` becomes the caller contract) and can send Ether. `delegatecall` executes the target's code in the **caller's** context (caller's storage, `msg.sender` and `msg.value` preserved) — used by proxies and libraries; dangerous with untrusted targets. `staticcall` is like call but reverts on any state modification — used for view calls.
+`call` executes code in the target contract's context (its storage; `msg.sender` becomes the caller contract) and can send Ether. `delegatecall` executes the target's code in the **caller's** context (caller's storage, `msg.sender` and `msg.value` preserved): used by proxies and libraries; dangerous with untrusted targets. `staticcall` is like call but reverts on any state modification, used for view calls.
 
 ## [Scenario|High] You must build a token sale contract that accepts USDC and gives buyers your token. What would you check for security?
 
-Use OpenZeppelin ERC-20 and `SafeERC20` (`safeTransferFrom` for USDC); handle decimals correctly (USDC has 6, your token 18); checks-effects-interactions plus `nonReentrant`; caps per wallet and a total cap; start/end times; pausable by a multisig; no reliance on spot prices; no unbounded loops (let users claim — pull, not push); withdrawal of raised funds only by the treasury multisig; events for every purchase; comprehensive unit/fuzz tests including edge cases (zero amounts, rounding); an external audit; and legal/compliance review (securities rules, KYC).
+Use OpenZeppelin ERC-20 and `SafeERC20` (`safeTransferFrom` for USDC); handle decimals correctly (USDC has 6, your token 18); checks-effects-interactions plus `nonReentrant`; caps per wallet and a total cap; start/end times; pausable by a multisig; no reliance on spot prices; no unbounded loops (let users claim: pull, not push); withdrawal of raised funds only by the treasury multisig; events for every purchase; comprehensive unit/fuzz tests including edge cases (zero amounts, rounding); an external audit; and legal/compliance review (securities rules, KYC).
 
 ## [Scenario|High] A deployed contract has a bug that can drain funds, and it's not upgradeable. What do you do?
 

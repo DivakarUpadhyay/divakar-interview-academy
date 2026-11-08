@@ -50,7 +50,7 @@ export const ROLES: Role[] = [
   },
   {
     slug: "test-automation", title: "Test Automation (SDET) Engineer", icon: "QA", color: "#2b8a3e",
-    summary: "Selenium, Playwright, NUnit/xUnit, API testing, BDD and CI — plus the C# and Git questions SDET rounds include.",
+    summary: "Selenium, Playwright, NUnit/xUnit, API testing, BDD and CI, plus the C# and Git questions SDET rounds include.",
     courses: ["test-automation", "csharp", "oop", "clean-code", "git", "azure-devops"],
   },
   {

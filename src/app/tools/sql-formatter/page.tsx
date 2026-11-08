@@ -6,13 +6,13 @@ import { tool } from "@/lib/tools";
 import SqlFormatter from "./SqlFormatter";
 
 const t = tool("sql-formatter");
-export const metadata: Metadata = pageMeta({ title: `${t.name} — Free Online T-SQL Beautifier`, description: t.description, path: `/tools/${t.slug}` });
+export const metadata: Metadata = pageMeta({ title: `${t.name}: Free Online T-SQL Beautifier`, description: t.description, path: `/tools/${t.slug}` });
 
 export default function Page() {
   return (
     <ToolPage tool={t}
       howTo={<ol>
-        <li>Paste a query copied from code, a log, SQL Profiler or Extended Events — even if it is all on one line.</li>
+        <li>Paste a query copied from code, a log, SQL Profiler or Extended Events, even if it is all on one line.</li>
         <li>Click <b>Format SQL</b>. Each clause (<code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>, <code>GROUP BY</code>…) starts on its own line, joins and their <code>ON</code> conditions are indented, and every selected column gets its own line.</li>
         <li>Choose UPPERCASE or lowercase keywords and the indent size to match your team&apos;s style, then <b>Copy</b>.</li>
         <li>Strings, <code>[bracketed]</code> names and comments are never changed. Learn T-SQL step by step in the free <Link href="/courses/sqlserver">SQL Server course</Link>.</li>

@@ -1,0 +1,3 @@
+# Old owner-dashboard link (its path became public) now goes to the new private dashboard.
+/ops-fe23babe4536cfc1 /owner 301
+/ops-fe23babe4536cfc1/* /owner 301

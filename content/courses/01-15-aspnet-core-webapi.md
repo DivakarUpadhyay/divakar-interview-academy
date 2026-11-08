@@ -13,8 +13,8 @@ summary: REST principles, controllers vs Minimal APIs, middleware, status codes,
 
 **ASP.NET Core Web API** builds HTTP services that return data (usually JSON) for SPAs (React/Angular/Vue), mobile apps and other services. Two programming models:
 
-- **Controller-based APIs** — `[ApiController]` classes with actions (feature-rich: filters, model binding conventions).
-- **Minimal APIs** (.NET 6+) — lambda endpoints mapped in `Program.cs` (`app.MapGet(...)`), less ceremony, AOT-friendly.
+- **Controller-based APIs**: `[ApiController]` classes with actions (feature-rich: filters, model binding conventions).
+- **Minimal APIs** (.NET 6+): lambda endpoints mapped in `Program.cs` (`app.MapGet(...)`), less ceremony, AOT-friendly.
 
 Related technologies: **gRPC** (high-performance HTTP/2 + Protobuf RPC), **SignalR** (real-time WebSockets), **GraphQL** (Hot Chocolate), **YARP** (reverse proxy/API gateway).
 
@@ -252,7 +252,7 @@ public async Task<PagedResult<OrderDto>> ListAsync(OrderQuery q, CancellationTok
 }
 ```
 
-- Cap the page size. For large/realtime data use **keyset (cursor) pagination**: `WHERE Id > @lastId ORDER BY Id` — stable and fast, no deep `OFFSET`.
+- Cap the page size. For large/realtime data use **keyset (cursor) pagination**: `WHERE Id > @lastId ORDER BY Id`: stable and fast, no deep `OFFSET`.
 - **HATEOAS** (hypermedia links in responses) is REST's top maturity level (Richardson Maturity Model level 3); rarely fully used in practice.
 
 # Module: Security
@@ -275,7 +275,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 ```
 
-A **JWT** has three Base64Url parts: `header.payload.signature`. The payload holds **claims** (`sub`, `iss`, `aud`, `exp`, `iat`, roles/scopes). It is **signed, not encrypted** — anyone can read it, so never put secrets in it. The server validates signature, issuer, audience and expiry without a DB lookup (stateless).
+A **JWT** has three Base64Url parts: `header.payload.signature`. The payload holds **claims** (`sub`, `iss`, `aud`, `exp`, `iat`, roles/scopes). It is **signed, not encrypted**: anyone can read it, so never put secrets in it. The server validates signature, issuer, audience and expiry without a DB lookup (stateless).
 
 - **Access token**: short-lived (5–60 min). **Refresh token**: long-lived, stored securely, rotated on use, revocable server-side.
 - OAuth 2.0 flows: **Authorization Code + PKCE** (SPAs, mobile, web), **Client Credentials** (service-to-service). Implicit and password grants are deprecated.
@@ -298,7 +298,7 @@ app.UseRateLimiter();
 app.MapGet("/api/search", Search).RequireRateLimiting("per-client");
 ```
 
-- **CORS** is a *browser* mechanism: the server tells browsers which other origins may call it (preflight `OPTIONS` for non-simple requests). It is not authentication — non-browser clients ignore it. Never `AllowAnyOrigin` with credentials (not allowed anyway).
+- **CORS** is a *browser* mechanism: the server tells browsers which other origins may call it (preflight `OPTIONS` for non-simple requests). It is not authentication: non-browser clients ignore it. Never `AllowAnyOrigin` with credentials (not allowed anyway).
 - Other protections: HTTPS only, input validation, request size limits, API keys for partner identification (not as the only auth), secrets in Key Vault, security headers.
 
 # Module: Performance, Versioning and Docs
@@ -348,7 +348,7 @@ app.MapOpenApi();                                       // /openapi/v1.json
 // UI: Scalar (app.MapScalarApiReference()) or Swashbuckle/NSwag Swagger UI
 ```
 
-Versioning strategies: **URL segment** (`/v2/orders` — most visible), **query string** (`?api-version=2.0`), **header** (`api-version: 2`), **media type** (`Accept: application/vnd.shop.v2+json`). Only make breaking changes in a new major version; additive changes are non-breaking.
+Versioning strategies: **URL segment** (`/v2/orders`: most visible), **query string** (`?api-version=2.0`), **header** (`api-version: 2`), **media type** (`Accept: application/vnd.shop.v2+json`). Only make breaking changes in a new major version; additive changes are non-breaking.
 
 ## Lesson: [Advanced|High] HttpClient correctly: IHttpClientFactory and resilience
 
@@ -367,14 +367,14 @@ public class WeatherClient(HttpClient http) : IWeatherClient
 ```
 
 - `new HttpClient()` per request → **socket exhaustion** (sockets stay in TIME_WAIT). One static `HttpClient` forever → **stale DNS**.
-- `IHttpClientFactory` pools and recycles `HttpMessageHandler`s (default lifetime 2 minutes) — solves both. (Alternatively a singleton `HttpClient` with `SocketsHttpHandler.PooledConnectionLifetime`.)
+- `IHttpClientFactory` pools and recycles `HttpMessageHandler`s (default lifetime 2 minutes): solves both. (Alternatively a singleton `HttpClient` with `SocketsHttpHandler.PooledConnectionLifetime`.)
 
 ## Lesson: [Advanced|Medium] Real-time and RPC: SignalR, gRPC, webhooks
 
-- **SignalR** — server push to clients over WebSockets (fallback: Server-Sent Events, long polling). Hubs, groups, Azure SignalR Service for scale-out. Use for chat, dashboards, notifications.
-- **gRPC** — contract-first (`.proto`), HTTP/2, binary Protobuf, streaming (server, client, bidirectional), generated clients. Great for internal service-to-service calls; browsers need gRPC-Web.
-- **Webhooks** — your API calls the client's URL when events happen; sign payloads (HMAC), retry with backoff, idempotency.
-- **Server-Sent Events** — one-way server → browser streaming over HTTP (.NET 10 adds `TypedResults.ServerSentEvents`).
+- **SignalR**: server push to clients over WebSockets (fallback: Server-Sent Events, long polling). Hubs, groups, Azure SignalR Service for scale-out. Use for chat, dashboards, notifications.
+- **gRPC**: contract-first (`.proto`), HTTP/2, binary Protobuf, streaming (server, client, bidirectional), generated clients. Great for internal service-to-service calls; browsers need gRPC-Web.
+- **Webhooks**: your API calls the client's URL when events happen; sign payloads (HMAC), retry with backoff, idempotency.
+- **Server-Sent Events**: one-way server → browser streaming over HTTP (.NET 10 adds `TypedResults.ServerSentEvents`).
 
 ## Lesson: [Advanced|High] Microservices basics for API developers
 
@@ -382,7 +382,7 @@ public class WeatherClient(HttpClient http) : IWeatherClient
 - **API Gateway** (Azure API Management, YARP, Ocelot): routing, auth, rate limiting, aggregation; **BFF** per client type.
 - **Service discovery** (Kubernetes DNS, Aspire service discovery), **config** centralised, **observability** via OpenTelemetry traces with correlation IDs.
 - **Resilience**: timeouts, retries, circuit breakers; **idempotency keys** for POSTs; **Outbox** for reliable events; **Saga** for distributed transactions.
-- Start with a **modular monolith** unless you need independent scaling/deployment — microservices add operational cost.
+- Start with a **modular monolith** unless you need independent scaling/deployment: microservices add operational cost.
 
 # Interview
 
@@ -410,7 +410,7 @@ Middleware are components in the request pipeline. Each receives `HttpContext`, 
 
 `IActionResult` can return any result but carries no type information. `ActionResult<T>` (2.1+) lets you return either a `T` (implicitly wrapped in a 200 OK) or any `ActionResult` (`NotFound()`), and lets OpenAPI tools infer the response type. Minimal APIs use `TypedResults` and `Results<Ok<T>, NotFound>` for the same purpose.
 
-## [Intermediate|High] Controllers vs Minimal APIs — which do you choose?
+## [Intermediate|High] Controllers vs Minimal APIs: which do you choose?
 
 Both are fully supported and equally fast. Controllers suit large APIs with many endpoints, teams familiar with MVC, and heavy use of MVC filters and conventions. Minimal APIs suit microservices and small services; they have less ceremony, route groups, endpoint filters, typed results and **Native AOT** support (controllers aren't AOT-compatible). They can coexist in one app. Organise Minimal APIs with extension methods per feature (`app.MapOrders()`).
 
@@ -454,7 +454,7 @@ Require an `Idempotency-Key` header (a client-generated UUID). On the first requ
 
 HTTPS only with HSTS; OAuth 2.0/OIDC with short-lived JWTs (Authorization Code + PKCE for user clients, client credentials for services); scope/role/policy authorisation plus resource ownership checks (IDOR); input validation and request size limits; parameterised data access; rate limiting and an API gateway/WAF (APIM, Front Door); strict CORS; secrets in Key Vault with managed identities; security headers; dependency scanning; logging and alerting on auth failures; no sensitive data in URLs or logs; and regular penetration tests or OWASP ZAP scans.
 
-## [Advanced|Medium] gRPC vs REST — when do you use gRPC?
+## [Advanced|Medium] gRPC vs REST: when do you use gRPC?
 
 gRPC uses HTTP/2 with Protobuf binary serialisation, has contract-first `.proto` definitions with generated strongly typed clients, supports bidirectional streaming, and has lower latency and smaller payloads. Use it for internal microservice-to-microservice communication, streaming or polyglot environments. Use REST/JSON for public APIs and browser clients (gRPC needs gRPC-Web in browsers), and where human readability and HTTP caching matter.
 

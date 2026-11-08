@@ -1,6 +1,6 @@
 ---
 slug: logging
-title: Logging & Custom Logging in .NET — ILogger, Serilog, NLog, log4net and Your Own Logger
+title: Logging & Custom Logging in .NET: ILogger, Serilog, NLog, log4net and Your Own Logger
 track: dotnet
 order: 17
 group: Errors, Logging & UI Components
@@ -11,7 +11,7 @@ summary: Why and what to log, log levels, structured vs plain-text logging, Micr
 
 # Overview
 
-**Logging** records what an application does so you can understand behaviour, diagnose problems and audit actions — especially in production where you can't attach a debugger.
+**Logging** records what an application does so you can understand behaviour, diagnose problems and audit actions, especially in production where you can't attach a debugger.
 
 | Signal | Answers | Example tools |
 |---|---|---|
@@ -29,7 +29,7 @@ Together logs, metrics and traces are called **observability**.
 | 2001–2004 | log4net (Apache port of log4j); `System.Diagnostics.Trace`/`EventLog` in .NET Framework |
 | 2006 | NLog 1.0 |
 | 2009 | ELMAH (error logging for ASP.NET Web Forms/MVC) |
-| 2013 | Serilog — structured logging for .NET |
+| 2013 | Serilog: structured logging for .NET |
 | 2016 | `Microsoft.Extensions.Logging` (`ILogger<T>`) with ASP.NET Core 1.0 |
 | 2019–2021 | `LoggerMessage.Define`; .NET 6 **logging source generator** (`[LoggerMessage]`) |
 | 2021–2023 | OpenTelemetry .NET 1.0 (tracing 2021, metrics 2022, logs 2023) |
@@ -40,7 +40,7 @@ Together logs, metrics and traces are called **observability**.
 **Life of a log event:**
 
 1. Code calls `logger.LogWarning("Payment {PaymentId} retry {Attempt}", id, attempt)`.
-2. The logger checks if the level is **enabled** for this category (cheap check — nothing else happens if not).
+2. The logger checks if the level is **enabled** for this category (cheap check: nothing else happens if not).
 3. A log entry is created: timestamp, level, category, message template, **named properties** (PaymentId, Attempt), exception, scope data (RequestId, TraceId, user).
 4. Each registered **provider/sink** receives it: console, file, Seq, Application Insights, database…
 5. Sinks often **buffer and batch** asynchronously, then write/send.
@@ -59,30 +59,30 @@ Together logs, metrics and traces are called **observability**.
 
 | Level | Use for | Example |
 |---|---|---|
-| **Trace** | Very detailed internals; may contain sensitive data — off in production | "Entering CalculateTax with 3 lines" |
+| **Trace** | Very detailed internals; may contain sensitive data: off in production | "Entering CalculateTax with 3 lines" |
 | **Debug** | Developer diagnostics | "Cache miss for product 42" |
 | **Information** | Normal significant events | "Order 1001 placed by customer 42 (₹4,500)" |
 | **Warning** | Unexpected but handled; might need attention | "Payment gateway slow (3.2 s), retrying" |
 | **Error** | A failure of the current operation | "Failed to save order 1001" + exception |
-| **Critical** | The app or a major part is down | "Cannot connect to database — shutting down" |
+| **Critical** | The app or a major part is down | "Cannot connect to database: shutting down" |
 
 **What to log:** application start/stop and configuration summary, incoming requests (method, path, status, duration), important business events, external calls (target, duration, result), handled failures (warning) and unhandled exceptions (error, with stack trace), security events (logins, permission denied).
 
 **What NOT to log:** passwords, tokens, full card numbers, secrets, connection strings, personal data beyond what's necessary (GDPR/DPDP), huge payloads.
 
-**Structured logging** — log a *message template* with named properties instead of a pre-built string:
+**Structured logging**: log a *message template* with named properties instead of a pre-built string:
 
 ```csharp
-// ❌ String interpolation — one opaque string, can't query by OrderId, allocates even if the level is disabled
+// ❌ String interpolation: one opaque string, can't query by OrderId, allocates even if the level is disabled
 logger.LogInformation($"Order {order.Id} placed by {customer.Id} total {order.Total}");
 
-// ✅ Message template — properties are stored separately and searchable
+// ✅ Message template: properties are stored separately and searchable
 logger.LogInformation("Order {OrderId} placed by {CustomerId} total {Total}", order.Id, customer.Id, order.Total);
 ```
 
 In Seq/App Insights you can then query `OrderId = 1001` or `Total > 10000` across millions of entries.
 
-## Lesson: [Basic|High] Microsoft.Extensions.Logging — ILogger, providers and configuration
+## Lesson: [Basic|High] Microsoft.Extensions.Logging: ILogger, providers and configuration
 
 ```csharp
 public class OrderService(ILogger<OrderService> logger)      // category = full class name
@@ -103,13 +103,13 @@ public class OrderService(ILogger<OrderService> logger)      // category = full 
 }
 ```
 
-**Providers** (where logs go): Console, Debug, EventSource, EventLog (Windows), Azure App Service, Application Insights, OpenTelemetry — plus third-party (Serilog, NLog) plugged in as providers.
+**Providers** (where logs go): Console, Debug, EventSource, EventLog (Windows), Azure App Service, Application Insights, OpenTelemetry, plus third-party (Serilog, NLog) plugged in as providers.
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);    // adds Console, Debug, EventSource (+ EventLog on Windows) by default
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-builder.Logging.AddJsonConsole();                    // structured JSON to stdout — ideal for containers
+builder.Logging.AddJsonConsole();                    // structured JSON to stdout: ideal for containers
 ```
 
 **Filtering by category and level** (`appsettings.json`):
@@ -144,7 +144,7 @@ using (logger.BeginScope(new Dictionary<string, object> { ["OrderId"] = order.Id
 
 ASP.NET Core automatically adds `RequestId`, `RequestPath`, `TraceId`, `SpanId` scopes (when the provider includes scopes, e.g. `"IncludeScopes": true` for console).
 
-**Correlation id** — one id that follows a request through UI → API → other services → logs:
+**Correlation id**: one id that follows a request through UI → API → other services → logs:
 
 ```csharp
 app.Use(async (ctx, next) =>
@@ -158,7 +158,7 @@ app.Use(async (ctx, next) =>
 
 With OpenTelemetry/W3C trace context, the **TraceId** already plays this role across services automatically.
 
-**High-performance logging — the source generator (.NET 6+):**
+**High-performance logging: the source generator (.NET 6+):**
 
 ```csharp
 public static partial class Log
@@ -177,7 +177,7 @@ Also: `if (logger.IsEnabled(LogLevel.Debug))` before expensive message construct
 
 # Module: Logging Libraries
 
-## Lesson: [Intermediate|High] Serilog — sinks, enrichers and request logging
+## Lesson: [Intermediate|High] Serilog: sinks, enrichers and request logging
 
 ```csharp
 // dotnet add package Serilog.AspNetCore Serilog.Sinks.Seq Serilog.Sinks.File
@@ -224,7 +224,7 @@ Concepts: **sinks** (Console, File, Seq, Elasticsearch, Application Insights, SQ
 
 ## Lesson: [Intermediate|Medium] NLog and log4net (including .NET Framework apps)
 
-**NLog** — configuration-driven (`nlog.config`), many targets, layouts:
+**NLog**: configuration-driven (`nlog.config`), many targets, layouts:
 
 ```xml
 <nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -246,10 +246,10 @@ Concepts: **sinks** (Console, File, Seq, Elasticsearch, Application Insights, SQ
 
 ```csharp
 builder.Logging.ClearProviders();
-builder.Host.UseNLog();                     // NLog.Web.AspNetCore — ILogger<T> calls now go to NLog
+builder.Host.UseNLog();                     // NLog.Web.AspNetCore: ILogger<T> calls now go to NLog
 ```
 
-**log4net** — common in .NET Framework (Web Forms/MVC 5/WCF) code:
+**log4net**: common in .NET Framework (Web Forms/MVC 5/WCF) code:
 
 ```xml
 <log4net>
@@ -269,7 +269,7 @@ Log.Info("Products page loaded");
 Log.Error("Save failed", ex);
 ```
 
-**Built-in .NET Framework options:** `System.Diagnostics.Trace` with listeners in web.config, `EventLog.WriteEntry` (Windows Event Viewer — needs a registered source), ASP.NET **health monitoring**, **ELMAH** (automatic unhandled-error logging with a web viewer `/elmah.axd` — protect it!).
+**Built-in .NET Framework options:** `System.Diagnostics.Trace` with listeners in web.config, `EventLog.WriteEntry` (Windows Event Viewer, needs a registered source), ASP.NET **health monitoring**, **ELMAH** (automatic unhandled-error logging with a web viewer `/elmah.axd`: protect it!).
 
 | | Serilog | NLog | log4net | MS ILogger only |
 |---|---|---|---|---|
@@ -348,7 +348,7 @@ CREATE TABLE dbo.AppLogs (
 CREATE INDEX IX_AppLogs_Utc ON dbo.AppLogs(Utc) INCLUDE (Level);
 ```
 
-Considerations: bounded queue (don't run out of memory if the DB is down), batching, retention job (delete/archive old rows), separate database from business data, never log inside the logger (infinite recursion). In most cases prefer an existing sink (Serilog MSSqlServer, NLog Database target) — but interviewers like to see you can build one.
+Considerations: bounded queue (don't run out of memory if the DB is down), batching, retention job (delete/archive old rows), separate database from business data, never log inside the logger (infinite recursion). In most cases prefer an existing sink (Serilog MSSqlServer, NLog Database target), but interviewers like to see you can build one.
 
 ## Lesson: [Intermediate|High] Audit logging vs diagnostic logging
 
@@ -423,7 +423,7 @@ exceptions
 
 ## [Beginner|High] What are the log levels in .NET and when do you use each?
 
-Trace (very detailed internals, off in production), Debug (developer diagnostics), Information (normal business events: order placed, user logged in), Warning (unexpected but handled: retry, slow dependency), Error (an operation failed — with the exception), Critical (system-wide failure needing immediate attention). Configure the minimum level per category so production logs stay useful and affordable.
+Trace (very detailed internals, off in production), Debug (developer diagnostics), Information (normal business events: order placed, user logged in), Warning (unexpected but handled: retry, slow dependency), Error (an operation failed, with the exception), Critical (system-wide failure needing immediate attention). Configure the minimum level per category so production logs stay useful and affordable.
 
 ## [Beginner|High] What is structured logging and why is it better than string logs?
 
@@ -435,11 +435,11 @@ Through `Microsoft.Extensions.Logging`: inject `ILogger<T>` (category = class na
 
 ## [Beginner|Medium] What should never be logged?
 
-Passwords, tokens/API keys, connection strings, full card numbers/CVV, secrets, and personal data beyond what's needed (Aadhaar/PAN, health data, full addresses) — logs are widely accessible and kept long. Mask or redact, log identifiers instead of content, and review log output in code reviews.
+Passwords, tokens/API keys, connection strings, full card numbers/CVV, secrets, and personal data beyond what's needed (Aadhaar/PAN, health data, full addresses): logs are widely accessible and kept long. Mask or redact, log identifiers instead of content, and review log output in code reviews.
 
 ## [Intermediate|High] Serilog vs NLog vs log4net vs built-in ILogger?
 
-ILogger is the abstraction your code depends on; the others are implementations plugged in as providers. Serilog: structured logging first, rich sinks and enrichers, code or JSON configuration — the popular choice for modern .NET. NLog: mature, XML/JSON config, many targets, good performance, works in Framework and Core. log4net: older, XML-configured, common in legacy .NET Framework apps, limited structured support. Built-in providers + OpenTelemetry/App Insights are enough for many cloud apps.
+ILogger is the abstraction your code depends on; the others are implementations plugged in as providers. Serilog: structured logging first, rich sinks and enrichers, code or JSON configuration, the popular choice for modern .NET. NLog: mature, XML/JSON config, many targets, good performance, works in Framework and Core. log4net: older, XML-configured, common in legacy .NET Framework apps, limited structured support. Built-in providers + OpenTelemetry/App Insights are enough for many cloud apps.
 
 ## [Intermediate|High] How do you correlate logs across multiple services?
 
@@ -451,11 +451,11 @@ Implement `ILoggerProvider` (creates `ILogger` instances per category and holds 
 
 ## [Intermediate|Medium] What are logging scopes?
 
-A way to attach contextual properties to all log entries written within a block (`using (logger.BeginScope(...))`) — e.g. OrderId, TenantId, CorrelationId. ASP.NET Core adds request scopes automatically. Providers must support scopes (Serilog's `Enrich.FromLogContext`, console `IncludeScopes`).
+A way to attach contextual properties to all log entries written within a block (`using (logger.BeginScope(...))`): e.g. OrderId, TenantId, CorrelationId. ASP.NET Core adds request scopes automatically. Providers must support scopes (Serilog's `Enrich.FromLogContext`, console `IncludeScopes`).
 
 ## [Intermediate|Medium] What is the difference between audit logging and application logging?
 
-Application (diagnostic) logs help developers and operators troubleshoot — technical, short retention, can be sampled. Audit logs record who did what to which data and when (often with before/after values) for compliance and security — complete, tamper-evident, long retention, stored separately (audit tables, temporal tables, SQL Server Audit, immutable storage).
+Application (diagnostic) logs help developers and operators troubleshoot: technical, short retention, can be sampled. Audit logs record who did what to which data and when (often with before/after values) for compliance and security, complete, tamper-evident, long retention, stored separately (audit tables, temporal tables, SQL Server Audit, immutable storage).
 
 ## [Advanced|Medium] How do you make logging fast and avoid performance problems?
 
@@ -471,7 +471,7 @@ Keep levels in configuration (`appsettings.json`, environment variables, Azure A
 
 ## [Beginner|Medium] What is the difference between Console.WriteLine/Debug.WriteLine and a logging framework?
 
-`Console.WriteLine` writes plain text to stdout with no levels, categories, structure or filtering; `Debug.WriteLine` only works in debug builds with a debugger listener. A logging framework adds levels, categories, structured properties, scopes, multiple outputs (files, Seq, App Insights), filtering by configuration, async batching and correlation with traces — essential for production.
+`Console.WriteLine` writes plain text to stdout with no levels, categories, structure or filtering; `Debug.WriteLine` only works in debug builds with a debugger listener. A logging framework adds levels, categories, structured properties, scopes, multiple outputs (files, Seq, App Insights), filtering by configuration, async batching and correlation with traces: essential for production.
 
 ## [Scenario|High] Production has an intermittent bug you can't reproduce. How do you use logging to find it?
 

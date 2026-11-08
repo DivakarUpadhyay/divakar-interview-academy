@@ -1,6 +1,6 @@
 ---
 slug: vbnet
-title: VB.NET — Visual Basic .NET from Basics to Advanced (with C# Comparison)
+title: VB.NET: Visual Basic .NET from Basics to Advanced (with C# Comparison)
 track: dotnet
 order: 2
 group: Languages & Internals
@@ -28,7 +28,7 @@ Microsoft's position (2020): Visual Basic is supported on .NET 5+ for WinForms, 
 
 | Version | Year | Shipped with | Highlights |
 |---|---|---|---|
-| VB 1.0–6.0 (classic) | 1991–1998 | Visual Studio 6 | COM-based, not .NET — VB6 apps are still migrated today |
+| VB 1.0–6.0 (classic) | 1991–1998 | Visual Studio 6 | COM-based, not .NET: VB6 apps are still migrated today |
 | VB.NET 7.0 | 2002 | .NET Framework 1.0 | Full OOP, structured exception handling, .NET |
 | VB 8.0 (2005) | 2005 | .NET 2.0 | Generics `(Of T)`, `My` namespace, `Using`, operator overloading, partial classes, `IsNot` |
 | VB 9.0 (2008) | 2007 | .NET 3.5 | LINQ, XML literals, `Option Infer`, lambdas, anonymous types, extension methods |
@@ -45,13 +45,13 @@ Microsoft's position (2020): Visual Basic is supported on .NET 5+ for WinForms, 
 1. Write `.vb` files (Visual Studio with VB project templates).
 2. The VB compiler (`vbc`, part of Roslyn) compiles them with project-level settings (`Option Strict`, `Option Explicit`, root namespace, imports) into IL in an assembly.
 3. The CLR loads and JIT-compiles it exactly like C# output; VB-specific helpers live in `Microsoft.VisualBasic.dll` (e.g. `Left`, `Mid`, `CInt`, `My` namespace).
-4. C# and VB projects in one solution reference each other freely — they share the CTS types.
+4. C# and VB projects in one solution reference each other freely: they share the CTS types.
 
 # Tools
 
 - Visual Studio (VB.NET project templates: Console, Class Library, WinForms, WPF; Web Forms/MVC on .NET Framework).
 - Converters: Telerik Code Converter (online), ICSharpCode CodeConverter (VB ↔ C#, Visual Studio extension), SharpDevelop's converter (legacy).
-- ILSpy can decompile an assembly to either language — useful to see the C# equivalent of VB code.
+- ILSpy can decompile an assembly to either language: useful to see the C# equivalent of VB code.
 - .NET Upgrade Assistant for migrating .NET Framework VB projects to modern .NET.
 
 # Module: VB.NET Basics
@@ -59,7 +59,7 @@ Microsoft's position (2020): Visual Basic is supported on .NET 5+ for WinForms, 
 ## Lesson: [Basic|High] Program structure, modules and the Main method
 
 ```vb
-Option Strict On          ' no implicit narrowing conversions or late binding — always turn on
+Option Strict On          ' no implicit narrowing conversions or late binding: always turn on
 Option Explicit On        ' every variable must be declared
 Option Infer On           ' allow Dim x = 5 (type inferred)
 
@@ -124,7 +124,7 @@ Dim str2 As String = TryCast(o, String)     ' returns Nothing if wrong type (C# 
 Dim v = CType(o, String)                    ' general conversion
 ```
 
-**Option Strict On** — the most important setting: it forbids implicit narrowing conversions (`Dim i As Integer = 3.7` fails) and late binding on `Object`. With it **Off**, VB silently converts types and resolves members at runtime — a source of hidden bugs. Turn it on for every project (Project Properties → Compile).
+**Option Strict On**: the most important setting: it forbids implicit narrowing conversions (`Dim i As Integer = 3.7` fails) and late binding on `Object`. With it **Off**, VB silently converts types and resolves members at runtime: a source of hidden bugs. Turn it on for every project (Project Properties → Compile).
 
 ## Lesson: [Basic|High] Operators, conditions and loops
 
@@ -179,7 +179,7 @@ Do While attempts < 3                    ' also: Do Until, Loop While, Loop Unti
 Loop
 ```
 
-Pitfall: `If user IsNot Nothing And user.IsActive Then` evaluates both sides and throws when `user` is Nothing — use **`AndAlso`**.
+Pitfall: `If user IsNot Nothing And user.IsActive Then` evaluates both sides and throws when `user` is Nothing, use **`AndAlso`**.
 
 # Module: Procedures and Collections
 
@@ -247,7 +247,7 @@ Public Class Repository(Of T As {Class, New})
 End Class
 ```
 
-Indexing uses **parentheses** `arr(0)`, not square brackets — the same syntax as method calls.
+Indexing uses **parentheses** `arr(0)`, not square brackets: the same syntax as method calls.
 
 # Module: Object-Oriented VB.NET
 
@@ -346,7 +346,7 @@ End Interface
 | `class A : B, IX` | `Inherits B` + `Implements IX` |
 | interface member implementation (implicit) | `Implements IX.Member` clause required |
 
-## Lesson: [Intermediate|High] Events and delegates — WithEvents, Handles, AddHandler, RaiseEvent
+## Lesson: [Intermediate|High] Events and delegates: WithEvents, Handles, AddHandler, RaiseEvent
 
 ```vb
 Public Class Thermostat
@@ -356,7 +356,7 @@ Public Class Thermostat
     End Sub
 End Class
 
-' Style 1: WithEvents + Handles (static wiring — typical in WinForms/Web Forms code-behind)
+' Style 1: WithEvents + Handles (static wiring, typical in WinForms/Web Forms code-behind)
 Public Class Monitor
     Private WithEvents _sensor As New Thermostat()
     Private Sub OnTooHot(sender As Object, t As Double) Handles _sensor.TooHot
@@ -375,11 +375,11 @@ Public Delegate Function Calc(a As Integer, b As Integer) As Integer
 Dim add As Calc = Function(a, b) a + b
 ```
 
-In Web Forms VB code-behind you'll see `Protected Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click` — the `Handles` clause connects the button's server event.
+In Web Forms VB code-behind you'll see `Protected Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click`: the `Handles` clause connects the button's server event.
 
 # Module: Errors, LINQ and Modern Features
 
-## Lesson: [Intermediate|High] Error handling — Try/Catch/Finally and legacy On Error
+## Lesson: [Intermediate|High] Error handling: Try/Catch/Finally and legacy On Error
 
 ```vb
 Try
@@ -408,7 +408,7 @@ Public Class InsufficientFundsException
 End Class
 ```
 
-**Legacy unstructured error handling** (from VB6, still compiles in VB.NET — you'll find it in old code):
+**Legacy unstructured error handling** (from VB6, still compiles in VB.NET: you'll find it in old code):
 
 ```vb
 Sub OldStyle()
@@ -417,7 +417,7 @@ Sub OldStyle()
     Exit Sub
 ErrHandler:
     Console.WriteLine("Error " & Err.Number & ": " & Err.Description)
-    Resume Next                       ' continue with the next statement (dangerous — hides errors)
+    Resume Next                       ' continue with the next statement (dangerous: hides errors)
 End Sub
 ```
 
@@ -436,7 +436,7 @@ Dim expensive = From p In products
 Dim byCategory = From p In products
                  Group By p.Category Into Total = Sum(p.Price), Count()
 
-' XML literals — unique to VB: XML directly in code, with embedded expressions
+' XML literals: unique to VB: XML directly in code, with embedded expressions
 Dim doc = <orders>
               <%= From o In orders Select <order id=<%= o.Id %> total=<%= o.Total %>/> %>
           </orders>
@@ -473,9 +473,9 @@ If IsNumeric(input) Then ...
 Dim answer = MsgBox("Save changes?", MsgBoxStyle.YesNo)   ' WinForms only
 ```
 
-**Late binding** (`Option Strict Off`): calling members on an `Object` resolved at runtime — used historically for COM/Office automation (`CreateObject("Excel.Application")`). With `Option Strict On` use proper types or `dynamic`-like patterns via interop assemblies.
+**Late binding** (`Option Strict Off`): calling members on an `Object` resolved at runtime, used historically for COM/Office automation (`CreateObject("Excel.Application")`). With `Option Strict On` use proper types or `dynamic`-like patterns via interop assemblies.
 
-**1-based vs 0-based:** classic functions (`Mid`, `InStr`) are 1-based; .NET methods (`Substring`, `IndexOf`) are 0-based — a common bug source when mixing them.
+**1-based vs 0-based:** classic functions (`Mid`, `InStr`) are 1-based; .NET methods (`Substring`, `IndexOf`) are 0-based, a common bug source when mixing them.
 
 ## Lesson: [Advanced|High] Converting VB.NET to C# and migration strategy
 
@@ -494,7 +494,7 @@ Dim answer = MsgBox("Save changes?", MsgBoxStyle.YesNo)   ' WinForms only
 | `Handles btn.Click` | wire `btn.Click += ...` (or markup) |
 | `Shared` / `Module` | `static` / `static class` |
 | `MustInherit` / `Overridable` | `abstract` / `virtual` |
-| `On Error Resume Next` | no equivalent — rewrite with try/catch |
+| `On Error Resume Next` | no equivalent: rewrite with try/catch |
 | `My.Settings` | `IOptions<T>` / `appsettings.json` |
 
 **Migration strategy for a legacy VB.NET app:**
@@ -503,7 +503,7 @@ Dim answer = MsgBox("Save changes?", MsgBoxStyle.YesNo)   ' WinForms only
 2. Add tests around critical behaviour.
 3. Mixed-language solution: new code in C# class libraries referenced by the VB project (both compile to IL).
 4. Convert class libraries one by one with a converter, review by hand (Mid/InStr 1-based, integer division, `Nothing` semantics for value types, `On Error`).
-5. UI: Web Forms → ASP.NET Core MVC/Razor Pages or Blazor (rewrite page by page behind a reverse proxy — strangler pattern); WinForms VB can move to .NET 8/10 WinForms directly.
+5. UI: Web Forms → ASP.NET Core MVC/Razor Pages or Blazor (rewrite page by page behind a reverse proxy, strangler pattern); WinForms VB can move to .NET 8/10 WinForms directly.
 6. Use .NET Upgrade Assistant for project files and package updates.
 
 # Interview
@@ -514,7 +514,7 @@ Both compile to the same IL and run on the same CLR with the same libraries, so 
 
 ## [Beginner|High] What do Option Strict, Option Explicit and Option Infer do?
 
-Option Explicit On requires variables to be declared. Option Strict On disallows implicit narrowing conversions and late binding — catching type errors at compile time (strongly recommended). Option Infer On lets `Dim x = 5` infer the type from the initializer. Set them per project (Compile settings) or per file at the top.
+Option Explicit On requires variables to be declared. Option Strict On disallows implicit narrowing conversions and late binding: catching type errors at compile time (strongly recommended). Option Infer On lets `Dim x = 5` infer the type from the initializer. Set them per project (Compile settings) or per file at the top.
 
 ## [Beginner|High] What is the difference between Sub and Function?
 
@@ -522,7 +522,7 @@ A `Sub` performs an action and returns no value (C# `void` method). A `Function`
 
 ## [Beginner|High] ByVal vs ByRef?
 
-ByVal (the default) passes a copy of the value — for reference types, a copy of the reference, so the method can modify the object but not replace the caller's variable. ByRef passes the variable itself, so assigning a new value inside the method changes the caller's variable (C# `ref`).
+ByVal (the default) passes a copy of the value: for reference types, a copy of the reference, so the method can modify the object but not replace the caller's variable. ByRef passes the variable itself, so assigning a new value inside the method changes the caller's variable (C# `ref`).
 
 ## [Beginner|Medium] What are the VB.NET equivalents of static, this, null and abstract?
 
@@ -530,7 +530,7 @@ ByVal (the default) passes a copy of the value — for reference types, a copy o
 
 ## [Beginner|Medium] Why does `Dim arr(5) As Integer` create 6 elements?
 
-VB.NET array declarations specify the **upper bound**, not the length, and arrays are zero-based — so `arr(5)` has indexes 0 to 5 = 6 elements. In C#, `new int[5]` specifies the length (indexes 0–4). A classic off-by-one source when converting code.
+VB.NET array declarations specify the **upper bound**, not the length, and arrays are zero-based, so `arr(5)` has indexes 0 to 5 = 6 elements. In C#, `new int[5]` specifies the length (indexes 0–4). A classic off-by-one source when converting code.
 
 ## [Intermediate|High] And vs AndAlso, Or vs OrElse?
 
@@ -550,7 +550,7 @@ Declare with `Event`, raise with `RaiseEvent`. Subscribe statically by declaring
 
 ## [Intermediate|Medium] What is a Module in VB.NET?
 
-A container whose members are implicitly `Shared` and which can't be instantiated or inherited — compiled as a sealed class with static members (C# static class). Module members can be called without qualifying the module name, which is convenient for helper functions and `Sub Main`.
+A container whose members are implicitly `Shared` and which can't be instantiated or inherited: compiled as a sealed class with static members (C# static class). Module members can be called without qualifying the module name, which is convenient for helper functions and `Sub Main`.
 
 ## [Intermediate|Medium] What are XML literals?
 

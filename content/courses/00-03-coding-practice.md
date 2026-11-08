@@ -40,21 +40,21 @@ Algorithms don't have versions, but the C# features you can use in a coding roun
 
 **How to solve a problem in an interview (UMPIRE):**
 
-1. **Understand** — restate the problem; ask about input size, nulls, duplicates, negative numbers, sorted or not.
-2. **Match** — which pattern? (hash map, two pointers, sliding window, stack, BFS/DFS, binary search, DP)
-3. **Plan** — say the brute force and its complexity, then the better approach.
-4. **Implement** — write clean code; talk while typing.
-5. **Review** — dry-run with a small example; check edge cases (empty, one element, all same).
-6. **Evaluate** — state time/space complexity and possible improvements.
+1. **Understand**: restate the problem; ask about input size, nulls, duplicates, negative numbers, sorted or not.
+2. **Match**: which pattern? (hash map, two pointers, sliding window, stack, BFS/DFS, binary search, DP)
+3. **Plan**: say the brute force and its complexity, then the better approach.
+4. **Implement**: write clean code; talk while typing.
+5. **Review**: dry-run with a small example; check edge cases (empty, one element, all same).
+6. **Evaluate**: state time/space complexity and possible improvements.
 
 # Tools
 
 - **Visual Studio / VS Code / Rider** with `dotnet new console` for practice.
-- **LINQPad**, **dotnetfiddle.net**, **SharpLab** — quick online/offline runners.
-- **LeetCode, HackerRank, Codility, CodeSignal, GeeksforGeeks** — practice platforms (HackerRank/Codility are often used by Indian service companies for online tests).
-- **NeetCode 150 / Blind 75** — curated problem lists by pattern.
-- **BenchmarkDotNet** — compare approaches.
-- **xUnit** — write tests for your own solutions.
+- **LINQPad**, **dotnetfiddle.net**, **SharpLab**: quick online/offline runners.
+- **LeetCode, HackerRank, Codility, CodeSignal, GeeksforGeeks**: practice platforms (HackerRank/Codility are often used by Indian service companies for online tests).
+- **NeetCode 150 / Blind 75**: curated problem lists by pattern.
+- **BenchmarkDotNet**: compare approaches.
+- **xUnit**: write tests for your own solutions.
 
 # Module: Foundations
 
@@ -88,7 +88,7 @@ static string Reverse(string s)
     return new string(chars);
 }
 
-// 2. Palindrome (ignore case and non-alphanumerics) — two pointers, O(n) time, O(1) space
+// 2. Palindrome (ignore case and non-alphanumerics): two pointers, O(n) time, O(1) space
 static bool IsPalindrome(string s)
 {
     int i = 0, j = s.Length - 1;
@@ -118,7 +118,7 @@ static char? FirstUnique(string s)
     return null;
 }
 
-// 5. Anagram check — O(n) with a count array for lowercase letters
+// 5. Anagram check: O(n) with a count array for lowercase letters
 static bool IsAnagram(string a, string b)
 {
     if (a.Length != b.Length) return false;
@@ -138,7 +138,7 @@ static int Vowels(string s) => s.Count(c => "aeiouAEIOU".Contains(c));
 ## Lesson: [Basic|High] Number programs
 
 ```csharp
-// Fibonacci — iterative O(n) time, O(1) space
+// Fibonacci: iterative O(n) time, O(1) space
 static long Fib(int n)
 {
     if (n < 2) return n;
@@ -147,7 +147,7 @@ static long Fib(int n)
     return b;
 }
 
-// Prime check — O(√n)
+// Prime check: O(√n)
 static bool IsPrime(int n)
 {
     if (n < 2) return false;
@@ -156,7 +156,7 @@ static bool IsPrime(int n)
     return true;
 }
 
-// Factorial — recursive and iterative
+// Factorial: recursive and iterative
 static long Fact(int n) => n <= 1 ? 1 : n * Fact(n - 1);
 
 // Swap without temp
@@ -184,7 +184,7 @@ static int Lcm(int a, int b) => a / Gcd(a, b) * b;
 ## Lesson: [Basic|High] Array programs
 
 ```csharp
-// Second largest (distinct) — single pass O(n)
+// Second largest (distinct): single pass O(n)
 static int? SecondLargest(int[] a)
 {
     int? first = null, second = null;
@@ -196,7 +196,7 @@ static int? SecondLargest(int[] a)
     return second;
 }
 
-// Find duplicates — HashSet O(n)
+// Find duplicates: HashSet O(n)
 static List<int> Duplicates(int[] a)
 {
     var seen = new HashSet<int>(); var dups = new HashSet<int>();
@@ -204,10 +204,10 @@ static List<int> Duplicates(int[] a)
     return dups.ToList();
 }
 
-// Missing number in 1..n — sum formula O(n), O(1) space
+// Missing number in 1..n: sum formula O(n), O(1) space
 static int Missing(int[] a, int n) => n * (n + 1) / 2 - a.Sum();
 
-// Move zeros to the end keeping order — O(n), in place
+// Move zeros to the end keeping order: O(n), in place
 static void MoveZeros(int[] a)
 {
     int write = 0;
@@ -215,14 +215,14 @@ static void MoveZeros(int[] a)
     while (write < a.Length) a[write++] = 0;
 }
 
-// Rotate array right by k — reverse trick O(n), O(1)
+// Rotate array right by k: reverse trick O(n), O(1)
 static void Rotate(int[] a, int k)
 {
     k %= a.Length;
     Array.Reverse(a); Array.Reverse(a, 0, k); Array.Reverse(a, k, a.Length - k);
 }
 
-// Merge two sorted arrays — O(n + m)
+// Merge two sorted arrays: O(n + m)
 static int[] Merge(int[] x, int[] y)
 {
     var r = new int[x.Length + y.Length]; int i = 0, j = 0, k = 0;
@@ -233,10 +233,10 @@ static int[] Merge(int[] x, int[] y)
 }
 ```
 
-## Lesson: [Intermediate|High] Hash map pattern — Two Sum, frequency, grouping
+## Lesson: [Intermediate|High] Hash map pattern: Two Sum, frequency, grouping
 
 ```csharp
-// Two Sum — O(n) time, O(n) space
+// Two Sum: O(n) time, O(n) space
 static (int, int)? TwoSum(int[] nums, int target)
 {
     var index = new Dictionary<int, int>();          // value -> index
@@ -252,7 +252,7 @@ static (int, int)? TwoSum(int[] nums, int target)
 static IEnumerable<List<string>> GroupAnagrams(string[] words) =>
     words.GroupBy(w => new string(w.OrderBy(c => c).ToArray())).Select(g => g.ToList());
 
-// Top K frequent elements — PriorityQueue (.NET 6+)
+// Top K frequent elements: PriorityQueue (.NET 6+)
 static int[] TopK(int[] nums, int k)
 {
     var freq = nums.CountBy(n => n);                 // .NET 9; or GroupBy
@@ -271,7 +271,7 @@ static int[] TopK(int[] nums, int k)
 ## Lesson: [Intermediate|High] Two pointers and sliding window
 
 ```csharp
-// Pair with sum in a SORTED array — two pointers O(n)
+// Pair with sum in a SORTED array: two pointers O(n)
 static bool HasPair(int[] sorted, int target)
 {
     int l = 0, r = sorted.Length - 1;
@@ -284,7 +284,7 @@ static bool HasPair(int[] sorted, int target)
     return false;
 }
 
-// Longest substring without repeating characters — sliding window O(n)
+// Longest substring without repeating characters: sliding window O(n)
 static int LongestUnique(string s)
 {
     var last = new Dictionary<char, int>();
@@ -298,7 +298,7 @@ static int LongestUnique(string s)
     return best;
 }
 
-// Maximum subarray sum — Kadane's algorithm O(n)
+// Maximum subarray sum: Kadane's algorithm O(n)
 static int MaxSubArray(int[] a)
 {
     int best = a[0], current = a[0];
@@ -310,7 +310,7 @@ static int MaxSubArray(int[] a)
     return best;
 }
 
-// Max sum of any window of size k — fixed sliding window
+// Max sum of any window of size k: fixed sliding window
 static int MaxWindow(int[] a, int k)
 {
     int sum = a.Take(k).Sum(), best = sum;
@@ -324,7 +324,7 @@ static int MaxWindow(int[] a, int k)
 ## Lesson: [Intermediate|High] Stack problems
 
 ```csharp
-// Valid parentheses — O(n)
+// Valid parentheses: O(n)
 static bool IsValid(string s)
 {
     var stack = new Stack<char>();
@@ -340,7 +340,7 @@ static bool IsValid(string s)
     return stack.Count == 0;
 }
 
-// Next greater element — monotonic stack O(n)
+// Next greater element: monotonic stack O(n)
 static int[] NextGreater(int[] a)
 {
     var result = Enumerable.Repeat(-1, a.Length).ToArray();
@@ -359,7 +359,7 @@ static int[] NextGreater(int[] a)
 ```csharp
 public class Node(int value) { public int Value = value; public Node? Next; }
 
-// Reverse a linked list — iterative O(n), O(1)
+// Reverse a linked list: iterative O(n), O(1)
 static Node? Reverse(Node? head)
 {
     Node? prev = null;
@@ -373,7 +373,7 @@ static Node? Reverse(Node? head)
     return prev;
 }
 
-// Detect a cycle — Floyd's slow/fast pointers
+// Detect a cycle: Floyd's slow/fast pointers
 static bool HasCycle(Node? head)
 {
     Node? slow = head, fast = head;
@@ -385,7 +385,7 @@ static bool HasCycle(Node? head)
     return false;
 }
 
-// Middle node — slow moves 1, fast moves 2
+// Middle node: slow moves 1, fast moves 2
 static Node? Middle(Node? head)
 {
     Node? slow = head, fast = head;
@@ -454,7 +454,7 @@ static int BinarySearch(int[] a, int target)
 | Quick | O(n log n) | O(n log n) | O(n²) | O(log n) | No |
 | Heap | O(n log n) | O(n log n) | O(n log n) | O(1) | No |
 
-.NET's `Array.Sort`/`List.Sort` use **introsort** (quicksort + heapsort + insertion sort) — O(n log n) worst case, **not stable**. LINQ `OrderBy` **is stable**.
+.NET's `Array.Sort`/`List.Sort` use **introsort** (quicksort + heapsort + insertion sort): O(n log n) worst case, **not stable**. LINQ `OrderBy` **is stable**.
 
 ```csharp
 // Bubble sort with early exit
@@ -500,10 +500,10 @@ static long FibMemo(int n, Dictionary<int, long>? memo = null)
     return memo[n] = FibMemo(n - 1, memo) + FibMemo(n - 2, memo);
 }
 
-// Climbing stairs (1 or 2 steps) — bottom-up DP, same recurrence as Fibonacci
+// Climbing stairs (1 or 2 steps): bottom-up DP, same recurrence as Fibonacci
 static int Climb(int n) { int a = 1, b = 1; for (int i = 2; i <= n; i++) (a, b) = (b, a + b); return b; }
 
-// Permutations of a string — backtracking
+// Permutations of a string: backtracking
 static void Permute(string prefix, string rest, List<string> output)
 {
     if (rest.Length == 0) { output.Add(prefix); return; }
@@ -512,7 +512,7 @@ static void Permute(string prefix, string rest, List<string> output)
 }
 ```
 
-Recursion needs a **base case**; deep recursion can cause `StackOverflowException`, which **cannot be caught** in .NET — convert to iteration for large inputs.
+Recursion needs a **base case**; deep recursion can cause `StackOverflowException`, which **cannot be caught** in .NET: convert to iteration for large inputs.
 
 # Module: Trees and Graphs
 
@@ -556,7 +556,7 @@ static bool IsBst(TreeNode? n, long min = long.MinValue, long max = long.MaxValu
 ## Lesson: [Advanced|Medium] Graph BFS and DFS
 
 ```csharp
-// Number of islands in a grid — DFS flood fill O(rows*cols)
+// Number of islands in a grid: DFS flood fill O(rows*cols)
 static int Islands(char[][] g)
 {
     int count = 0;
@@ -572,7 +572,7 @@ static int Islands(char[][] g)
     return count;
 }
 
-// Shortest path in an unweighted graph — BFS
+// Shortest path in an unweighted graph: BFS
 static int ShortestPath(Dictionary<int, List<int>> graph, int from, int to)
 {
     var dist = new Dictionary<int, int> { [from] = 0 };
@@ -625,7 +625,7 @@ long a = 0, b = 1;
 for (int i = 0; i < n; i++) { Console.Write($"{a} "); (a, b) = (b, a + b); }
 ```
 
-Iterative is O(n) time and O(1) space. Naive recursion `F(n-1)+F(n-2)` is O(2ⁿ) — mention memoisation if asked for recursion.
+Iterative is O(n) time and O(1) space. Naive recursion `F(n-1)+F(n-2)` is O(2ⁿ): mention memoisation if asked for recursion.
 
 ## [Beginner|High] Find duplicate elements in an array.
 
@@ -653,7 +653,7 @@ Single pass tracking `first` and `second` (skip values equal to `first` if disti
 
 ## [Beginner|Medium] Check whether two strings are anagrams.
 
-Same length + same character counts. Use an `int[26]` count array (lowercase a–z) incrementing for one string and decrementing for the other — O(n) time, O(1) space. Or sort both and compare — O(n log n). For Unicode use a `Dictionary<char,int>`.
+Same length + same character counts. Use an `int[26]` count array (lowercase a–z) incrementing for one string and decrementing for the other: O(n) time, O(1) space. Or sort both and compare, O(n log n). For Unicode use a `Dictionary<char,int>`.
 
 ## [Beginner|Medium] Swap two numbers without a third variable.
 
@@ -720,7 +720,7 @@ Scan the grid. When you find unvisited land (`'1'`), increment the count and flo
 
 If the distinct IPs fit in memory: stream the file line by line (`File.ReadLines`), count in a `Dictionary<string,int>`, then keep a min-heap of size 10, O(n log 10). If not: **partition** by hash of the IP into N temp files so each file's distinct IPs fit in memory, count each file, and merge the per-file top-10s. For a stream with bounded error, use a Count-Min Sketch or the Space-Saving algorithm. In practice you'd load the data into SQL/Kusto and `GROUP BY ... ORDER BY COUNT(*) DESC`.
 
-## [Scenario|High] The interviewer says your O(n²) solution works — "can you do better?" What's your approach?
+## [Scenario|High] The interviewer says your O(n²) solution works: "can you do better?" What's your approach?
 
 Find the repeated work in the inner loop. Usual upgrades: (1) a **hash map/set** to replace an inner search, O(n²) → O(n); (2) **sort + two pointers**, O(n log n); (3) a **sliding window** for contiguous subarray/substring problems; (4) **prefix sums** for range sums; (5) a **heap** for top-K; (6) **binary search** on a sorted structure or on the answer; (7) **memoisation/DP** for overlapping subproblems. Say the trade-off (more memory for less time).
 
@@ -753,7 +753,7 @@ Keep talking. Restate what works so far, try a smaller example by hand to spot t
 | Add | O(1)* | O(1)* | O(log n) | O(1) |
 | Search | O(n) | O(1) | O(log n) | O(n) |
 | Remove | O(n) | O(1) | O(log n) | O(1) with node |
-| Index | O(1) | — | — | O(n) |
+| Index | O(1) |: |, | O(n) |
 
 *amortised/average
 

@@ -1,6 +1,6 @@
 ---
 slug: dapper
-title: Dapper — The Micro-ORM from Basics to Advanced
+title: Dapper: The Micro-ORM from Basics to Advanced
 track: dotnet
 order: 10
 group: Data Access
@@ -11,7 +11,7 @@ summary: What Dapper is and how it works inside, Query/QueryFirst/QuerySingle/Ex
 
 # Overview
 
-**Dapper** is a lightweight object mapper ("micro-ORM") created by Stack Overflow (Sam Saffron and Marc Gravell, 2011). It adds extension methods to `IDbConnection` that run **your SQL** and map the results to objects — nearly as fast as hand-written ADO.NET, with a fraction of the code.
+**Dapper** is a lightweight object mapper ("micro-ORM") created by Stack Overflow (Sam Saffron and Marc Gravell, 2011). It adds extension methods to `IDbConnection` that run **your SQL** and map the results to objects: nearly as fast as hand-written ADO.NET, with a fraction of the code.
 
 | | ADO.NET | Dapper | EF Core |
 |---|---|---|---|
@@ -31,8 +31,8 @@ Many teams combine them: **EF Core for writes, Dapper for complex reads/reports*
 | 2011 | Dapper open-sourced by Stack Overflow |
 | 2012–2016 | Multi-mapping, QueryMultiple, async methods, .NET Core support |
 | 2017 | Dapper 1.50+ for .NET Standard |
-| 2019 | Dapper 2.0 — modern target frameworks |
-| 2023 | Dapper 2.1 — AOT-friendlier work begins; **Dapper.AOT** (source-generated, no runtime reflection emit) |
+| 2019 | Dapper 2.0: modern target frameworks |
+| 2023 | Dapper 2.1: AOT-friendlier work begins; **Dapper.AOT** (source-generated, no runtime reflection emit) |
 | 2024–2025 | Dapper 2.1.x maintained; works with `Microsoft.Data.SqlClient`, Npgsql, MySqlConnector, SQLite |
 
 Related packages: **Dapper.Contrib** / **Dapper.SimpleCRUD** (generated CRUD), **Dapper.AOT**, **DapperQueryBuilder**, **Dapper.Bulk**.
@@ -42,7 +42,7 @@ Related packages: **Dapper.Contrib** / **Dapper.SimpleCRUD** (generated CRUD), *
 **What happens when you call `connection.Query<Order>(sql, new { CustomerId = 42 })`:**
 
 1. Dapper builds a **cache key** from the SQL text, the parameter object's type and the result type.
-2. First time only: it generates (via IL emit / compiled code) a **parameter writer** that turns the anonymous object's properties into `DbParameter`s, and a **row mapper** that reads a `DbDataReader` row into an `Order` by matching column names to properties/constructor parameters. These are cached — later calls are fast.
+2. First time only: it generates (via IL emit / compiled code) a **parameter writer** that turns the anonymous object's properties into `DbParameter`s, and a **row mapper** that reads a `DbDataReader` row into an `Order` by matching column names to properties/constructor parameters. These are cached: later calls are fast.
 3. Opens the connection if it is closed (and closes it again afterwards).
 4. Creates a `DbCommand`, adds parameters, executes `ExecuteReader`.
 5. Maps each row with the cached mapper; with `buffered: true` (default) it reads all rows into a `List<T>` before returning.
@@ -82,7 +82,7 @@ Product? maybe = await conn.QueryFirstOrDefaultAsync<Product>(
 // Scalar value
 int count = await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM dbo.Products");
 
-// INSERT/UPDATE/DELETE — returns affected rows
+// INSERT/UPDATE/DELETE: returns affected rows
 int rows = await conn.ExecuteAsync("UPDATE dbo.Products SET Price = Price * 1.1 WHERE Category = @Cat", new { Cat = "Pens" });
 
 // Insert and get the new id
@@ -93,19 +93,19 @@ int newId = await conn.QuerySingleAsync<int>(
 
 | Method | Rows expected | Throws when |
 |---|---|---|
-| `Query<T>` | 0..n | — |
+| `Query<T>` | 0..n |: |
 | `QueryFirst<T>` | ≥ 1 (takes first) | 0 rows |
-| `QueryFirstOrDefault<T>` | 0..n (takes first) | — |
+| `QueryFirstOrDefault<T>` | 0..n (takes first) |: |
 | `QuerySingle<T>` | exactly 1 | 0 or > 1 rows |
 | `QuerySingleOrDefault<T>` | 0 or 1 | > 1 rows |
-| `Execute` | — (returns affected count) | — |
-| `ExecuteScalar<T>` | first column of first row | — |
+| `Execute` |: (returns affected count) |, |
+| `ExecuteScalar<T>` | first column of first row |: |
 
 **Mapping rules:** column names match property names case-insensitively; use SQL aliases when names differ (`SELECT ProductName AS Name`); records/classes with constructors are matched by parameter names; set `DefaultTypeMap.MatchNamesWithUnderscores = true` to map `product_name` → `ProductName`.
 
 ## Lesson: [Basic|High] Parameters, SQL injection and IN lists
 
-Dapper always sends values as **real parameters** — never concatenate user input into SQL.
+Dapper always sends values as **real parameters**: never concatenate user input into SQL.
 
 ```csharp
 // ❌ SQL injection: name = "x'; DROP TABLE Products;--"
@@ -124,7 +124,7 @@ p.Add("@Category", new DbString { Value = cat, IsAnsi = true, Length = 100 });  
 var result = conn.Query<Product>("SELECT * FROM Products WHERE Name = @Name AND Category = @Category", p);
 ```
 
-Dynamic sort columns or table names **can't** be parameters — whitelist them:
+Dynamic sort columns or table names **can't** be parameters: whitelist them:
 
 ```csharp
 string orderBy = sort switch { "price" => "Price", "name" => "Name", _ => "Id" };   // never use raw input
@@ -160,7 +160,7 @@ END
 
 # Module: Advanced Queries
 
-## Lesson: [Intermediate|High] Multi-mapping — joins into object graphs
+## Lesson: [Intermediate|High] Multi-mapping: joins into object graphs
 
 ```csharp
 public class Order { public int Id { get; set; } public DateTime OrderDate { get; set; } public Customer Customer { get; set; } = null!; public List<OrderLine> Lines { get; } = []; }
@@ -174,7 +174,7 @@ var orders = await conn.QueryAsync<Order, Customer, Order>(sql,
     (order, customer) => { order.Customer = customer; return order; },
     splitOn: "Id");          // where the second object's columns start (default "Id")
 
-// One-to-many: Orders + Lines — de-duplicate parents with a dictionary
+// One-to-many: Orders + Lines, de-duplicate parents with a dictionary
 var lookup = new Dictionary<int, Order>();
 var sql2 = @"SELECT o.Id, o.OrderDate, l.Id, l.Product, l.Qty
              FROM dbo.Orders o JOIN dbo.OrderLines l ON l.OrderId = o.Id
@@ -223,7 +223,7 @@ catch
 }
 ```
 
-Passing an `IEnumerable` of parameter objects to `Execute` runs the statement **once per item** — fine for tens of rows, slow for thousands. For bulk loads use:
+Passing an `IEnumerable` of parameter objects to `Execute` runs the statement **once per item**: fine for tens of rows, slow for thousands. For bulk loads use:
 
 | Technique | Use |
 |---|---|
@@ -243,7 +243,7 @@ await conn.ExecuteAsync("dbo.usp_AddLines", new { OrderId = orderId, Lines = tab
 ## Lesson: [Intermediate|Medium] Buffering, streaming, type handlers and dynamic results
 
 ```csharp
-// Unbuffered: stream rows one by one (huge exports) — keep the connection open while iterating
+// Unbuffered: stream rows one by one (huge exports), keep the connection open while iterating
 await foreach (var row in conn.QueryUnbufferedAsync<Order>("SELECT * FROM dbo.Orders"))
     await writer.WriteLineAsync($"{row.Id},{row.OrderDate:O}");
 
@@ -312,7 +312,7 @@ builder.Services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 ```
 
-- Open connections late and dispose early — **ADO.NET connection pooling** makes this cheap.
+- Open connections late and dispose early: **ADO.NET connection pooling** makes this cheap.
 - A **unit of work** shares one connection + transaction across several repositories for one business operation.
 - Keep SQL in one place (repository or `.sql` resources), name queries clearly, and test them against a real database.
 
@@ -323,11 +323,11 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 - Select only needed columns; page on the server (`OFFSET/FETCH` or keyset paging).
 - Use correct parameter types (`DbString IsAnsi` for `VARCHAR` columns) to avoid implicit conversions that prevent index seeks.
 - Use `QueryMultiple` instead of several round trips; TVPs/SqlBulkCopy for bulk.
-- Dapper caches per SQL text — **don't** build SQL with embedded values (cache grows without limit and plans aren't reused).
+- Dapper caches per SQL text: **don't** build SQL with embedded values (cache grows without limit and plans aren't reused).
 - Use `QueryUnbufferedAsync` for very large results.
 - Check the execution plan; Dapper is only as fast as your SQL.
 
-**Testing:** unit-test services by mocking the repository interface; integration-test repositories against a real SQL Server (Testcontainers / LocalDB) — mocking `IDbConnection` extension methods is impractical.
+**Testing:** unit-test services by mocking the repository interface; integration-test repositories against a real SQL Server (Testcontainers / LocalDB), mocking `IDbConnection` extension methods is impractical.
 
 **When to choose what:**
 
@@ -335,7 +335,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 |---|---|
 | Complex reporting queries, dashboards, existing stored procedures | Dapper |
 | Rich domain with relationships, change tracking, migrations | EF Core |
-| Read-heavy API endpoints needing maximum speed | Dapper (or EF Core with `AsNoTracking` + projection — often close enough) |
+| Read-heavy API endpoints needing maximum speed | Dapper (or EF Core with `AsNoTracking` + projection, often close enough) |
 | Bulk loads / ETL | SqlBulkCopy / TVPs (with or without Dapper) |
 | Mixed | EF Core for commands, Dapper for queries (they can share a connection/transaction via `db.Database.GetDbConnection()`) |
 
@@ -347,11 +347,11 @@ A micro-ORM: extension methods on `IDbConnection` that execute SQL you write and
 
 ## [Beginner|High] Dapper vs Entity Framework Core?
 
-Dapper: you write SQL; minimal overhead; no change tracking, relationships, migrations or LINQ translation — perfect for reports and tuned queries. EF Core: LINQ queries translated to SQL, change tracking and `SaveChanges`, relationships, migrations, interceptors — faster to build CRUD and domain models, some overhead. Many projects use both: EF Core for writes, Dapper for complex reads.
+Dapper: you write SQL; minimal overhead; no change tracking, relationships, migrations or LINQ translation, perfect for reports and tuned queries. EF Core: LINQ queries translated to SQL, change tracking and `SaveChanges`, relationships, migrations, interceptors, faster to build CRUD and domain models, some overhead. Many projects use both: EF Core for writes, Dapper for complex reads.
 
 ## [Beginner|High] How does Dapper prevent SQL injection?
 
-When you pass values in the parameter object (`new { Id = id }`) or `DynamicParameters`, Dapper creates real `DbParameter`s, so the database treats them as data, never as SQL. Injection is only possible if you concatenate user input into the SQL string — never do that; whitelist identifiers like sort columns.
+When you pass values in the parameter object (`new { Id = id }`) or `DynamicParameters`, Dapper creates real `DbParameter`s, so the database treats them as data, never as SQL. Injection is only possible if you concatenate user input into the SQL string: never do that; whitelist identifiers like sort columns.
 
 ## [Beginner|High] Difference between Query, QueryFirst, QuerySingle and Execute?
 
@@ -375,7 +375,7 @@ Not by passing a list to `Execute` (one round trip per row). Use `SqlBulkCopy` f
 
 ## [Intermediate|Medium] What is buffered vs unbuffered querying in Dapper?
 
-Buffered (default) reads all rows into a list before returning and closes the reader — simple and safe. Unbuffered (`buffered: false` or `QueryUnbufferedAsync`) yields rows while reading, keeping the reader and connection open until enumeration finishes — lower memory for huge results, but you must finish iterating before using the connection again.
+Buffered (default) reads all rows into a list before returning and closes the reader: simple and safe. Unbuffered (`buffered: false` or `QueryUnbufferedAsync`) yields rows while reading, keeping the reader and connection open until enumeration finishes, lower memory for huge results, but you must finish iterating before using the connection again.
 
 ## [Intermediate|Medium] How does Dapper map columns to properties and how do you handle mismatched names?
 
@@ -383,7 +383,7 @@ By name, case-insensitive, to public properties/fields or constructor parameters
 
 ## [Advanced|Medium] How does Dapper achieve its performance?
 
-It generates and caches mapping code per (SQL, parameter type, result type) the first time a query runs — IL-emitted delegates that read the data reader directly into objects and write parameters — so later calls avoid reflection. It adds very little on top of ADO.NET: no change tracking, no expression translation. Dapper.AOT moves this generation to compile time with source generators.
+It generates and caches mapping code per (SQL, parameter type, result type) the first time a query runs: IL-emitted delegates that read the data reader directly into objects and write parameters, so later calls avoid reflection. It adds very little on top of ADO.NET: no change tracking, no expression translation. Dapper.AOT moves this generation to compile time with source generators.
 
 ## [Advanced|Medium] How do you manage connections with Dapper in ASP.NET Core?
 
@@ -391,7 +391,7 @@ Register a connection factory (singleton) that creates new `SqlConnection`s; cre
 
 ## [Scenario|High] A Dapper search endpoint is slow even though the same SQL is fast in SSMS. What could cause it?
 
-Different parameter types: Dapper sends `string` as `NVARCHAR`, and if the column is `VARCHAR` SQL Server converts the column, preventing an index seek — use `DbString { IsAnsi = true }`. Parameter sniffing: SSMS runs with literal values while the app reuses a plan compiled for different values — check the cached plan; consider `OPTION (RECOMPILE)` or better indexes. Also different SET options (ARITHABORT) produce different plans, and the app may be returning far more rows/columns or doing N+1 calls.
+Different parameter types: Dapper sends `string` as `NVARCHAR`, and if the column is `VARCHAR` SQL Server converts the column, preventing an index seek, use `DbString { IsAnsi = true }`. Parameter sniffing: SSMS runs with literal values while the app reuses a plan compiled for different values, check the cached plan; consider `OPTION (RECOMPILE)` or better indexes. Also different SET options (ARITHABORT) produce different plans, and the app may be returning far more rows/columns or doing N+1 calls.
 
 ## [Scenario|Medium] Your team builds SQL with string interpolation for filters in Dapper. What problems does this cause and how do you fix it?
 

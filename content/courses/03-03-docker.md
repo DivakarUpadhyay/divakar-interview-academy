@@ -11,7 +11,7 @@ summary: Containers vs VMs, images and layers, Dockerfile for .NET, multi-stage 
 
 # Overview
 
-**Docker** packages an application with everything it needs (runtime, libraries, config) into a **container image** that runs the same on a laptop, CI server or cloud. A **container** is a running instance of an image — an isolated process that shares the host's OS kernel.
+**Docker** packages an application with everything it needs (runtime, libraries, config) into a **container image** that runs the same on a laptop, CI server or cloud. A **container** is a running instance of an image: an isolated process that shares the host's OS kernel.
 
 | | Virtual machine | Container |
 |---|---|---|
@@ -36,7 +36,7 @@ Key pieces: **Docker Engine** (daemon `dockerd` + CLI), **images**, **containers
 | 2019 | Docker Enterprise sold to Mirantis |
 | 2020 | **BuildKit** default path; Compose Specification |
 | 2021 | Docker Desktop requires a paid subscription for larger companies (>250 employees or >$10M revenue) |
-| 2022 | Kubernetes removes dockershim (v1.24) — Docker-built images still run fine |
+| 2022 | Kubernetes removes dockershim (v1.24): Docker-built images still run fine |
 | 2023 | **Docker Compose v2** (`docker compose`) replaces `docker-compose`; Docker Scout; Docker Init |
 | 2024–2025 | Docker Engine 27/28: Docker Build Cloud, Docker Desktop AI features, hardened images |
 
@@ -72,10 +72,10 @@ Key pieces: **Docker Engine** (daemon `dockerd` + CLI), **images**, **containers
 
 ## Lesson: [Basic|High] Images, containers, layers and registries
 
-- **Image** — read-only template made of stacked **layers** (each Dockerfile instruction adds one). Identified by `repository:tag` (e.g. `myacr.azurecr.io/shop-api:1.4.2`) and an immutable **digest** (`@sha256:...`).
-- **Container** — image + a thin writable layer + runtime config (env vars, ports, mounts). Changes in the writable layer are lost when the container is removed.
-- **Layer caching** — unchanged layers are reused between builds and shared between images on disk (copy-on-write via the overlay2 storage driver).
-- **Registry** — stores images; **repository** — one image name with many tags.
+- **Image**: read-only template made of stacked **layers** (each Dockerfile instruction adds one). Identified by `repository:tag` (e.g. `myacr.azurecr.io/shop-api:1.4.2`) and an immutable **digest** (`@sha256:...`).
+- **Container**: image + a thin writable layer + runtime config (env vars, ports, mounts). Changes in the writable layer are lost when the container is removed.
+- **Layer caching**: unchanged layers are reused between builds and shared between images on disk (copy-on-write via the overlay2 storage driver).
+- **Registry**: stores images; **repository**: one image name with many tags.
 
 ```bash
 docker pull mcr.microsoft.com/dotnet/aspnet:10.0
@@ -89,7 +89,7 @@ docker image prune -a                 # remove unused images
 docker system df                      # disk usage
 ```
 
-> **Interview tip:** never use the `latest` tag in production — use immutable version tags or digests so deployments are reproducible.
+> **Interview tip:** never use the `latest` tag in production, use immutable version tags or digests so deployments are reproducible.
 
 ## Lesson: [Basic|High] Dockerfile instructions
 
@@ -97,14 +97,14 @@ docker system df                      # disk usage
 |---|---|
 | `FROM` | Base image (can appear multiple times for multi-stage) |
 | `WORKDIR` | Set working directory |
-| `COPY` / `ADD` | Copy files (ADD also extracts tar and fetches URLs — prefer COPY) |
+| `COPY` / `ADD` | Copy files (ADD also extracts tar and fetches URLs: prefer COPY) |
 | `RUN` | Execute a command at **build** time (creates a layer) |
 | `ENV` | Environment variable (build + runtime) |
 | `ARG` | Build-time variable only |
 | `EXPOSE` | Document the listening port (doesn't publish it) |
 | `USER` | Run as a non-root user |
 | `ENTRYPOINT` | The executable that always runs |
-| `CMD` | Default arguments (or command) — overridable at `docker run` |
+| `CMD` | Default arguments (or command): overridable at `docker run` |
 | `HEALTHCHECK` | Command to test container health |
 | `LABEL`, `VOLUME`, `STOPSIGNAL`, `SHELL` | Metadata, mount points, signals |
 
@@ -220,7 +220,7 @@ Compose creates a default network so services reach each other by **service name
 
 1. Multi-stage builds; minimal base images (`aspnet`, chiseled, Alpine); pin versions (`aspnet:10.0` or a digest).
 2. Run as **non-root** (`USER app`); read-only root filesystem where possible; drop Linux capabilities.
-3. **No secrets in images** (not in `ENV`, `ARG` or copied files — they stay in layer history). Inject at runtime via environment/secret stores (Key Vault, Kubernetes Secrets, Docker secrets); use BuildKit `--mount=type=secret` for build-time secrets.
+3. **No secrets in images** (not in `ENV`, `ARG` or copied files: they stay in layer history). Inject at runtime via environment/secret stores (Key Vault, Kubernetes Secrets, Docker secrets); use BuildKit `--mount=type=secret` for build-time secrets.
 4. Order instructions from least to most frequently changing for cache hits; combine `RUN` steps and clean package caches in the same layer.
 5. `.dockerignore` to keep the build context small and avoid leaking files.
 6. Scan images in CI (Trivy, Docker Scout, Defender) and rebuild regularly to pick up base image patches.
@@ -249,7 +249,7 @@ Common issues: app listening on `localhost` instead of `0.0.0.0` inside the cont
 
 | Service | When |
 |---|---|
-| **Azure Container Apps** | Serverless containers/microservices, scale to zero, KEDA autoscaling, Dapr — easiest |
+| **Azure Container Apps** | Serverless containers/microservices, scale to zero, KEDA autoscaling, Dapr: easiest |
 | **Azure Kubernetes Service (AKS)** | Full Kubernetes control, complex platforms |
 | **Azure App Service (Web App for Containers)** | Simple web apps/APIs from an image |
 | **Azure Container Instances (ACI)** | Single containers, batch jobs, quick runs |
@@ -264,7 +264,7 @@ Docker is a platform to build, ship and run applications in containers. A contai
 
 ## [Beginner|High] What is the difference between a container and a virtual machine?
 
-A VM virtualises hardware and runs a full guest OS with its own kernel on a hypervisor — strong isolation, GBs in size, minutes to boot. A container virtualises at the OS level: isolated processes sharing the host kernel using namespaces (isolation) and cgroups (resource limits) — MBs in size, starts in seconds, much higher density. Containers can run inside VMs (as in most clouds).
+A VM virtualises hardware and runs a full guest OS with its own kernel on a hypervisor: strong isolation, GBs in size, minutes to boot. A container virtualises at the OS level: isolated processes sharing the host kernel using namespaces (isolation) and cgroups (resource limits), MBs in size, starts in seconds, much higher density. Containers can run inside VMs (as in most clouds).
 
 ## [Beginner|High] What is the difference between an image and a container?
 
@@ -272,15 +272,15 @@ An image is a read-only, layered template (filesystem + metadata) built from a D
 
 ## [Beginner|High] Explain the common Dockerfile instructions. CMD vs ENTRYPOINT? COPY vs ADD?
 
-FROM (base image), WORKDIR, COPY/ADD, RUN (build-time command), ENV/ARG, EXPOSE, USER, HEALTHCHECK, ENTRYPOINT and CMD. ENTRYPOINT defines the executable that always runs; CMD supplies default arguments (or a default command) that `docker run` arguments override. COPY copies local files; ADD also auto-extracts local tar archives and can download URLs — prefer COPY for clarity and security.
+FROM (base image), WORKDIR, COPY/ADD, RUN (build-time command), ENV/ARG, EXPOSE, USER, HEALTHCHECK, ENTRYPOINT and CMD. ENTRYPOINT defines the executable that always runs; CMD supplies default arguments (or a default command) that `docker run` arguments override. COPY copies local files; ADD also auto-extracts local tar archives and can download URLs: prefer COPY for clarity and security.
 
 ## [Beginner|High] What is a multi-stage build and why use it?
 
-A Dockerfile with several FROM stages: an early stage (e.g. .NET SDK) compiles and publishes the app; the final stage starts from a small runtime image and copies only the build output with `COPY --from=build`. Result: much smaller images without compilers or source code, faster deployments, smaller attack surface — all in one Dockerfile.
+A Dockerfile with several FROM stages: an early stage (e.g. .NET SDK) compiles and publishes the app; the final stage starts from a small runtime image and copies only the build output with `COPY --from=build`. Result: much smaller images without compilers or source code, faster deployments, smaller attack surface, all in one Dockerfile.
 
 ## [Beginner|Medium] What is the difference between a volume and a bind mount?
 
-Volumes are managed by Docker (stored under Docker's data directory), portable, easy to back up and the preferred way to persist container data like databases. Bind mounts map a specific host path into the container — great for live-editing source code in development but tied to the host's folder structure and permissions. Data in the container's writable layer disappears when the container is removed.
+Volumes are managed by Docker (stored under Docker's data directory), portable, easy to back up and the preferred way to persist container data like databases. Bind mounts map a specific host path into the container: great for live-editing source code in development but tied to the host's folder structure and permissions. Data in the container's writable layer disappears when the container is removed.
 
 ## [Intermediate|High] What is Docker Compose and when would you use it?
 
@@ -304,19 +304,19 @@ Each instruction produces a layer; Docker reuses a cached layer if the instructi
 
 ## [Intermediate|Medium] What do container exit codes 0, 1, 137 and 143 mean?
 
-0 = normal exit; 1 = application error; 137 = killed with SIGKILL (128+9) — often out-of-memory (OOMKilled) or forced stop after timeout; 143 = terminated by SIGTERM (128+15) — normal graceful stop; 139 = segmentation fault. Check `docker inspect` (State.OOMKilled) and logs.
+0 = normal exit; 1 = application error; 137 = killed with SIGKILL (128+9), often out-of-memory (OOMKilled) or forced stop after timeout; 143 = terminated by SIGTERM (128+15): normal graceful stop; 139 = segmentation fault. Check `docker inspect` (State.OOMKilled) and logs.
 
 ## [Advanced|Medium] How does Docker isolate containers under the hood?
 
-Linux **namespaces** isolate what a process can see — PID, network, mount, UTS (hostname), IPC, user and cgroup namespaces. **cgroups** limit and account resources (CPU, memory, I/O). **Union/overlay filesystems** provide layered images with copy-on-write. Security layers: capabilities, seccomp profiles, AppArmor/SELinux, user namespaces/rootless mode. containerd and runc (OCI runtime) actually create the containers.
+Linux **namespaces** isolate what a process can see: PID, network, mount, UTS (hostname), IPC, user and cgroup namespaces. **cgroups** limit and account resources (CPU, memory, I/O). **Union/overlay filesystems** provide layered images with copy-on-write. Security layers: capabilities, seccomp profiles, AppArmor/SELinux, user namespaces/rootless mode. containerd and runc (OCI runtime) actually create the containers.
 
 ## [Advanced|Medium] Why did Kubernetes "remove Docker" and does it matter?
 
-Kubernetes 1.24 removed **dockershim**, the adapter that let the kubelet talk to Docker Engine. Kubernetes now talks to CRI-compatible runtimes (containerd, CRI-O) directly. Images built with Docker are OCI images and run unchanged. It only matters if something relied on the Docker socket inside nodes (e.g. Docker-in-Docker builds) — use BuildKit/Kaniko/ACR Tasks instead.
+Kubernetes 1.24 removed **dockershim**, the adapter that let the kubelet talk to Docker Engine. Kubernetes now talks to CRI-compatible runtimes (containerd, CRI-O) directly. Images built with Docker are OCI images and run unchanged. It only matters if something relied on the Docker socket inside nodes (e.g. Docker-in-Docker builds): use BuildKit/Kaniko/ACR Tasks instead.
 
 ## [Scenario|High] Your ASP.NET Core container starts but you get "connection refused" on http://localhost:8080. What do you check?
 
-Is the port published (`-p 8080:8080`)? Which port does the app listen on — .NET 8+ images default to 8080 (`ASPNETCORE_HTTP_PORTS`), older ones to 80. Is the app bound to `0.0.0.0`/`+` rather than `localhost` inside the container? Did the container crash (`docker ps -a`, `docker logs`)? Is HTTPS redirection forcing 443 without a certificate? On Windows, is another process using the port? Check `docker inspect` for port bindings and health status.
+Is the port published (`-p 8080:8080`)? Which port does the app listen on, .NET 8+ images default to 8080 (`ASPNETCORE_HTTP_PORTS`), older ones to 80. Is the app bound to `0.0.0.0`/`+` rather than `localhost` inside the container? Did the container crash (`docker ps -a`, `docker logs`)? Is HTTPS redirection forcing 443 without a certificate? On Windows, is another process using the port? Check `docker inspect` for port bindings and health status.
 
 ## [Scenario|High] The image is 2.1 GB and deploys slowly. How do you shrink it?
 
@@ -324,7 +324,7 @@ Inspect with `docker history`/Dive. Typical fixes: switch to a multi-stage build
 
 ## [Scenario|Medium] A container keeps restarting with exit code 137. What's happening?
 
-It's being killed — most often **out of memory**: the container exceeded its memory limit (`docker inspect` shows `OOMKilled: true`, or Kubernetes shows `OOMKilled`). Investigate memory usage (`docker stats`, dotnet-counters), raise the limit appropriately, fix leaks, and make sure .NET respects container limits (it does by default; tune `DOTNET_GCHeapHardLimit` or Server/Workstation GC if needed). It can also be a failing liveness probe or a forced stop after SIGTERM timeout.
+It's being killed: most often **out of memory**: the container exceeded its memory limit (`docker inspect` shows `OOMKilled: true`, or Kubernetes shows `OOMKilled`). Investigate memory usage (`docker stats`, dotnet-counters), raise the limit appropriately, fix leaks, and make sure .NET respects container limits (it does by default; tune `DOTNET_GCHeapHardLimit` or Server/Workstation GC if needed). It can also be a failing liveness probe or a forced stop after SIGTERM timeout.
 
 ## [Scenario|Medium] Developers need SQL Server, Redis and RabbitMQ locally to run the API. How do you make onboarding one command?
 

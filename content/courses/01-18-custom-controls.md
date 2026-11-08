@@ -1,12 +1,12 @@
 ---
 slug: custom-controls
-title: Custom Controls & Reusable UI Components in .NET — Web Forms to Blazor
+title: Custom Controls & Reusable UI Components in .NET: Web Forms to Blazor
 track: dotnet
 order: 18
 group: Errors, Logging & UI Components
 icon: UI
 color: #d6336c
-summary: Building reusable UI in every .NET UI technology — Web Forms user controls and custom server controls (Control, WebControl, CompositeControl, rendering, ViewState-backed properties, events, postback data, templated controls, design-time attributes), MVC 5 custom HTML helpers, display/editor templates and child actions, ASP.NET Core partial views, custom tag helpers, view components and Razor Class Libraries, Blazor components (parameters, EventCallback, RenderFragment, cascading values, generic components) and WinForms/WPF custom controls.
+summary: Building reusable UI in every .NET UI technology, Web Forms user controls and custom server controls (Control, WebControl, CompositeControl, rendering, ViewState-backed properties, events, postback data, templated controls, design-time attributes), MVC 5 custom HTML helpers, display/editor templates and child actions, ASP.NET Core partial views, custom tag helpers, view components and Razor Class Libraries, Blazor components (parameters, EventCallback, RenderFragment, cascading values, generic components) and WinForms/WPF custom controls.
 ---
 
 # Overview
@@ -38,12 +38,12 @@ Interview focus: the **difference between user controls and custom controls**, *
 
 **How a reusable component is designed:**
 
-1. **Identify repetition** — same markup/logic on 3+ pages.
-2. **Define the API** — inputs (properties/parameters/attributes), outputs (events/callbacks), slots (child content/templates).
+1. **Identify repetition**: same markup/logic on 3+ pages.
+2. **Define the API**: inputs (properties/parameters/attributes), outputs (events/callbacks), slots (child content/templates).
 3. **Encapsulate** markup, styling and behaviour; avoid reaching into the page.
-4. **Handle state** — Web Forms: ViewState/ControlState; Blazor: component fields + parameters; MVC/Core: stateless per request.
-5. **Package** — same project, shared class library, Razor Class Library or NuGet package.
-6. **Document and test** — examples, unit tests (bUnit for Blazor), accessibility checks.
+4. **Handle state**: Web Forms: ViewState/ControlState; Blazor: component fields + parameters; MVC/Core: stateless per request.
+5. **Package**: same project, shared class library, Razor Class Library or NuGet package.
+6. **Document and test**: examples, unit tests (bUnit for Blazor), accessibility checks.
 
 # Tools
 
@@ -67,7 +67,7 @@ Interview focus: the **difference between user controls and custom controls**, *
 
 User controls were covered in the Web Forms course; here we build **custom controls**.
 
-## Lesson: [Intermediate|High] Building a custom server control — rendering, properties and ViewState
+## Lesson: [Intermediate|High] Building a custom server control: rendering, properties and ViewState
 
 ```csharp
 [DefaultProperty(nameof(Amount))]
@@ -112,7 +112,7 @@ Base classes:
 |---|---|
 | `Control` | Minimal: no style properties; override `Render` |
 | `WebControl` | Adds `CssClass`, `Style`, `Enabled`, tag rendering (`RenderBeginTag`/`RenderContents`) |
-| `CompositeControl` | Builds child controls (`CreateChildControls`) — reuse existing TextBoxes/Buttons |
+| `CompositeControl` | Builds child controls (`CreateChildControls`): reuse existing TextBoxes/Buttons |
 | `DataBoundControl` / `CompositeDataBoundControl` | Bind to data sources (`DataSource`, `DataBind`) |
 | Existing control (e.g. `TextBox`) | Extend behaviour (a `NumericTextBox`) |
 
@@ -142,9 +142,9 @@ public class SearchBox : CompositeControl, INamingContainer
 ```
 
 - **INamingContainer** gives child controls unique client ids (`SearchBox1$q`).
-- **IPostBackDataHandler** — implement `LoadPostData`/`RaisePostDataChangedEvent` for controls that read posted form values themselves.
-- **IPostBackEventHandler** — `RaisePostBackEvent` for controls that trigger postbacks (`Page.ClientScript.GetPostBackEventReference`).
-- **Templated controls** — `[TemplateContainer]` + `ITemplate` properties (`ItemTemplate`, `EmptyTemplate`) let users supply markup, like Repeater.
+- **IPostBackDataHandler**: implement `LoadPostData`/`RaisePostDataChangedEvent` for controls that read posted form values themselves.
+- **IPostBackEventHandler**: `RaisePostBackEvent` for controls that trigger postbacks (`Page.ClientScript.GetPostBackEventReference`).
+- **Templated controls**: `[TemplateContainer]` + `ITemplate` properties (`ItemTemplate`, `EmptyTemplate`) let users supply markup, like Repeater.
 - **ControlState** (`OnInit: Page.RegisterRequiresControlState(this)`, override `SaveControlState/LoadControlState`) for state that must work even with ViewState disabled.
 - Embedded resources (JS/CSS/images) via `[assembly: WebResource]` and `ClientScript.GetWebResourceUrl`.
 
@@ -184,11 +184,11 @@ public static class HtmlHelperExtensions
 
 Register the namespace in `Views/web.config` (`<add namespace="Shop.Web.Helpers" />`) so all views see it.
 
-**Razor `@helper`** (MVC 5 only) — inline helpers in `App_Code/Helpers.cshtml`. **Display/editor templates** — `Views/Shared/DisplayTemplates/Money.cshtml` used by `Html.DisplayFor(m => m.Price)` when the property has `[UIHint("Money")]` or matches the type name. **Child actions** (`Html.Action`) for self-contained widgets with their own data.
+**Razor `@helper`** (MVC 5 only): inline helpers in `App_Code/Helpers.cshtml`. **Display/editor templates**: `Views/Shared/DisplayTemplates/Money.cshtml` used by `Html.DisplayFor(m => m.Price)` when the property has `[UIHint("Money")]` or matches the type name. **Child actions** (`Html.Action`) for self-contained widgets with their own data.
 
 ## Lesson: [Intermediate|High] ASP.NET Core: custom tag helpers
 
-Tag helpers let server code participate in rendering **HTML-looking elements and attributes** — editor-friendly and readable.
+Tag helpers let server code participate in rendering **HTML-looking elements and attributes**: editor-friendly and readable.
 
 ```csharp
 // <money amount="Model.Total" culture="en-IN"></money>  →  <span class="money">₹4,500.00</span>
@@ -259,13 +259,13 @@ public sealed class CartSummaryViewComponent(ICartService carts) : ViewComponent
 | Data | Passed in by the parent | Loads its own (DI, async) | Attributes |
 | Logic | Minimal | Yes (class with DI) | Rendering logic |
 | Typical use | Repeated markup (product card) | Widgets: cart summary, menu, recent posts | Element/attribute enhancement |
-| Can be called from a controller | `PartialView()` | `ViewComponent()` result | — |
+| Can be called from a controller | `PartialView()` | `ViewComponent()` result |: |
 
 **Razor Class Library (RCL):** put views, view components, tag helpers, Razor Pages and static assets (`wwwroot` → `_content/LibName/...`) in a class library and reference it (or ship as NuGet) to reuse UI across apps.
 
 # Module: Blazor and Desktop Components
 
-## Lesson: [Intermediate|High] Blazor components — parameters, events, child content and generics
+## Lesson: [Intermediate|High] Blazor components: parameters, events, child content and generics
 
 ```razor
 @* Components/ConfirmButton.razor *@
@@ -325,8 +325,8 @@ Key concepts: **lifecycle** (`OnInitialized(Async)`, `OnParametersSet(Async)`, `
 | Approach | How |
 |---|---|
 | UserControl | Combine existing controls in the designer (address panel) |
-| Inherited control | `class NumericTextBox : TextBox` — override `OnKeyPress` to allow digits only |
-| Owner-drawn / custom-drawn | `class Gauge : Control` — override `OnPaint(PaintEventArgs e)` and draw with GDI+, call `Invalidate()` when data changes |
+| Inherited control | `class NumericTextBox : TextBox`: override `OnKeyPress` to allow digits only |
+| Owner-drawn / custom-drawn | `class Gauge : Control`: override `OnPaint(PaintEventArgs e)` and draw with GDI+, call `Invalidate()` when data changes |
 
 ```csharp
 public class NumericTextBox : TextBox
@@ -378,7 +378,7 @@ Tag helpers are classes that process HTML elements/attributes in Razor (`<input 
 
 ## [Intermediate|High] View component vs partial view?
 
-A partial view renders markup with data provided by the caller; a view component is a class with its own logic and dependencies (constructor injection, async `InvokeAsync`) plus a view — for widgets that fetch their own data (cart summary, navigation menu). View components replace MVC 5 child actions and are lighter than a full controller action.
+A partial view renders markup with data provided by the caller; a view component is a class with its own logic and dependencies (constructor injection, async `InvokeAsync`) plus a view: for widgets that fetch their own data (cart summary, navigation menu). View components replace MVC 5 child actions and are lighter than a full controller action.
 
 ## [Intermediate|High] How do you create a reusable Blazor component? How does a child notify a parent?
 
@@ -402,7 +402,7 @@ Blazor: bUnit renders components in memory, sets parameters, triggers events and
 
 ## [Beginner|Medium] What is the difference between Control, WebControl and CompositeControl in Web Forms?
 
-`Control` is the base of all server controls — no styling properties; you override `Render` and write all HTML. `WebControl` adds common style properties (CssClass, Style, Font, Enabled) and a tag-rendering model (`TagKey`, `AddAttributesToRender`, `RenderContents`). `CompositeControl` builds its UI from child controls in `CreateChildControls` (reusing TextBoxes, Buttons, validators) and handles naming and child-control lifetime for you.
+`Control` is the base of all server controls: no styling properties; you override `Render` and write all HTML. `WebControl` adds common style properties (CssClass, Style, Font, Enabled) and a tag-rendering model (`TagKey`, `AddAttributesToRender`, `RenderContents`). `CompositeControl` builds its UI from child controls in `CreateChildControls` (reusing TextBoxes, Buttons, validators) and handles naming and child-control lifetime for you.
 
 ## [Intermediate|Medium] How do you make a Blazor component support two-way binding with @bind-Value?
 
@@ -410,11 +410,11 @@ Expose a `[Parameter] public T Value` and a `[Parameter] public EventCallback<T>
 
 ## [Intermediate|Medium] What are display and editor templates in MVC?
 
-Razor partials placed in `Views/Shared/DisplayTemplates` or `EditorTemplates` (or per controller) named after a type (`DateTime.cshtml`, `Money.cshtml`) or selected with `[UIHint("Money")]`. `Html.DisplayFor`/`EditorFor` automatically use them, so every property of that type renders consistently across the site — a lightweight way to build reusable UI without code.
+Razor partials placed in `Views/Shared/DisplayTemplates` or `EditorTemplates` (or per controller) named after a type (`DateTime.cshtml`, `Money.cshtml`) or selected with `[UIHint("Money")]`. `Html.DisplayFor`/`EditorFor` automatically use them, so every property of that type renders consistently across the site: a lightweight way to build reusable UI without code.
 
 ## [Intermediate|Medium] How do you share UI components across several ASP.NET Core applications?
 
-Put them in a Razor Class Library — views, partials, view components, tag helpers, Blazor components and static assets — and reference it as a project or publish it as an internal NuGet package with semantic versioning. Consumers add `@addTagHelper` / `@using` in `_ViewImports`, and static files are available under `_content/{LibraryName}/`.
+Put them in a Razor Class Library: views, partials, view components, tag helpers, Blazor components and static assets, and reference it as a project or publish it as an internal NuGet package with semantic versioning. Consumers add `@addTagHelper` / `@using` in `_ViewImports`, and static files are available under `_content/{LibraryName}/`.
 
 ## [Scenario|High] Twenty MVC pages repeat the same "price with discount badge" markup with slight differences. What do you build?
 

@@ -18,7 +18,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/courses/[slug]/interview">): Promise<Metadata> {
   const c = getCourse((await params).slug);
   if (!c) return { title: "Interview" };
-  return pageMeta({ title: `${c.title} Interview Questions & Answers (${c.questions})`, description: `${c.questions} ${c.title} interview questions with clear answers — beginner, intermediate, advanced and scenario-based, with the must-know questions marked.`, path: `/courses/${c.slug}/interview` });
+  return pageMeta({ title: `${c.title} Interview Questions & Answers (${c.questions})`, description: `${c.questions} ${c.title} interview questions with clear answers: beginner, intermediate, advanced and scenario-based, with the must-know questions marked.`, path: `/courses/${c.slug}/interview` });
 }
 
 export default async function CourseInterview({ params }: PageProps<"/courses/[slug]/interview">) {

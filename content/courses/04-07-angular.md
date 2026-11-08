@@ -15,11 +15,11 @@ summary: Angular CLI, standalone components, templates and new control flow, dat
 
 Key characteristics:
 
-- **Component-based** — UI built from components (TypeScript class + HTML template + styles).
+- **Component-based**: UI built from components (TypeScript class + HTML template + styles).
 - **TypeScript-first** with decorators (`@Component`, `@Injectable`, `@Input`...).
 - **Dependency injection** built in, hierarchical.
 - **RxJS** observables for async streams; **Signals** (v16+) for fine-grained reactivity.
-- **Opinionated** structure — great for large enterprise teams.
+- **Opinionated** structure: great for large enterprise teams.
 - **Standalone components** (default since v19) replace NgModules for most apps.
 
 Angular ≠ AngularJS: Angular (2016+) is a complete rewrite of AngularJS (1.x, EOL Dec 2021).
@@ -31,7 +31,7 @@ Angular ≠ AngularJS: Angular (2016+) is a complete rewrite of AngularJS (1.x, 
 | 2 | Sep 2016 | Rewrite: components, TypeScript, RxJS, DI |
 | 4 | Mar 2017 | Skipped v3 (router package was already v3); `*ngIf; else`, smaller builds |
 | 5–8 | 2017–2019 | HttpClient (4.3/5), CLI `ng update` & Angular Elements (6), CLI prompts (7), differential loading (8) |
-| **9** | Feb 2020 | **Ivy** compiler/renderer by default — smaller bundles, faster builds |
+| **9** | Feb 2020 | **Ivy** compiler/renderer by default: smaller bundles, faster builds |
 | 12–13 | 2021 | View Engine deprecated then removed; IE11 support dropped (13) |
 | 14 | Jun 2022 | **Standalone components** (preview), strictly **typed reactive forms** |
 | 15 | Nov 2022 | Standalone APIs stable, directive composition, `NgOptimizedImage` |
@@ -54,15 +54,15 @@ Angular ≠ AngularJS: Angular (2016+) is a complete rewrite of AngularJS (1.x, 
 |---|---|
 | `constructor` | Class instantiated; DI happens (don't do heavy work or touch inputs) |
 | `ngOnChanges(changes)` | Before `ngOnInit` and whenever an `@Input` reference changes |
-| `ngOnInit` | Once, after first `ngOnChanges` — fetch data, initialise |
-| `ngDoCheck` | Every change detection run — custom change detection (use sparingly) |
+| `ngOnInit` | Once, after first `ngOnChanges`: fetch data, initialise |
+| `ngDoCheck` | Every change detection run: custom change detection (use sparingly) |
 | `ngAfterContentInit` / `ngAfterContentChecked` | After projected content (`<ng-content>`) is initialised / checked |
-| `ngAfterViewInit` / `ngAfterViewChecked` | After the component's view and child views are initialised / checked — `@ViewChild` available |
-| `ngOnDestroy` | Before destroy — unsubscribe, clear timers |
+| `ngAfterViewInit` / `ngAfterViewChecked` | After the component's view and child views are initialised / checked: `@ViewChild` available |
+| `ngOnDestroy` | Before destroy: unsubscribe, clear timers |
 
 Newer alternatives: `afterNextRender` / `afterEveryRender` (DOM work after rendering), `DestroyRef` + `takeUntilDestroyed()` for cleanup, signal inputs instead of `ngOnChanges`.
 
-**Change detection lifecycle:** an event (click, HTTP response, timer) → with **zone.js**, Angular detects that async work finished and runs change detection from the root down (all components with `Default` strategy; `OnPush` components only if inputs changed, an event fired in them, an async pipe emitted or a signal they read changed) → DOM updated. **Zoneless** (default for new apps in v21): change detection is scheduled by signals, `markForCheck`, events and the async pipe — no zone.js.
+**Change detection lifecycle:** an event (click, HTTP response, timer) → with **zone.js**, Angular detects that async work finished and runs change detection from the root down (all components with `Default` strategy; `OnPush` components only if inputs changed, an event fired in them, an async pipe emitted or a signal they read changed) → DOM updated. **Zoneless** (default for new apps in v21): change detection is scheduled by signals, `markForCheck`, events and the async pipe, no zone.js.
 
 # Tools
 
@@ -123,7 +123,7 @@ import { CurrencyPipe } from "@angular/common";
   imports: [CurrencyPipe],                        // standalone: import what the template uses
   template: `
     <div class="card" [class.paid]="order().status === 'paid'">
-      <h3>#{{ order().id }} — {{ order().customer }}</h3>
+      <h3>#{{ order().id }}: {{ order().customer }}</h3>
       <p>{{ order().total | currency:'INR' }}</p>
       <input [value]="note()" (input)="note.set($any($event.target).value)" />
       <button (click)="select.emit(order().id)" [disabled]="busy()">Open</button>
@@ -155,7 +155,7 @@ Classic decorators still work: `@Input()`, `@Output() select = new EventEmitter<
 @if (orders().length > 0) {
   <ul>
     @for (o of orders(); track o.id; let i = $index) {
-      <li>{{ i + 1 }}. {{ o.customer }} — {{ o.total | currency:'INR' }}</li>
+      <li>{{ i + 1 }}. {{ o.customer }}: {{ o.total | currency:'INR' }}</li>
     } @empty {
       <li>No orders</li>
     }
@@ -184,7 +184,7 @@ export class StatusLabelPipe implements PipeTransform {
 }
 ```
 
-## Lesson: [Basic|High] Angular workspace folder structure explained — with sample files
+## Lesson: [Basic|High] Angular workspace folder structure explained: with sample files
 
 A real Angular 17+ application (standalone components, no NgModules) organised by **core / shared / features**:
 
@@ -255,7 +255,7 @@ Rules of thumb: `core` = provided once (interceptors, guards, auth), `shared` = 
 The usual enterprise stack: **Angular → ASP.NET Core Web API → EF Core/Dapper → SQL Server**.
 
 ```csharp
-// ASP.NET Core API — ProductsController.cs (EF Core)
+// ASP.NET Core API: ProductsController.cs (EF Core)
 [ApiController, Route("api/[controller]")]
 public class ProductsController(ShopDbContext db) : ControllerBase
 {
@@ -287,7 +287,7 @@ export class ProductService {
   template: `
     @if (products.isLoading()) { <p>Loading…</p> }
     @else if (products.error()) { <p>Could not load products.</p> }
-    @else { <ul>@for (p of products.value(); track p.id) { <li>{{ p.name }} — {{ p.price | currency:'INR' }}</li> }</ul> }
+    @else { <ul>@for (p of products.value(); track p.id) { <li>{{ p.name }}: {{ p.price | currency:'INR' }}</li> }</ul> }
   `,
   imports: [CurrencyPipe],
 })
@@ -298,11 +298,11 @@ export class ProductList {
 ```
 
 ```json
-// proxy.conf.json — referenced from angular.json "serve" options ("proxyConfig": "proxy.conf.json")
+// proxy.conf.json: referenced from angular.json "serve" options ("proxyConfig": "proxy.conf.json")
 { "/api": { "target": "https://localhost:7001", "secure": false, "changeOrigin": true } }
 ```
 
-Production: build with `ng build`, host the `dist/` files on IIS/Static Web Apps/CDN (SPA fallback rewrite to `index.html`), and either serve the API on the same domain or enable CORS for the Angular origin. The connection string lives only in the API (appsettings / Key Vault), never in Angular `environment` files — those ship to the browser.
+Production: build with `ng build`, host the `dist/` files on IIS/Static Web Apps/CDN (SPA fallback rewrite to `index.html`), and either serve the API on the same domain or enable CORS for the Angular origin. The connection string lives only in the API (appsettings / Key Vault), never in Angular `environment` files: those ship to the browser.
 
 # Module: Services, DI and HTTP
 
@@ -324,7 +324,7 @@ export const API_URL = new InjectionToken<string>("API_URL");
 // app.config.ts: providers: [{ provide: API_URL, useValue: "https://api.example.com" }]
 ```
 
-Provider recipes: `useClass`, `useValue`, `useFactory`, `useExisting`. **Hierarchical injectors**: environment (root/platform/route) injectors and element (component) injectors — Angular looks up from the component to its ancestors to the root. Resolution modifiers: `{ optional: true }`, `{ self: true }`, `{ skipSelf: true }`, `{ host: true }`.
+Provider recipes: `useClass`, `useValue`, `useFactory`, `useExisting`. **Hierarchical injectors**: environment (root/platform/route) injectors and element (component) injectors, Angular looks up from the component to its ancestors to the root. Resolution modifiers: `{ optional: true }`, `{ self: true }`, `{ skipSelf: true }`, `{ host: true }`.
 
 ## Lesson: [Intermediate|High] HttpClient, interceptors and error handling
 
@@ -357,7 +357,7 @@ getOrder(id: number) {
 }
 ```
 
-HttpClient returns **cold observables** — nothing happens until you subscribe (or use the `async` pipe / `toSignal`). Newer: `httpResource()` (signal-based HTTP resource, v19.2+).
+HttpClient returns **cold observables**: nothing happens until you subscribe (or use the `async` pipe / `toSignal`). Newer: `httpResource()` (signal-based HTTP resource, v19.2+).
 
 ## Lesson: [Intermediate|High] RxJS essentials
 
@@ -386,9 +386,9 @@ results$ = this.search.valueChanges.pipe(
 | `takeUntil`, `takeUntilDestroyed`, `take(1)`, `first` | Completion/unsubscription |
 | `shareReplay` | Multicast and cache the last value |
 
-**Subjects**: `Subject` (no initial value), `BehaviorSubject` (has current value — simple state), `ReplaySubject(n)`, `AsyncSubject`. **Cold** observables start per subscriber (HTTP); **hot** share one source (DOM events, Subjects).
+**Subjects**: `Subject` (no initial value), `BehaviorSubject` (has current value, simple state), `ReplaySubject(n)`, `AsyncSubject`. **Cold** observables start per subscriber (HTTP); **hot** share one source (DOM events, Subjects).
 
-**Unsubscribing**: the `async` pipe, `takeUntilDestroyed()`, `toSignal()` — avoid manual subscriptions that leak.
+**Unsubscribing**: the `async` pipe, `takeUntilDestroyed()`, `toSignal()`: avoid manual subscriptions that leak.
 
 # Module: Signals, Change Detection and State
 
@@ -422,7 +422,7 @@ Signals tell Angular exactly which components depend on which state, enabling fi
 - **zone.js** patches async APIs (setTimeout, promises, events) to know when to run change detection.
 - **Zoneless** (`provideZonelessChangeDetection()`, default for new apps in v21): no zone.js; change detection is triggered by signals, `markForCheck`, template events, async pipe → smaller bundles, better performance, clearer stack traces. Third-party code that mutates state outside Angular needs signals or `markForCheck`.
 - `ChangeDetectorRef`: `markForCheck()`, `detectChanges()`, `detach()`.
-- **ExpressionChangedAfterItHasBeenCheckedError** (dev mode): a binding value changed during the same check cycle (e.g. changing state in `ngAfterViewInit`) — fix the data flow (compute earlier, use signals, or schedule).
+- **ExpressionChangedAfterItHasBeenCheckedError** (dev mode): a binding value changed during the same check cycle (e.g. changing state in `ngAfterViewInit`): fix the data flow (compute earlier, use signals, or schedule).
 
 ## Lesson: [Intermediate|Medium] Component communication and content projection
 
@@ -452,7 +452,7 @@ Signals tell Angular exactly which components depend on which state, enabling fi
 
 - Small/medium apps: **services with signals** (or BehaviorSubject) exposing read-only state and methods.
 - Large apps: **NgRx Store** (Redux pattern): **Actions** (events) → **Reducers** (pure functions producing new state) → **Store** (single immutable state tree) → **Selectors** (memoised queries); **Effects** handle side effects (HTTP) and dispatch new actions. Redux DevTools for time-travel debugging.
-- **NgRx Signal Store** — lighter, signal-based store (`signalStore`, `withState`, `withComputed`, `withMethods`).
+- **NgRx Signal Store**: lighter, signal-based store (`signalStore`, `withState`, `withComputed`, `withMethods`).
 
 ```ts
 @Injectable({ providedIn: "root" })
@@ -581,11 +581,11 @@ Interpolation `{{ }}` and property binding `[prop]="expr"` (component → view),
 
 ## [Beginner|High] What are directives? Types of directives?
 
-Classes that add behaviour to elements. **Components** are directives with templates. **Attribute directives** change appearance/behaviour (`ngClass`, `ngStyle`, custom `appHighlight`). **Structural directives** change DOM layout by adding/removing elements (`*ngIf`, `*ngFor`, `*ngSwitch` — now largely replaced by built-in control flow `@if`, `@for`, `@switch`).
+Classes that add behaviour to elements. **Components** are directives with templates. **Attribute directives** change appearance/behaviour (`ngClass`, `ngStyle`, custom `appHighlight`). **Structural directives** change DOM layout by adding/removing elements (`*ngIf`, `*ngFor`, `*ngSwitch`: now largely replaced by built-in control flow `@if`, `@for`, `@switch`).
 
 ## [Beginner|High] What are pipes? Pure vs impure?
 
-Pipes transform values in templates (`date`, `currency`, `async`, custom). Pure pipes (default) run only when the input value/reference changes — efficient. Impure pipes (`pure: false`) run on every change detection cycle — needed for detecting changes inside mutable objects/arrays, but expensive. `async` is impure because it tracks emissions.
+Pipes transform values in templates (`date`, `currency`, `async`, custom). Pure pipes (default) run only when the input value/reference changes: efficient. Impure pipes (`pure: false`) run on every change detection cycle, needed for detecting changes inside mutable objects/arrays, but expensive. `async` is impure because it tracks emissions.
 
 ## [Beginner|Medium] What is the Angular CLI? Name common commands.
 
@@ -609,15 +609,15 @@ All map each source value to an inner observable and flatten. `switchMap` cancel
 
 ## [Intermediate|High] What are signals and why were they introduced?
 
-Signals (v16+) are reactive primitives holding a value: `signal()` (writable), `computed()` (derived, memoised), `effect()` (side effects). Angular tracks which templates/computeds read which signals, so it knows exactly what changed and can update only affected components — enabling fine-grained, zoneless change detection, simpler state than RxJS for synchronous state, and better performance. RxJS remains useful for async event streams; `toSignal`/`toObservable` bridge them.
+Signals (v16+) are reactive primitives holding a value: `signal()` (writable), `computed()` (derived, memoised), `effect()` (side effects). Angular tracks which templates/computeds read which signals, so it knows exactly what changed and can update only affected components: enabling fine-grained, zoneless change detection, simpler state than RxJS for synchronous state, and better performance. RxJS remains useful for async event streams; `toSignal`/`toObservable` bridge them.
 
-## [Intermediate|High] Template-driven vs reactive forms — which do you use?
+## [Intermediate|High] Template-driven vs reactive forms: which do you use?
 
-Template-driven forms define the model in the template with `ngModel` and directive validators — quick for simple forms. Reactive forms define `FormGroup`/`FormControl`/`FormArray` in the component, are synchronous, strongly typed (v14+), easy to unit test, and ideal for complex, dynamic forms with custom/async validators. Most enterprise apps use reactive forms; v21 previews signal-based forms.
+Template-driven forms define the model in the template with `ngModel` and directive validators: quick for simple forms. Reactive forms define `FormGroup`/`FormControl`/`FormArray` in the component, are synchronous, strongly typed (v14+), easy to unit test, and ideal for complex, dynamic forms with custom/async validators. Most enterprise apps use reactive forms; v21 previews signal-based forms.
 
 ## [Intermediate|High] How do you implement route guards and lazy loading?
 
-Guards are functions (`CanActivateFn`, `CanMatchFn`, `CanDeactivateFn`, `ResolveFn`) listed on routes; they return boolean, UrlTree (redirect), or an observable/promise of those — e.g. `authGuard` redirects to /login. Lazy loading uses `loadComponent: () => import(...)` or `loadChildren` so feature code is downloaded only when the route is visited, reducing the initial bundle; preloading strategies can fetch them in the background.
+Guards are functions (`CanActivateFn`, `CanMatchFn`, `CanDeactivateFn`, `ResolveFn`) listed on routes; they return boolean, UrlTree (redirect), or an observable/promise of those: e.g. `authGuard` redirects to /login. Lazy loading uses `loadComponent: () => import(...)` or `loadChildren` so feature code is downloaded only when the route is visited, reducing the initial bundle; preloading strategies can fetch them in the background.
 
 ## [Intermediate|Medium] How do components communicate?
 
@@ -625,11 +625,11 @@ Parent to child with inputs; child to parent with outputs (events); two-way with
 
 ## [Intermediate|Medium] What is an HTTP interceptor?
 
-A function (`HttpInterceptorFn`) or class registered with `provideHttpClient(withInterceptors([...]))` that sees every outgoing request and incoming response. Uses: attaching auth tokens, adding headers, global error handling (401 redirect, toast), logging, loading spinners, caching, retrying. Requests are immutable — use `req.clone()` to modify.
+A function (`HttpInterceptorFn`) or class registered with `provideHttpClient(withInterceptors([...]))` that sees every outgoing request and incoming response. Uses: attaching auth tokens, adding headers, global error handling (401 redirect, toast), logging, loading spinners, caching, retrying. Requests are immutable: use `req.clone()` to modify.
 
 ## [Advanced|High] Explain change detection. What does OnPush do? What is zoneless?
 
-Change detection syncs component state to the DOM. With zone.js, Angular runs a check over the tree after any async event. `OnPush` limits checks of a component to when its input references change, an event happens inside it, an async pipe emits, a signal it reads changes, or `markForCheck()` is called — fewer checks, better performance, but requires immutable updates. Zoneless mode (default for new apps in v21) removes zone.js entirely; change detection is scheduled by signals, events and explicit notifications, which gives smaller bundles and more predictable updates.
+Change detection syncs component state to the DOM. With zone.js, Angular runs a check over the tree after any async event. `OnPush` limits checks of a component to when its input references change, an event happens inside it, an async pipe emits, a signal it reads changes, or `markForCheck()` is called: fewer checks, better performance, but requires immutable updates. Zoneless mode (default for new apps in v21) removes zone.js entirely; change detection is scheduled by signals, events and explicit notifications, which gives smaller bundles and more predictable updates.
 
 ## [Advanced|High] How do you prevent memory leaks in Angular?
 
@@ -637,7 +637,7 @@ Unsubscribe from long-lived observables: prefer the `async` pipe or `toSignal`, 
 
 ## [Advanced|Medium] What is SSR and hydration in Angular?
 
-Server-side rendering (`@angular/ssr`) renders pages on the server (or prerenders at build time) so users and search engines get HTML immediately. Hydration then reuses that DOM in the browser instead of re-rendering it (non-destructive hydration v16+), with event replay so early clicks aren't lost and incremental hydration (v19) to hydrate parts lazily with `@defer` triggers. Watch for browser-only APIs (`window`, `localStorage`) — guard them with `isPlatformBrowser` or `afterNextRender`.
+Server-side rendering (`@angular/ssr`) renders pages on the server (or prerenders at build time) so users and search engines get HTML immediately. Hydration then reuses that DOM in the browser instead of re-rendering it (non-destructive hydration v16+), with event replay so early clicks aren't lost and incremental hydration (v19) to hydrate parts lazily with `@defer` triggers. Watch for browser-only APIs (`window`, `localStorage`): guard them with `isPlatformBrowser` or `afterNextRender`.
 
 ## [Advanced|Medium] What is NgRx and when should you use it?
 
@@ -653,11 +653,11 @@ Use a reactive control and RxJS: `valueChanges.pipe(debounceTime(300), distinctU
 
 ## [Scenario|High] After login, some API calls still go out without the token, and expired tokens cause random 401s. How do you design auth handling?
 
-Centralise it: an auth service storing the token (in memory/signal; refresh token in an HttpOnly cookie via the backend), a functional interceptor that adds the `Authorization` header to API requests, and on 401 attempts a single shared refresh (queue concurrent requests while refreshing using a shared observable), then retries; if refresh fails, log out and redirect via a guard. Protect routes with `canActivate`/`canMatch` guards; never rely on the frontend for real authorisation — the API must enforce it.
+Centralise it: an auth service storing the token (in memory/signal; refresh token in an HttpOnly cookie via the backend), a functional interceptor that adds the `Authorization` header to API requests, and on 401 attempts a single shared refresh (queue concurrent requests while refreshing using a shared observable), then retries; if refresh fails, log out and redirect via a guard. Protect routes with `canActivate`/`canMatch` guards; never rely on the frontend for real authorisation: the API must enforce it.
 
 ## [Scenario|Medium] You get "ExpressionChangedAfterItHasBeenCheckedError". What does it mean and how do you fix it?
 
-In development mode Angular runs a second check after change detection; the error means a bound value changed between the first and second check — usually state modified in `ngAfterViewInit`/`ngAfterContentInit`, in a child that updates the parent during the same cycle, or a getter returning a new value each time. Fix the data flow: initialise values earlier (`ngOnInit`), derive with `computed`, move updates into an event or the next tick only as a last resort, or restructure so children don't mutate parent state during rendering.
+In development mode Angular runs a second check after change detection; the error means a bound value changed between the first and second check, usually state modified in `ngAfterViewInit`/`ngAfterContentInit`, in a child that updates the parent during the same cycle, or a getter returning a new value each time. Fix the data flow: initialise values earlier (`ngOnInit`), derive with `computed`, move updates into an event or the next tick only as a last resort, or restructure so children don't mutate parent state during rendering.
 
 ## [Scenario|Medium] How would you upgrade an Angular 12 app to the latest version?
 

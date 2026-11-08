@@ -17,7 +17,7 @@ export default function JwtDecoder() {
     const parts = token.trim().replace(/^Bearer\s+/i, "").split(".");
     if (parts.length < 2) return { error: "A JWT has three parts separated by dots: header.payload.signature." };
     try { return { header: part(parts[0]), payload: part(parts[1]), hasSig: !!parts[2] }; }
-    catch { return { error: "This does not look like a valid JWT — the header or payload is not Base64URL-encoded JSON." }; }
+    catch { return { error: "This does not look like a valid JWT, the header or payload is not Base64URL-encoded JSON." }; }
   }, [token]);
 
   const now = Date.now() / 1000;
@@ -43,7 +43,7 @@ export default function JwtDecoder() {
               ))}
             </ul>
           )}
-          <p className="muted small">The signature is not verified here — that needs the secret or public key, which should never be pasted into a website.</p>
+          <p className="muted small">The signature is not verified here: that needs the secret or public key, which should never be pasted into a website.</p>
         </>
       )}
     </div>

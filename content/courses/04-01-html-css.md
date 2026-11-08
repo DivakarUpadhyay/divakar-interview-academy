@@ -1,6 +1,6 @@
 ---
 slug: html-css
-title: HTML5 & CSS3 — Semantic Markup to Responsive Layouts
+title: HTML5 & CSS3: Semantic Markup to Responsive Layouts
 track: frontend
 order: 1
 group: Web Basics
@@ -44,20 +44,20 @@ Frameworks: Bootstrap 5 (2021, no jQuery), Tailwind CSS 4 (2025, CSS-first confi
 1. Download HTML → parse into the **DOM** tree.
 2. Download CSS → parse into the **CSSOM**.
 3. Combine into the **render tree** (only visible nodes with computed styles).
-4. **Layout** (reflow) — compute size and position of every box.
-5. **Paint** — fill pixels (text, colours, borders, shadows).
-6. **Composite** — layers combined on the GPU.
+4. **Layout** (reflow): compute size and position of every box.
+5. **Paint**: fill pixels (text, colours, borders, shadows).
+6. **Composite**: layers combined on the GPU.
 
-CSS is **render-blocking** and synchronous `<script>` is **parser-blocking** — so put CSS in `<head>`, use `defer`/`type="module"` for scripts, and animate `transform`/`opacity` (composite only) rather than `width`/`top` (layout every frame).
+CSS is **render-blocking** and synchronous `<script>` is **parser-blocking**: so put CSS in `<head>`, use `defer`/`type="module"` for scripts, and animate `transform`/`opacity` (composite only) rather than `width`/`top` (layout every frame).
 
 # Tools
 
-- **Browser DevTools** — Elements (box model, computed styles, Flexbox/Grid overlays), Lighthouse (performance, accessibility, SEO), device toolbar for responsive testing.
-- **Editors** — VS Code with Emmet, Prettier, stylelint.
-- **CSS tooling** — Sass/SCSS, PostCSS + Autoprefixer, CSS Modules.
-- **Frameworks** — Bootstrap, Tailwind CSS, Angular Material, MUI.
-- **Accessibility** — axe DevTools, WAVE, screen readers (NVDA, VoiceOver).
-- **Reference** — MDN Web Docs, caniuse.com.
+- **Browser DevTools**: Elements (box model, computed styles, Flexbox/Grid overlays), Lighthouse (performance, accessibility, SEO), device toolbar for responsive testing.
+- **Editors**: VS Code with Emmet, Prettier, stylelint.
+- **CSS tooling**: Sass/SCSS, PostCSS + Autoprefixer, CSS Modules.
+- **Frameworks**: Bootstrap, Tailwind CSS, Angular Material, MUI.
+- **Accessibility**: axe DevTools, WAVE, screen readers (NVDA, VoiceOver).
+- **Reference**: MDN Web Docs, caniuse.com.
 
 # Module: HTML Foundations
 
@@ -69,7 +69,7 @@ CSS is **render-blocking** and synchronous `<script>` is **parser-blocking** —
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Orders — Divakar Shop</title>
+  <title>Orders: Divakar Shop</title>
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
@@ -87,7 +87,7 @@ CSS is **render-blocking** and synchronous `<script>` is **parser-blocking** —
 </html>
 ```
 
-**Why semantic tags matter:** screen readers use them as landmarks, search engines understand the content, and code is easier to read. `<div>` and `<span>` have no meaning — use them only for styling hooks.
+**Why semantic tags matter:** screen readers use them as landmarks, search engines understand the content, and code is easier to read. `<div>` and `<span>` have no meaning: use them only for styling hooks.
 
 | Element | Meaning |
 |---|---|
@@ -97,7 +97,7 @@ CSS is **render-blocking** and synchronous `<script>` is **parser-blocking** —
 | `article` | Self-contained content (post, product card) |
 | `section` | Thematic group with a heading |
 | `aside` | Related but secondary content |
-| `h1`–`h6` | Heading hierarchy — don't skip levels for styling |
+| `h1`–`h6` | Heading hierarchy: don't skip levels for styling |
 
 **Block vs inline:** block elements (`div`, `p`, `h1`, `section`) start on a new line and take full width; inline elements (`span`, `a`, `strong`) flow within text and ignore width/height; `inline-block` flows inline but accepts width/height.
 
@@ -126,16 +126,16 @@ CSS is **render-blocking** and synchronous `<script>` is **parser-blocking** —
 </form>
 ```
 
-- Every input needs a `<label>` (`for` = input `id`) — clicking the label focuses the input and screen readers announce it.
+- Every input needs a `<label>` (`for` = input `id`): clicking the label focuses the input and screen readers announce it.
 - HTML5 types (`email`, `number`, `date`, `tel`, `url`) give mobile keyboards and built-in validation.
 - Constraint attributes: `required`, `min`, `max`, `minlength`, `maxlength`, `pattern`.
 - `GET` puts data in the URL (search forms); `POST` sends it in the body (create/change data).
-- **Client-side validation is for UX only — always validate again on the server.**
+- **Client-side validation is for UX only: always validate again on the server.**
 
 ## Lesson: [Basic|High] Accessibility essentials
 
 - Meaningful `alt` text on images (`alt=""` for decorative ones).
-- Use real `<button>` for actions and `<a href>` for navigation — they work with the keyboard for free.
+- Use real `<button>` for actions and `<a href>` for navigation: they work with the keyboard for free.
 - Visible focus styles; logical tab order; never `outline: none` without a replacement.
 - Colour contrast at least **4.5:1** for normal text (WCAG AA).
 - Headings in order; `lang` on `<html>`; labels on all form fields.
@@ -167,7 +167,7 @@ input[type="email"] { }   /* attribute */
 
 1. Origin and importance (`!important` beats normal; user-agent < author).
 2. **Cascade layers** (`@layer`) order.
-3. **Specificity** — (ids, classes/attributes/pseudo-classes, elements):
+3. **Specificity**: (ids, classes/attributes/pseudo-classes, elements):
 
 | Selector | Specificity |
 |---|---|
@@ -176,18 +176,18 @@ input[type="email"] { }   /* attribute */
 | `#main .card p` | 1,1,1 |
 | inline `style=""` | beats all selectors |
 
-4. **Source order** — later wins when specificity is equal.
+4. **Source order**: later wins when specificity is equal.
 
 **Inheritance:** text properties (`color`, `font-*`, `line-height`) inherit; box properties (`margin`, `border`, `width`) don't.
 
-> **Interview tip:** Avoid `!important` and id selectors for styling — keep specificity low and flat (classes), so styles are easy to override.
+> **Interview tip:** Avoid `!important` and id selectors for styling, keep specificity low and flat (classes), so styles are easy to override.
 
 ## Lesson: [Basic|High] The box model, units and positioning
 
 Every element is a box: **content → padding → border → margin**.
 
 ```css
-*, *::before, *::after { box-sizing: border-box; }   /* width includes padding + border — the modern default */
+*, *::before, *::after { box-sizing: border-box; }   /* width includes padding + border, the modern default */
 .card { width: 300px; padding: 16px; border: 1px solid #ddd; margin: 12px; }
 /* content-box: rendered width = 300 + 32 + 2 = 334px;  border-box: rendered width = 300px */
 ```
@@ -218,7 +218,7 @@ Every element is a box: **content → padding → border → margin**.
 
 # Module: Layout and Responsive Design
 
-## Lesson: [Intermediate|High] Flexbox — one-dimensional layout
+## Lesson: [Intermediate|High] Flexbox: one-dimensional layout
 
 ```css
 .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -227,7 +227,7 @@ Every element is a box: **content → padding → border → margin**.
 
 | Property (container) | Does |
 |---|---|
-| `flex-direction` | `row` / `column` — sets the **main axis** |
+| `flex-direction` | `row` / `column`: sets the **main axis** |
 | `justify-content` | Align on the main axis (`flex-start`, `center`, `space-between`) |
 | `align-items` | Align on the cross axis (`stretch`, `center`) |
 | `flex-wrap` | Allow items onto new lines |
@@ -235,13 +235,13 @@ Every element is a box: **content → padding → border → margin**.
 
 | Property (item) | Does |
 |---|---|
-| `flex: 1` | Shorthand for grow 1, shrink 1, basis 0 — share space equally |
+| `flex: 1` | Shorthand for grow 1, shrink 1, basis 0, share space equally |
 | `flex: 0 0 200px` | Fixed 200px, no grow/shrink |
 | `align-self` / `order` | Override alignment / visual order |
 
-Classic: perfectly centre anything — `display:flex; justify-content:center; align-items:center;` (or Grid `place-items:center`).
+Classic: perfectly centre anything, `display:flex; justify-content:center; align-items:center;` (or Grid `place-items:center`).
 
-## Lesson: [Intermediate|High] CSS Grid — two-dimensional layout
+## Lesson: [Intermediate|High] CSS Grid: two-dimensional layout
 
 ```css
 .page {
@@ -262,9 +262,9 @@ header { grid-area: header; }  aside { grid-area: sidebar; }  main { grid-area: 
 
 **Flexbox vs Grid:** Flexbox lays out along **one** axis and sizes from the content (toolbars, nav bars, button groups). Grid controls **rows and columns together** from the container (page layouts, card grids, forms). They combine well: Grid for the page, Flexbox inside components.
 
-## Lesson: [Intermediate|High] Responsive design — mobile first, media and container queries
+## Lesson: [Intermediate|High] Responsive design: mobile first, media and container queries
 
-1. `<meta name="viewport" content="width=device-width, initial-scale=1">` — without it phones render a zoomed-out desktop page.
+1. `<meta name="viewport" content="width=device-width, initial-scale=1">`: without it phones render a zoomed-out desktop page.
 2. **Mobile first:** base styles for small screens, then `min-width` media queries add layout for larger ones.
 3. Fluid layouts: `%`, `fr`, `minmax()`, `clamp()`, `max-width` instead of fixed widths.
 4. Responsive images: `max-width: 100%; height: auto;`, `srcset`/`sizes`, `<picture>`, `loading="lazy"`.
@@ -284,7 +284,7 @@ h1 { font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem); }        /* fluid type, no br
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 ```
 
-Common breakpoints (Bootstrap 5): 576, 768, 992, 1200, 1400 px — but choose breakpoints where **your content** breaks.
+Common breakpoints (Bootstrap 5): 576, 768, 992, 1200, 1400 px, but choose breakpoints where **your content** breaks.
 
 # Module: Modern CSS and Frameworks
 
@@ -307,7 +307,7 @@ Common breakpoints (Bootstrap 5): 576, 768, 992, 1200, 1400 px — but choose br
 }
 ```
 
-**Custom properties vs Sass variables:** CSS variables are live at runtime (change them with JS or media queries, they inherit and cascade — ideal for theming/dark mode); Sass variables are replaced at compile time.
+**Custom properties vs Sass variables:** CSS variables are live at runtime (change them with JS or media queries, they inherit and cascade, ideal for theming/dark mode); Sass variables are replaced at compile time.
 
 **Hiding things:** `display: none` (removed from layout and accessibility tree), `visibility: hidden` (keeps space), `opacity: 0` (keeps space, still clickable), visually-hidden class (hidden visually, still read by screen readers).
 
@@ -340,19 +340,19 @@ Common breakpoints (Bootstrap 5): 576, 768, 992, 1200, 1400 px — but choose br
 
 ## [Beginner|High] What is semantic HTML and why is it important?
 
-Using elements that describe meaning — `header`, `nav`, `main`, `article`, `section`, `aside`, `footer`, `button`, headings — instead of generic `div`/`span`. Benefits: accessibility (screen readers use landmarks and roles), SEO (search engines understand structure), built-in behaviour (buttons are focusable and keyboard-operable), and readable code.
+Using elements that describe meaning: `header`, `nav`, `main`, `article`, `section`, `aside`, `footer`, `button`, headings, instead of generic `div`/`span`. Benefits: accessibility (screen readers use landmarks and roles), SEO (search engines understand structure), built-in behaviour (buttons are focusable and keyboard-operable), and readable code.
 
 ## [Beginner|High] Explain the CSS box model. What does box-sizing: border-box do?
 
-Each element is content + padding + border + margin. With the default `content-box`, `width` sets only the content, so padding and border are added on top. With `border-box`, `width` includes content, padding and border, which makes sizing predictable — most projects set it globally.
+Each element is content + padding + border + margin. With the default `content-box`, `width` sets only the content, so padding and border are added on top. With `border-box`, `width` includes content, padding and border, which makes sizing predictable: most projects set it globally.
 
 ## [Beginner|High] What is CSS specificity? Which rule wins?
 
 Specificity scores selectors as (ids, classes/attributes/pseudo-classes, elements); higher wins, inline styles beat selectors, `!important` beats normal declarations, and with equal specificity the later rule wins. Example: `#nav a` (1,0,1) beats `.menu a.active` (0,2,1). Keep specificity low with classes to avoid override wars.
 
-## [Beginner|High] Flexbox vs Grid — when do you use each?
+## [Beginner|High] Flexbox vs Grid: when do you use each?
 
-Flexbox is one-dimensional (a row or a column), content-driven — nav bars, toolbars, centring, distributing items. Grid is two-dimensional (rows and columns together), container-driven — page layouts, card galleries, forms. Often Grid for the overall layout and Flexbox inside components.
+Flexbox is one-dimensional (a row or a column), content-driven: nav bars, toolbars, centring, distributing items. Grid is two-dimensional (rows and columns together), container-driven, page layouts, card galleries, forms. Often Grid for the overall layout and Flexbox inside components.
 
 ## [Beginner|High] How do you centre a div horizontally and vertically?
 
@@ -372,7 +372,7 @@ Viewport meta tag, mobile-first CSS with `min-width` media queries, fluid layout
 
 ## [Intermediate|High] What are media queries and container queries?
 
-Media queries apply styles based on the viewport/device (`@media (min-width: 768px)`, `prefers-color-scheme`, `prefers-reduced-motion`, print). Container queries apply styles based on the size of a parent container (`container-type: inline-size; @container (min-width: 400px)`), so a component adapts wherever it is placed — e.g. a card in a narrow sidebar vs a wide main area.
+Media queries apply styles based on the viewport/device (`@media (min-width: 768px)`, `prefers-color-scheme`, `prefers-reduced-motion`, print). Container queries apply styles based on the size of a parent container (`container-type: inline-size; @container (min-width: 400px)`), so a component adapts wherever it is placed, e.g. a card in a narrow sidebar vs a wide main area.
 
 ## [Intermediate|High] How do you make a web page accessible?
 
@@ -384,7 +384,7 @@ Semantic HTML, labels for inputs, `alt` text, real buttons/links, keyboard navig
 
 ## [Intermediate|Medium] CSS variables vs Sass variables?
 
-CSS custom properties exist at runtime: they cascade and inherit, can be changed by media queries, classes or JavaScript — perfect for themes and dark mode. Sass variables are compile-time constants, replaced in the output CSS; useful for build-time logic (loops, mixins), but cannot change in the browser.
+CSS custom properties exist at runtime: they cascade and inherit, can be changed by media queries, classes or JavaScript, perfect for themes and dark mode. Sass variables are compile-time constants, replaced in the output CSS; useful for build-time logic (loops, mixins), but cannot change in the browser.
 
 ## [Intermediate|Medium] What is the critical rendering path and how do you optimise it?
 
@@ -392,11 +392,11 @@ HTML → DOM, CSS → CSSOM, combined into the render tree → layout → paint 
 
 ## [Advanced|Medium] What is a stacking context and why does z-index sometimes not work?
 
-A stacking context is an isolated layering group; `z-index` only compares elements within the same context. New contexts are created by positioned elements with `z-index`, `opacity < 1`, `transform`, `filter`, `isolation: isolate` and others. A child with `z-index: 9999` can't escape a parent context that is below another element — fix the parent's stacking, not the child's number.
+A stacking context is an isolated layering group; `z-index` only compares elements within the same context. New contexts are created by positioned elements with `z-index`, `opacity < 1`, `transform`, `filter`, `isolation: isolate` and others. A child with `z-index: 9999` can't escape a parent context that is below another element, fix the parent's stacking, not the child's number.
 
 ## [Advanced|Medium] What are Core Web Vitals?
 
-Google's user-experience metrics: LCP (Largest Contentful Paint — loading, good ≤ 2.5 s), INP (Interaction to Next Paint — responsiveness, good ≤ 200 ms; replaced FID in 2024) and CLS (Cumulative Layout Shift — visual stability, good ≤ 0.1). Improve with optimised images and fonts, less JavaScript, and fixed dimensions for media and ads.
+Google's user-experience metrics: LCP (Largest Contentful Paint, loading, good ≤ 2.5 s), INP (Interaction to Next Paint, responsiveness, good ≤ 200 ms; replaced FID in 2024) and CLS (Cumulative Layout Shift, visual stability, good ≤ 0.1). Improve with optimised images and fonts, less JavaScript, and fixed dimensions for media and ads.
 
 ## [Scenario|High] The layout looks fine on desktop but has a horizontal scrollbar on mobile. How do you find and fix it?
 
@@ -410,7 +410,7 @@ Use DevTools device mode and find the element wider than the viewport (temporari
 @media (min-width: 1100px) { .cards { grid-template-columns: repeat(4, 1fr); } }
 ```
 
-Or without breakpoints: `grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));` — columns appear as space allows.
+Or without breakpoints: `grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));`: columns appear as space allows.
 
 ## [Scenario|Medium] Your page jumps around while loading (high CLS). What do you fix?
 

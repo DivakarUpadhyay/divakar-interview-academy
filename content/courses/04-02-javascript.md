@@ -15,7 +15,7 @@ summary: Types, scope, hoisting, closures, this, prototypes, classes, the event 
 
 The language standard is **ECMAScript** (ECMA-262), maintained by **TC39**. Browsers implement it in engines: **V8** (Chrome, Edge, Node.js), **SpiderMonkey** (Firefox), **JavaScriptCore** (Safari).
 
-**TypeScript** (Microsoft, 2012) is a typed superset of JavaScript that compiles to JS — the default for Angular and widely used with React, Vue and Node.
+**TypeScript** (Microsoft, 2012) is a typed superset of JavaScript that compiles to JS: the default for Angular and widely used with React, Vue and Node.
 
 Every frontend framework interview (jQuery, Angular, React, Vue) starts with JavaScript fundamentals: closures, `this`, the event loop, promises, `var`/`let`/`const`, prototypes and array methods.
 
@@ -46,8 +46,8 @@ TypeScript: 1.0 (2014), 2.0 (2016, strict null checks), 3.x, 4.x (2020–2023), 
 
 1. HTML parsed → DOM built; CSS → CSSOM; `<script>` without `defer`/`async` **blocks** parsing while it downloads and runs.
 2. `defer` scripts run in order after parsing; `async` scripts run as soon as downloaded (any order); `type="module"` is deferred by default.
-3. **DOMContentLoaded** — DOM ready (deferred scripts done).
-4. **load** — all images, styles, iframes loaded.
+3. **DOMContentLoaded**: DOM ready (deferred scripts done).
+4. **load**: all images, styles, iframes loaded.
 5. User interaction → events → event loop runs handlers.
 6. **visibilitychange / pagehide** → **beforeunload** → **unload** (avoid unload; use pagehide/visibilitychange).
 
@@ -116,13 +116,13 @@ console.log(b);   // ReferenceError: Cannot access 'b' before initialization (TD
 let b = 2;
 
 const user = { name: "Asha" };
-user.name = "Ravi";      // allowed — the binding is constant, not the object
+user.name = "Ravi";      // allowed: the binding is constant, not the object
 // user = {};            // TypeError
 Object.freeze(user);     // shallow immutability
 
-sayHi();                  // works — function declarations are fully hoisted
+sayHi();                  // works: function declarations are fully hoisted
 function sayHi() { console.log("hi"); }
-// sayBye();              // TypeError — function expressions follow variable rules
+// sayBye();              // TypeError: function expressions follow variable rules
 var sayBye = function () {};
 ```
 
@@ -140,7 +140,7 @@ Math.max(...[3, 9, 2]);                              // spread into arguments
 const copy = [...arr, 4];                            // spread array
 const merged = { ...defaults, ...options };          // spread object (later wins)
 
-// IIFE — immediately invoked function expression (old module pattern)
+// IIFE: immediately invoked function expression (old module pattern)
 (function () { const secret = 1; })();
 ```
 
@@ -148,7 +148,7 @@ const merged = { ...defaults, ...options };          // spread object (later win
 
 **Higher-order functions** take or return functions (`map`, `filter`, `setTimeout`, debounce). **Pure functions** return the same output for the same input with no side effects.
 
-## Lesson: [Basic|High] Arrays and objects — the essential methods
+## Lesson: [Basic|High] Arrays and objects: the essential methods
 
 ```js
 const orders = [
@@ -200,7 +200,7 @@ function createCounter() {
 }
 const counter = createCounter();
 counter.increment(); counter.increment();
-counter.getCount();                   // 2 — count is not accessible directly
+counter.getCount();                   // 2: count is not accessible directly
 
 // Function factory
 const multiplier = factor => n => n * factor;
@@ -208,8 +208,8 @@ const double = multiplier(2);
 double(5);                            // 10
 
 // Classic loop problem
-for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));   // 3 3 3 — one shared 'i'
-for (let j = 0; j < 3; j++) setTimeout(() => console.log(j));   // 0 1 2 — new 'j' per iteration
+for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));   // 3 3 3: one shared 'i'
+for (let j = 0; j < 3; j++) setTimeout(() => console.log(j));   // 0 1 2: new 'j' per iteration
 ```
 
 Uses: data privacy/encapsulation, function factories, memoisation, debounce/throttle, event handlers, module pattern, partial application/currying. Risk: unintentionally retaining large objects (memory leaks).
@@ -251,7 +251,7 @@ Person.prototype.hello = function () { return `I am ${this.name}`; };
 const p = new Person("Asha");
 p.hello();                                   // found on Person.prototype
 
-// ES6 classes — syntax over prototypes
+// ES6 classes: syntax over prototypes
 class Animal {
   #sound;                                    // private field (ES2022)
   static count = 0;
@@ -325,7 +325,7 @@ const res = await fetch("/api/report", { signal: controller.signal });   // or A
 | `Promise.race` | First to settle (value) | First to settle is a rejection |
 | `Promise.any` | First to fulfil | All reject (`AggregateError`) |
 
-`async` functions always return a promise; `await` pauses the function (not the thread) until the promise settles. Sequential `await`s in a loop run one by one — use `Promise.all` for independent work.
+`async` functions always return a promise; `await` pauses the function (not the thread) until the promise settles. Sequential `await`s in a loop run one by one: use `Promise.all` for independent work.
 
 ## Lesson: [Intermediate|Medium] Modules (ESM vs CommonJS)
 
@@ -355,7 +355,7 @@ const list = document.querySelector("#orders");
 const items = document.querySelectorAll(".order");      // static NodeList
 
 const li = document.createElement("li");
-li.textContent = "Order #42";                            // safe — no HTML parsing (prevents XSS)
+li.textContent = "Order #42";                            // safe: no HTML parsing (prevents XSS)
 li.classList.add("order", "new");
 li.dataset.id = "42";                                    // data-id="42"
 list.append(li);
@@ -366,7 +366,7 @@ button.addEventListener("click", e => {
   e.stopPropagation();                                   // stop bubbling
 }, { once: true });
 
-// Event delegation — one listener for many (and future) children
+// Event delegation: one listener for many (and future) children
 list.addEventListener("click", e => {
   const item = e.target.closest(".order");
   if (item) openOrder(item.dataset.id);
@@ -384,14 +384,14 @@ Performance: batch DOM writes (DocumentFragment, `append(...nodes)`), avoid layo
 | Cookies | ~4 KB | Expiry date | **Yes**, with every request |
 | `localStorage` | ~5–10 MB | Until cleared | No |
 | `sessionStorage` | ~5 MB | Tab session | No |
-| IndexedDB | Large (quota-based) | Until cleared | No — async, structured data |
-| Cache API | Large | Until cleared | No — service workers/PWA |
+| IndexedDB | Large (quota-based) | Until cleared | No: async, structured data |
+| Cache API | Large | Until cleared | No: service workers/PWA |
 
 Never store auth tokens in localStorage if you can avoid it (readable by any XSS); prefer `HttpOnly; Secure; SameSite` cookies or a BFF.
 
 Other APIs: `fetch`, `AbortController`, `IntersectionObserver` (lazy load, infinite scroll), `ResizeObserver`, `MutationObserver`, Web Workers, Service Workers (offline/PWA), WebSockets, `history.pushState` (SPA routing), Clipboard, Geolocation, Notifications.
 
-**CORS** — the browser blocks reading cross-origin responses unless the server sends `Access-Control-Allow-Origin`; preflight `OPTIONS` for non-simple requests. It's fixed on the **server**, not in JS.
+**CORS**: the browser blocks reading cross-origin responses unless the server sends `Access-Control-Allow-Origin`; preflight `OPTIONS` for non-simple requests. It's fixed on the **server**, not in JS.
 
 ## Lesson: [Intermediate|High] Debounce, throttle, memoisation and other utilities
 
@@ -451,7 +451,7 @@ const validator = new Proxy({}, {
 
 - **Memory leaks**: forgotten timers/intervals, event listeners on removed elements, global variables, closures holding large data, detached DOM nodes, growing caches. Find with DevTools Memory → heap snapshots.
 - **Performance**: code splitting and lazy loading, tree shaking, minification, compression, caching (HTTP + service worker), avoid long tasks (> 50 ms), virtualise long lists, debounce input, use `defer`, optimise images, measure Core Web Vitals (**LCP**, **INP**, **CLS**).
-- **Security**: **XSS** (never insert untrusted HTML — use `textContent`, sanitise with DOMPurify, Content-Security-Policy), **CSRF** (SameSite cookies, tokens), avoid `eval`/`new Function`, validate on the server, keep dependencies patched (`npm audit`), Subresource Integrity for CDN scripts.
+- **Security**: **XSS** (never insert untrusted HTML, use `textContent`, sanitise with DOMPurify, Content-Security-Policy), **CSRF** (SameSite cookies, tokens), avoid `eval`/`new Function`, validate on the server, keep dependencies patched (`npm audit`), Subresource Integrity for CDN scripts.
 
 ## Lesson: [Intermediate|High] TypeScript essentials
 
@@ -481,7 +481,7 @@ function format(x: string | number) {
 function parse(json: string): unknown { return JSON.parse(json); }
 ```
 
-`interface` vs `type`: both describe object shapes; interfaces can be re-opened (declaration merging) and extended; types support unions, intersections, mapped and conditional types. Enable `"strict": true` in `tsconfig.json`. TypeScript types disappear at runtime — validate external data with libraries like Zod.
+`interface` vs `type`: both describe object shapes; interfaces can be re-opened (declaration merging) and extended; types support unions, intersections, mapped and conditional types. Enable `"strict": true` in `tsconfig.json`. TypeScript types disappear at runtime: validate external data with libraries like Zod.
 
 # Interview
 
@@ -503,15 +503,15 @@ During the creation phase of an execution context, declarations are registered b
 
 ## [Beginner|High] What is the difference between `null` and `undefined`?
 
-`undefined` means a variable has been declared but not assigned, a missing property, or a function with no return value — set by the engine. `null` is an intentional "no value" assigned by the programmer. `typeof undefined` is "undefined", `typeof null` is "object"; `null == undefined` is true but `null === undefined` is false. `??` and `?.` treat both as nullish.
+`undefined` means a variable has been declared but not assigned, a missing property, or a function with no return value: set by the engine. `null` is an intentional "no value" assigned by the programmer. `typeof undefined` is "undefined", `typeof null` is "object"; `null == undefined` is true but `null === undefined` is false. `??` and `?.` treat both as nullish.
 
 ## [Beginner|High] What are arrow functions and how are they different from regular functions?
 
-A concise function syntax (`x => x * 2`). Differences: no own `this` (lexically inherited — great for callbacks), no `arguments` object, can't be used as constructors with `new`, no `prototype`, and implicit return for single expressions. Don't use them as object methods or prototype methods that need dynamic `this`.
+A concise function syntax (`x => x * 2`). Differences: no own `this` (lexically inherited, great for callbacks), no `arguments` object, can't be used as constructors with `new`, no `prototype`, and implicit return for single expressions. Don't use them as object methods or prototype methods that need dynamic `this`.
 
 ## [Intermediate|High] What is a closure? Give a practical example.
 
-A closure is a function that remembers the variables from the scope where it was created, even after that scope has finished executing. Example: `function counter() { let c = 0; return () => ++c; }` — each returned function has its own private `c`. Practical uses: data privacy, function factories, memoisation caches, debounce/throttle timers, partial application, event handlers capturing loop values (with `let`).
+A closure is a function that remembers the variables from the scope where it was created, even after that scope has finished executing. Example: `function counter() { let c = 0; return () => ++c; }`: each returned function has its own private `c`. Practical uses: data privacy, function factories, memoisation caches, debounce/throttle timers, partial application, event handlers capturing loop values (with `let`).
 
 ## [Intermediate|High] Explain the event loop.
 
@@ -527,7 +527,7 @@ It depends on the call site: method call → the object before the dot; plain fu
 
 ## [Intermediate|High] What is the difference between `call`, `apply` and `bind`?
 
-All set `this` explicitly. `call(thisArg, a, b)` invokes immediately with individual arguments. `apply(thisArg, [a, b])` invokes immediately with an array of arguments. `bind(thisArg, a)` doesn't invoke — it returns a new function with `this` (and optionally leading arguments) permanently bound, useful for callbacks and event handlers.
+All set `this` explicitly. `call(thisArg, a, b)` invokes immediately with individual arguments. `apply(thisArg, [a, b])` invokes immediately with an array of arguments. `bind(thisArg, a)` doesn't invoke: it returns a new function with `this` (and optionally leading arguments) permanently bound, useful for callbacks and event handlers.
 
 ## [Intermediate|High] What is prototypal inheritance?
 
@@ -535,9 +535,9 @@ Objects inherit directly from other objects through the internal `[[Prototype]]`
 
 ## [Intermediate|High] What is event delegation and why use it?
 
-Attaching a single event listener to a common ancestor instead of each child, using event bubbling and `event.target` (often with `closest()`) to identify which child was interacted with. Benefits: fewer listeners (memory/performance), works for elements added later dynamically, simpler cleanup. Note: some events don't bubble (`focus`, `blur` — use `focusin`/`focusout`).
+Attaching a single event listener to a common ancestor instead of each child, using event bubbling and `event.target` (often with `closest()`) to identify which child was interacted with. Benefits: fewer listeners (memory/performance), works for elements added later dynamically, simpler cleanup. Note: some events don't bubble (`focus`, `blur`: use `focusin`/`focusout`).
 
-## [Intermediate|High] Debounce vs throttle — implement one.
+## [Intermediate|High] Debounce vs throttle: implement one.
 
 Debounce delays execution until calls stop for a given time (search-as-you-type, auto-save, resize end). Throttle guarantees execution at most once per interval (scroll position, mousemove, rate-limited API calls).
 
@@ -552,11 +552,11 @@ A shallow copy duplicates top-level properties, but nested objects are still sha
 
 ## [Intermediate|Medium] What is the difference between `map`, `forEach`, `filter` and `reduce`?
 
-`forEach` iterates for side effects and returns `undefined`. `map` returns a new array of the same length with transformed items. `filter` returns a new array with items that pass a test. `reduce` accumulates the array into a single value (sum, object, grouped map). None of them mutate the original array (unless your callback does). `forEach` can't be stopped early — use `for...of` with `break`, or `some`/`find`.
+`forEach` iterates for side effects and returns `undefined`. `map` returns a new array of the same length with transformed items. `filter` returns a new array with items that pass a test. `reduce` accumulates the array into a single value (sum, object, grouped map). None of them mutate the original array (unless your callback does). `forEach` can't be stopped early: use `for...of` with `break`, or `some`/`find`.
 
 ## [Intermediate|Medium] What are `async` and `defer` on script tags?
 
-Both download the script without blocking HTML parsing. `async` executes as soon as it's downloaded — order not guaranteed, may run before the DOM is complete (good for independent scripts like analytics). `defer` executes after parsing finishes, in document order, before DOMContentLoaded (good for app scripts). Module scripts are deferred by default.
+Both download the script without blocking HTML parsing. `async` executes as soon as it's downloaded: order not guaranteed, may run before the DOM is complete (good for independent scripts like analytics). `defer` executes after parsing finishes, in document order, before DOMContentLoaded (good for app scripts). Module scripts are deferred by default.
 
 ## [Advanced|High] What causes memory leaks in JavaScript and how do you find them?
 

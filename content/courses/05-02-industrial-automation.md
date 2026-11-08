@@ -1,6 +1,6 @@
 ---
 slug: industrial-automation
-title: Industrial Automation — PLC, SCADA, Modbus and OPC UA
+title: Industrial Automation: PLC, SCADA, Modbus and OPC UA
 track: automation
 order: 2
 group: Industrial Automation
@@ -11,17 +11,17 @@ summary: Automation pyramid and Purdue model, sensors and actuators, signals (di
 
 # Overview
 
-**Industrial automation** uses control systems — PLCs, DCS, SCADA, robots — to run machines and processes with little human intervention. It is the **OT (Operational Technology)** side of a factory, as opposed to **IT** (ERP, email, business apps). Industry 4.0 is largely about connecting the two.
+**Industrial automation** uses control systems: PLCs, DCS, SCADA, robots, to run machines and processes with little human intervention. It is the **OT (Operational Technology)** side of a factory, as opposed to **IT** (ERP, email, business apps). Industry 4.0 is largely about connecting the two.
 
 **Automation pyramid / Purdue model (ISA-95 levels):**
 
 | Level | What lives there | Examples |
 |---|---|---|
-| 4 — Business | ERP, planning, logistics | SAP, Oracle, Dynamics 365 |
-| 3 — Manufacturing operations | MES, quality, scheduling, historian | MES, AVEVA PI, Ignition MES |
-| 2 — Supervisory control | SCADA, HMI, engineering stations | WinCC, FactoryTalk View, Ignition, AVEVA InTouch |
-| 1 — Control | PLC, DCS controllers, drives, robot controllers | Siemens S7-1500, Allen-Bradley ControlLogix |
-| 0 — Field / process | Sensors, actuators, motors, valves | Proximity sensors, RTDs, VFDs, solenoid valves |
+| 4: Business | ERP, planning, logistics | SAP, Oracle, Dynamics 365 |
+| 3: Manufacturing operations | MES, quality, scheduling, historian | MES, AVEVA PI, Ignition MES |
+| 2: Supervisory control | SCADA, HMI, engineering stations | WinCC, FactoryTalk View, Ignition, AVEVA InTouch |
+| 1: Control | PLC, DCS controllers, drives, robot controllers | Siemens S7-1500, Allen-Bradley ControlLogix |
+| 0: Field / process | Sensors, actuators, motors, valves | Proximity sensors, RTDs, VFDs, solenoid valves |
 
 Typical industries: automotive, pharma, food & beverage, oil & gas, power, water, semiconductors, packaging.
 
@@ -33,12 +33,12 @@ Typical industries: automotive, pharma, food & beverage, oil & gas, power, water
 | 1979 | Modbus protocol published by Modicon |
 | 1980s | DCS and SCADA spread; Profibus (1989) |
 | 1993 | IEC 61131-3 standardises PLC languages (3rd edition 2013) |
-| 1996 | OPC (OLE for Process Control, Windows DCOM-based) — OPC DA |
+| 1996 | OPC (OLE for Process Control, Windows DCOM-based): OPC DA |
 | 1999 | Modbus TCP; Modbus later handed to Modbus Organization (2004) |
 | 2003 | PROFINET; EtherNet/IP (2001) |
 | 2006–2008 | OPC UA released (platform-independent, secure; IEC 62541) |
 | 2009+ | ISA/IEC 62443 series for industrial cybersecurity |
-| 2010 | Stuxnet attack on Siemens PLCs — OT security becomes mainstream |
+| 2010 | Stuxnet attack on Siemens PLCs: OT security becomes mainstream |
 | 2018+ | OPC UA over TSN, OPC UA PubSub/MQTT; companion specifications |
 | 2020s | Software-defined/virtual PLCs, IEC 61499 distributed control, IT/OT convergence |
 
@@ -46,10 +46,10 @@ Typical industries: automotive, pharma, food & beverage, oil & gas, power, water
 
 **How a PLC runs (scan cycle), repeated every few milliseconds:**
 
-1. **Read inputs** — copy the state of all input modules into the input image table.
-2. **Execute the program** — evaluate ladder/ST logic from top to bottom using the image.
-3. **Write outputs** — copy the output image to output modules (motors, valves).
-4. **Housekeeping** — communications, diagnostics; then repeat. Scan time is typically 1–50 ms.
+1. **Read inputs**: copy the state of all input modules into the input image table.
+2. **Execute the program**: evaluate ladder/ST logic from top to bottom using the image.
+3. **Write outputs**: copy the output image to output modules (motors, valves).
+4. **Housekeeping**: communications, diagnostics; then repeat. Scan time is typically 1–50 ms.
 
 **Automation project lifecycle:** requirements & URS → functional design spec (FDS) → I/O list and electrical design → panel build → PLC/HMI programming → **FAT** (Factory Acceptance Test at the vendor) → installation → **SAT** (Site Acceptance Test) → commissioning → validation (IQ/OQ/PQ in pharma) → maintenance and change management.
 
@@ -78,7 +78,7 @@ Typical industries: automotive, pharma, food & beverage, oil & gas, power, water
 | Pressure / level / flow transmitter | Process values | Analog 4–20 mA, HART, fieldbus |
 | Encoder | Speed / position | Pulses (high-speed counter) |
 
-**Actuators (outputs):** contactors and motors, **VFD** (variable frequency drive — controls AC motor speed), solenoid valves, pneumatic cylinders, control valves, servo drives, indicator lamps, buzzers.
+**Actuators (outputs):** contactors and motors, **VFD** (variable frequency drive, controls AC motor speed), solenoid valves, pneumatic cylinders, control valves, servo drives, indicator lamps, buzzers.
 
 **Signal types:**
 
@@ -103,7 +103,7 @@ A **PLC (Programmable Logic Controller)** is a rugged industrial computer: CPU, 
 | Programming | IEC 61131-3 languages | Any language |
 | Reliability | Very high, hot-swap modules, redundancy options | Lower |
 
-Related controllers: **DCS** (Distributed Control System — plant-wide continuous processes such as refineries, tightly integrated with its own HMI, e.g. Emerson DeltaV, ABB 800xA, Honeywell Experion); **PAC** (programmable automation controller — PLC + PC features); **RTU** (remote terminal unit for remote sites like pipelines); **safety PLC** (SIL-rated, e.g. Siemens F-CPU, GuardLogix); **soft/virtual PLC** running on industrial PCs.
+Related controllers: **DCS** (Distributed Control System, plant-wide continuous processes such as refineries, tightly integrated with its own HMI, e.g. Emerson DeltaV, ABB 800xA, Honeywell Experion); **PAC** (programmable automation controller: PLC + PC features); **RTU** (remote terminal unit for remote sites like pipelines); **safety PLC** (SIL-rated, e.g. Siemens F-CPU, GuardLogix); **soft/virtual PLC** running on industrial PCs.
 
 # Module: PLC Programming
 
@@ -111,11 +111,11 @@ Related controllers: **DCS** (Distributed Control System — plant-wide continuo
 
 | Language | Style | Best for |
 |---|---|---|
-| **LD** — Ladder Diagram | Graphical relay logic | Discrete on/off logic, electricians can read it |
-| **FBD** — Function Block Diagram | Graphical blocks | Process control, signal flow |
-| **ST** — Structured Text | Pascal-like text | Calculations, loops, data handling |
-| **SFC** — Sequential Function Chart | Steps and transitions | Sequences (batch, machine cycles) |
-| IL — Instruction List | Assembly-like | Deprecated in the 3rd edition (2013) |
+| **LD**: Ladder Diagram | Graphical relay logic | Discrete on/off logic, electricians can read it |
+| **FBD**: Function Block Diagram | Graphical blocks | Process control, signal flow |
+| **ST**: Structured Text | Pascal-like text | Calculations, loops, data handling |
+| **SFC**: Sequential Function Chart | Steps and transitions | Sequences (batch, machine cycles) |
+| IL: Instruction List | Assembly-like | Deprecated in the 3rd edition (2013) |
 
 **Classic start/stop (seal-in) circuit:**
 
@@ -163,7 +163,7 @@ BoxFull := ctParts.Q;                        // true after 100 parts
 | `TP` | Fixed-length pulse |
 | `CTU` / `CTD` / `CTUD` | Count up / down / both to a preset |
 
-**Sequences** — use a state machine (SFC, or a `CASE` on a step number in ST): Idle → Fill → Heat → Mix → Drain → Idle, each step with entry conditions, timeouts and fault handling. Avoid scattering sequence logic across many unrelated rungs.
+**Sequences**: use a state machine (SFC, or a `CASE` on a step number in ST): Idle → Fill → Heat → Mix → Drain → Idle, each step with entry conditions, timeouts and fault handling. Avoid scattering sequence logic across many unrelated rungs.
 
 ## Lesson: [Intermediate|Medium] PID control loops
 
@@ -177,9 +177,9 @@ SP ──►(+)──error──► PID ──CV──► valve/heater ──►
 
 | Term | Effect |
 |---|---|
-| P — proportional | Output proportional to current error; too high → oscillation; alone leaves steady-state offset |
-| I — integral | Accumulates past error; removes offset; too much → overshoot, windup |
-| D — derivative | Reacts to rate of change; damps overshoot; sensitive to noise |
+| P: proportional | Output proportional to current error; too high → oscillation; alone leaves steady-state offset |
+| I: integral | Accumulates past error; removes offset; too much → overshoot, windup |
+| D: derivative | Reacts to rate of change; damps overshoot; sensitive to noise |
 
 Practicalities: anti-windup, bumpless transfer between manual and auto, output limits, filtering noisy signals, tuning methods (Ziegler–Nichols, step-response, auto-tune in the PLC). Examples: temperature of an oven, tank level, pressure, motor speed.
 
@@ -187,10 +187,10 @@ Practicalities: anti-windup, bumpless transfer between manual and auto, output l
 
 ## Lesson: [Intermediate|High] HMI, SCADA, alarms and historians
 
-- **HMI (Human-Machine Interface)** — operator screen for one machine or line: start/stop, setpoints, status, alarms.
-- **SCADA (Supervisory Control and Data Acquisition)** — supervises many PLCs/RTUs across a plant or region (pipelines, water networks): data collection, control, alarms, trends, reports, often redundant servers.
+- **HMI (Human-Machine Interface)**: operator screen for one machine or line: start/stop, setpoints, status, alarms.
+- **SCADA (Supervisory Control and Data Acquisition)**: supervises many PLCs/RTUs across a plant or region (pipelines, water networks): data collection, control, alarms, trends, reports, often redundant servers.
 - **Alarm management** (ISA-18.2): priorities, acknowledgement, shelving, avoid alarm floods; every alarm must require an operator action.
-- **Historian** — time-series database storing tag values (temperatures, states) with compression for years; used for trends, OEE, investigations, batch reports.
+- **Historian**: time-series database storing tag values (temperatures, states) with compression for years; used for trends, OEE, investigations, batch reports.
 - **High-performance HMI** (ISA-101): grey backgrounds, colour only for abnormal states, clear hierarchy of screens.
 
 **Tag** = named data point (e.g. `Line1.Filler.Motor.Running`, `Tank3.Level.PV`) with type, address, scaling, alarms and history settings.
@@ -200,7 +200,7 @@ Practicalities: anti-windup, bumpless transfer between manual and auto, output l
 | Network | Type | Common with |
 |---|---|---|
 | Modbus RTU | Serial (RS-485), master/slave | Meters, drives, simple devices |
-| Modbus TCP | Ethernet, client/server, port 502 | Everywhere — simplest Ethernet protocol |
+| Modbus TCP | Ethernet, client/server, port 502 | Everywhere: simplest Ethernet protocol |
 | PROFIBUS DP | Fieldbus (RS-485) | Siemens installations |
 | PROFINET | Industrial Ethernet, real-time | Siemens |
 | EtherNet/IP (CIP) | Industrial Ethernet | Rockwell / Allen-Bradley |
@@ -213,20 +213,20 @@ Practicalities: anti-windup, bumpless transfer between manual and auto, output l
 
 | Table | Access | Function codes |
 |---|---|---|
-| Coils (0xxxx) — 1 bit | Read/write | FC01 read, FC05 write single, FC15 write multiple |
-| Discrete inputs (1xxxx) — 1 bit | Read-only | FC02 |
-| Input registers (3xxxx) — 16 bit | Read-only | FC04 |
-| Holding registers (4xxxx) — 16 bit | Read/write | FC03 read, FC06 write single, FC16 write multiple |
+| Coils (0xxxx): 1 bit | Read/write | FC01 read, FC05 write single, FC15 write multiple |
+| Discrete inputs (1xxxx): 1 bit | Read-only | FC02 |
+| Input registers (3xxxx): 16 bit | Read-only | FC04 |
+| Holding registers (4xxxx): 16 bit | Read/write | FC03 read, FC06 write single, FC16 write multiple |
 
-32-bit floats use **two registers** — check the word/byte order (big-endian vs "word swapped") in the device manual. Modbus has **no authentication or encryption** — keep it on isolated networks.
+32-bit floats use **two registers**: check the word/byte order (big-endian vs "word swapped") in the device manual. Modbus has **no authentication or encryption**: keep it on isolated networks.
 
-## Lesson: [Advanced|High] OPC UA — the standard for IT/OT data exchange
+## Lesson: [Advanced|High] OPC UA: the standard for IT/OT data exchange
 
-**OPC UA (Unified Architecture, IEC 62541)** is a platform-independent, secure, service-oriented standard for industrial data exchange — the successor of classic OPC DA, which depended on Windows DCOM.
+**OPC UA (Unified Architecture, IEC 62541)** is a platform-independent, secure, service-oriented standard for industrial data exchange: the successor of classic OPC DA, which depended on Windows DCOM.
 
 | Feature | Meaning |
 |---|---|
-| Information model | Address space of **nodes** (objects, variables, methods) with types and references — data has meaning, not just addresses |
+| Information model | Address space of **nodes** (objects, variables, methods) with types and references: data has meaning, not just addresses |
 | Services | Browse, Read, Write, **Subscribe** (monitored items notify on change), Call methods, history read, alarms & conditions |
 | Security | X.509 certificates, signing and encryption, user authentication (username, certificate, token) |
 | Transports | Binary over TCP (`opc.tcp://host:4840`), HTTPS; **PubSub** over UDP/MQTT for one-to-many |
@@ -280,7 +280,7 @@ Design rules: **read-mostly** (writes to PLCs only through controlled, audited p
 
 ## Lesson: [Advanced|Medium] Functional safety and OT cybersecurity
 
-**Functional safety** — protecting people and equipment when something fails:
+**Functional safety**: protecting people and equipment when something fails:
 
 - Standards: IEC 61508 (general), IEC 61511 (process industry SIS), ISO 13849 / IEC 62061 (machinery).
 - **SIL** (Safety Integrity Level 1–4) / **PL** (Performance Level a–e) express required risk reduction.
@@ -316,7 +316,7 @@ Ladder Diagram (relay-style graphics), Function Block Diagram (blocks connected 
 
 ## [Beginner|High] What is the difference between SCADA, HMI and DCS?
 
-HMI is the operator interface for a machine or line. SCADA supervises many controllers over a plant or wide area — data acquisition, control, alarms, trends and reporting. A DCS is an integrated control system (controllers + HMI + engineering) for continuous processes like refineries and power plants, where control is distributed across controllers on a common platform.
+HMI is the operator interface for a machine or line. SCADA supervises many controllers over a plant or wide area: data acquisition, control, alarms, trends and reporting. A DCS is an integrated control system (controllers + HMI + engineering) for continuous processes like refineries and power plants, where control is distributed across controllers on a common platform.
 
 ## [Beginner|High] Why is 4–20 mA used instead of 0–20 mA or 0–10 V?
 
@@ -324,7 +324,7 @@ Current signals are not affected by voltage drop over long cables and are less s
 
 ## [Beginner|Medium] What is the difference between NO and NC contacts, and why is a stop button wired NC?
 
-Normally open contacts close when actuated; normally closed contacts open when actuated. Stop and emergency-stop buttons are wired NC so a broken wire or loose terminal has the same effect as pressing Stop — the machine fails safe instead of becoming impossible to stop.
+Normally open contacts close when actuated; normally closed contacts open when actuated. Stop and emergency-stop buttons are wired NC so a broken wire or loose terminal has the same effect as pressing Stop: the machine fails safe instead of becoming impossible to stop.
 
 ## [Intermediate|High] Explain the start/stop seal-in (latching) circuit.
 
@@ -332,11 +332,11 @@ Start (NO) in parallel with a contact of the motor output, in series with Stop (
 
 ## [Intermediate|High] Explain TON, TOF and counters with an example.
 
-TON (on-delay): output becomes true when the input has stayed true for the preset — e.g. start a conveyor 5 s after a horn. TOF (off-delay): output stays true for the preset after the input turns false — e.g. keep a cooling fan running 2 minutes after the motor stops. CTU counts rising edges to a preset — e.g. 100 parts fill a box, then reset.
+TON (on-delay): output becomes true when the input has stayed true for the preset, e.g. start a conveyor 5 s after a horn. TOF (off-delay): output stays true for the preset after the input turns false, e.g. keep a cooling fan running 2 minutes after the motor stops. CTU counts rising edges to a preset: e.g. 100 parts fill a box, then reset.
 
 ## [Intermediate|High] What is Modbus? Explain its data model and function codes.
 
-A simple open request/response protocol (RTU over RS-485 serial, TCP over Ethernet on port 502). Data tables: coils (read/write bits — FC01/05/15), discrete inputs (read-only bits — FC02), input registers (read-only 16-bit — FC04) and holding registers (read/write 16-bit — FC03/06/16). 32-bit values span two registers with device-specific word order. It has no security, so it belongs on segmented networks.
+A simple open request/response protocol (RTU over RS-485 serial, TCP over Ethernet on port 502). Data tables: coils (read/write bits, FC01/05/15), discrete inputs (read-only bits, FC02), input registers (read-only 16-bit, FC04) and holding registers (read/write 16-bit, FC03/06/16). 32-bit values span two registers with device-specific word order. It has no security, so it belongs on segmented networks.
 
 ## [Intermediate|High] What is OPC UA and why is it important for Industry 4.0?
 
@@ -372,7 +372,7 @@ Wrong register address (0- vs 1-based offset: 40001 is register 0), wrong functi
 
 ## [Scenario|Medium] Management wants to let a cloud dashboard write setpoints directly to PLCs. What do you advise?
 
-Treat it as a safety and security risk. Keep control and interlocks in the PLC; allow only bounded, validated setpoint changes through a controlled path (MES/SCADA with role-based access, approval, audit trail, limits enforced again in the PLC); no inbound connections from the internet into OT — use outbound-only edge connections through the DMZ; follow change-management and safety review (MOC). Often a read-only cloud dashboard is the right first step.
+Treat it as a safety and security risk. Keep control and interlocks in the PLC; allow only bounded, validated setpoint changes through a controlled path (MES/SCADA with role-based access, approval, audit trail, limits enforced again in the PLC); no inbound connections from the internet into OT: use outbound-only edge connections through the DMZ; follow change-management and safety review (MOC). Often a read-only cloud dashboard is the right first step.
 
 # Cheatsheet
 
@@ -390,7 +390,7 @@ Digital 24 V (PNP/NPN) · 4–20 mA (live zero, broken-wire detection) · 0–10
 
 ## Modbus
 
-Coils FC01/05/15 · discrete inputs FC02 · input registers FC04 · holding registers FC03/06/16 · TCP port 502 · two registers per float — check word order · no security.
+Coils FC01/05/15 · discrete inputs FC02 · input registers FC04 · holding registers FC03/06/16 · TCP port 502 · two registers per float: check word order · no security.
 
 ## OPC UA
 

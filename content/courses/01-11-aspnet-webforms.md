@@ -1,6 +1,6 @@
 ---
 slug: aspnet-webforms
-title: ASP.NET Web Forms — Page Life Cycle, ViewState, Controls and State Management
+title: ASP.NET Web Forms: Page Life Cycle, ViewState, Controls and State Management
 track: dotnet
 order: 11
 group: ASP.NET (.NET Framework)
@@ -20,7 +20,7 @@ summary: How ASP.NET Web Forms works inside IIS (application and page life cycle
 | Huge control ecosystem (Telerik, DevExpress, Infragistics) | Tightly coupled to IIS/System.Web; not in .NET Core |
 | Still powers many enterprise/government intranets | No new features; migration needed for modern .NET |
 
-Web Forms remains supported on **.NET Framework 4.8/4.8.1** (as part of Windows), so these apps keep running — and developers who understand them are needed for maintenance and migration. Community project **WebFormsCore**/Blazor migration tools exist, but there is no official Web Forms for .NET Core.
+Web Forms remains supported on **.NET Framework 4.8/4.8.1** (as part of Windows), so these apps keep running, and developers who understand them are needed for maintenance and migration. Community project **WebFormsCore**/Blazor migration tools exist, but there is no official Web Forms for .NET Core.
 
 # Versions
 
@@ -56,26 +56,26 @@ The first request to the application raises `Application_Start` (Global.asax); `
 
 | Stage / event | What happens | Typical use |
 |---|---|---|
-| Page request & start | Determines `IsPostBack`, sets `Request`/`Response` | — |
+| Page request & start | Determines `IsPostBack`, sets `Request`/`Response` |: |
 | **PreInit** | Before controls initialise | Set master page or theme dynamically, create dynamic controls |
 | **Init** | Each control's Init (children first), control IDs set | Initialise control properties, add dynamic controls |
-| InitComplete | ViewState tracking turned on | — |
-| (PostBack) Load ViewState / ControlState | Restore control values from `__VIEWSTATE` | — |
-| (PostBack) Load PostBack data | Apply posted form values to controls | — |
-| PreLoad | Before Load | — |
-| **Load** | Page then each control's Load | Data loading — usually inside `if (!IsPostBack)` |
+| InitComplete | ViewState tracking turned on |: |
+| (PostBack) Load ViewState / ControlState | Restore control values from `__VIEWSTATE` |: |
+| (PostBack) Load PostBack data | Apply posted form values to controls |: |
+| PreLoad | Before Load |: |
+| **Load** | Page then each control's Load | Data loading, usually inside `if (!IsPostBack)` |
 | **Control events** (PostBack) | `TextChanged`, `SelectedIndexChanged`, then the **Button `Click`** that caused the postback | Your business actions |
-| LoadComplete | After events | — |
+| LoadComplete | After events |: |
 | **PreRender** | Last chance to change controls before rendering | Final UI adjustments |
-| PreRenderComplete, SaveStateComplete | ViewState saved into `__VIEWSTATE` | — |
+| PreRenderComplete, SaveStateComplete | ViewState saved into `__VIEWSTATE` |: |
 | **Render** | Each control writes its HTML (method, not event) | Custom controls override `Render` |
 | **Unload** | Cleanup (children first, then page); response already sent | Close resources |
 
-Mnemonic: **"SILVER"** — Start, Init, Load, Validate, Event handling, Render (plus Unload).
+Mnemonic: **"SILVER"**: Start, Init, Load, Validate, Event handling, Render (plus Unload).
 
 # Tools
 
-- Visual Studio 2022/2026 with the "ASP.NET and web development" workload (.NET Framework 4.8 templates) — designer view, Toolbox, Properties window.
+- Visual Studio 2022/2026 with the "ASP.NET and web development" workload (.NET Framework 4.8 templates): designer view, Toolbox, Properties window.
 - IIS / IIS Express, IIS Manager, Event Viewer, Failed Request Tracing.
 - Third-party control suites: Telerik UI for ASP.NET AJAX, DevExpress ASP.NET Web Forms, Infragistics.
 - ViewState decoders (to inspect page size), browser DevTools, Glimpse (legacy), Application Insights / ELMAH for errors.
@@ -90,7 +90,7 @@ Mnemonic: **"SILVER"** — Start, Init, Load, Validate, Event handling, Render (
 ```text
 ShopWeb/                        (ASP.NET Web Application, .NET Framework 4.8)
 ├── App_Code/                   shared classes compiled dynamically (Web Site projects mainly)
-├── App_Data/                   local data files (.mdf, XML) — not served to browsers
+├── App_Data/                   local data files (.mdf, XML), not served to browsers
 ├── App_GlobalResources/        .resx strings for localisation (whole app)
 ├── App_LocalResources/         .resx per page
 ├── App_Start/                  startup classes: RouteConfig, BundleConfig, IdentityConfig
@@ -139,7 +139,7 @@ public partial class Products : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)       // AutoEventWireup="true" wires Page_Load by name
     {
-        if (!IsPostBack)                                        // first visit only — otherwise you overwrite user input
+        if (!IsPostBack)                                        // first visit only: otherwise you overwrite user input
         {
             ddlCategory.DataSource = ProductService.GetCategories();
             ddlCategory.DataBind();
@@ -165,13 +165,13 @@ public partial class Products : System.Web.UI.Page
 }
 ```
 
-**Control categories:** HTML controls (`<input>` — plain), **HTML server controls** (`<input runat="server">` — accessible in code), **Web server controls** (`<asp:TextBox>`), **validation controls**, **data controls** (GridView, Repeater, ListView, DetailsView, FormView), **navigation** (Menu, TreeView, SiteMapPath), **login controls**, **user controls** (.ascx) and **custom controls**.
+**Control categories:** HTML controls (`<input>`: plain), **HTML server controls** (`<input runat="server">`: accessible in code), **Web server controls** (`<asp:TextBox>`), **validation controls**, **data controls** (GridView, Repeater, ListView, DetailsView, FormView), **navigation** (Menu, TreeView, SiteMapPath), **login controls**, **user controls** (.ascx) and **custom controls**.
 
-**Inline code expressions:** `<%= value %>` (write, not encoded), `<%: value %>` (HTML-encoded — use this), `<%# Eval("Name") %>` (data binding), `<%$ ConnectionStrings:Shop %>` (expression builder).
+**Inline code expressions:** `<%= value %>` (write, not encoded), `<%: value %>` (HTML-encoded, use this), `<%# Eval("Name") %>` (data binding), `<%$ ConnectionStrings:Shop %>` (expression builder).
 
 # Module: PostBack and State
 
-## Lesson: [Intermediate|High] PostBack, AutoPostBack and ViewState — how they work
+## Lesson: [Intermediate|High] PostBack, AutoPostBack and ViewState: how they work
 
 - A Web Forms page wraps everything in **one `<form runat="server">`** that posts back to the same URL.
 - **PostBack** = the browser submits the form to the same page; the page object is **created again from scratch** on the server, rebuilds controls, restores state and raises the events.
@@ -185,10 +185,10 @@ public partial class Products : System.Web.UI.Page
 ```
 
 - Stores control properties that changed programmatically (e.g. a Label's text, a GridView's data) so they survive postbacks.
-- Base64-encoded, **signed** (MAC) to prevent tampering, optionally encrypted (`ViewStateEncryptionMode`) — but **not secret by default**; never store sensitive data.
-- Grows page size and slows requests — large GridViews can produce hundreds of KB.
+- Base64-encoded, **signed** (MAC) to prevent tampering, optionally encrypted (`ViewStateEncryptionMode`), but **not secret by default**; never store sensitive data.
+- Grows page size and slows requests: large GridViews can produce hundreds of KB.
 - Control: `EnableViewState="false"` per control/page, `ViewStateMode="Disabled"` + enable selectively (4.0+), store state elsewhere.
-- **ControlState** — a small, separate state that controls need to function (e.g. GridView page index); cannot be turned off.
+- **ControlState**: a small, separate state that controls need to function (e.g. GridView page index); cannot be turned off.
 
 ```csharp
 // Your own values in ViewState (per page, survives postbacks of that page)
@@ -199,14 +199,14 @@ private int CurrentStep
 }
 ```
 
-## Lesson: [Intermediate|High] State management — client-side vs server-side
+## Lesson: [Intermediate|High] State management: client-side vs server-side
 
 | Technique | Where stored | Scope / lifetime | Use for |
 |---|---|---|---|
 | **ViewState** | Hidden field in the page | One page, across its postbacks | Control values, small page data |
 | **ControlState** | Hidden field | One control | Essential control data |
 | Hidden field | Page | Postbacks | Small values for client script |
-| **Query string** | URL | One request/link | Ids, filters, bookmarkable state (`?id=5`) — visible, validate it |
+| **Query string** | URL | One request/link | Ids, filters, bookmarkable state (`?id=5`): visible, validate it |
 | **Cookies** | Browser | Until expiry | Preferences, "remember me" (4 KB limit) |
 | **Session** | Server (InProc memory, StateServer, SQL Server) keyed by a cookie | One user, until timeout (20 min default) | Cart, user data during a visit |
 | **Application** | Server memory | Whole app, all users, until restart | Rarely-changing global data (with locking) |
@@ -224,7 +224,7 @@ Response.Redirect("Orders.aspx?customerId=" + customerId, endResponse: false);
 
 **Session modes** (web.config `<sessionState mode="...">`): **InProc** (fastest; lost on app-pool recycle; not shared in a web farm), **StateServer** (separate Windows service; survives recycles), **SQLServer** (durable, shared across a farm), **Custom** (Redis provider), **Off**. Objects stored out-of-process must be `[Serializable]`.
 
-**Page navigation:** `Response.Redirect` (browser makes a new request — URL changes, 302), `Server.Transfer` (server switches page — URL doesn't change, same request), cross-page posting (`PostBackUrl`).
+**Page navigation:** `Response.Redirect` (browser makes a new request, URL changes, 302), `Server.Transfer` (server switches page, URL doesn't change, same request), cross-page posting (`PostBackUrl`).
 
 # Module: Building Pages
 
@@ -241,7 +241,7 @@ Response.Redirect("Orders.aspx?customerId=" + customerId, endResponse: false);
 | `CustomValidator` | Your own function (`OnServerValidate`, `ClientValidationFunction`) |
 | `ValidationSummary` | Shows all errors in one place |
 
-`ValidationGroup` separates groups of validators on one page; `CausesValidation="false"` on Cancel buttons. **Always check `Page.IsValid` on the server** — client scripts can be bypassed.
+`ValidationGroup` separates groups of validators on one page; `CausesValidation="false"` on Cancel buttons. **Always check `Page.IsValid` on the server**: client scripts can be bypassed.
 
 **Master pages** (layout template):
 
@@ -259,7 +259,7 @@ Access the master from a page with `<%@ MasterType VirtualPath="~/Site.Master" %
 
 **Themes and skins:** `App_Themes/Dark/Controls.skin` sets default control properties (`<asp:Button runat="server" CssClass="btn btn-dark" />`); apply with `Theme="Dark"` in the page or web.config `<pages theme="Dark">`.
 
-**User controls (.ascx)** — reusable page fragments with their own markup and code-behind:
+**User controls (.ascx)**: reusable page fragments with their own markup and code-behind:
 
 ```aspx
 <%@ Control Language="C#" CodeBehind="AddressEditor.ascx.cs" Inherits="ShopWeb.Controls.AddressEditor" %>
@@ -281,7 +281,7 @@ public partial class AddressEditor : UserControl
 
 (Custom server controls compiled into DLLs are covered in the **Custom Controls & Components** course.)
 
-## Lesson: [Intermediate|High] Data binding — GridView, Repeater, ListView and data source controls
+## Lesson: [Intermediate|High] Data binding: GridView, Repeater, ListView and data source controls
 
 | Control | Output | Paging/sorting/editing built in | Use |
 |---|---|---|---|
@@ -294,7 +294,7 @@ public partial class AddressEditor : UserControl
 ```aspx
 <asp:Repeater ID="rptOrders" runat="server" ItemType="ShopWeb.Models.OrderDto">
   <ItemTemplate>
-    <div class="order"><%#: Item.Id %> — <%#: Item.Total.ToString("C") %></div>
+    <div class="order"><%#: Item.Id %>, <%#: Item.Total.ToString("C") %></div>
   </ItemTemplate>
 </asp:Repeater>
 
@@ -312,11 +312,11 @@ public void UpdateProduct(int id)
 }
 ```
 
-**Data source controls:** `SqlDataSource` (SQL in markup — quick but mixes data access into the UI), `ObjectDataSource` (calls methods on your business class — better layering), `EntityDataSource`, `LinqDataSource`. Prefer model binding or code-behind binding to services.
+**Data source controls:** `SqlDataSource` (SQL in markup, quick but mixes data access into the UI), `ObjectDataSource` (calls methods on your business class, better layering), `EntityDataSource`, `LinqDataSource`. Prefer model binding or code-behind binding to services.
 
 GridView events: `RowDataBound` (format each row), `RowCommand` (custom buttons with `CommandName`/`CommandArgument`), `RowEditing`/`RowUpdating`/`RowDeleting`, `PageIndexChanging`, `Sorting`.
 
-## Lesson: [Intermediate|Medium] AJAX in Web Forms — ScriptManager, UpdatePanel and page methods
+## Lesson: [Intermediate|Medium] AJAX in Web Forms: ScriptManager, UpdatePanel and page methods
 
 ```aspx
 <asp:ScriptManager runat="server" />
@@ -345,7 +345,7 @@ public class Global : HttpApplication
     }
     protected void Session_Start(object sender, EventArgs e) { }      // new user session
     protected void Application_BeginRequest(object sender, EventArgs e) { }
-    protected void Application_Error(object sender, EventArgs e)      // unhandled exceptions — log here
+    protected void Application_Error(object sender, EventArgs e)      // unhandled exceptions: log here
     {
         var ex = Server.GetLastError();
         Logger.Error(ex);
@@ -382,7 +382,7 @@ public class Global : HttpApplication
 
 Config inheritance: `machine.config` → root `web.config` (Framework folder) → site `web.config` → sub-folder `web.config`s. Changing web.config **restarts the application**.
 
-**HTTP module** (`IHttpModule`) — hooks pipeline events for every request (auth, logging, URL rewriting). **HTTP handler** (`IHttpHandler`) — produces the response for a request type (`.aspx` page handler, `.ashx` generic handler for files/images/JSON).
+**HTTP module** (`IHttpModule`): hooks pipeline events for every request (auth, logging, URL rewriting). **HTTP handler** (`IHttpHandler`), produces the response for a request type (`.aspx` page handler, `.ashx` generic handler for files/images/JSON).
 
 ```csharp
 public class ThumbnailHandler : IHttpHandler          // Thumbnail.ashx
@@ -414,11 +414,11 @@ protected void Page_Error(object sender, EventArgs e)
     Server.ClearError();
     Response.Redirect("~/Error.aspx", false);
 }
-// 3. Application level — Global.asax Application_Error (logs everything unhandled)
-// 4. web.config <customErrors> (ASP.NET) and <httpErrors> (IIS) — friendly pages, never show stack traces to users
+// 3. Application level: Global.asax Application_Error (logs everything unhandled)
+// 4. web.config <customErrors> (ASP.NET) and <httpErrors> (IIS): friendly pages, never show stack traces to users
 ```
 
-`customErrors mode="On"` shows custom pages to everyone; `RemoteOnly` shows details only on the server; `Off` shows the "yellow screen of death" — never in production. ELMAH or log4net/NLog/Serilog capture errors (see the **Exception Handling** and **Logging** courses).
+`customErrors mode="On"` shows custom pages to everyone; `RemoteOnly` shows details only on the server; `Off` shows the "yellow screen of death": never in production. ELMAH or log4net/NLog/Serilog capture errors (see the **Exception Handling** and **Logging** courses).
 
 ## Lesson: [Advanced|Medium] Performance tuning and migrating Web Forms to modern .NET
 
@@ -453,7 +453,7 @@ A hidden form field (`__VIEWSTATE`) holding base64-encoded, MAC-signed state of 
 
 ## [Beginner|High] What is PostBack and IsPostBack?
 
-A postback is the form submitting back to the same page so server-side events (button clicks, selection changes) can run. `IsPostBack` is false on the first request and true on postbacks — load initial data only when `!IsPostBack`, otherwise you overwrite the user's input and waste database calls.
+A postback is the form submitting back to the same page so server-side events (button clicks, selection changes) can run. `IsPostBack` is false on the first request and true on postbacks: load initial data only when `!IsPostBack`, otherwise you overwrite the user's input and waste database calls.
 
 ## [Beginner|High] What state management options exist in ASP.NET?
 
@@ -461,15 +461,15 @@ Client-side: ViewState, ControlState, hidden fields, cookies, query strings. Ser
 
 ## [Beginner|High] Response.Redirect vs Server.Transfer?
 
-`Response.Redirect` sends a 302 to the browser, which makes a new request — URL changes, works for any URL, an extra round trip, previous page data lost unless passed. `Server.Transfer` switches execution to another page on the server within the same request — URL in the browser stays the same, faster, can access the previous page (`PreviousPage`), only within the same application.
+`Response.Redirect` sends a 302 to the browser, which makes a new request: URL changes, works for any URL, an extra round trip, previous page data lost unless passed. `Server.Transfer` switches execution to another page on the server within the same request, URL in the browser stays the same, faster, can access the previous page (`PreviousPage`), only within the same application.
 
 ## [Intermediate|High] What are the Session state modes? Which would you use in a web farm?
 
-InProc (in the worker process memory — fastest, lost on app-pool recycle, not shared), StateServer (aspnet_state service — survives recycles, shared, serialisation needed), SQLServer (stored in SQL — durable, shared, slower), Custom (e.g. Redis provider), Off. In a web farm use SQLServer, StateServer or a Redis custom provider (or sticky sessions as a weaker alternative).
+InProc (in the worker process memory: fastest, lost on app-pool recycle, not shared), StateServer (aspnet_state service, survives recycles, shared, serialisation needed), SQLServer (stored in SQL, durable, shared, slower), Custom (e.g. Redis provider), Off. In a web farm use SQLServer, StateServer or a Redis custom provider (or sticky sessions as a weaker alternative).
 
 ## [Intermediate|High] User control vs custom control?
 
-A user control (.ascx) is markup + code-behind built visually and reused within one application (registered with `@Register Src=`). A custom (server) control is a class deriving from `Control`/`WebControl`/`CompositeControl` that renders its own HTML, compiled into a DLL, reusable across applications, can appear in the Toolbox and support design-time features — more work to build.
+A user control (.ascx) is markup + code-behind built visually and reused within one application (registered with `@Register Src=`). A custom (server) control is a class deriving from `Control`/`WebControl`/`CompositeControl` that renders its own HTML, compiled into a DLL, reusable across applications, can appear in the Toolbox and support design-time features: more work to build.
 
 ## [Intermediate|High] What are master pages and how do content pages use them?
 
@@ -481,7 +481,7 @@ Global.asax holds application-level event handlers: Application_Start/End, Sessi
 
 ## [Intermediate|Medium] HTTP module vs HTTP handler?
 
-Modules (`IHttpModule`) subscribe to pipeline events and run for every request — authentication, logging, URL rewriting, compression. Handlers (`IHttpHandler`) generate the response for specific requests/extensions — the Page handler for `.aspx`, `.ashx` generic handlers for images or files. A request passes through many modules but is processed by one handler.
+Modules (`IHttpModule`) subscribe to pipeline events and run for every request: authentication, logging, URL rewriting, compression. Handlers (`IHttpHandler`) generate the response for specific requests/extensions, the Page handler for `.aspx`, `.ashx` generic handlers for images or files. A request passes through many modules but is processed by one handler.
 
 ## [Intermediate|Medium] What does an UpdatePanel actually do?
 
@@ -497,7 +497,7 @@ Because controls created in code must be recreated on every request, with the sa
 
 ## [Advanced|Medium] What is the difference between a Web Site project and a Web Application project?
 
-Web Site: no project file, files compiled dynamically on the server (each page/folder its own assembly), `App_Code` for shared classes, easy to edit live but harder to manage. Web Application: `.csproj`, compiled ahead into one assembly in `bin`, designer files, better for builds, refactoring, source control and deployment — the standard for professional projects.
+Web Site: no project file, files compiled dynamically on the server (each page/folder its own assembly), `App_Code` for shared classes, easy to edit live but harder to manage. Web Application: `.csproj`, compiled ahead into one assembly in `bin`, designer files, better for builds, refactoring, source control and deployment, the standard for professional projects.
 
 ## [Scenario|High] A Web Forms page with a big GridView is very slow to post back. How do you fix it?
 

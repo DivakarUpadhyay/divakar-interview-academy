@@ -11,7 +11,7 @@ export function Legend() {
   return (
     <div className="legend">
       <span>Interview priority:</span>
-      <span className="badge High">★ Must know</span> <span>High priority — asked in almost every interview, learn first</span>
+      <span className="badge High">★ Must know</span> <span>High priority: asked in almost every interview, learn first</span>
       <span className="badge Medium">Medium</span> <span>asked regularly</span>
       <span className="badge Low">Low</span> <span>good to know</span>
     </div>

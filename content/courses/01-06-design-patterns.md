@@ -28,9 +28,9 @@ Enterprise and cloud patterns used daily in .NET: Repository, Unit of Work, Depe
 | 1977 | Christopher Alexander, *A Pattern Language* (architecture) inspires software patterns |
 | 1994 | GoF book: 23 patterns |
 | 1996 | *Pattern-Oriented Software Architecture* (POSA) |
-| 2002 | Martin Fowler, *Patterns of Enterprise Application Architecture* — Repository, Unit of Work, Data Mapper, Active Record |
-| 2003 | Eric Evans, *Domain-Driven Design* — Aggregates, Value Objects, Domain Events |
-| 2003 | Hohpe & Woolf, *Enterprise Integration Patterns* — messaging |
+| 2002 | Martin Fowler, *Patterns of Enterprise Application Architecture*: Repository, Unit of Work, Data Mapper, Active Record |
+| 2003 | Eric Evans, *Domain-Driven Design*: Aggregates, Value Objects, Domain Events |
+| 2003 | Hohpe & Woolf, *Enterprise Integration Patterns*: messaging |
 | 2010s | Cloud design patterns (Microsoft Azure Architecture Center): Circuit Breaker, Retry, CQRS, Event Sourcing, Saga, Strangler Fig |
 
 # Lifecycle
@@ -39,20 +39,20 @@ How to use a pattern well:
 
 1. **Notice the problem** (e.g. a growing `switch` on type, an awkward third-party API, object creation spread everywhere).
 2. **Name the pattern** that fits (Strategy, Adapter, Factory).
-3. **Apply it minimally** — the simplest version that solves today's problem.
+3. **Apply it minimally**: the simplest version that solves today's problem.
 4. **Test** behaviour through the abstraction.
-5. **Revisit** — remove a pattern that adds indirection with no benefit.
+5. **Revisit**: remove a pattern that adds indirection with no benefit.
 
 > Patterns are a vocabulary. Saying "I wrapped the SDK in an Adapter and added a caching Decorator" communicates a whole design in one sentence.
 
 # Tools
 
-- **refactoring.guru** — free illustrated catalogue (with C# examples).
-- **dofactory.com** — .NET-specific pattern examples.
-- **MediatR** — Mediator/CQRS pipeline library (commercial licence from v13).
-- **Polly / Microsoft.Extensions.Http.Resilience** — Retry, Circuit Breaker, Timeout, Bulkhead.
-- **Scrutor** — Decorator registration in ASP.NET Core DI.
-- **Azure Architecture Center — Cloud design patterns** catalogue.
+- **refactoring.guru**: free illustrated catalogue (with C# examples).
+- **dofactory.com**: .NET-specific pattern examples.
+- **MediatR**: Mediator/CQRS pipeline library (commercial licence from v13).
+- **Polly / Microsoft.Extensions.Http.Resilience**: Retry, Circuit Breaker, Timeout, Bulkhead.
+- **Scrutor**: Decorator registration in ASP.NET Core DI.
+- **Azure Architecture Center: Cloud design patterns** catalogue.
 
 # Module: Creational Patterns
 
@@ -160,7 +160,7 @@ Watch out for **shallow vs deep copy**: `MemberwiseClone()` and `with` copy refe
 
 ## Lesson: [Intermediate|High] Adapter
 
-Convert one interface into another that clients expect — wrap a legacy or third-party API.
+Convert one interface into another that clients expect: wrap a legacy or third-party API.
 
 ```csharp
 public interface ISmsSender { Task SendAsync(string phone, string text); }   // our interface
@@ -201,7 +201,7 @@ builder.Services.Decorate<IProductRepository, CachedProductRepository>();
 
 ## Lesson: [Intermediate|Medium] Facade, Proxy and Composite
 
-**Facade** — one simple interface over a complex subsystem.
+**Facade**: one simple interface over a complex subsystem.
 
 ```csharp
 public class CheckoutFacade(IInventory inv, IPayment pay, IShipping ship, IEmail email)
@@ -217,9 +217,9 @@ public class CheckoutFacade(IInventory inv, IPayment pay, IShipping ship, IEmail
 }
 ```
 
-**Proxy** — a stand-in that controls access: lazy loading (EF Core lazy-loading proxies), remote proxies (gRPC/WCF clients), protection proxies (authorisation checks), caching proxies.
+**Proxy**: a stand-in that controls access: lazy loading (EF Core lazy-loading proxies), remote proxies (gRPC/WCF clients), protection proxies (authorisation checks), caching proxies.
 
-**Composite** — treat individual objects and groups the same way (tree structures).
+**Composite**: treat individual objects and groups the same way (tree structures).
 
 ```csharp
 public interface IMenuItem { decimal Price(); }
@@ -229,9 +229,9 @@ public class Combo(params IMenuItem[] items) : IMenuItem { public decimal Price(
 
 ## Lesson: [Advanced|Low] Bridge and Flyweight
 
-**Bridge** — separate an abstraction from its implementation so both can vary independently (e.g. `Notification` × `Channel`: Urgent/Normal notifications over Email/SMS without 4 subclasses).
+**Bridge**: separate an abstraction from its implementation so both can vary independently (e.g. `Notification` × `Channel`: Urgent/Normal notifications over Email/SMS without 4 subclasses).
 
-**Flyweight** — share common immutable state across many objects to save memory (e.g. string interning, glyph objects in a text editor, `ArrayPool<T>` is a related idea).
+**Flyweight**: share common immutable state across many objects to save memory (e.g. string interning, glyph objects in a text editor, `ArrayPool<T>` is a related idea).
 
 # Module: Behavioural Patterns
 
@@ -266,7 +266,7 @@ var ticker = new StockTicker();
 ticker.PriceChanged += (_, e) => Console.WriteLine($"{e.Symbol}: {e.Price}");
 ```
 
-Remember to **unsubscribe** (`-=`) — a long-lived publisher holding handlers of short-lived subscribers is a classic memory leak.
+Remember to **unsubscribe** (`-=`): a long-lived publisher holding handlers of short-lived subscribers is a classic memory leak.
 
 ## Lesson: [Intermediate|High] Chain of Responsibility (and ASP.NET Core middleware)
 
@@ -288,9 +288,9 @@ Other examples: `HttpClient` `DelegatingHandler` pipeline, MediatR pipeline beha
 
 ## Lesson: [Intermediate|Medium] Command, Template Method, State and Mediator
 
-**Command** — wrap a request as an object (queue it, log it, undo it). CQRS commands (`PlaceOrderCommand`) and background job payloads are commands.
+**Command**: wrap a request as an object (queue it, log it, undo it). CQRS commands (`PlaceOrderCommand`) and background job payloads are commands.
 
-**Template Method** — the base class defines the algorithm's skeleton; subclasses fill in steps.
+**Template Method**: the base class defines the algorithm's skeleton; subclasses fill in steps.
 
 ```csharp
 public abstract class DataImporter
@@ -302,9 +302,9 @@ public abstract class DataImporter
 }
 ```
 
-**State** — an object changes behaviour when its internal state changes (Order: Pending → Paid → Shipped → Delivered, each state class allowing only valid transitions).
+**State**: an object changes behaviour when its internal state changes (Order: Pending → Paid → Shipped → Delivered, each state class allowing only valid transitions).
 
-**Mediator** — objects talk through a mediator instead of directly, which reduces coupling. MediatR: controllers send `IRequest`s, handlers process them.
+**Mediator**: objects talk through a mediator instead of directly, which reduces coupling. MediatR: controllers send `IRequest`s, handlers process them.
 
 ```csharp
 public record GetOrder(int Id) : IRequest<OrderDto?>;
@@ -318,16 +318,16 @@ public class GetOrderHandler(AppDbContext db) : IRequestHandler<GetOrder, OrderD
 
 ## Lesson: [Advanced|Low] Iterator, Visitor, Memento and Interpreter
 
-- **Iterator** — sequential access without exposing internals: `IEnumerable<T>` + `yield return`.
-- **Visitor** — add operations to a class hierarchy without changing it (double dispatch); Roslyn syntax walkers and LINQ `ExpressionVisitor` use it.
-- **Memento** — capture and restore state (undo). Records + `with` make snapshots easy.
-- **Interpreter** — evaluate a small grammar (rule engines, expression trees).
+- **Iterator**: sequential access without exposing internals: `IEnumerable<T>` + `yield return`.
+- **Visitor**: add operations to a class hierarchy without changing it (double dispatch); Roslyn syntax walkers and LINQ `ExpressionVisitor` use it.
+- **Memento**: capture and restore state (undo). Records + `with` make snapshots easy.
+- **Interpreter**: evaluate a small grammar (rule engines, expression trees).
 
 # Module: Enterprise and Cloud Patterns
 
 ## Lesson: [Intermediate|High] Repository and Unit of Work
 
-**Repository** — a collection-like abstraction over data access. **Unit of Work** — tracks changes and commits them in **one transaction**.
+**Repository**: a collection-like abstraction over data access. **Unit of Work**: tracks changes and commits them in **one transaction**.
 
 ```csharp
 public interface IOrderRepository
@@ -344,15 +344,15 @@ public class OrderRepository(AppDbContext db) : IOrderRepository
 }
 ```
 
-Note: EF Core's `DbSet<T>` already is a repository and `DbContext` a unit of work. Many teams use `DbContext` directly. Others add repositories per **aggregate** to keep EF out of the domain and simplify testing. A **generic** repository over EF often adds little value — be ready to discuss this trade-off.
+Note: EF Core's `DbSet<T>` already is a repository and `DbContext` a unit of work. Many teams use `DbContext` directly. Others add repositories per **aggregate** to keep EF out of the domain and simplify testing. A **generic** repository over EF often adds little value: be ready to discuss this trade-off.
 
 ## Lesson: [Advanced|High] CQRS, Outbox and Saga
 
-**CQRS** — separate the **write model** (commands that change state, with validation and business rules) from the **read model** (queries optimised for display, e.g. Dapper or views). It can share one database or use separate read stores.
+**CQRS**: separate the **write model** (commands that change state, with validation and business rules) from the **read model** (queries optimised for display, e.g. Dapper or views). It can share one database or use separate read stores.
 
-**Transactional Outbox** — to reliably publish an event when data changes, save the event in an `Outbox` table **in the same DB transaction** as the business data; a background worker publishes it to the broker and marks it sent. This avoids "saved but message lost" or "message sent but save rolled back".
+**Transactional Outbox**: to reliably publish an event when data changes, save the event in an `Outbox` table **in the same DB transaction** as the business data; a background worker publishes it to the broker and marks it sent. This avoids "saved but message lost" or "message sent but save rolled back".
 
-**Saga** — manage a business transaction spanning several services (each with its own DB) as a sequence of local transactions with **compensating actions** on failure (orchestration via a coordinator, or choreography via events).
+**Saga**: manage a business transaction spanning several services (each with its own DB) as a sequence of local transactions with **compensating actions** on failure (orchestration via a coordinator, or choreography via events).
 
 ## Lesson: [Advanced|High] Resilience patterns: Retry, Circuit Breaker, Timeout, Bulkhead
 
@@ -362,11 +362,11 @@ builder.Services.AddHttpClient<IPaymentClient, PaymentClient>(c => c.BaseAddress
     .AddStandardResilienceHandler();   // rate limiter, total timeout, retry (exponential + jitter), circuit breaker, attempt timeout
 ```
 
-- **Retry** — transient failures; use exponential backoff + jitter; only for idempotent operations.
-- **Circuit Breaker** — after N failures, stop calling for a period (open), then test (half-open), then close.
-- **Timeout** — never wait forever.
-- **Bulkhead** — isolate resources so one slow dependency can't exhaust all threads/connections.
-- **Fallback** — default/cached response when everything fails.
+- **Retry**: transient failures; use exponential backoff + jitter; only for idempotent operations.
+- **Circuit Breaker**: after N failures, stop calling for a period (open), then test (half-open), then close.
+- **Timeout**: never wait forever.
+- **Bulkhead**: isolate resources so one slow dependency can't exhaust all threads/connections.
+- **Fallback**: default/cached response when everything fails.
 
 ## Lesson: [Intermediate|Medium] Options pattern and other .NET-specific patterns
 
@@ -470,7 +470,7 @@ Use the **Transactional Outbox**: in the same `SaveChanges` transaction, insert 
 
 # Cheatsheet
 
-## 23 GoF patterns — one line each
+## 23 GoF patterns: one line each
 
 | Pattern | One line |
 |---|---|
@@ -515,14 +515,14 @@ Use the **Transactional Outbox**: in the same `SaveChanges` transaction, insert 
 
 ## Enterprise/cloud
 
-- **Repository + UoW** — data access abstraction + one transaction.
-- **CQRS** — separate reads and writes.
-- **Outbox** — event + data in the same transaction.
-- **Saga** — distributed transaction with compensation.
-- **Retry / Circuit Breaker / Timeout / Bulkhead** — resilience (`AddStandardResilienceHandler`).
-- **Options** — typed config: `IOptions` / `IOptionsSnapshot` / `IOptionsMonitor`.
-- **Strangler Fig** — replace a legacy system piece by piece.
-- **API Gateway / BFF** — single entry point per client type.
+- **Repository + UoW**: data access abstraction + one transaction.
+- **CQRS**: separate reads and writes.
+- **Outbox**: event + data in the same transaction.
+- **Saga**: distributed transaction with compensation.
+- **Retry / Circuit Breaker / Timeout / Bulkhead**: resilience (`AddStandardResilienceHandler`).
+- **Options**: typed config: `IOptions` / `IOptionsSnapshot` / `IOptionsMonitor`.
+- **Strangler Fig**: replace a legacy system piece by piece.
+- **API Gateway / BFF**: single entry point per client type.
 
 ## Answer formula
 

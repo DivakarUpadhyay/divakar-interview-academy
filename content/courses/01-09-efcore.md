@@ -17,8 +17,8 @@ Supported databases (providers): SQL Server / Azure SQL, SQLite, PostgreSQL (Npg
 
 Workflows:
 
-- **Code-first** — write entity classes, generate the schema with **migrations** (most common for new apps).
-- **Database-first** — **scaffold** classes from an existing DB (`dotnet ef dbcontext scaffold`).
+- **Code-first**: write entity classes, generate the schema with **migrations** (most common for new apps).
+- **Database-first**: **scaffold** classes from an existing DB (`dotnet ef dbcontext scaffold`).
 
 **EF6** (Entity Framework 6) is the older .NET Framework ORM, now in maintenance; EF Core is the modern rewrite (and EF6 also runs on .NET Core 3.1+ for migration scenarios).
 
@@ -29,7 +29,7 @@ Workflows:
 | EF 1.0 → EF 6 | 2008 → 2013 | .NET Framework ORM; EDMX designer, Code First (4.1), migrations (4.3) |
 | EF Core 1.0 | 2016 | Rewrite, lightweight, cross-platform |
 | EF Core 2.0/2.1 | 2017/2018 | Global query filters, owned types, lazy loading proxies, value conversions |
-| EF Core 3.0/3.1 (LTS) | 2019 | LINQ overhaul — **no more silent client evaluation** |
+| EF Core 3.0/3.1 (LTS) | 2019 | LINQ overhaul: **no more silent client evaluation** |
 | EF Core 5 | 2020 | Many-to-many without join entity, split queries, filtered Include, `ToQueryString()` |
 | EF Core 6 (LTS) | 2021 | Temporal tables, compiled models, migration bundles, pre-convention config |
 | EF Core 7 | 2022 | **`ExecuteUpdate`/`ExecuteDelete`** (bulk), JSON columns, TPC mapping |
@@ -82,7 +82,7 @@ An **ORM** (object-relational mapper) maps classes to tables and objects to rows
 |---|---|---|
 | Released | EF 1 (2008, .NET 3.5 SP1) → EF 4.1 Code First (2011) → **EF6 (2013)**, 6.4/6.5 last | 2016 (1.0) → **EF Core 10 (2025)** |
 | Runs on | .NET Framework (EF 6.3+ also on .NET Core 3.1+/.NET 5+) | .NET Core / .NET 5+ only |
-| Status | Maintenance only (bug/security fixes) | Active — new features every year |
+| Status | Maintenance only (bug/security fixes) | Active: new features every year |
 | Modelling | **EDMX designer** (Database First / Model First, XML model: CSDL + SSDL + MSL) or Code First | Code First only (plus **reverse engineering** with `dotnet ef dbcontext scaffold`) |
 | Context API | `DbContext` (wrapper over the older `ObjectContext`) | `DbContext` only |
 | Lazy loading | On by default (virtual navigation properties) | Off by default (opt-in proxies) |
@@ -92,7 +92,7 @@ An **ORM** (object-relational mapper) maps classes to tables and objects to rows
 **EF6 Database First with EDMX (legacy apps):** Add → ADO.NET Entity Data Model → "EF Designer from database" → pick tables/procedures → Visual Studio generates `ShopModel.edmx` (diagram) + T4 templates that generate entity classes and a `ShopEntities : DbContext`. Changing the database means **"Update Model from Database"** in the designer. The connection string contains metadata (`metadata=res://*/ShopModel.csdl|...;provider=System.Data.SqlClient;provider connection string="..."`).
 
 ```csharp
-// EF6 (System.Data.Entity) — .NET Framework MVC 5 / Web Forms
+// EF6 (System.Data.Entity): .NET Framework MVC 5 / Web Forms
 using (var db = new ShopEntities())
 {
     var orders = db.Orders.Include(o => o.Customer).Where(o => o.Total > 1000).ToList();   // Include(lambda) needs System.Data.Entity
@@ -102,14 +102,14 @@ using (var db = new ShopEntities())
 ```
 
 ```csharp
-// EF Core (Microsoft.EntityFrameworkCore) — same idea, modern API
+// EF Core (Microsoft.EntityFrameworkCore): same idea, modern API
 await using var db = new ShopDbContext(options);
 var orders = await db.Orders.Include(o => o.Customer).Where(o => o.Total > 1000).AsNoTracking().ToListAsync();
 ```
 
 **Migrating EF6 → EF Core:** move EDMX models to code-first classes (scaffold from the database), replace `System.Data.Entity` namespaces, review lazy-loading assumptions (add explicit `Include`), re-test queries that EF Core translates differently (client evaluation is no longer silent), replace EF6-only features (EDMX stored-procedure mapping, entity splitting differences), and adopt EF Core migrations from a baseline.
 
-> **Interview tip:** "Code First vs Database First": Code First — classes are the source of truth and migrations create/alter the database; Database First — the existing database is the source of truth and the model is generated from it (EDMX in EF6, scaffolding in EF Core).
+> **Interview tip:** "Code First vs Database First": Code First, classes are the source of truth and migrations create/alter the database; Database First, the existing database is the source of truth and the model is generated from it (EDMX in EF6, scaffolding in EF Core).
 
 ## Lesson: [Basic|High] DbContext, DbSet and configuration
 
@@ -167,7 +167,7 @@ dotnet ef dbcontext scaffold "Server=.;Database=Legacy;Trusted_Connection=True;T
     Microsoft.EntityFrameworkCore.SqlServer -o Models --context LegacyContext
 ```
 
-- Migrations are C# classes with `Up()` and `Down()`; review them — renames may be generated as drop + add (data loss).
+- Migrations are C# classes with `Up()` and `Down()`; review them: renames may be generated as drop + add (data loss).
 - In production prefer **idempotent scripts or bundles** applied by the pipeline over `Database.Migrate()` at app start (race conditions with multiple instances, permissions).
 
 ## Lesson: [Basic|High] Conventions, data annotations and Fluent API
@@ -207,11 +207,11 @@ Fluent-only features: composite keys (`HasKey(x => new { x.A, x.B })`), indexes,
 ## Lesson: [Intermediate|High] One-to-one, one-to-many, many-to-many
 
 ```csharp
-// One-to-many: Customer 1 — * Order
+// One-to-many: Customer 1, * Order
 b.Entity<Order>().HasOne(o => o.Customer).WithMany(c => c.Orders)
  .HasForeignKey(o => o.CustomerId).OnDelete(DeleteBehavior.Restrict);
 
-// One-to-one: User 1 — 1 Profile (dependent has the FK)
+// One-to-one: User 1, 1 Profile (dependent has the FK)
 b.Entity<User>().HasOne(u => u.Profile).WithOne(p => p.User).HasForeignKey<Profile>(p => p.UserId);
 
 // Many-to-many (EF Core 5+): skip navigations, join table created automatically
@@ -222,7 +222,7 @@ public class Course  { public int Id { get; set; } public List<Student> Students
 public class Enrollment { public int StudentId { get; set; } public int CourseId { get; set; } public DateTime EnrolledOn { get; set; } }
 ```
 
-Delete behaviours: `Cascade` (default for required relationships), `Restrict`/`NoAction`, `SetNull`, `ClientSetNull`. SQL Server rejects multiple cascade paths — use `Restrict` on one.
+Delete behaviours: `Cascade` (default for required relationships), `Restrict`/`NoAction`, `SetNull`, `ClientSetNull`. SQL Server rejects multiple cascade paths: use `Restrict` on one.
 
 ## Lesson: [Intermediate|Medium] Owned types, complex types, value conversions and inheritance
 
@@ -242,9 +242,9 @@ Inheritance strategies:
 
 | Strategy | Tables | Pros/cons |
 |---|---|---|
-| **TPH** — Table per Hierarchy (default) | One table + discriminator column | Fastest queries; nullable columns |
-| **TPT** — Table per Type | Base table + one per derived type | Normalised; joins make it slower |
-| **TPC** — Table per Concrete type (EF 7) | One table per concrete class | No joins for concrete queries; IDs must be unique across tables |
+| **TPH**: Table per Hierarchy (default) | One table + discriminator column | Fastest queries; nullable columns |
+| **TPT**: Table per Type | Base table + one per derived type | Normalised; joins make it slower |
+| **TPC**: Table per Concrete type (EF 7) | One table per concrete class | No joins for concrete queries; IDs must be unique across tables |
 
 # Module: Querying
 
@@ -257,14 +257,14 @@ var active = await db.Customers.Where(x => x.IsActive).OrderBy(x => x.Name).ToLi
 // Read-only: skip change tracking (faster, less memory)
 var list = await db.Products.AsNoTracking().Where(p => p.Price > 100).ToListAsync(ct);
 
-// Projection — best for read models; selects only needed columns, never tracked
+// Projection: best for read models; selects only needed columns, never tracked
 var dtos = await db.Orders
     .Where(o => o.CreatedAt >= from)
     .Select(o => new OrderDto(o.Id, o.Customer.Name, o.Total))
     .ToListAsync(ct);
 ```
 
-`AsNoTrackingWithIdentityResolution()` — no tracking but still one instance per key. Configure default: `UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)` for read-heavy contexts.
+`AsNoTrackingWithIdentityResolution()`: no tracking but still one instance per key. Configure default: `UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)` for read-heavy contexts.
 
 ## Lesson: [Intermediate|High] Loading related data: eager, explicit, lazy
 
@@ -294,7 +294,7 @@ await db.Entry(order).Reference(o => o.Customer).LoadAsync();
 ## Lesson: [Intermediate|High] Raw SQL, stored procedures and bulk operations
 
 ```csharp
-// Raw SQL returning entities — interpolation is parameterised (safe)
+// Raw SQL returning entities: interpolation is parameterised (safe)
 var big = await db.Orders.FromSql($"SELECT * FROM Orders WHERE Total > {minTotal}").Where(o => o.Status == "Open").ToListAsync();
 
 // Unmapped types (EF Core 8)
@@ -309,7 +309,7 @@ await db.Products.Where(p => p.CategoryId == 3)
     .ExecuteUpdateAsync(s => s.SetProperty(p => p.Price, p => p.Price * 1.1m), ct);
 ```
 
-`FromSqlRaw`/`ExecuteSqlRaw` take a string + parameters — never concatenate user input into them. `ExecuteUpdate/Delete` bypass the change tracker (tracked entities become stale) and run immediately.
+`FromSqlRaw`/`ExecuteSqlRaw` take a string + parameters: never concatenate user input into them. `ExecuteUpdate/Delete` bypass the change tracker (tracked entities become stale) and run immediately.
 
 # Module: Saving Data
 
@@ -320,12 +320,12 @@ await db.Products.Where(p => p.CategoryId == 3)
 db.Customers.Add(new Customer { Name = "Acme" });
 await db.SaveChangesAsync(ct);
 
-// Update — tracked (connected) scenario
+// Update: tracked (connected) scenario
 var p = await db.Products.FindAsync(id);
 p!.Price = 499;                                 // change tracker notices
 await db.SaveChangesAsync(ct);                  // UPDATE Products SET Price = @p0 WHERE Id = @p1
 
-// Update — disconnected (e.g. DTO from API)
+// Update: disconnected (e.g. DTO from API)
 db.Products.Update(product);                     // marks ALL properties modified
 db.Entry(product).Property(x => x.Price).IsModified = true;   // or mark only specific ones
 
@@ -359,7 +359,7 @@ catch (DbUpdateConcurrencyException ex)
 }
 ```
 
-**Optimistic concurrency** (rowversion / `IsConcurrencyToken()`): no locks; detect conflicts on save — default choice for web apps. **Pessimistic** (locks: `SELECT ... WITH (UPDLOCK)`, serializable transactions): prevents conflicts but reduces throughput.
+**Optimistic concurrency** (rowversion / `IsConcurrencyToken()`): no locks; detect conflicts on save, default choice for web apps. **Pessimistic** (locks: `SELECT ... WITH (UPDLOCK)`, serializable transactions): prevents conflicts but reduces throughput.
 
 ## Lesson: [Intermediate|High] Transactions
 
@@ -386,9 +386,9 @@ With `EnableRetryOnFailure`, user-initiated transactions must run inside an exec
 
 ## Lesson: [Advanced|High] EF Core performance checklist
 
-1. **Project** with `Select` — fetch only needed columns.
+1. **Project** with `Select`: fetch only needed columns.
 2. `AsNoTracking` for read-only queries.
-3. Avoid **N+1** — no lazy loading in loops; `Include` or projection.
+3. Avoid **N+1**: no lazy loading in loops; `Include` or projection.
 4. `AsSplitQuery` for multiple collection includes (cartesian explosion).
 5. **Paginate**; never load whole tables.
 6. Indexes for filters/joins/order-bys (`HasIndex`).
@@ -433,9 +433,9 @@ var asOf = await db.Products.TemporalAsOf(DateTime.UtcNow.AddDays(-7)).ToListAsy
 
 ## Lesson: [Intermediate|Medium] Testing code that uses EF Core
 
-- **In-Memory provider** — fast but not relational (no SQL, no constraints, no transactions); Microsoft discourages it for testing DB behaviour.
-- **SQLite in-memory** (`DataSource=:memory:`) — relational, fast; some SQL Server differences.
-- **Testcontainers** with real SQL Server — most accurate; slower startup (share one container per test run, reset with Respawn).
+- **In-Memory provider**: fast but not relational (no SQL, no constraints, no transactions); Microsoft discourages it for testing DB behaviour.
+- **SQLite in-memory** (`DataSource=:memory:`), relational, fast; some SQL Server differences.
+- **Testcontainers** with real SQL Server: most accurate; slower startup (share one container per test run, reset with Respawn).
 - Or hide EF behind repositories and mock those for unit tests of business logic.
 
 # Interview
@@ -446,11 +446,11 @@ An open-source, cross-platform ORM that maps C# classes to database tables. You 
 
 ## [Beginner|High] Code-first vs database-first?
 
-Code-first: you design entity classes and DbContext; migrations create and evolve the schema — the model is the source of truth (common for new projects). Database-first: the database exists (or DBAs own it); you scaffold entities and context from it with `dotnet ef dbcontext scaffold` and re-scaffold when the schema changes. EF Core has no EDMX designer (that was EF6).
+Code-first: you design entity classes and DbContext; migrations create and evolve the schema, the model is the source of truth (common for new projects). Database-first: the database exists (or DBAs own it); you scaffold entities and context from it with `dotnet ef dbcontext scaffold` and re-scaffold when the schema changes. EF Core has no EDMX designer (that was EF6).
 
 ## [Beginner|High] What is DbContext? Is it thread-safe? What lifetime should it have?
 
-DbContext represents a session with the database: it holds DbSets, the change tracker, configuration, and implements unit of work (`SaveChanges`). It is **not thread-safe** — never share it across concurrent operations (no parallel `await`s on the same context). Register it **scoped** in ASP.NET Core (one per request) and keep it short-lived; use `IDbContextFactory` for background services, Blazor Server or parallel work.
+DbContext represents a session with the database: it holds DbSets, the change tracker, configuration, and implements unit of work (`SaveChanges`). It is **not thread-safe**: never share it across concurrent operations (no parallel `await`s on the same context). Register it **scoped** in ASP.NET Core (one per request) and keep it short-lived; use `IDbContextFactory` for background services, Blazor Server or parallel work.
 
 ## [Beginner|High] What are migrations? What commands do you use?
 
@@ -458,15 +458,15 @@ Migrations are versioned C# files describing schema changes (Up/Down), generated
 
 ## [Beginner|High] What is the difference between eager, lazy and explicit loading?
 
-Eager: related data loaded in the same query with `Include`/`ThenInclude`. Explicit: load later on demand with `Entry(x).Collection(...).Load()` / `.Reference(...).Load()`. Lazy: navigation properties load automatically on first access (needs proxies or `ILazyLoader`, virtual navigations) — convenient but causes hidden N+1 queries. Projections (`Select`) are often better than any of them for read models.
+Eager: related data loaded in the same query with `Include`/`ThenInclude`. Explicit: load later on demand with `Entry(x).Collection(...).Load()` / `.Reference(...).Load()`. Lazy: navigation properties load automatically on first access (needs proxies or `ILazyLoader`, virtual navigations), convenient but causes hidden N+1 queries. Projections (`Select`) are often better than any of them for read models.
 
 ## [Beginner|Medium] What is the difference between `Find` and `FirstOrDefault`?
 
-`Find(key)` looks up by primary key and first checks the **change tracker** — if the entity is already tracked, no DB query is sent. `FirstOrDefault(predicate)` always queries the database (with any predicate) and supports `Include`/ordering. `Find` can't use `Include`.
+`Find(key)` looks up by primary key and first checks the **change tracker**: if the entity is already tracked, no DB query is sent. `FirstOrDefault(predicate)` always queries the database (with any predicate) and supports `Include`/ordering. `Find` can't use `Include`.
 
 ## [Intermediate|High] What is change tracking? What is AsNoTracking?
 
-When EF loads entities it keeps a snapshot of their original values. On `SaveChanges`, `DetectChanges` compares current vs original values and generates UPDATEs for changed columns; entity states drive INSERT/DELETE. `AsNoTracking()` skips this — faster and less memory for read-only queries, but changes to those objects won't be saved unless you attach them.
+When EF loads entities it keeps a snapshot of their original values. On `SaveChanges`, `DetectChanges` compares current vs original values and generates UPDATEs for changed columns; entity states drive INSERT/DELETE. `AsNoTracking()` skips this: faster and less memory for read-only queries, but changes to those objects won't be saved unless you attach them.
 
 ## [Intermediate|High] Explain entity states in EF Core.
 
@@ -486,7 +486,7 @@ By convention (navigation properties + `XxxId` FK), data annotations (`[ForeignK
 
 ## [Intermediate|Medium] What are global query filters? Give use cases.
 
-LINQ predicates configured per entity type in `OnModelCreating` (`HasQueryFilter`) that EF automatically adds to every query for that type — e.g. soft delete (`!IsDeleted`) and multi-tenancy (`TenantId == currentTenant`). Bypass with `IgnoreQueryFilters()`. EF Core 10 adds named filters so you can disable them individually.
+LINQ predicates configured per entity type in `OnModelCreating` (`HasQueryFilter`) that EF automatically adds to every query for that type: e.g. soft delete (`!IsDeleted`) and multi-tenancy (`TenantId == currentTenant`). Bypass with `IgnoreQueryFilters()`. EF Core 10 adds named filters so you can disable them individually.
 
 ## [Intermediate|Medium] How do you execute raw SQL or stored procedures in EF Core?
 
@@ -494,7 +494,7 @@ LINQ predicates configured per entity type in `OnModelCreating` (`HasQueryFilter
 
 ## [Intermediate|Medium] What are ExecuteUpdate and ExecuteDelete?
 
-EF Core 7 set-based operations that translate directly into a single `UPDATE`/`DELETE ... WHERE` statement without loading entities into memory or using the change tracker — e.g. `db.Orders.Where(o => o.Expired).ExecuteDeleteAsync()`. Much faster for bulk changes. Caveats: they run immediately (not part of `SaveChanges` unless inside an explicit transaction) and tracked entities aren't updated.
+EF Core 7 set-based operations that translate directly into a single `UPDATE`/`DELETE ... WHERE` statement without loading entities into memory or using the change tracker: e.g. `db.Orders.Where(o => o.Expired).ExecuteDeleteAsync()`. Much faster for bulk changes. Caveats: they run immediately (not part of `SaveChanges` unless inside an explicit transaction) and tracked entities aren't updated.
 
 ## [Advanced|High] How do you improve EF Core query performance?
 
@@ -504,7 +504,7 @@ Project only needed columns; `AsNoTracking`; avoid N+1 and lazy loading; `AsSpli
 
 `db.Update(entity)` attaches a detached entity and marks **all** properties as Modified → UPDATE writes every column (can overwrite concurrent changes in other columns). Loading the entity and setting properties (or `Attach` + marking specific properties `IsModified = true`) updates only changed columns. In APIs, prefer loading → mapping the DTO onto the tracked entity → saving, with a concurrency token.
 
-## [Advanced|Medium] EF Core vs EF6 — key differences?
+## [Advanced|Medium] EF Core vs EF6: key differences?
 
 EF Core: cross-platform, lighter, faster, supports more DB providers incl. Cosmos, has features like global query filters, `ExecuteUpdate`, JSON columns, compiled models, split queries; no EDMX designer, no ObjectContext. EF6: .NET Framework-centric (also runs on .NET Core 3.1+), EDMX/database-first designer, mature but maintenance only. New development should use EF Core.
 
@@ -526,11 +526,11 @@ EF scaffolded the rename as drop + add. Prevention: always review generated migr
 
 ## [Scenario|Medium] A BackgroundService throws "A second operation was started on this context instance before a previous operation completed." Why?
 
-The same DbContext was used concurrently — e.g. parallel tasks (`Task.WhenAll`) or a singleton service holding one context. DbContext isn't thread-safe. Fix: create a new scope/context per unit of work (`IServiceScopeFactory` or `IDbContextFactory<T>.CreateDbContext()` per task), and `await` each operation before starting the next on the same context.
+The same DbContext was used concurrently: e.g. parallel tasks (`Task.WhenAll`) or a singleton service holding one context. DbContext isn't thread-safe. Fix: create a new scope/context per unit of work (`IServiceScopeFactory` or `IDbContextFactory<T>.CreateDbContext()` per task), and `await` each operation before starting the next on the same context.
 
 ## [Intermediate|Medium] What is the difference between DbContext and ObjectContext?
 
-`ObjectContext` was the original Entity Framework (EF 1–4) API: verbose, tied to EDMX models and `ObjectSet<T>`. `DbContext` (EF 4.1+) is a simpler, lightweight wrapper over ObjectContext with `DbSet<T>`, Code First, change tracking via `ChangeTracker` and easy configuration; you could still reach the ObjectContext through `IObjectContextAdapter` in EF6. EF Core has only `DbContext` — ObjectContext doesn't exist there.
+`ObjectContext` was the original Entity Framework (EF 1–4) API: verbose, tied to EDMX models and `ObjectSet<T>`. `DbContext` (EF 4.1+) is a simpler, lightweight wrapper over ObjectContext with `DbSet<T>`, Code First, change tracking via `ChangeTracker` and easy configuration; you could still reach the ObjectContext through `IObjectContextAdapter` in EF6. EF Core has only `DbContext`: ObjectContext doesn't exist there.
 
 # Cheatsheet
 

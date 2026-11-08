@@ -12,7 +12,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/courses/[slug]/overview">): Promise<Metadata> {
   const c = getCourse((await params).slug);
   if (!c) return { title: "Course" };
-  return pageMeta({ title: `${c.title} — Overview, Versions, Lifecycle & Tools`, description: `${c.title}: what it is, every version and its features, how it works step by step, and the tools you need. ${c.summary}`, path: `/courses/${c.slug}/overview` });
+  return pageMeta({ title: `${c.title}: Overview, Versions, Lifecycle & Tools`, description: `${c.title}: what it is, every version and its features, how it works step by step, and the tools you need. ${c.summary}`, path: `/courses/${c.slug}/overview` });
 }
 
 export default async function OverviewPage({ params }: PageProps<"/courses/[slug]/overview">) {

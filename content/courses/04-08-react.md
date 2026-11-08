@@ -15,14 +15,14 @@ summary: JSX, components and props, state, events, conditional rendering and lis
 
 Core ideas:
 
-- **Declarative UI** — describe what the UI should look like for a given state; React updates the DOM.
-- **Components** — functions returning **JSX**; compose them like building blocks.
-- **One-way data flow** — data flows down via **props**; events flow up via callbacks.
-- **State + re-render** — when state changes, React re-renders the component and **reconciles** the result against the previous render, updating only what changed in the DOM.
-- **Hooks** (2019) — state and side effects in function components.
-- **"Learn once, write anywhere"** — React DOM (web), React Native (mobile), React Server Components.
+- **Declarative UI**: describe what the UI should look like for a given state; React updates the DOM.
+- **Components**: functions returning **JSX**; compose them like building blocks.
+- **One-way data flow**: data flows down via **props**; events flow up via callbacks.
+- **State + re-render**: when state changes, React re-renders the component and **reconciles** the result against the previous render, updating only what changed in the DOM.
+- **Hooks** (2019): state and side effects in function components.
+- **"Learn once, write anywhere"**: React DOM (web), React Native (mobile), React Server Components.
 
-React is a *library*; for routing, data fetching, SSR and bundling you add tools or use a **framework** such as **Next.js** or **React Router (framework mode, formerly Remix)** — the React docs recommend starting new apps with a framework (or Vite for a pure client app). Create React App was **deprecated in February 2025**.
+React is a *library*; for routing, data fetching, SSR and bundling you add tools or use a **framework** such as **Next.js** or **React Router (framework mode, formerly Remix)**: the React docs recommend starting new apps with a framework (or Vite for a pure client app). Create React App was **deprecated in February 2025**.
 
 # Versions
 
@@ -32,20 +32,20 @@ React is a *library*; for routing, data fetching, SSR and bundling you add tools
 | 0.14 | 2015 | `react` / `react-dom` split, stateless function components |
 | 15 | Apr 2016 | Version jump from 0.14; `createElement` DOM rendering |
 | **16** | Sep 2017 | **Fiber** reconciler, fragments, error boundaries, portals; 16.3 new Context API; **16.8 (Feb 2019) Hooks** |
-| 17 | Oct 2020 | No new features — gradual upgrades, new JSX transform (no `import React` needed) |
+| 17 | Oct 2020 | No new features: gradual upgrades, new JSX transform (no `import React` needed) |
 | **18** | Mar 2022 | **Concurrent rendering**, `createRoot`, **automatic batching**, `useTransition`, `useDeferredValue`, `useId`, streaming SSR with Suspense |
 | **19** | Dec 2024 | **Actions**, `useActionState`, `useOptimistic`, `use()`, form `action`, `ref` as a prop, Server Components & Server Actions stable, document metadata, resource preloading |
 | 19.1 / 19.2 | 2025 | Owner stacks; 19.2 (Oct 2025): `<Activity>`, `useEffectEvent`, partial pre-rendering, `cacheSignal` |
 
-Ecosystem milestones: **React Compiler 1.0** (Oct 2025 — automatic memoisation), React Native New Architecture default (0.76, 2024), React and React Native moved to the **React Foundation** under the Linux Foundation (announced Oct 2025). Next.js: 13 (App Router, 2022), 14, 15 (2024, React 19), 16 (2025, Turbopack default).
+Ecosystem milestones: **React Compiler 1.0** (Oct 2025, automatic memoisation), React Native New Architecture default (0.76, 2024), React and React Native moved to the **React Foundation** under the Linux Foundation (announced Oct 2025). Next.js: 13 (App Router, 2022), 14, 15 (2024, React 19), 16 (2025, Turbopack default).
 
 # Lifecycle
 
 **Component lifecycle (function components):**
 
-1. **Mount** — React calls the component function (render) → commits DOM → runs `useLayoutEffect` → browser paints → runs `useEffect` callbacks.
-2. **Update** — triggered by a state change, new props from the parent re-rendering, or a context change → render again → React **diffs** the new element tree with the old one (reconciliation) → commits minimal DOM changes → runs effect **cleanups** for changed dependencies, then the new effects.
-3. **Unmount** — effect cleanups run (unsubscribe, clear timers).
+1. **Mount**: React calls the component function (render) → commits DOM → runs `useLayoutEffect` → browser paints → runs `useEffect` callbacks.
+2. **Update**: triggered by a state change, new props from the parent re-rendering, or a context change → render again → React **diffs** the new element tree with the old one (reconciliation) → commits minimal DOM changes → runs effect **cleanups** for changed dependencies, then the new effects.
+3. **Unmount**: effect cleanups run (unsubscribe, clear timers).
 
 In development **Strict Mode** mounts components twice (mount → unmount → mount) to reveal missing cleanups.
 
@@ -59,7 +59,7 @@ In development **Strict Mode** mounts components twice (mount → unmount → mo
 | `shouldComponentUpdate` | `React.memo` |
 | `this.state` / `setState` | `useState` / `useReducer` |
 
-**Render phases:** **render phase** (pure — call components, compute the tree; can be paused/interrupted in concurrent mode) → **commit phase** (apply DOM mutations, run layout effects, then passive effects).
+**Render phases:** **render phase** (pure, call components, compute the tree; can be paused/interrupted in concurrent mode) → **commit phase** (apply DOM mutations, run layout effects, then passive effects).
 
 # Tools
 
@@ -88,7 +88,7 @@ function OrderCard({ order, onSelect }) {            // props are read-only
   const isBig = order.total > 10000;
   return (
     <div className={`card ${isBig ? "big" : ""}`} onClick={() => onSelect(order.id)}>
-      <h3>#{order.id} — {order.customer}</h3>
+      <h3>#{order.id}: {order.customer}</h3>
       <p>{order.total.toLocaleString("en-IN", { style: "currency", currency: "INR" })}</p>
     </div>
   );
@@ -130,7 +130,7 @@ function Counter() {
 }
 ```
 
-- State updates are **asynchronous and batched** — `count` doesn't change until the next render. Use the **functional form** (`c => c + 1`) when the new value depends on the old one.
+- State updates are **asynchronous and batched**: `count` doesn't change until the next render. Use the **functional form** (`c => c + 1`) when the new value depends on the old one.
 - Never mutate state (`form.name = "x"`); create new objects/arrays (`[...items, newItem]`, `items.filter(...)`, `items.map(...)`).
 - Lazy initial state for expensive computation: `useState(() => loadFromStorage())`.
 - Events are React **synthetic events** wrapping native ones; `e.preventDefault()` for forms.
@@ -140,7 +140,7 @@ function Counter() {
 ```jsx
 {isLoading ? <Spinner /> : <OrderTable orders={orders} />}
 {error && <p className="error">{error.message}</p>}
-{orders.length === 0 && <EmptyState />}            {/* careful: {0 && <X/>} renders "0" — use length > 0 */}
+{orders.length === 0 && <EmptyState />}            {/* careful: {0 && <X/>} renders "0", use length > 0 */}
 
 <ul>
   {todos.map(todo => <TodoItem key={todo.id} todo={todo} />)}
@@ -179,7 +179,7 @@ function SearchForm() {
 
 For real forms, **React Hook Form** (uncontrolled, performant) + **Zod** schema validation is common; React 19 adds form **Actions** (below).
 
-## Lesson: [Basic|High] React project folder structure — with sample files (Vite + TypeScript)
+## Lesson: [Basic|High] React project folder structure: with sample files (Vite + TypeScript)
 
 `npm create vite@latest shop-ui -- --template react-ts` creates a client-side React app. A real project grows into a **feature-based** structure:
 
@@ -253,7 +253,7 @@ Next.js projects use the `app/` folder conventions instead (see the **Next.js** 
 
 ## Lesson: [Intermediate|High] Connecting a React app to SQL Server (through an API)
 
-A browser app **never connects to SQL Server directly** — it would expose the connection string and SQL Server doesn't speak HTTP. The pattern is: **React → HTTP API (ASP.NET Core or Node.js) → SQL Server**.
+A browser app **never connects to SQL Server directly**: it would expose the connection string and SQL Server doesn't speak HTTP. The pattern is: **React → HTTP API (ASP.NET Core or Node.js) → SQL Server**.
 
 ```text
 React (browser)  ──fetch JSON──▶  ASP.NET Core Web API / Node Express  ──ADO.NET/EF/Dapper or mssql──▶  SQL Server
@@ -300,12 +300,12 @@ export default function ProductList() {
   const { data, isLoading, error } = useProducts();
   if (isLoading) return <p>Loading…</p>;
   if (error) return <p>Could not load products.</p>;
-  return <ul>{data!.map((p) => <li key={p.id}>{p.name} — ₹{p.price}</li>)}</ul>;
+  return <ul>{data!.map((p) => <li key={p.id}>{p.name}: ₹{p.price}</li>)}</ul>;
 }
 ```
 
 ```ts
-// vite.config.ts — dev proxy avoids CORS during development
+// vite.config.ts: dev proxy avoids CORS during development
 export default defineConfig({
   plugins: [react()],
   server: { proxy: { "/api": { target: "https://localhost:7001", changeOrigin: true, secure: false } } },
@@ -344,7 +344,7 @@ function OrderDetails({ orderId }) {
 | `[]` | Once after mount (cleanup on unmount) |
 | `[a, b]` | After mount and whenever `a` or `b` changes (`Object.is` comparison) |
 
-Rules: include every reactive value used inside (the ESLint rule enforces it); don't use effects for things computable during render ("you might not need an effect"); avoid setting state that triggers the same effect in a loop; prefer a data library (TanStack Query) or framework loaders for data fetching (caching, dedupe, race conditions). `useLayoutEffect` runs synchronously after DOM mutations before paint — for measuring layout.
+Rules: include every reactive value used inside (the ESLint rule enforces it); don't use effects for things computable during render ("you might not need an effect"); avoid setting state that triggers the same effect in a loop; prefer a data library (TanStack Query) or framework loaders for data fetching (caching, dedupe, race conditions). `useLayoutEffect` runs synchronously after DOM mutations before paint: for measuring layout.
 
 ## Lesson: [Intermediate|High] useRef, useMemo, useCallback and React.memo
 
@@ -366,9 +366,9 @@ const OrderRow = memo(function OrderRow({ order, onSelect }) {  // skip re-rende
 ```
 
 - `useMemo` caches a **value**; `useCallback` caches a **function** (`useCallback(fn, deps)` = `useMemo(() => fn, deps)`).
-- `React.memo` caches a **component's render** for the same props — useful only if props are stable (hence `useCallback`/`useMemo` for objects and functions passed down).
-- Don't memoise everything — it has its own cost. The **React Compiler** (1.0, Oct 2025) adds memoisation automatically at build time, making most manual `useMemo`/`useCallback`/`memo` unnecessary in new code.
-- `forwardRef` is no longer needed in React 19 — `ref` is a regular prop for function components.
+- `React.memo` caches a **component's render** for the same props: useful only if props are stable (hence `useCallback`/`useMemo` for objects and functions passed down).
+- Don't memoise everything: it has its own cost. The **React Compiler** (1.0, Oct 2025) adds memoisation automatically at build time, making most manual `useMemo`/`useCallback`/`memo` unnecessary in new code.
+- `forwardRef` is no longer needed in React 19: `ref` is a regular prop for function components.
 
 ## Lesson: [Intermediate|High] useContext and useReducer
 
@@ -399,7 +399,7 @@ const [cart, dispatch] = useReducer(cartReducer, { items: [] });
 dispatch({ type: "add", item: { id: 7, name: "Mouse", price: 900 } });
 ```
 
-Context avoids **prop drilling** for app-wide values (theme, auth, locale). Every consumer re-renders when the context value changes — split contexts, memoise the value, or use a state library for frequently changing global state.
+Context avoids **prop drilling** for app-wide values (theme, auth, locale). Every consumer re-renders when the context value changes: split contexts, memoise the value, or use a state library for frequently changing global state.
 
 ## Lesson: [Intermediate|High] Custom hooks and the Rules of Hooks
 
@@ -425,7 +425,7 @@ function useDebounce(value, ms = 300) {
 }
 ```
 
-**Rules of Hooks:** 1) call hooks only at the **top level** of a component or custom hook (not in loops, conditions, nested functions or after early returns) — React relies on call order; 2) call them only from React function components or custom hooks. Custom hook names start with `use`. Exception: the new `use()` API can be called conditionally.
+**Rules of Hooks:** 1) call hooks only at the **top level** of a component or custom hook (not in loops, conditions, nested functions or after early returns), React relies on call order; 2) call them only from React function components or custom hooks. Custom hook names start with `use`. Exception: the new `use()` API can be called conditionally.
 
 # Module: React 19 and Server Components
 
@@ -464,13 +464,13 @@ Also: `useFormStatus` (pending state for a submit button inside a form), `useTra
 
 ## Lesson: [Advanced|High] Server Components, SSR and Next.js basics
 
-- **CSR** (client-side rendering): browser downloads JS and renders — slower first paint, weak SEO.
+- **CSR** (client-side rendering): browser downloads JS and renders, slower first paint, weak SEO.
 - **SSR** (server-side rendering): server renders HTML per request, client **hydrates** to make it interactive.
 - **SSG** (static generation): HTML at build time; **ISR** regenerates periodically.
 - **React Server Components (RSC)**: components that run **only on the server** (can read databases/files directly, ship zero JS); **Client Components** (`"use client"`) handle state and events. **Server Actions/Functions** (`"use server"`) are server functions callable from forms/client code.
 
 ```tsx
-// Next.js App Router — app/orders/page.tsx (Server Component by default)
+// Next.js App Router: app/orders/page.tsx (Server Component by default)
 export default async function OrdersPage() {
   const orders = await db.order.findMany({ orderBy: { createdAt: "desc" }, take: 20 });   // runs on the server
   return <OrderTable orders={orders} />;
@@ -563,7 +563,7 @@ const Reports = lazy(() => import("./Reports"));
 createPortal(<Modal />, document.getElementById("modal-root"));
 ```
 
-Error boundaries catch errors during rendering, lifecycle and constructors of children — **not** in event handlers, async code or the boundary itself.
+Error boundaries catch errors during rendering, lifecycle and constructors of children: **not** in event handlers, async code or the boundary itself.
 
 ## Lesson: [Advanced|High] Performance optimisation
 
@@ -574,7 +574,7 @@ Error boundaries catch errors during rendering, lifecycle and constructors of ch
 5. `useTransition`/`useDeferredValue` to keep typing responsive during heavy updates.
 6. Debounce expensive inputs; avoid creating objects/functions inline for memoised children (or use the compiler).
 7. Server Components/SSR to ship less JS; image optimisation; caching server data (TanStack Query).
-8. Production build (`vite build`) — dev mode is much slower.
+8. Production build (`vite build`): dev mode is much slower.
 
 ## Lesson: [Intermediate|Medium] Testing React components
 
@@ -604,7 +604,7 @@ JSX is a syntax extension that looks like HTML inside JavaScript. A compiler (Ba
 
 ## [Beginner|High] What is the virtual DOM and reconciliation?
 
-The virtual DOM is a lightweight in-memory tree of React elements describing the UI. On each render React creates a new tree, **diffs** it against the previous one (reconciliation) using heuristics — elements of a different type are replaced, same-type elements are updated, keys identify list items — and applies only the minimal changes to the real DOM in the commit phase. Fiber (React 16+) made this work interruptible and prioritised.
+The virtual DOM is a lightweight in-memory tree of React elements describing the UI. On each render React creates a new tree, **diffs** it against the previous one (reconciliation) using heuristics: elements of a different type are replaced, same-type elements are updated, keys identify list items, and applies only the minimal changes to the real DOM in the commit phase. Fiber (React 16+) made this work interruptible and prioritised.
 
 ## [Beginner|High] What is the difference between props and state?
 
@@ -616,15 +616,15 @@ Keys give each list item a stable identity so React can match elements between r
 
 ## [Beginner|Medium] Controlled vs uncontrolled components?
 
-In a controlled component, form input values are driven by React state (`value` + `onChange`), giving React full control — instant validation, conditional disabling, formatting. In an uncontrolled component, the DOM keeps the value and you read it when needed via refs or `FormData` (`defaultValue`), which means less code and fewer re-renders (React Hook Form uses this approach). File inputs are always uncontrolled.
+In a controlled component, form input values are driven by React state (`value` + `onChange`), giving React full control: instant validation, conditional disabling, formatting. In an uncontrolled component, the DOM keeps the value and you read it when needed via refs or `FormData` (`defaultValue`), which means less code and fewer re-renders (React Hook Form uses this approach). File inputs are always uncontrolled.
 
 ## [Intermediate|High] Explain useEffect and its dependency array. How do you clean up?
 
-`useEffect(fn, deps)` runs side effects (data fetching, subscriptions, timers, DOM APIs) after the component commits. With no deps it runs after every render; with `[]` once after mount; with `[a, b]` when those values change. Return a cleanup function from the effect to unsubscribe, clear timers or abort fetches — React runs it before re-running the effect and on unmount. Missing dependencies cause stale values; the ESLint hooks rule helps.
+`useEffect(fn, deps)` runs side effects (data fetching, subscriptions, timers, DOM APIs) after the component commits. With no deps it runs after every render; with `[]` once after mount; with `[a, b]` when those values change. Return a cleanup function from the effect to unsubscribe, clear timers or abort fetches: React runs it before re-running the effect and on unmount. Missing dependencies cause stale values; the ESLint hooks rule helps.
 
 ## [Intermediate|High] What are the Rules of Hooks and why do they exist?
 
-Only call hooks at the top level of React function components or custom hooks — never inside loops, conditions, nested functions or after early returns — and only from React functions. React stores hook state in an ordered list per component and relies on the call order being identical on every render to match each `useState`/`useEffect` with its stored data.
+Only call hooks at the top level of React function components or custom hooks: never inside loops, conditions, nested functions or after early returns, and only from React functions. React stores hook state in an ordered list per component and relies on the call order being identical on every render to match each `useState`/`useEffect` with its stored data.
 
 ## [Intermediate|High] useMemo vs useCallback vs React.memo?
 
@@ -632,7 +632,7 @@ Only call hooks at the top level of React function components or custom hooks �
 
 ## [Intermediate|High] What is the Context API? When would you not use it?
 
-Context passes data through the component tree without prop drilling: `createContext`, a provider with a value, and `useContext` in consumers. It suits low-frequency global values (theme, auth user, locale, feature flags). Avoid it for frequently changing, large global state, because every consumer re-renders on any change of the value — use a state library (Zustand, Redux Toolkit) or split contexts and memoise values. It's not a replacement for server-state caching.
+Context passes data through the component tree without prop drilling: `createContext`, a provider with a value, and `useContext` in consumers. It suits low-frequency global values (theme, auth user, locale, feature flags). Avoid it for frequently changing, large global state, because every consumer re-renders on any change of the value: use a state library (Zustand, Redux Toolkit) or split contexts and memoise values. It's not a replacement for server-state caching.
 
 ## [Intermediate|High] useState vs useReducer?
 
@@ -644,7 +644,7 @@ When two components need the same changing data, move the state to their closest
 
 ## [Intermediate|Medium] What are custom hooks? Give an example.
 
-Functions starting with `use` that call other hooks to encapsulate reusable stateful logic — `useFetch(url)`, `useDebounce(value)`, `useLocalStorage(key)`, `useOnlineStatus()`. Each component that calls a custom hook gets its own independent state. They replace older patterns like HOCs and render props for logic reuse.
+Functions starting with `use` that call other hooks to encapsulate reusable stateful logic: `useFetch(url)`, `useDebounce(value)`, `useLocalStorage(key)`, `useOnlineStatus()`. Each component that calls a custom hook gets its own independent state. They replace older patterns like HOCs and render props for logic reuse.
 
 ## [Intermediate|Medium] What are error boundaries?
 
@@ -656,7 +656,7 @@ Profile with React DevTools; avoid unnecessary re-renders (state colocation, spl
 
 ## [Advanced|High] What are React Server Components and how do they differ from SSR?
 
-SSR renders the whole component tree to HTML on the server per request, then ships all the component JS to hydrate it in the browser. Server Components are components that run only on the server (or at build time): they can access databases and secrets directly, and their code is never sent to the browser — only their rendered output (RSC payload). Client Components (`"use client"`) are still hydrated for interactivity. RSC and SSR are complementary — frameworks like Next.js use both.
+SSR renders the whole component tree to HTML on the server per request, then ships all the component JS to hydrate it in the browser. Server Components are components that run only on the server (or at build time): they can access databases and secrets directly, and their code is never sent to the browser, only their rendered output (RSC payload). Client Components (`"use client"`) are still hydrated for interactivity. RSC and SSR are complementary: frameworks like Next.js use both.
 
 ## [Advanced|Medium] What's new in React 18 and 19?
 
@@ -680,7 +680,7 @@ Feature-based folders (`features/orders/{components,hooks,api,types}`) plus shar
 
 ## [Scenario|Medium] A modal rendered inside a card is cut off by `overflow: hidden` on the card. How do you fix it in React?
 
-Render the modal with a **portal** (`createPortal(<Modal />, document.body)` or a dedicated `#modal-root`) so it's attached outside the card's DOM hierarchy while still part of the React tree (events and context still work). Manage focus trapping, Escape to close and `aria-modal` for accessibility — or use the native `<dialog>` element or an accessible library (Radix UI).
+Render the modal with a **portal** (`createPortal(<Modal />, document.body)` or a dedicated `#modal-root`) so it's attached outside the card's DOM hierarchy while still part of the React tree (events and context still work). Manage focus trapping, Escape to close and `aria-modal` for accessibility, or use the native `<dialog>` element or an accessible library (Radix UI).
 
 # Cheatsheet
 

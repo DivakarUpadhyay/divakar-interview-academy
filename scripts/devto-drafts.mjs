@@ -17,7 +17,7 @@ const API = "https://dev.to/api";
 
 const env = fs.existsSync(".env.devto.local") ? fs.readFileSync(".env.devto.local", "utf8") : "";
 const KEY = process.env.DEVTO_API_KEY ?? env.match(/^DEVTO_API_KEY=(.+)$/m)?.[1]?.trim();
-if (!KEY) throw new Error("DEVTO_API_KEY missing — put it in .env.devto.local");
+if (!KEY) throw new Error("DEVTO_API_KEY missing: put it in .env.devto.local");
 const headers = { "api-key": KEY, "content-type": "application/json", accept: "application/vnd.forem.api-v1+json", "user-agent": "devladder-drafts" };
 
 // dev.to allows 4 tags: lowercase letters and digits only.
@@ -65,7 +65,7 @@ function pick(all, done, n) {
   const order = ["dotnet", "data", "devops-cloud", "frontend", "interview", "foundations", "automation", "web3"];
   const queues = [...byCourse.values()].sort((a, b) => order.indexOf(a[0].course.track) - order.indexOf(b[0].course.track));
   const picked = [];
-  const topic = (t) => t.toLowerCase().split(/\s+[—-]\s+/)[0];
+  const topic = (t) => t.toLowerCase().split(/\s+[—:-]\s*/)[0];
   const seen = new Set();
   for (let round = 0; picked.length < n && queues.some((q) => q.length > round); round++)
     for (const q of queues) {
@@ -85,15 +85,15 @@ function article(l) {
 
 ${l.body.trim()}
 
-## Interview questions on ${l.course.title.split(" — ")[0]}
+## Interview questions on ${l.course.title.split(": ")[0]}
 
 ${qs}
 
 ---
 
-Read the [full lesson with progress tracking](${l.url}) and the rest of the course on **DevLadder** — free step-by-step tutorials and interview questions for developers.${next}`;
+Read the [full lesson with progress tracking](${l.url}) and the rest of the course on **DevLadder**: free step-by-step tutorials and interview questions for developers.${next}`;
   return {
-    title: `${l.title} — ${l.course.title.split(" — ")[0]}`.slice(0, 128),
+    title: `${l.title} (${l.course.title.split(": ")[0]})`.slice(0, 128),
     body_markdown: body,
     published: false,
     canonical_url: l.url,

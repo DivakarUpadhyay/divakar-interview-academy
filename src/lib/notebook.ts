@@ -14,7 +14,7 @@ export type NoteItem = {
   interviewDay?: boolean; // on the interview-day checklist
   checked?: boolean;      // ticked on the checklist
   note?: string;
-  listOnly?: boolean;     // typed straight into the checklist — not a note
+  listOnly?: boolean;     // typed straight into the checklist, not a note
   updated: number;
 };
 

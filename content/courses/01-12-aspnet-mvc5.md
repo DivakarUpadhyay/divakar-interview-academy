@@ -1,6 +1,6 @@
 ---
 slug: aspnet-mvc5
-title: ASP.NET MVC 5 (.NET Framework) — Folder Structure, Request Life Cycle and Features
+title: ASP.NET MVC 5 (.NET Framework): Folder Structure, Request Life Cycle and Features
 track: dotnet
 order: 12
 group: ASP.NET (.NET Framework)
@@ -16,7 +16,7 @@ summary: The MVC pattern, the classic MVC 5 project and folder structure (App_St
 | Part | Responsibility | Example |
 |---|---|---|
 | **Model** | Data and business rules (entities, view models, validation) | `Product`, `ProductViewModel` |
-| **View** | Presentation — Razor templates producing HTML | `Views/Products/Index.cshtml` |
+| **View** | Presentation: Razor templates producing HTML | `Views/Products/Index.cshtml` |
 | **Controller** | Handles the request, calls services, chooses the view/result | `ProductsController.Index()` |
 
 | | Web Forms | MVC 5 | ASP.NET Core MVC |
@@ -102,7 +102,7 @@ ShopMvc/                                  (ASP.NET Web Application, .NET Framewo
 
 **Conventions:** a controller class ends with `Controller` and lives in `Controllers/`; its views are in `Views/<ControllerName>/<ActionName>.cshtml`; shared views in `Views/Shared`. Layered solutions usually add `Shop.Core` (domain), `Shop.Data` (EF/Dapper), `Shop.Services` projects referenced by the web project.
 
-## Lesson: [Basic|High] Routing — conventional and attribute routes
+## Lesson: [Basic|High] Routing: conventional and attribute routes
 
 ```csharp
 // App_Start/RouteConfig.cs
@@ -135,7 +135,7 @@ public class OrdersController : Controller
 }
 ```
 
-Routes are checked **in order** — put specific routes before the generic default. `Url.Action("Details", "Orders", new { id = 5 })` and `Html.ActionLink` generate URLs from routes, so URLs change in one place.
+Routes are checked **in order**: put specific routes before the generic default. `Url.Action("Details", "Orders", new { id = 5 })` and `Html.ActionLink` generate URLs from routes, so URLs change in one place.
 
 # Module: Controllers and Views
 
@@ -182,7 +182,7 @@ public class ProductsController : Controller
 | `ContentResult` | `Content()` | Plain text/HTML |
 | `FileResult` | `File()` | Downloads |
 | `HttpStatusCodeResult` / `HttpNotFoundResult` | `new HttpStatusCodeResult(400)` / `HttpNotFound()` | Status codes |
-| `EmptyResult` | — | Nothing |
+| `EmptyResult` |: | Nothing |
 
 Action selectors: `[HttpGet]`, `[HttpPost]`, `[ActionName("Delete")]`, `[NonAction]` (public method that isn't an action), `[ChildActionOnly]`.
 
@@ -232,17 +232,17 @@ Action selectors: `[HttpGet]`, `[HttpPost]`, `[ActionName("Delete")]`, `[NonActi
 </html>
 ```
 
-Razor basics: `@expression` (HTML-encoded automatically), `@{ code block }`, `@if/@foreach`, `@Html.Raw(x)` (no encoding — dangerous), `@* comment *@`, `@:` text line. Views are compiled into classes deriving from `WebViewPage<TModel>` the first time they are requested (or at build with `MvcBuildViews`).
+Razor basics: `@expression` (HTML-encoded automatically), `@{ code block }`, `@if/@foreach`, `@Html.Raw(x)` (no encoding, dangerous), `@* comment *@`, `@:` text line. Views are compiled into classes deriving from `WebViewPage<TModel>` the first time they are requested (or at build with `MvcBuildViews`).
 
-**Partial view vs child action:** a partial renders a template with data you pass; a child action (`Html.Action`) runs a full controller action (with its own data access and filters) — useful for widgets like a cart summary on every page. (ASP.NET Core replaces child actions with view components.)
+**Partial view vs child action:** a partial renders a template with data you pass; a child action (`Html.Action`) runs a full controller action (with its own data access and filters), useful for widgets like a cart summary on every page. (ASP.NET Core replaces child actions with view components.)
 
 **Display/editor templates:** `Views/Shared/EditorTemplates/DateTime.cshtml` customises `Html.EditorFor` for every `DateTime` property.
 
-## Lesson: [Intermediate|High] Passing data — ViewData, ViewBag, TempData, Session and strongly typed models
+## Lesson: [Intermediate|High] Passing data: ViewData, ViewBag, TempData, Session and strongly typed models
 
 | Mechanism | Type | Lifetime | Typical use |
 |---|---|---|---|
-| **Strongly typed model** | `View(model)` + `@model` | One request | The main data — IntelliSense, compile-time checks (preferred) |
+| **Strongly typed model** | `View(model)` + `@model` | One request | The main data: IntelliSense, compile-time checks (preferred) |
 | ViewData | `ViewDataDictionary` (string keys) | Current request, controller → view | Small extras |
 | ViewBag | `dynamic` wrapper over ViewData | Current request | Title, small extras (no compile-time checking) |
 | **TempData** | Dictionary backed by Session (default) | Until read in a **subsequent** request | Messages after redirect (Post-Redirect-Get) |
@@ -254,7 +254,7 @@ Razor basics: `@expression` (HTML-encoded automatically), `@{ code block }`, `@i
 
 ## Lesson: [Intermediate|High] Model binding and validation
 
-The **DefaultModelBinder** fills action parameters and complex objects from **value providers**: form fields, route data, query string, posted files — matching by name (including nested `Address.City`, indexed `Lines[0].Qty`).
+The **DefaultModelBinder** fills action parameters and complex objects from **value providers**: form fields, route data, query string, posted files, matching by name (including nested `Address.City`, indexed `Lines[0].Qty`).
 
 ```csharp
 public class ProductEditModel
@@ -282,15 +282,15 @@ public class FutureDateAttribute : ValidationAttribute
 ```
 
 - `ModelState.IsValid` after binding; add your own errors with `ModelState.AddModelError("Name", "...")`.
-- **Unobtrusive client validation** (jquery.validate + jquery.validate.unobtrusive) uses `data-val-*` attributes generated from the annotations — client validation is a convenience; server checks are mandatory.
+- **Unobtrusive client validation** (jquery.validate + jquery.validate.unobtrusive) uses `data-val-*` attributes generated from the annotations: client validation is a convenience; server checks are mandatory.
 - `IValidatableObject` for cross-field rules; FluentValidation as an alternative library.
-- **Over-posting/mass assignment:** bind to view models (or `[Bind(Include = "Name,Price")]`) — never bind directly to EF entities with sensitive fields like `IsAdmin`.
+- **Over-posting/mass assignment:** bind to view models (or `[Bind(Include = "Name,Price")]`), never bind directly to EF entities with sensitive fields like `IsAdmin`.
 
-## Lesson: [Intermediate|High] Filters — authentication, authorization, action, result and exception
+## Lesson: [Intermediate|High] Filters: authentication, authorization, action, result and exception
 
 | Filter (MVC 5) | Interface | Runs | Built-in examples |
 |---|---|---|---|
-| Authentication | `IAuthenticationFilter` | First — establishes identity | Custom token checks |
+| Authentication | `IAuthenticationFilter` | First: establishes identity | Custom token checks |
 | Authorization | `IAuthorizationFilter` | Before model binding/action | `[Authorize]`, `[AllowAnonymous]`, `[RequireHttps]`, `[ValidateAntiForgeryToken]`, `[ChildActionOnly]` |
 | Action | `IActionFilter` | Before/after the action method | `[OutputCache]` (also result), custom logging/auditing |
 | Result | `IResultFilter` | Before/after the result executes | Modify view data, timing |
@@ -323,10 +323,10 @@ Order: authentication → authorization → (model binding) → action filters �
 
 ## Lesson: [Intermediate|High] Dependency injection, bundling, Identity and Web API 2 in MVC 5
 
-**Dependency injection** — MVC 5 has no built-in container; plug one in through `DependencyResolver`:
+**Dependency injection**: MVC 5 has no built-in container; plug one in through `DependencyResolver`:
 
 ```csharp
-// Unity.Mvc5 — App_Start/UnityConfig.cs
+// Unity.Mvc5: App_Start/UnityConfig.cs
 public static void RegisterComponents()
 {
     var container = new UnityContainer();
@@ -348,17 +348,17 @@ BundleTable.EnableOptimizations = true;   // or compilation debug="false" in web
 
 **ASP.NET Identity + OWIN:** `Startup.Auth.cs` configures cookie authentication (`UseCookieAuthentication`), external logins (Google, Microsoft), `UserManager`/`SignInManager` with EF tables (`AspNetUsers`, `AspNetRoles`); `[Authorize(Roles = "Admin")]` protects actions.
 
-**Web API 2** in the same project: `ApiController` classes under `/api/...`, configured in `WebApiConfig.Register` (`config.MapHttpAttributeRoutes()`), returning data with content negotiation (JSON/XML). MVC and Web API 2 have **separate** pipelines, filters and DI resolvers in .NET Framework — ASP.NET Core unifies them.
+**Web API 2** in the same project: `ApiController` classes under `/api/...`, configured in `WebApiConfig.Register` (`config.MapHttpAttributeRoutes()`), returning data with content negotiation (JSON/XML). MVC and Web API 2 have **separate** pipelines, filters and DI resolvers in .NET Framework: ASP.NET Core unifies them.
 
 ## Lesson: [Intermediate|High] Error handling, custom error pages and logging in MVC 5
 
 Layers of error handling:
 
 1. **try/catch** in actions/services for expected failures (show a validation message, return 404/409).
-2. **Exception filters** — `[HandleError(ExceptionType = typeof(DbUpdateException), View = "DatabaseError")]` or a custom `IExceptionFilter` that logs and shows a view (only for exceptions inside MVC actions/results).
-3. **Controller.OnException** override — per-controller handling.
-4. **`Application_Error`** in Global.asax — catches everything else (routing errors, errors outside MVC), log and redirect.
-5. **web.config** — `customErrors` (ASP.NET) and `httpErrors` (IIS) for friendly pages for 404/500.
+2. **Exception filters**: `[HandleError(ExceptionType = typeof(DbUpdateException), View = "DatabaseError")]` or a custom `IExceptionFilter` that logs and shows a view (only for exceptions inside MVC actions/results).
+3. **Controller.OnException** override: per-controller handling.
+4. **`Application_Error`** in Global.asax: catches everything else (routing errors, errors outside MVC), log and redirect.
+5. **web.config**: `customErrors` (ASP.NET) and `httpErrors` (IIS) for friendly pages for 404/500.
 
 ```csharp
 public class GlobalExceptionFilter : IExceptionFilter
@@ -425,7 +425,7 @@ Request → IIS/ASP.NET pipeline → UrlRoutingModule matches a route → MvcRou
 
 ## [Beginner|High] ViewData vs ViewBag vs TempData?
 
-ViewData is a string-keyed dictionary and ViewBag a dynamic wrapper over the same data — both live only for the current request (controller → view). TempData survives until it is read in a subsequent request (stored in session by default), so it's used for messages after a redirect; `Keep`/`Peek` retain it longer. Prefer strongly typed view models for real data.
+ViewData is a string-keyed dictionary and ViewBag a dynamic wrapper over the same data: both live only for the current request (controller → view). TempData survives until it is read in a subsequent request (stored in session by default), so it's used for messages after a redirect; `Keep`/`Peek` retain it longer. Prefer strongly typed view models for real data.
 
 ## [Beginner|High] What types of ActionResult are there?
 
@@ -437,7 +437,7 @@ Attributes/classes that run logic before or after stages of action execution: au
 
 ## [Intermediate|High] Conventional routing vs attribute routing?
 
-Conventional routes are defined centrally (`MapRoute("{controller}/{action}/{id}")`) and matched in order. Attribute routing (MVC 5, `routes.MapMvcAttributeRoutes()`) puts `[Route]`/`[RoutePrefix]` on controllers/actions — clearer for REST-style or custom URLs, with inline constraints (`{id:int}`). Both can be combined; attribute routes are usually registered first.
+Conventional routes are defined centrally (`MapRoute("{controller}/{action}/{id}")`) and matched in order. Attribute routing (MVC 5, `routes.MapMvcAttributeRoutes()`) puts `[Route]`/`[RoutePrefix]` on controllers/actions: clearer for REST-style or custom URLs, with inline constraints (`{id:int}`). Both can be combined; attribute routes are usually registered first.
 
 ## [Intermediate|High] How does model binding and validation work?
 
@@ -445,7 +445,7 @@ The DefaultModelBinder uses value providers (form, route, query string, files) t
 
 ## [Intermediate|High] Partial view vs child action (vs view component in Core)?
 
-A partial view is a reusable template rendered with data you pass (`Html.Partial`). A child action (`Html.Action`) invokes a controller action that loads its own data and returns a partial — for self-contained widgets. ASP.NET Core removed child actions in favour of view components, which are lighter (no full action pipeline).
+A partial view is a reusable template rendered with data you pass (`Html.Partial`). A child action (`Html.Action`) invokes a controller action that loads its own data and returns a partial: for self-contained widgets. ASP.NET Core removed child actions in favour of view components, which are lighter (no full action pipeline).
 
 ## [Intermediate|Medium] How do you implement dependency injection in MVC 5?
 
@@ -457,7 +457,7 @@ After a successful POST, redirect (302) to a GET action instead of returning a v
 
 ## [Intermediate|Medium] How do you prevent CSRF and XSS in MVC 5?
 
-CSRF: `@Html.AntiForgeryToken()` in forms and `[ValidateAntiForgeryToken]` on POST actions (plus SameSite cookies). XSS: Razor encodes `@` output by default — avoid `Html.Raw` on user input, validate input, use Content Security Policy. Also `[Authorize]`, HTTPS, parameterised queries, and view models against over-posting.
+CSRF: `@Html.AntiForgeryToken()` in forms and `[ValidateAntiForgeryToken]` on POST actions (plus SameSite cookies). XSS: Razor encodes `@` output by default, avoid `Html.Raw` on user input, validate input, use Content Security Policy. Also `[Authorize]`, HTTPS, parameterised queries, and view models against over-posting.
 
 ## [Advanced|Medium] How do you handle errors globally in MVC 5?
 

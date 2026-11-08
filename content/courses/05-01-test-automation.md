@@ -1,6 +1,6 @@
 ---
 slug: test-automation
-title: Test Automation — Selenium, Playwright, API and BDD with C#
+title: Test Automation: Selenium, Playwright, API and BDD with C#
 track: automation
 order: 1
 group: Test Automation
@@ -11,14 +11,14 @@ summary: Testing fundamentals and the test pyramid, NUnit/xUnit, Selenium WebDri
 
 # Overview
 
-**Test automation** means writing code that tests software automatically and repeatably — UI tests that drive a browser, API tests that call endpoints, and unit/integration tests that check code directly. An **SDET** (Software Development Engineer in Test) or automation engineer builds and maintains these frameworks and runs them in CI/CD.
+**Test automation** means writing code that tests software automatically and repeatably: UI tests that drive a browser, API tests that call endpoints, and unit/integration tests that check code directly. An **SDET** (Software Development Engineer in Test) or automation engineer builds and maintains these frameworks and runs them in CI/CD.
 
 **The test pyramid** (Mike Cohn):
 
 ```text
-          /  UI / E2E  \        few — slow, brittle, test real user flows
-         /  API / service \     more — fast, stable, test business rules through the API
-        /    Unit tests     \   most — milliseconds, test classes/functions in isolation
+          /  UI / E2E  \        few: slow, brittle, test real user flows
+         /  API / service \     more: fast, stable, test business rules through the API
+        /    Unit tests     \   most: milliseconds, test classes/functions in isolation
 ```
 
 | Level | Tools (.NET) | Speed |
@@ -39,22 +39,22 @@ summary: Testing fundamentals and the test pyramid, NUnit/xUnit, Selenium WebDri
 | 2016 | Selenium 3 (Selenium RC removed) |
 | 2018 | WebDriver becomes a W3C Recommendation |
 | 2020 | Playwright released by Microsoft (Node), .NET/Python/Java bindings in 2021 |
-| 2021 | Selenium 4 — W3C protocol, relative locators, CDP access, new Grid |
+| 2021 | Selenium 4: W3C protocol, relative locators, CDP access, new Grid |
 | 2023 | Selenium Manager (automatic driver download) built in from 4.6+ |
 | 2024 | SpecFlow end-of-life announced; community fork **Reqnroll** becomes the .NET BDD standard; WebDriver BiDi rolling out |
-| 2025 | Playwright 1.5x — test agents, MCP integration; Selenium 4.3x with BiDi APIs |
+| 2025 | Playwright 1.5x: test agents, MCP integration; Selenium 4.3x with BiDi APIs |
 
 # Lifecycle
 
 **Automation in the software testing life cycle (STLC):**
 
-1. **Requirement analysis** — which acceptance criteria can be automated; risk-based selection.
-2. **Test planning** — scope, tools, framework design, environments, data strategy.
-3. **Test design** — test cases, data sets, page objects, API contracts.
-4. **Framework & scripts** — build reusable framework, write tests, code review them like product code.
-5. **Execution** — locally and in CI (on every PR: unit + API smoke; nightly: full regression; parallel/grid).
-6. **Reporting** — results, screenshots, videos, traces (Allure, ExtentReports, Azure Test Plans, Playwright HTML report).
-7. **Maintenance** — fix flaky tests, update locators, refactor; delete tests that no longer give value.
+1. **Requirement analysis**: which acceptance criteria can be automated; risk-based selection.
+2. **Test planning**: scope, tools, framework design, environments, data strategy.
+3. **Test design**: test cases, data sets, page objects, API contracts.
+4. **Framework & scripts**: build reusable framework, write tests, code review them like product code.
+5. **Execution**: locally and in CI (on every PR: unit + API smoke; nightly: full regression; parallel/grid).
+6. **Reporting**: results, screenshots, videos, traces (Allure, ExtentReports, Azure Test Plans, Playwright HTML report).
+7. **Maintenance**: fix flaky tests, update locators, refactor; delete tests that no longer give value.
 
 # Tools
 
@@ -73,9 +73,9 @@ summary: Testing fundamentals and the test pyramid, NUnit/xUnit, Selenium WebDri
 | Term | Meaning |
 |---|---|
 | Functional vs non-functional | What it does vs how well (performance, security, usability) |
-| Smoke | Few critical checks — is the build alive? |
+| Smoke | Few critical checks: is the build alive? |
 | Sanity | Quick check of one changed area |
-| Regression | Re-run existing tests to catch side effects of changes — the main candidate for automation |
+| Regression | Re-run existing tests to catch side effects of changes: the main candidate for automation |
 | Black box / white box | Without / with knowledge of the code |
 | Verification vs validation | Built right (spec) vs built the right thing (user need) |
 | Severity vs priority | Impact on the system vs urgency to fix |
@@ -85,7 +85,7 @@ summary: Testing fundamentals and the test pyramid, NUnit/xUnit, Selenium WebDri
 
 **Test case design techniques:** equivalence partitioning, boundary value analysis (age 17/18/99/100), decision tables, state transition, pairwise.
 
-## Lesson: [Basic|High] Unit test frameworks — NUnit and xUnit
+## Lesson: [Basic|High] Unit test frameworks: NUnit and xUnit
 
 ```csharp
 // NUnit
@@ -102,7 +102,7 @@ public class DiscountTests
         => Assert.That(_sut.For(total), Is.EqualTo(expected));
 }
 
-// xUnit — a new class instance per test; constructor = setup, IDisposable = teardown
+// xUnit: a new class instance per test; constructor = setup, IDisposable = teardown
 public class CartTests
 {
     [Theory]
@@ -131,7 +131,7 @@ Structure every test as **Arrange – Act – Assert**; one behaviour per test; 
 
 # Module: UI Automation
 
-## Lesson: [Intermediate|High] Selenium WebDriver with C# — locators and actions
+## Lesson: [Intermediate|High] Selenium WebDriver with C#: locators and actions
 
 ```csharp
 using OpenQA.Selenium;
@@ -162,7 +162,7 @@ Assert.That(heading.Text, Is.EqualTo("Dashboard"));
 
 Other APIs: `Actions` (hover, drag-drop, keyboard), `SelectElement` (dropdowns), `SwitchTo().Frame()/Window()/Alert()`, `IJavaScriptExecutor` (scroll, read values), `GetScreenshot()`.
 
-## Lesson: [Intermediate|High] Waits and synchronisation — killing flaky tests
+## Lesson: [Intermediate|High] Waits and synchronisation: killing flaky tests
 
 | Wait | Behaviour | Verdict |
 |---|---|---|
@@ -177,11 +177,11 @@ wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(StaleElementRef
 var button = wait.Until(d => { var e = d.FindElement(By.Id("save")); return e.Displayed && e.Enabled ? e : null; });
 ```
 
-Common exceptions: `NoSuchElementException` (wrong locator or not loaded), `StaleElementReferenceException` (DOM re-rendered — find the element again), `ElementClickInterceptedException` (overlay/spinner covering it — wait for it to disappear), `TimeoutException`.
+Common exceptions: `NoSuchElementException` (wrong locator or not loaded), `StaleElementReferenceException` (DOM re-rendered, find the element again), `ElementClickInterceptedException` (overlay/spinner covering it, wait for it to disappear), `TimeoutException`.
 
 ## Lesson: [Intermediate|High] Page Object Model and framework design
 
-**Page Object Model (POM):** one class per page/component holding its locators and actions; tests call meaningful methods instead of raw locators — locator changes are fixed in one place.
+**Page Object Model (POM):** one class per page/component holding its locators and actions; tests call meaningful methods instead of raw locators, locator changes are fixed in one place.
 
 ```csharp
 public class LoginPage(IWebDriver driver)
@@ -303,7 +303,7 @@ public class LoginSteps(ScenarioContext ctx, IWebDriver driver)
 }
 ```
 
-BDD value: shared language with business (Three Amigos), living documentation. Cost: an extra layer — use it when business people actually read the feature files. Hooks: `[BeforeScenario]`, `[AfterScenario]` (screenshot on failure), tags (`@smoke`) to filter runs.
+BDD value: shared language with business (Three Amigos), living documentation. Cost: an extra layer, use it when business people actually read the feature files. Hooks: `[BeforeScenario]`, `[AfterScenario]` (screenshot on failure), tags (`@smoke`) to filter runs.
 
 ## Lesson: [Advanced|High] Running tests in CI/CD, parallel execution and reporting
 
@@ -321,7 +321,7 @@ BDD value: shared language with business (Three Amigos), living documentation. C
 - **Reports:** TRX in Azure DevOps, Allure/Extent HTML, Playwright HTML report with traces.
 - **Environment & data:** config per environment (appsettings + pipeline variables), secrets from Key Vault/variable groups, fresh data created through APIs, Testcontainers for DBs.
 
-## Lesson: [Advanced|High] Flaky tests — causes and cures
+## Lesson: [Advanced|High] Flaky tests: causes and cures
 
 A **flaky test** passes and fails on the same code. It destroys trust in the suite.
 
@@ -332,15 +332,15 @@ A **flaky test** passes and fails on the same code. It destroys trust in the sui
 | Brittle locators | `data-testid`, role-based locators, POM |
 | Environment instability | Health check before run, mock external services (WireMock), stable test env |
 | Parallel collisions | Separate users/data per worker; thread-safe driver handling |
-| Hidden bugs (race conditions in the app) | Investigate — the flakiness may be real |
+| Hidden bugs (race conditions in the app) | Investigate: the flakiness may be real |
 
-Process: quarantine (tag and exclude from blocking runs), track flake rate, fix or delete — never just add retries everywhere (retries hide real problems; use them as a temporary, visible measure).
+Process: quarantine (tag and exclude from blocking runs), track flake rate, fix or delete, never just add retries everywhere (retries hide real problems; use them as a temporary, visible measure).
 
 # Interview
 
 ## [Beginner|High] What is the test pyramid and why does it matter?
 
-Many fast unit tests at the bottom, fewer API/integration tests in the middle, and a small number of slow UI/E2E tests at the top. It gives fast feedback and stable suites: most logic is tested cheaply below the UI, while a few E2E tests confirm critical user journeys. The anti-pattern is the "ice-cream cone" (mostly UI tests) — slow and flaky.
+Many fast unit tests at the bottom, fewer API/integration tests in the middle, and a small number of slow UI/E2E tests at the top. It gives fast feedback and stable suites: most logic is tested cheaply below the UI, while a few E2E tests confirm critical user journeys. The anti-pattern is the "ice-cream cone" (mostly UI tests): slow and flaky.
 
 ## [Beginner|High] What should and shouldn't be automated?
 
@@ -348,17 +348,17 @@ Automate stable, repetitive, high-value checks: regression, smoke, data-driven c
 
 ## [Beginner|High] Which Selenium locators do you use and in what order?
 
-Prefer stable, unique attributes: `data-testid`/`data-qa` → `id` → `name` → CSS selectors → relative XPath (text, attributes, axes) → link text. Avoid absolute XPath and generated class names. If the app lacks good attributes, ask developers to add test ids — it's the most effective fix for brittle tests.
+Prefer stable, unique attributes: `data-testid`/`data-qa` → `id` → `name` → CSS selectors → relative XPath (text, attributes, axes) → link text. Avoid absolute XPath and generated class names. If the app lacks good attributes, ask developers to add test ids: it's the most effective fix for brittle tests.
 
 ## [Beginner|High] Implicit vs explicit vs fluent wait?
 
-Implicit: a global timeout applied to every element lookup. Explicit: `WebDriverWait` waiting for a specific condition (visible, clickable, text present) up to a timeout — recommended. Fluent: an explicit wait with configurable polling and ignored exceptions. Never use `Thread.Sleep`, and don't mix implicit and explicit waits (timeouts combine unpredictably).
+Implicit: a global timeout applied to every element lookup. Explicit: `WebDriverWait` waiting for a specific condition (visible, clickable, text present) up to a timeout, recommended. Fluent: an explicit wait with configurable polling and ignored exceptions. Never use `Thread.Sleep`, and don't mix implicit and explicit waits (timeouts combine unpredictably).
 
 ## [Beginner|High] What is the Page Object Model?
 
 A design pattern where each page or component is a class that owns its locators and exposes user actions (`LoginAs`, `AddToCart`). Tests read like user steps, locators live in one place (one fix when the UI changes), and code is reused. Variants: Page Factory (Java), component objects, Screenplay pattern.
 
-## [Intermediate|High] Selenium vs Playwright — which would you choose?
+## [Intermediate|High] Selenium vs Playwright: which would you choose?
 
 Playwright for new web projects: auto-waiting and retrying assertions (less flakiness), fast isolated browser contexts, built-in tracing, network mocking, API testing, parallel runs and codegen. Selenium when you need the W3C standard, the widest language/browser support (including real Safari and legacy browsers), Appium for mobile, an existing large Selenium framework, or vendor grids. Both work well with C#.
 
@@ -384,7 +384,7 @@ Frames: `driver.SwitchTo().Frame(idOrElement)` then `SwitchTo().DefaultContent()
 
 ## [Intermediate|Medium] What is BDD and when is it worth it?
 
-Behaviour-Driven Development describes behaviour in Gherkin (Given/When/Then) agreed with business and QA, then automates those scenarios with step definitions (Reqnroll in .NET). Worth it when business stakeholders read and help write scenarios — it becomes living documentation. If only engineers read them, the Gherkin layer is overhead; plain readable tests are enough.
+Behaviour-Driven Development describes behaviour in Gherkin (Given/When/Then) agreed with business and QA, then automates those scenarios with step definitions (Reqnroll in .NET). Worth it when business stakeholders read and help write scenarios: it becomes living documentation. If only engineers read them, the Gherkin layer is overhead; plain readable tests are enough.
 
 ## [Advanced|High] How do you run UI tests in parallel safely?
 
@@ -408,7 +408,7 @@ Compare environments: headless vs headed (viewport/screen size differs), browser
 
 ## [Scenario|Medium] The developers change the UI often and your locators break every sprint. How do you fix this?
 
-Agree with developers to add stable `data-testid` attributes (part of the definition of done), use role/text-based locators (Playwright `GetByRole`, `GetByLabel`) that follow user-visible behaviour, centralise locators in page/component objects, review UI changes with QA early, and add a quick smoke run on every PR so breaks are found immediately — not at the end of the sprint.
+Agree with developers to add stable `data-testid` attributes (part of the definition of done), use role/text-based locators (Playwright `GetByRole`, `GetByLabel`) that follow user-visible behaviour, centralise locators in page/component objects, review UI changes with QA early, and add a quick smoke run on every PR so breaks are found immediately, not at the end of the sprint.
 
 ## [Scenario|Medium] How would you test a login page? List the cases.
 

@@ -59,7 +59,7 @@ export default function InterviewPanel({ tracks, courses }: { tracks: { slug: st
         <label className="check"><input type="checkbox" checked={onlyMarked} onChange={(e) => setOnlyMarked(e.target.checked)} /> Bookmarked</label>
       </div>
       <div className="row" style={{ marginBottom: 10 }}>
-        <span className="muted small">{loading ? "Loading…" : `${total} matching questions`} — sorted by course, then High → Low priority</span>
+        <span className="muted small">{loading ? "Loading…" : `${total} matching questions`}, sorted by course, then High → Low priority</span>
         <span className="spacer" />
         <button className="btn small" onClick={() => setOpen(new Set(shown.map((q) => q.id)))}>Show answers</button>
         <button className="btn small" onClick={() => setOpen(new Set())}>Hide answers</button>

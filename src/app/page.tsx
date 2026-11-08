@@ -20,7 +20,7 @@ export default function Home() {
       <section className="start-strip">
         <div className="start-text">
           <h1>Learn it. Practise it. Crack the interview.</h1>
-          <p>Short lessons with real examples, from basics to advanced — then the questions interviewers actually ask, with the must-know ones marked.</p>
+          <p>Short lessons with real examples, from basics to advanced, then the questions interviewers actually ask, with the must-know ones marked.</p>
         </div>
         <div className="start-cards">
           <Link href="/courses/computer-fundamentals" className="start-card">
@@ -35,7 +35,7 @@ export default function Home() {
         </div>
       </section>
       <h2 className="home-title">Learn Programming</h2>
-      <p className="home-sub">Each subject runs from basics to advanced — study the topics left to right. The bar under a tile shows your progress.</p>
+      <p className="home-sub">Each subject runs from basics to advanced: study the topics left to right. The bar under a tile shows your progress.</p>
       {menu.map((t) => (
         <section key={t.slug} className="tile-section">
           <h2>{t.title}</h2>

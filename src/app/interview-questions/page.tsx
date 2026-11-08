@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getCourses, getQuestionsForCourses } from "@/lib/db";
 import { ROLES } from "@/lib/roles";
 
-export const metadata: Metadata = pageMeta({ title: "Interview Questions by Role", description: "Interview question banks for .NET full stack, backend, legacy .NET, frontend, SQL/BI, DevOps, test automation, industrial automation, Industry 4.0, Web3 and team lead roles — must-know questions first.", path: "/interview-questions" });
+export const metadata: Metadata = pageMeta({ title: "Interview Questions by Role", description: "Interview question banks for .NET full stack, backend, legacy .NET, frontend, SQL/BI, DevOps, test automation, industrial automation, Industry 4.0, Web3 and team lead roles: must-know questions first.", path: "/interview-questions" });
 
 export default function InterviewQuestionsIndex() {
   const known = new Set(getCourses().map((c) => c.slug));

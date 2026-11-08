@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/courses/[slug]/le
   const c = getCourse(slug);
   const l = c && getLesson(c.id, lesson);
   if (!l || !c) return { title: "Lesson" };
-  return pageMeta({ title: `${l.title} — ${c.title}`, description: describe(l.body_html), path: `/courses/${c.slug}/lessons/${l.slug}`, type: "article" });
+  return pageMeta({ title: `${l.title}: ${c.title}`, description: describe(l.body_html), path: `/courses/${c.slug}/lessons/${l.slug}`, type: "article" });
 }
 
 export default async function LessonPage({ params }: PageProps<"/courses/[slug]/lessons/[lesson]">) {

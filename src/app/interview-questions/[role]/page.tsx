@@ -36,7 +36,7 @@ export default async function RolePage({ params }: PageProps<"/interview-questio
       <div className="role-head">
         <span className="icon" style={{ background: role.color }}>{role.icon}</span>
         <div>
-          <h1>{role.title} — Interview Questions</h1>
+          <h1>{role.title}: Interview Questions</h1>
           <div className="muted">{role.summary}</div>
         </div>
       </div>

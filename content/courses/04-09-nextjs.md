@@ -1,6 +1,6 @@
 ---
 slug: nextjs
-title: Next.js — App Router, Folder Structure, Rendering and Full Stack with SQL Server
+title: Next.js: App Router, Folder Structure, Rendering and Full Stack with SQL Server
 track: frontend
 order: 9
 group: Libraries & Frameworks
@@ -58,7 +58,7 @@ DevLadder itself is built with Next.js (App Router, Server Components reading SQ
 
 # Module: Getting Started
 
-## Lesson: [Basic|High] Next.js App Router folder structure — with sample files
+## Lesson: [Basic|High] Next.js App Router folder structure: with sample files
 
 ```text
 my-shop/
@@ -77,7 +77,7 @@ my-shop/
 │   │   └── [id]/                          dynamic segment
 │   │       ├── page.tsx                   "/products/42"
 │   │       └── edit/page.tsx              "/products/42/edit"
-│   ├── (shop)/                            route GROUP — organises files, not part of the URL
+│   ├── (shop)/                            route GROUP: organises files, not part of the URL
 │   │   ├── layout.tsx                     layout only for pages in this group
 │   │   └── cart/page.tsx                  "/cart"
 │   ├── admin/
@@ -85,20 +85,20 @@ my-shop/
 │   │   └── [[...slug]]/page.tsx           optional catch-all: "/admin", "/admin/a/b"
 │   ├── api/
 │   │   └── products/route.ts              route handler: GET/POST "/api/products" (REST API)
-│   └── _components/                       private folder (underscore) — not a route
+│   └── _components/                       private folder (underscore), not a route
 ├── components/                            shared UI components (Button.tsx, ProductCard.tsx)
 ├── lib/                                   server/client utilities: db.ts, auth.ts, validation.ts
 ├── public/                                static files served as-is: /logo.png, /robots.txt (if static)
 ├── proxy.ts  (middleware.ts before v16)   runs before requests: auth redirects, rewrites, headers
 ├── next.config.ts                         Next.js configuration (images, redirects, headers)
-├── .env.local                             secrets for local dev (never commit) — DB connection string
+├── .env.local                             secrets for local dev (never commit): DB connection string
 ├── tsconfig.json · eslint.config.mjs · package.json
 ```
 
 **Sample files:**
 
 ```tsx
-// app/layout.tsx — root layout
+// app/layout.tsx: root layout
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = { title: { default: "My Shop", template: "%s · My Shop" }, description: "Buy great things" };
@@ -110,7 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 
-// app/products/[id]/page.tsx — dynamic Server Component page
+// app/products/[id]/page.tsx: dynamic Server Component page
 import { notFound } from "next/navigation";
 import { getProduct } from "@/lib/products";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -118,21 +118,21 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return { title: p?.name ?? "Product" };
 }
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const product = await getProduct(Number((await params).id));    // runs on the server — can query the DB
+  const product = await getProduct(Number((await params).id));    // runs on the server: can query the DB
   if (!product) notFound();
-  return <h1>{product.name} — ₹{product.price}</h1>;
+  return <h1>{product.name}: ₹{product.price}</h1>;
 }
 
 // app/products/loading.tsx
 export default function Loading() { return <p>Loading products…</p>; }
 
-// app/error.tsx — must be a Client Component
+// app/error.tsx: must be a Client Component
 "use client";
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   return <div><p>Something went wrong.</p><button onClick={() => reset()}>Try again</button></div>;
 }
 
-// app/api/products/route.ts — REST endpoint
+// app/api/products/route.ts: REST endpoint
 import { NextResponse } from "next/server";
 import { listProducts, createProduct } from "@/lib/products";
 export async function GET() { return NextResponse.json(await listProducts()); }
@@ -141,7 +141,7 @@ export async function POST(request: Request) {
   return NextResponse.json(await createProduct(body), { status: 201 });
 }
 
-// proxy.ts — protect /admin (named middleware.ts with export function middleware before Next 16)
+// proxy.ts: protect /admin (named middleware.ts with export function middleware before Next 16)
 import { NextResponse, type NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   if (!request.cookies.get("session")) return NextResponse.redirect(new URL("/login", request.url));
@@ -182,7 +182,7 @@ Rules: push `"use client"` as far down the tree as possible; Server Components c
 
 # Module: Rendering, Data and Caching
 
-## Lesson: [Intermediate|High] Rendering strategies — static, dynamic, streaming, ISR and PPR
+## Lesson: [Intermediate|High] Rendering strategies: static, dynamic, streaming, ISR and PPR
 
 | Strategy | When HTML is produced | Use |
 |---|---|---|
@@ -214,7 +214,7 @@ async function getCategories() {
 }
 ```
 
-**Server Actions** — functions that run on the server, callable from forms or client code (no API route needed):
+**Server Actions**: functions that run on the server, callable from forms or client code (no API route needed):
 
 ```tsx
 // app/products/new/actions.ts
@@ -229,7 +229,7 @@ const Schema = z.object({ name: z.string().min(2), price: z.coerce.number().posi
 export async function addProduct(formData: FormData) {
   const parsed = Schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: "Invalid input" };
-  await createProduct(parsed.data);           // auth check here too — actions are public endpoints!
+  await createProduct(parsed.data);           // auth check here too: actions are public endpoints!
   revalidatePath("/products");
   redirect("/products");
 }
@@ -251,7 +251,7 @@ Forms work even before JavaScript loads (progressive enhancement); `useActionSta
 
 ## Lesson: [Intermediate|High] Connecting Next.js to SQL Server
 
-Database code must run **only on the server** (Server Components, Server Actions, route handlers) — never in Client Components, or credentials would be exposed.
+Database code must run **only on the server** (Server Components, Server Actions, route handlers): never in Client Components, or credentials would be exposed.
 
 ```ts
 // lib/db.ts
@@ -305,8 +305,8 @@ DB_PASSWORD=change-me
 
 - Route handlers using `mssql` must run on the **Node.js runtime** (the default), not the Edge runtime.
 - With **Prisma**: `provider = "sqlserver"` in `schema.prisma`, a single `PrismaClient` instance kept on `globalThis` in development.
-- Serverless platforms (Vercel) open connections per function instance — keep pools small and prefer a database in the same region; Azure SQL serverless works well.
-- Alternative architecture: Next.js frontend calling an **ASP.NET Core Web API** that owns SQL Server (common in .NET shops) — then Next.js only does `fetch` to the API.
+- Serverless platforms (Vercel) open connections per function instance: keep pools small and prefer a database in the same region; Azure SQL serverless works well.
+- Alternative architecture: Next.js frontend calling an **ASP.NET Core Web API** that owns SQL Server (common in .NET shops), then Next.js only does `fetch` to the API.
 
 # Module: Production
 
@@ -325,7 +325,7 @@ File conventions `sitemap.ts`, `robots.ts`, `opengraph-image.tsx`, `icon.tsx` ge
 
 ## Lesson: [Intermediate|Medium] Authentication and deployment (Vercel, Azure, IIS, Docker)
 
-**Authentication:** Auth.js/NextAuth (OAuth providers, credentials, Microsoft Entra ID), Clerk, or your own JWT/cookie session. Check auth in **three places**: proxy (fast redirects), Server Components/layouts (render), and every Server Action/route handler (security — they're public endpoints).
+**Authentication:** Auth.js/NextAuth (OAuth providers, credentials, Microsoft Entra ID), Clerk, or your own JWT/cookie session. Check auth in **three places**: proxy (fast redirects), Server Components/layouts (render), and every Server Action/route handler (security, they're public endpoints).
 
 **Deployment options:**
 
@@ -393,15 +393,15 @@ Static generation at build time (with `generateStaticParams`), Incremental Stati
 
 ## [Intermediate|High] What are Server Actions and what must you be careful about?
 
-Async functions marked `"use server"` that run on the server and can be called from forms (`<form action={fn}>`) or client code, used for mutations without writing API routes; they integrate with revalidation and redirects and work without JavaScript. Careful: each action is effectively a public HTTP endpoint — always authenticate, authorise and validate input inside it, and don't return sensitive data.
+Async functions marked `"use server"` that run on the server and can be called from forms (`<form action={fn}>`) or client code, used for mutations without writing API routes; they integrate with revalidation and redirects and work without JavaScript. Careful: each action is effectively a public HTTP endpoint, always authenticate, authorise and validate input inside it, and don't return sensitive data.
 
 ## [Intermediate|High] How do you connect Next.js to SQL Server safely?
 
-Only from server code — Server Components, Server Actions and route handlers on the Node.js runtime — using `mssql` (one shared connection pool kept on `globalThis` in development) or Prisma with the `sqlserver` provider; mark modules `import "server-only"`, keep credentials in environment variables, use parameterised queries, and keep the database close to the hosting region. Alternatively call an ASP.NET Core API that owns the database.
+Only from server code: Server Components, Server Actions and route handlers on the Node.js runtime, using `mssql` (one shared connection pool kept on `globalThis` in development) or Prisma with the `sqlserver` provider; mark modules `import "server-only"`, keep credentials in environment variables, use parameterised queries, and keep the database close to the hosting region. Alternatively call an ASP.NET Core API that owns the database.
 
 ## [Intermediate|Medium] What is middleware (proxy in Next 16) used for?
 
-Code that runs before a request is routed — redirects, rewrites, authentication gates, A/B testing, adding headers, localisation — configured with a `matcher`. It should be fast and must not be the only security check; validate access again in pages, actions and route handlers.
+Code that runs before a request is routed: redirects, rewrites, authentication gates, A/B testing, adding headers, localisation, configured with a `matcher`. It should be fast and must not be the only security check; validate access again in pages, actions and route handlers.
 
 ## [Intermediate|Medium] How does Next.js help SEO?
 
@@ -413,7 +413,7 @@ Pages Router uses `pages/`, `getServerSideProps/getStaticProps`, `_app/_document
 
 ## [Advanced|Medium] What is hydration and what causes hydration errors?
 
-Hydration attaches React's event handlers and state to server-rendered HTML in the browser. Errors happen when the client's first render differs from the server HTML — using `Date.now()`/random values, `window`/`localStorage` during render, locale-dependent formatting, invalid HTML nesting, or browser extensions modifying the DOM. Fix by rendering client-only values in `useEffect`, consistent formatting, or `suppressHydrationWarning` for intentional differences.
+Hydration attaches React's event handlers and state to server-rendered HTML in the browser. Errors happen when the client's first render differs from the server HTML: using `Date.now()`/random values, `window`/`localStorage` during render, locale-dependent formatting, invalid HTML nesting, or browser extensions modifying the DOM. Fix by rendering client-only values in `useEffect`, consistent formatting, or `suppressHydrationWarning` for intentional differences.
 
 ## [Scenario|High] A product listing page is slow because it queries SQL Server on every request, but prices change only once a day. What do you do?
 
@@ -429,11 +429,11 @@ Environment variables set in the Vercel project for the right environment; the d
 
 ## [Beginner|Medium] What is the difference between `next/link` and `<a>`?
 
-`<Link>` performs client-side navigation — it fetches only the new route's payload, keeps layouts mounted and prefetches linked routes in the viewport — so navigation is fast without full page reloads. A plain `<a>` causes a full browser navigation. Use `<Link>` for internal links and `<a>` for external ones.
+`<Link>` performs client-side navigation: it fetches only the new route's payload, keeps layouts mounted and prefetches linked routes in the viewport, so navigation is fast without full page reloads. A plain `<a>` causes a full browser navigation. Use `<Link>` for internal links and `<a>` for external ones.
 
 ## [Intermediate|Medium] How do you handle environment variables in Next.js?
 
-Server-only variables in `.env.local`/hosting settings are read via `process.env.X` on the server. Variables prefixed `NEXT_PUBLIC_` are inlined into client bundles at build time — never put secrets there. Different files per environment (`.env.development`, `.env.production`); validate them at startup (zod).
+Server-only variables in `.env.local`/hosting settings are read via `process.env.X` on the server. Variables prefixed `NEXT_PUBLIC_` are inlined into client bundles at build time: never put secrets there. Different files per environment (`.env.development`, `.env.production`); validate them at startup (zod).
 
 # Cheatsheet
 

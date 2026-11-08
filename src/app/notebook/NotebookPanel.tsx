@@ -62,7 +62,7 @@ export default function NotebookPanel() {
       {tab === "notes" && (
         <section className="card">
           <h2 className="nb-h">📝 My notes</h2>
-          <AddBox draft={draft} setDraft={setDraft} onAdd={() => add(false)} placeholder="Write a note — what you learned, a trick, a question to ask…" multiline />
+          <AddBox draft={draft} setDraft={setDraft} onAdd={() => add(false)} placeholder="Write a note: what you learned, a trick, a question to ask…" multiline />
           {notes.length === 0 && <Empty text="No notes yet. Add one above, or use “📝 Add note” under any lesson or answer." />}
           <div className="nb-notes">
             {notes.map((i) => (
@@ -91,7 +91,7 @@ export default function NotebookPanel() {
                   const [course, lesson] = id.split("/");
                   return (
                     <li key={id}>
-                      <Link href={`/courses/${course}/lessons/${lesson}`}>{pretty(lesson)}</Link> <span className="muted small">— {pretty(course)}</span>
+                      <Link href={`/courses/${course}/lessons/${lesson}`}>{pretty(lesson)}</Link> <span className="muted small">- {pretty(course)}</span>
                       <span className="spacer" />
                       <button className="link-btn" onClick={() => setDone(done.filter((d) => d !== id))}>Unmark</button>
                     </li>
@@ -111,7 +111,7 @@ export default function NotebookPanel() {
         <span className="muted small">Everything is saved in this browser only.</span>
         <span className="spacer" />
         <button className="btn small" onClick={() => {
-          if (confirmed("Reset EVERYTHING — notebook, checklist, learned lessons and known questions?")) { nb.resetAll(); setDone([]); setKnown([]); }
+          if (confirmed("Reset EVERYTHING: notebook, checklist, learned lessons and known questions?")) { nb.resetAll(); setDone([]); setKnown([]); }
         }}>Reset everything</button>
       </div>
     </>
@@ -124,7 +124,7 @@ function ItemTitle({ i }: { i: NoteItem }) {
     <span className="nb-title">
       <span className="badge level">{tag}</span>{" "}
       {i.href ? <Link href={i.href}>{i.title}</Link> : i.title}
-      {i.course && <span className="muted small"> — {i.course}</span>}
+      {i.course && <span className="muted small">: {i.course}</span>}
     </span>
   );
 }
@@ -172,7 +172,7 @@ export function Checklist() {
             <span className="spacer" />
             <span className="muted small">{checklist.filter((i) => i.checked).length} of {checklist.length} ticked</span>
           </div>
-          <p className="muted small">Add anything you want to read once more on the day — from any lesson or question (tap “📋 Interview day”) or type your own.</p>
+          <p className="muted small">Add anything you want to read once more on the day: from any lesson or question (tap “📋 Interview day”) or type your own.</p>
           <AddBox draft={draft} setDraft={setDraft} onAdd={() => add(true)} placeholder="e.g. Revise my project numbers, test the camera, bring ID…" />
           {checklist.length === 0 && <Empty text="Nothing here yet. Tap “📋 Interview day” under any lesson or answer." />}
           <ul className="nb-list">

@@ -6,7 +6,7 @@ export function LessonDoneToggle({ id }: { id: string }) {
   const isDone = done.includes(id);
   return (
     <button className={`btn ${isDone ? "" : "primary"}`} onClick={() => setDone(isDone ? done.filter((d) => d !== id) : [...done, id])}>
-      {isDone ? "✓ Completed — mark as not done" : "Mark lesson as completed"}
+      {isDone ? "✓ Completed: mark as not done" : "Mark lesson as completed"}
     </button>
   );
 }

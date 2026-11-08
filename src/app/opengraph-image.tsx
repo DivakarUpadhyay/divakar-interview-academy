@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const dynamic = "force-static";
 
 // Default share image (WhatsApp, LinkedIn, X, Slack previews) for every page without its own.
-export const alt = "DevLadder — tutorials and interview questions from basics to advanced";
+export const alt = "DevLadder: tutorials and interview questions from basics to advanced";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

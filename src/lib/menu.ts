@@ -23,7 +23,7 @@ const SHORT: Record<string, string> = {
 };
 
 export function shortTitle(c: Pick<CourseSummary, "slug" | "title">) {
-  return SHORT[c.slug] ?? c.title.split(/ — | \(/)[0];
+  return SHORT[c.slug] ?? c.title.split(/: | \(/)[0];
 }
 
 export type MenuLink = { href: string; title: string; icon: string; color: string; slug?: string; lessons?: number };
@@ -43,7 +43,7 @@ export function buildMenu(tracks: Track[], courses: CourseSummary[]): MenuTrack[
       groups.unshift({
         title: "Question Banks by Role",
         links: [
-          { href: "/interview-questions/all", title: "All Questions — Topic-wise", icon: "All", color: "#c92a2a" },
+          { href: "/interview-questions/all", title: "All Questions: Topic-wise", icon: "All", color: "#c92a2a" },
           ...ROLES.map((r) => ({ href: `/interview-questions/${r.slug}`, title: r.title, icon: r.icon, color: r.color })),
         ],
       });

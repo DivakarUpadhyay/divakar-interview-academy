@@ -38,32 +38,32 @@ Interviewers almost always ask you to *explain each with an example* and then *s
 
 How SOLID is applied during development:
 
-1. **Design** — split responsibilities (SRP), define interfaces around what consumers need (ISP, DIP).
-2. **Implement** — inject dependencies through constructors; keep classes small.
-3. **Extend** — add behaviour by adding new classes (OCP) rather than editing switches.
-4. **Test** — mock the abstractions; unit-test each class in isolation.
-5. **Review** — code review checks for god classes, `new` of services inside business logic, and subclasses that throw `NotSupportedException` (LSP smell).
-6. **Refactor** — when a class keeps changing for unrelated reasons, split it.
+1. **Design**: split responsibilities (SRP), define interfaces around what consumers need (ISP, DIP).
+2. **Implement**: inject dependencies through constructors; keep classes small.
+3. **Extend**: add behaviour by adding new classes (OCP) rather than editing switches.
+4. **Test**: mock the abstractions; unit-test each class in isolation.
+5. **Review**: code review checks for god classes, `new` of services inside business logic, and subclasses that throw `NotSupportedException` (LSP smell).
+6. **Refactor**: when a class keeps changing for unrelated reasons, split it.
 
 # Tools
 
-- **ASP.NET Core DI container** (`Microsoft.Extensions.DependencyInjection`) — DIP in practice.
-- **Scrutor** — assembly scanning and decorators for the built-in container.
-- **Autofac** — advanced DI container.
-- **xUnit + Moq / NSubstitute / FakeItEasy** — mocking abstractions.
-- **SonarQube / SonarLint, NDepend, Visual Studio code metrics** — find large classes, high coupling, complexity.
-- **ArchUnitNET / NetArchTest** — enforce layering rules in tests.
+- **ASP.NET Core DI container** (`Microsoft.Extensions.DependencyInjection`): DIP in practice.
+- **Scrutor**: assembly scanning and decorators for the built-in container.
+- **Autofac**: advanced DI container.
+- **xUnit + Moq / NSubstitute / FakeItEasy**: mocking abstractions.
+- **SonarQube / SonarLint, NDepend, Visual Studio code metrics**: find large classes, high coupling, complexity.
+- **ArchUnitNET / NetArchTest**: enforce layering rules in tests.
 
 # Module: S and O
 
-## Lesson: [Basic|High] S — Single Responsibility Principle
+## Lesson: [Basic|High] S: Single Responsibility Principle
 
-> "A class should have one, and only one, reason to change." — Robert C. Martin
+> "A class should have one, and only one, reason to change.": Robert C. Martin
 
 "Reason to change" = one **actor** or stakeholder. A class that formats invoices *and* saves them *and* emails them changes when finance, DBAs or the email provider change.
 
 ```csharp
-// ❌ Violates SRP — three reasons to change
+// ❌ Violates SRP: three reasons to change
 public class InvoiceService
 {
     public decimal Calculate(Invoice i) => i.Lines.Sum(l => l.Qty * l.Price) * 1.18m;
@@ -89,7 +89,7 @@ public class InvoiceWorkflow(InvoiceCalculator calc, IInvoiceRepository repo, II
 
 > **Interview tip:** SRP doesn't mean "one method per class". It means one *cohesive* job. Controllers that only orchestrate are fine.
 
-## Lesson: [Basic|High] O — Open/Closed Principle
+## Lesson: [Basic|High] O: Open/Closed Principle
 
 Software entities should be **open for extension, closed for modification**: add new behaviour by adding code, not by editing tested code.
 
@@ -122,7 +122,7 @@ ASP.NET Core itself is OCP: you extend the pipeline by adding middleware, filter
 
 # Module: L, I and D
 
-## Lesson: [Intermediate|High] L — Liskov Substitution Principle
+## Lesson: [Intermediate|High] L: Liskov Substitution Principle
 
 If `S` is a subtype of `T`, objects of type `T` may be replaced by objects of type `S` **without breaking the program**. Subclasses must honour the base class's contract: no stronger preconditions, no weaker postconditions, no surprise exceptions.
 
@@ -144,12 +144,12 @@ public record Sq(int Side) : IShape { public int Area => Side * Side; }
 
 LSP smells: `throw new NotSupportedException()` in an override, `if (x is SpecialSubclass)` checks in callers, overrides that do nothing.
 
-## Lesson: [Intermediate|High] I — Interface Segregation Principle
+## Lesson: [Intermediate|High] I: Interface Segregation Principle
 
 Clients should not be forced to depend on methods they don't use. Split fat interfaces into role interfaces.
 
 ```csharp
-// ❌ Fat interface — a basic printer must implement Fax and Scan
+// ❌ Fat interface: a basic printer must implement Fax and Scan
 public interface IMachine { void Print(Doc d); void Scan(Doc d); void Fax(Doc d); }
 public class BasicPrinter : IMachine
 {
@@ -168,7 +168,7 @@ public class OfficeMachine : IPrinter, IScanner, IFax { /* all three */ }
 
 Real-world .NET example: `IReadOnlyList<T>` vs `IList<T>`; `IEnumerable<T>` vs `ICollection<T>`.
 
-## Lesson: [Intermediate|High] D — Dependency Inversion Principle
+## Lesson: [Intermediate|High] D: Dependency Inversion Principle
 
 1. High-level modules should not depend on low-level modules; **both depend on abstractions**.
 2. Abstractions should not depend on details; details depend on abstractions.
@@ -198,9 +198,9 @@ builder.Services.AddScoped<OrderService>();
 
 **DIP vs DI vs IoC:**
 
-- **DIP** — the *principle* (depend on abstractions).
-- **IoC (Inversion of Control)** — the general idea that a framework/container controls object creation and flow, not your code.
-- **DI (Dependency Injection)** — the *technique*: dependencies are passed in (constructor, method or property injection), usually by an IoC container.
+- **DIP**: the *principle* (depend on abstractions).
+- **IoC (Inversion of Control)**: the general idea that a framework/container controls object creation and flow, not your code.
+- **DI (Dependency Injection)**: the *technique*: dependencies are passed in (constructor, method or property injection), usually by an IoC container.
 
 ## Lesson: [Intermediate|High] Dependency injection lifetimes in ASP.NET Core
 
@@ -223,13 +223,13 @@ builder.Services.AddKeyedSingleton<IPaymentGateway, StripeGateway>("stripe");   
 
 ## Lesson: [Basic|Medium] DRY, KISS, YAGNI and separation of concerns
 
-- **DRY — Don't Repeat Yourself:** every piece of *knowledge* has one authoritative place. (Duplicate-looking code that changes for different reasons is not a DRY violation.)
-- **KISS — Keep It Simple:** the simplest design that works is easiest to maintain.
-- **YAGNI — You Aren't Gonna Need It:** don't build for hypothetical future requirements.
+- **DRY: Don't Repeat Yourself:** every piece of *knowledge* has one authoritative place. (Duplicate-looking code that changes for different reasons is not a DRY violation.)
+- **KISS: Keep It Simple:** the simplest design that works is easiest to maintain.
+- **YAGNI: You Aren't Gonna Need It:** don't build for hypothetical future requirements.
 - **Separation of Concerns:** UI, business logic and data access in separate layers.
 - **Composition over inheritance**, **Law of Demeter**, **Tell don't ask**.
 
-> **Interview tip:** show balance. "I apply SOLID where change is likely — payment providers, export formats. For a 20-line admin script I keep it simple (KISS/YAGNI)."
+> **Interview tip:** show balance. "I apply SOLID where change is likely: payment providers, export formats. For a 20-line admin script I keep it simple (KISS/YAGNI)."
 
 ## Lesson: [Advanced|Medium] SOLID in a layered / Clean Architecture solution
 
@@ -257,7 +257,7 @@ src/
 - **I**nterface Segregation: small client-specific interfaces instead of a fat one.
 - **D**ependency Inversion: high- and low-level modules depend on abstractions; inject dependencies.
 
-Follow with one concrete example from your own project, e.g. "payment providers behind `IPaymentGateway`, registered in DI — that's OCP and DIP."
+Follow with one concrete example from your own project, e.g. "payment providers behind `IPaymentGateway`, registered in DI: that's OCP and DIP."
 
 ## [Beginner|High] Give a real example of the Single Responsibility Principle.
 
@@ -277,7 +277,7 @@ DIP is the design **principle**: depend on abstractions. IoC is the broader **co
 
 ## [Intermediate|High] What are the service lifetimes in ASP.NET Core DI and what is a captive dependency?
 
-Transient (new each time), Scoped (one per request/scope), Singleton (one for the app). A captive dependency happens when a longer-lived service holds a shorter-lived one — e.g. a singleton injecting a scoped `DbContext`. The `DbContext` then lives forever and is shared across threads, which causes concurrency exceptions and stale data. Fix: make the consumer scoped, or inject `IServiceScopeFactory` and create a scope per operation (common in `BackgroundService`).
+Transient (new each time), Scoped (one per request/scope), Singleton (one for the app). A captive dependency happens when a longer-lived service holds a shorter-lived one: e.g. a singleton injecting a scoped `DbContext`. The `DbContext` then lives forever and is shared across threads, which causes concurrency exceptions and stale data. Fix: make the consumer scoped, or inject `IServiceScopeFactory` and create a scope per operation (common in `BackgroundService`).
 
 ## [Intermediate|Medium] Give an Interface Segregation example from .NET itself.
 
@@ -344,12 +344,12 @@ Never inject scoped into singleton → use `IServiceScopeFactory`.
 
 ## Other principles
 
-- **DRY** — one source of truth for knowledge.
-- **KISS** — simplest thing that works.
-- **YAGNI** — don't build for imaginary futures.
-- **SoC** — separate UI / business / data.
+- **DRY**: one source of truth for knowledge.
+- **KISS**: simplest thing that works.
+- **YAGNI**: don't build for imaginary futures.
+- **SoC**: separate UI / business / data.
 - **Composition over inheritance.**
-- **Law of Demeter** — no `a.B.C.D` chains.
+- **Law of Demeter**: no `a.B.C.D` chains.
 
 ## Quick code: DIP + OCP
 
@@ -365,9 +365,9 @@ public class ExportService(IEnumerable<IExporter> exporters)
 
 ## One-liners to say in the interview
 
-- **SRP**: "A class should have one reason to change — one actor it serves."
+- **SRP**: "A class should have one reason to change, one actor it serves."
 - **OCP**: "Add new behaviour by adding classes, not by editing tested ones."
-- **LSP**: "A subclass must work anywhere its base class is expected — no surprises."
+- **LSP**: "A subclass must work anywhere its base class is expected, no surprises."
 - **ISP**: "Don't force clients to depend on methods they don't use."
 - **DIP**: "High-level policy depends on abstractions; details plug in through DI."
 - **Balance**: "I apply SOLID where change is likely; for simple, stable code I keep it simple."

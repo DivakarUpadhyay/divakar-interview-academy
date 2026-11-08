@@ -15,7 +15,7 @@ const SERIES = {
 const dryRun = process.argv.includes("--dry-run");
 const env = fs.existsSync(".env.devto.local") ? fs.readFileSync(".env.devto.local", "utf8") : "";
 const KEY = process.env.DEVTO_API_KEY ?? env.match(/^DEVTO_API_KEY=(.+)$/m)?.[1]?.trim();
-if (!KEY) throw new Error("DEVTO_API_KEY missing — put it in .env.devto.local");
+if (!KEY) throw new Error("DEVTO_API_KEY missing: put it in .env.devto.local");
 const headers = { "api-key": KEY, "content-type": "application/json", accept: "application/vnd.forem.api-v1+json", "user-agent": "devladder-series" };
 
 const trackOf = new Map(fs.readdirSync("content/courses").filter((f) => f.endsWith(".md"))

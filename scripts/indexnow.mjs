@@ -13,7 +13,7 @@ const site = (process.env.NEXT_PUBLIC_SITE_URL ?? seo.match(/NEXT_PUBLIC_SITE_UR
 const host = new URL(site).host;
 const SKIP = new Set(["404.html", "_not-found.html"]);
 
-if (!fs.existsSync(root)) throw new Error("out/ not found — run `npm run build` first");
+if (!fs.existsSync(root)) throw new Error("out/ not found: run `npm run build` first");
 
 function pages(dir, acc = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -46,7 +46,7 @@ if (!changed.length) { console.log("IndexNow: no new or changed pages."); proces
 
 // Make sure the key file is reachable before submitting, otherwise engines reject the batch.
 const keyRes = await fetch(`${site}/${key}.txt`);
-if (!keyRes.ok || (await keyRes.text()).trim() !== key) throw new Error(`Key file ${site}/${key}.txt is not live yet — deploy first`);
+if (!keyRes.ok || (await keyRes.text()).trim() !== key) throw new Error(`Key file ${site}/${key}.txt is not live yet: deploy first`);
 
 for (let i = 0; i < changed.length; i += 10000) {
   const urlList = changed.slice(i, i + 10000);

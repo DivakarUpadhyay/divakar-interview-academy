@@ -1,6 +1,6 @@
 ---
 slug: industry-40
-title: Industry 4.0 & IIoT — Smart Manufacturing Software
+title: Industry 4.0 & IIoT: Smart Manufacturing Software
 track: automation
 order: 3
 group: Industry 4.0
@@ -15,10 +15,10 @@ summary: The four industrial revolutions and Industry 4.0 pillars, IIoT architec
 
 | Revolution | Around | Driver |
 |---|---|---|
-| 1.0 | 1780s | Mechanisation — water and steam power |
-| 2.0 | 1870s | Mass production — electricity, assembly lines |
-| 3.0 | 1970s | Automation — electronics, PLCs, IT |
-| 4.0 | 2010s → | Cyber-physical systems — IIoT, cloud, data analytics, AI |
+| 1.0 | 1780s | Mechanisation: water and steam power |
+| 2.0 | 1870s | Mass production: electricity, assembly lines |
+| 3.0 | 1970s | Automation: electronics, PLCs, IT |
+| 4.0 | 2010s → | Cyber-physical systems: IIoT, cloud, data analytics, AI |
 | 5.0 (EU concept, 2021) | Now | Human-centric, resilient, sustainable industry |
 
 **Pillars / technologies:** Industrial IoT (IIoT), cloud and edge computing, big data and analytics, AI/ML, digital twins and simulation, horizontal and vertical system integration (ERP ↔ MES ↔ machines), additive manufacturing, augmented reality, autonomous robots/AMRs, cybersecurity.
@@ -30,7 +30,7 @@ summary: The four industrial revolutions and Industry 4.0 pillars, IIoT architec
 | Year | Milestone |
 |---|---|
 | 1999 | MQTT created (Andy Stanford-Clark, IBM and Arlen Nipper) for oil pipeline telemetry |
-| 2000 | ISA-95 first published (later IEC 62264) — enterprise–control integration |
+| 2000 | ISA-95 first published (later IEC 62264): enterprise–control integration |
 | 2011 | "Industrie 4.0" presented at Hannover Messe; German government strategy |
 | 2014 | MQTT 3.1.1 becomes an OASIS standard; Industrial Internet Consortium founded |
 | 2015 | RAMI 4.0 reference architecture; Asset Administration Shell concept |
@@ -44,13 +44,13 @@ summary: The four industrial revolutions and Industry 4.0 pillars, IIoT architec
 
 **Data journey in a smart factory:**
 
-1. **Sense** — PLCs, sensors, machines produce signals (temperature, counts, states, alarms).
-2. **Connect** — protocols (OPC UA, Modbus, MQTT) via gateways and edge devices.
-3. **Contextualise** — attach meaning: which site/area/line/machine, which order, product, shift (ISA-95 model).
-4. **Store** — time-series database/historian for signals, relational database for orders, quality and genealogy.
-5. **Analyse** — OEE, downtime Pareto, SPC, energy per unit, ML for anomalies and predictions.
-6. **Act** — dashboards and alerts to operators, work orders to maintenance, adjustments via MES/SCADA — closing the loop.
-7. **Improve** — continuous improvement (Kaizen, Lean, Six Sigma) using the data.
+1. **Sense**: PLCs, sensors, machines produce signals (temperature, counts, states, alarms).
+2. **Connect**: protocols (OPC UA, Modbus, MQTT) via gateways and edge devices.
+3. **Contextualise**: attach meaning: which site/area/line/machine, which order, product, shift (ISA-95 model).
+4. **Store**: time-series database/historian for signals, relational database for orders, quality and genealogy.
+5. **Analyse**: OEE, downtime Pareto, SPC, energy per unit, ML for anomalies and predictions.
+6. **Act**: dashboards and alerts to operators, work orders to maintenance, adjustments via MES/SCADA, closing the loop.
+7. **Improve**: continuous improvement (Kaizen, Lean, Six Sigma) using the data.
 
 **Implementation roadmap:** pick one line and one KPI (pilot) → connect machines → OEE/downtime dashboard → prove value → standardise data model and architecture → scale to lines/plants → advanced use cases (predictive maintenance, AI, digital twin).
 
@@ -76,7 +76,7 @@ summary: The four industrial revolutions and Industry 4.0 pillars, IIoT architec
 | Vertical integration | Data flows up and down the levels: sensor → PLC → SCADA → MES → ERP |
 | Horizontal integration | Data flows along the value chain: suppliers → plants → logistics → customers |
 | Edge computing | Processing data near the machines (low latency, works offline, reduces bandwidth) |
-| Digital thread | Connected data across the product lifecycle — design, production, service |
+| Digital thread | Connected data across the product lifecycle: design, production, service |
 | Lights-out manufacturing | Highly automated production that runs with minimal human presence |
 
 **Smart factory example:** a CNC line streams spindle load, temperature and state to an edge gateway; MES knows which order and part is running; OEE dashboards show losses in real time; a vibration model predicts bearing failure two weeks ahead and creates a maintenance work order; every part's serial number is linked to its machine parameters for traceability.
@@ -89,7 +89,7 @@ summary: The four industrial revolutions and Industry 4.0 pillars, IIoT architec
 Enterprise → Site → Area → Work centre / Production line → Work unit / Machine
 ```
 
-**MES (Manufacturing Execution System)** — the system that runs production on the shop floor between ERP and machines. Typical functions (MESA model):
+**MES (Manufacturing Execution System)**: the system that runs production on the shop floor between ERP and machines. Typical functions (MESA model):
 
 | Function | What it does |
 |---|---|
@@ -107,7 +107,7 @@ ERP plans **what and when** (days/weeks); MES executes **how** (minutes/seconds)
 
 # Module: IIoT Architecture and Protocols
 
-## Lesson: [Intermediate|High] IIoT reference architecture — device, edge, cloud
+## Lesson: [Intermediate|High] IIoT reference architecture: device, edge, cloud
 
 ```text
 Machines/PLCs ──OPC UA/Modbus──► Edge gateway (filter, buffer, compute) ──MQTT/AMQP/HTTPS──►
@@ -130,7 +130,7 @@ Machines/PLCs ──OPC UA/Modbus──► Edge gateway (filter, buffer, compute
 
 ## Lesson: [Intermediate|High] MQTT, Sparkplug B and the Unified Namespace
 
-**MQTT** — lightweight publish/subscribe protocol over TCP (1883, TLS 8883). Clients publish to **topics**; the **broker** delivers to subscribers.
+**MQTT**: lightweight publish/subscribe protocol over TCP (1883, TLS 8883). Clients publish to **topics**; the **broker** delivers to subscribers.
 
 | Feature | Meaning |
 |---|---|
@@ -144,7 +144,7 @@ Machines/PLCs ──OPC UA/Modbus──► Edge gateway (filter, buffer, compute
 
 **Sparkplug B** (Eclipse) adds an industrial standard on top of MQTT: fixed topic namespace (`spBv1.0/group/NDATA/edge-node/device`), Protobuf payloads with metrics, birth/death certificates (`NBIRTH`/`NDEATH`) so subscribers know state, and report-by-exception.
 
-**Unified Namespace (UNS)** — a single, event-driven hub (usually an MQTT broker) where every system publishes its current state under an ISA-95-structured topic tree, and every consumer subscribes to what it needs — replacing point-to-point integrations.
+**Unified Namespace (UNS)**: a single, event-driven hub (usually an MQTT broker) where every system publishes its current state under an ISA-95-structured topic tree, and every consumer subscribes to what it needs, replacing point-to-point integrations.
 
 ```csharp
 // Publish a machine state with MQTTnet (v4/v5 style)
@@ -162,7 +162,7 @@ await client.PublishAsync(new MqttApplicationMessageBuilder()
 
 # Module: Manufacturing KPIs and Data
 
-## Lesson: [Intermediate|High] OEE — calculation, six big losses and downtime analysis
+## Lesson: [Intermediate|High] OEE: calculation, six big losses and downtime analysis
 
 **OEE (Overall Equipment Effectiveness) = Availability × Performance × Quality**
 
@@ -192,7 +192,7 @@ Other KPIs: **MTBF** (mean time between failures), **MTTR** (mean time to repair
 
 ## Lesson: [Intermediate|High] Traceability, genealogy and quality (SPC)
 
-**Traceability** answers: for this finished serial/lot, which raw-material lots, machines, operators, parameters and test results were involved (backward), and where did a suspect material lot end up (forward)? Essential in automotive (IATF 16949), pharma (GMP, 21 CFR Part 11 electronic records), food and aerospace — and for targeted recalls.
+**Traceability** answers: for this finished serial/lot, which raw-material lots, machines, operators, parameters and test results were involved (backward), and where did a suspect material lot end up (forward)? Essential in automotive (IATF 16949), pharma (GMP, 21 CFR Part 11 electronic records), food and aerospace, and for targeted recalls.
 
 ```sql
 -- Genealogy: which finished serials used a suspect component lot?
@@ -208,12 +208,12 @@ SELECT DISTINCT ParentSerial FROM Tree;
 
 ## Lesson: [Intermediate|Medium] Time-series data at scale
 
-Machine data is **time-series**: (timestamp, tag, value, quality), arriving continuously — thousands of tags × 1 Hz = hundreds of millions of rows per month.
+Machine data is **time-series**: (timestamp, tag, value, quality), arriving continuously, thousands of tags × 1 Hz = hundreds of millions of rows per month.
 
 | Technique | Why |
 |---|---|
 | Time-series databases (ADX/KQL, InfluxDB, TimescaleDB, PI) | Fast ingest, compression, time-bucket queries |
-| Report by exception / deadband | Store only changes beyond a threshold — reduces volume 10–100× |
+| Report by exception / deadband | Store only changes beyond a threshold: reduces volume 10–100× |
 | Downsampling & retention tiers | Raw for weeks, 1-min aggregates for years |
 | Partitioning by time (SQL Server partitioning, columnstore) | Efficient ranges and archiving |
 | UTC timestamps + source time vs ingest time | Correct ordering across time zones and late data |
@@ -251,7 +251,7 @@ A **digital twin** is a live digital representation of a physical asset, process
 |---|---|
 | Component/asset twin | A pump with its live state, health score and maintenance history |
 | Process/line twin | A production line model to test a new schedule or layout virtually |
-| Plant/system twin | Whole factory — energy, flow, capacity planning |
+| Plant/system twin | Whole factory: energy, flow, capacity planning |
 | Product twin | Each serial's as-built data for service and warranty |
 
 Technologies: Azure Digital Twins (DTDL models + twin graph), Asset Administration Shell (Industry 4.0 standard for asset information), NVIDIA Omniverse/Siemens tools for 3D simulation, discrete-event simulation (AnyLogic, Plant Simulation), **virtual commissioning** (test PLC code against a simulated machine before it exists).
@@ -264,9 +264,9 @@ Technologies: Azure Digital Twins (DTDL models + twin graph), Asset Administrati
 Edge:   .NET Worker Service (OPC UA / Modbus / MQTT clients) → local buffer (SQLite) → MQTT / IoT Hub
 Cloud/on-prem:
   Ingestion  : MQTT broker or Azure IoT Hub/Event Hubs → .NET consumer (BackgroundService) or Azure Functions
-  Storage    : SQL Server (orders, quality, genealogy — RLS per plant/tenant) + time-series store (ADX/InfluxDB)
+  Storage    : SQL Server (orders, quality, genealogy, RLS per plant/tenant) + time-series store (ADX/InfluxDB)
   APIs       : ASP.NET Core Web API (REST), SignalR hub for live machine states
-  UI         : Angular/React/Next.js dashboards — OEE, downtime Pareto, andon boards, work instructions
+  UI         : Angular/React/Next.js dashboards, OEE, downtime Pareto, andon boards, work instructions
   Jobs       : Shift summaries, OEE aggregation, ERP sync (SAP/Dynamics via APIs/IDocs)
   Ops        : Docker/Kubernetes or Azure Container Apps, OpenTelemetry, Grafana
 ```
@@ -294,11 +294,11 @@ Non-functional concerns interviewers ask about: multi-plant/multi-tenant isolati
 
 ## [Beginner|High] What is Industry 4.0?
 
-The fourth industrial revolution: connecting machines, products, people and IT systems through IIoT, cloud/edge computing, data analytics and AI so factories become transparent, flexible and self-optimising. It builds on the automation of Industry 3.0 (PLCs, IT) by adding connectivity and data-driven decisions — e.g. real-time OEE, predictive maintenance, full traceability and digital twins.
+The fourth industrial revolution: connecting machines, products, people and IT systems through IIoT, cloud/edge computing, data analytics and AI so factories become transparent, flexible and self-optimising. It builds on the automation of Industry 3.0 (PLCs, IT) by adding connectivity and data-driven decisions: e.g. real-time OEE, predictive maintenance, full traceability and digital twins.
 
 ## [Beginner|High] What is IIoT and how is it different from consumer IoT?
 
-Industrial IoT connects industrial equipment — sensors, PLCs, machines — to collect and use data. Compared with consumer IoT it demands higher reliability, determinism and safety, works with industrial protocols (OPC UA, Modbus, PROFINET), runs in harsh environments with long equipment lifetimes (20+ years, brownfield machines), and has stricter security and uptime requirements.
+Industrial IoT connects industrial equipment: sensors, PLCs, machines, to collect and use data. Compared with consumer IoT it demands higher reliability, determinism and safety, works with industrial protocols (OPC UA, Modbus, PROFINET), runs in harsh environments with long equipment lifetimes (20+ years, brownfield machines), and has stricter security and uptime requirements.
 
 ## [Beginner|High] What is OEE and how is it calculated?
 
@@ -306,11 +306,11 @@ Overall Equipment Effectiveness = Availability × Performance × Quality. Availa
 
 ## [Beginner|High] What is an MES and how does it differ from ERP?
 
-MES executes and tracks production on the shop floor in real time — orders dispatched to lines, data collection, quality, traceability, OEE, work instructions. ERP manages the business — finance, purchasing, inventory, sales, planning over days/weeks. ISA-95 defines the integration: ERP sends orders and receives production confirmations and consumption from MES.
+MES executes and tracks production on the shop floor in real time: orders dispatched to lines, data collection, quality, traceability, OEE, work instructions. ERP manages the business, finance, purchasing, inventory, sales, planning over days/weeks. ISA-95 defines the integration: ERP sends orders and receives production confirmations and consumption from MES.
 
 ## [Beginner|Medium] What is ISA-95?
 
-An international standard (IEC 62264) for integrating enterprise and control systems. It defines the levels (0–4), the functions of manufacturing operations management (production, quality, maintenance, inventory) and object models for data exchanged between ERP and MES, plus the equipment hierarchy enterprise → site → area → line → unit — used to structure data models and topic namespaces.
+An international standard (IEC 62264) for integrating enterprise and control systems. It defines the levels (0–4), the functions of manufacturing operations management (production, quality, maintenance, inventory) and object models for data exchanged between ERP and MES, plus the equipment hierarchy enterprise → site → area → line → unit: used to structure data models and topic namespaces.
 
 ## [Intermediate|High] What is MQTT and why is it popular in IIoT?
 
@@ -318,11 +318,11 @@ A lightweight publish/subscribe protocol over TCP with a broker. Small overhead,
 
 ## [Intermediate|High] Explain MQTT QoS levels.
 
-QoS 0 — at most once, fire-and-forget, may be lost. QoS 1 — at least once, acknowledged, may be duplicated (consumers must be idempotent). QoS 2 — exactly once via a four-step handshake, slower. Telemetry usually uses 0 or 1; commands and important events use 1 with idempotency or 2.
+QoS 0: at most once, fire-and-forget, may be lost. QoS 1, at least once, acknowledged, may be duplicated (consumers must be idempotent). QoS 2, exactly once via a four-step handshake, slower. Telemetry usually uses 0 or 1; commands and important events use 1 with idempotency or 2.
 
 ## [Intermediate|High] What is the difference between OPC UA and MQTT? When do you use which?
 
-OPC UA is a full industrial interoperability standard — rich information models, browse/read/write/subscribe/methods, built-in security — ideal for connecting to machines and controllers. MQTT is a lightweight transport for pub/sub distribution of data to many consumers and to the cloud. Common pattern: OPC UA at the machine/edge, MQTT (or OPC UA PubSub over MQTT) from the edge to the enterprise/cloud.
+OPC UA is a full industrial interoperability standard: rich information models, browse/read/write/subscribe/methods, built-in security, ideal for connecting to machines and controllers. MQTT is a lightweight transport for pub/sub distribution of data to many consumers and to the cloud. Common pattern: OPC UA at the machine/edge, MQTT (or OPC UA PubSub over MQTT) from the edge to the enterprise/cloud.
 
 ## [Intermediate|High] What is edge computing and why is it needed in factories?
 
@@ -334,7 +334,7 @@ An architecture where an event broker (typically MQTT) holds the current state o
 
 ## [Intermediate|Medium] What are MTBF and MTTR?
 
-MTBF (mean time between failures) = operating time ÷ number of failures — reliability. MTTR (mean time to repair) = total repair time ÷ number of repairs — maintainability. Availability ≈ MTBF ÷ (MTBF + MTTR). Improving maintenance, spare-part availability and diagnostics reduces MTTR; root-cause analysis and predictive maintenance increase MTBF.
+MTBF (mean time between failures) = operating time ÷ number of failures: reliability. MTTR (mean time to repair) = total repair time ÷ number of repairs, maintainability. Availability ≈ MTBF ÷ (MTBF + MTTR). Improving maintenance, spare-part availability and diagnostics reduces MTTR; root-cause analysis and predictive maintenance increase MTBF.
 
 ## [Advanced|High] How does predictive maintenance work? What data do you need?
 
@@ -350,7 +350,7 @@ A live virtual model of a physical asset or process, synchronised with real data
 
 ## [Advanced|Medium] How do you handle millions of telemetry rows per day in SQL Server?
 
-Batch inserts (SqlBulkCopy, table-valued parameters), narrow tables with tag ids, clustered columnstore indexes for history, partitioning by date with sliding-window archiving, report-by-exception/deadband to cut volume, aggregates (1-min/1-h) for dashboards, `DATE_BUCKET` and window functions for queries, separate hot recent data from cold history — or use a dedicated time-series store (ADX/InfluxDB) and keep SQL for transactional MES data.
+Batch inserts (SqlBulkCopy, table-valued parameters), narrow tables with tag ids, clustered columnstore indexes for history, partitioning by date with sliding-window archiving, report-by-exception/deadband to cut volume, aggregates (1-min/1-h) for dashboards, `DATE_BUCKET` and window functions for queries, separate hot recent data from cold history, or use a dedicated time-series store (ADX/InfluxDB) and keep SQL for transactional MES data.
 
 ## [Scenario|High] A plant has 30-year-old machines without network connectivity. How do you bring them into an Industry 4.0 project?
 
@@ -358,7 +358,7 @@ Retrofit: add sensors (current clamps for run/stop, vibration sensors, photo-eye
 
 ## [Scenario|High] OEE dashboards show 110 % performance on some lines. What is wrong?
 
-Performance above 100 % means the ideal cycle time is wrong (too slow) or counts are inflated — wrong ideal cycle time for the running product, product not switched in the system at changeover, double counting from sensor bounce (needs debounce/edge detection), counting rejects twice, or run time understated (downtime recorded incorrectly). Validate the master data per product and the signal logic at the edge.
+Performance above 100 % means the ideal cycle time is wrong (too slow) or counts are inflated: wrong ideal cycle time for the running product, product not switched in the system at changeover, double counting from sensor bounce (needs debounce/edge detection), counting rejects twice, or run time understated (downtime recorded incorrectly). Validate the master data per product and the signal logic at the edge.
 
 ## [Scenario|Medium] Telemetry arrives late and out of order after network outages. How do you keep reports correct?
 
@@ -366,7 +366,7 @@ Use the device's source timestamp (UTC) rather than ingestion time, buffer and r
 
 ## [Scenario|Medium] Management asks: "How do we start Industry 4.0 with a small budget?"
 
-Start with a clear business problem and one KPI — usually OEE/downtime on a bottleneck line. Connect a few signals with low-cost edge hardware, build a simple dashboard and digital downtime-reason entry, run daily review meetings on the data, and quantify savings (more output, less scrap, less overtime). Use the result to fund scaling with a standard architecture (ISA-95 naming, MQTT/OPC UA, central data store), then move to predictive maintenance and quality analytics.
+Start with a clear business problem and one KPI, usually OEE/downtime on a bottleneck line. Connect a few signals with low-cost edge hardware, build a simple dashboard and digital downtime-reason entry, run daily review meetings on the data, and quantify savings (more output, less scrap, less overtime). Use the result to fund scaling with a standard architecture (ISA-95 naming, MQTT/OPC UA, central data store), then move to predictive maintenance and quality analytics.
 
 # Cheatsheet
 

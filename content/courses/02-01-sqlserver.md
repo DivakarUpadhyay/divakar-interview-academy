@@ -18,7 +18,7 @@ The SQL Server family:
 | Component | Purpose |
 |---|---|
 | Database Engine | Stores and queries data (OLTP) |
-| SSIS (Integration Services) | ETL — see the SSIS course |
+| SSIS (Integration Services) | ETL: see the SSIS course |
 | SSRS (Reporting Services) / Power BI Report Server | Paginated reports |
 | SSAS (Analysis Services) | OLAP cubes, tabular models |
 | SQL Server Agent | Job scheduling |
@@ -53,11 +53,11 @@ SQL statement categories:
 
 **How SQL Server executes a query:**
 
-1. **Parse** — syntax check, build a parse tree.
-2. **Bind (algebrize)** — resolve names, types, permissions.
-3. **Optimise** — the cost-based **query optimizer** uses statistics to choose an **execution plan** (join types, index seeks vs scans, parallelism).
-4. **Plan cache** — plan stored for reuse (parameterised queries reuse plans).
-5. **Execute** — the storage engine reads pages from the **buffer pool** (memory) or disk, acquiring locks/latches.
+1. **Parse**: syntax check, build a parse tree.
+2. **Bind (algebrize)**: resolve names, types, permissions.
+3. **Optimise**: the cost-based **query optimizer** uses statistics to choose an **execution plan** (join types, index seeks vs scans, parallelism).
+4. **Plan cache**: plan stored for reuse (parameterised queries reuse plans).
+5. **Execute**: the storage engine reads pages from the **buffer pool** (memory) or disk, acquiring locks/latches.
 6. **Return** results to the client.
 
 **Logical query processing order** (not the written order):
@@ -133,7 +133,7 @@ Types: `INT/BIGINT`, `DECIMAL(p,s)` for money (avoid `FLOAT`), `VARCHAR` (1 byte
 | **BCNF** | Every determinant is a candidate key | Stricter 3NF for overlapping candidate keys |
 | 4NF / 5NF | No multi-valued / join dependencies | Rare in interviews |
 
-**Denormalisation** — deliberately adding redundancy (e.g. storing `OrderTotal`, reporting tables, star schemas) to speed reads at the cost of update complexity. OLTP systems: normalise to 3NF. Data warehouses: denormalised **star schemas** (facts + dimensions).
+**Denormalisation**: deliberately adding redundancy (e.g. storing `OrderTotal`, reporting tables, star schemas) to speed reads at the cost of update complexity. OLTP systems: normalise to 3NF. Data warehouses: denormalised **star schemas** (facts + dimensions).
 
 ## Lesson: [Basic|Medium] DDL vs DML; DELETE vs TRUNCATE vs DROP
 
@@ -258,7 +258,7 @@ SELECT * FROM Org ORDER BY Lvl
 OPTION (MAXRECURSION 100);     -- default limit is 100; 0 = unlimited
 ```
 
-`NOT IN` with a subquery that returns any NULL returns **no rows** — prefer `NOT EXISTS`.
+`NOT IN` with a subquery that returns any NULL returns **no rows**: prefer `NOT EXISTS`.
 
 ## Lesson: [Intermediate|High] Window functions
 
@@ -299,7 +299,7 @@ SELECT FullName, CASE WHEN Salary >= 150000 THEN 'Senior' WHEN Salary >= 80000 T
 SELECT * FROM (SELECT Region, Quarter, Amount FROM Sales) s
 PIVOT (SUM(Amount) FOR Quarter IN ([Q1], [Q2], [Q3], [Q4])) p;
 
--- MERGE (upsert) — target vs source
+-- MERGE (upsert): target vs source
 MERGE dbo.Products AS t
 USING dbo.StagingProducts AS s ON t.Sku = s.Sku
 WHEN MATCHED AND t.Price <> s.Price THEN UPDATE SET t.Price = s.Price
@@ -308,7 +308,7 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE
 OUTPUT $action, inserted.Sku, deleted.Sku;
 ```
 
-`MERGE` has known concurrency caveats — use `WITH (HOLDLOCK)` on the target for concurrent upserts, or separate UPDATE + INSERT in a transaction.
+`MERGE` has known concurrency caveats: use `WITH (HOLDLOCK)` on the target for concurrent upserts, or separate UPDATE + INSERT in a transaction.
 
 # Module: Programmability
 
@@ -345,7 +345,7 @@ Benefits: plan reuse, security (grant EXECUTE without table access), fewer round
 CREATE OR ALTER FUNCTION dbo.fn_TaxAmount (@Amount DECIMAL(12,2)) RETURNS DECIMAL(12,2)
 AS BEGIN RETURN @Amount * 0.18; END;
 
--- Inline table-valued function (best performing — expanded like a view)
+-- Inline table-valued function (best performing: expanded like a view)
 CREATE OR ALTER FUNCTION dbo.fn_OrdersByCustomer (@CustomerId INT) RETURNS TABLE
 AS RETURN (SELECT OrderId, OrderDate, Total FROM dbo.Orders WHERE CustomerId = @CustomerId);
 
@@ -426,12 +426,12 @@ END;
 
 ## Lesson: [Intermediate|High] Clustered, non-clustered, covering and filtered indexes
 
-- **Clustered index** — defines the physical order of rows (the table *is* the B-tree leaf level). **One per table**. Default on the PK. Best on narrow, unique, ever-increasing keys (INT IDENTITY).
-- **Non-clustered index** — separate B-tree with key columns + a row locator (clustered key, or RID for heaps). Up to 999 per table.
-- **Covering index** — contains all columns a query needs (keys + `INCLUDE` columns) → no key lookups.
-- **Filtered index** — index on a subset (`WHERE IsActive = 1`).
+- **Clustered index**: defines the physical order of rows (the table *is* the B-tree leaf level). **One per table**. Default on the PK. Best on narrow, unique, ever-increasing keys (INT IDENTITY).
+- **Non-clustered index**: separate B-tree with key columns + a row locator (clustered key, or RID for heaps). Up to 999 per table.
+- **Covering index**: contains all columns a query needs (keys + `INCLUDE` columns) → no key lookups.
+- **Filtered index**: index on a subset (`WHERE IsActive = 1`).
 - **Unique index**, **composite index** (column order matters: equality columns first, then range/sort), **columnstore** (analytics, compression), **full-text**, **XML/spatial**.
-- **Heap** — table without a clustered index.
+- **Heap**: table without a clustered index.
 
 ```sql
 CREATE NONCLUSTERED INDEX IX_Orders_Customer_Date
@@ -442,13 +442,13 @@ WHERE IsDeleted = 0;
 CREATE CLUSTERED COLUMNSTORE INDEX CCI_FactSales ON dbo.FactSales;
 ```
 
-Costs: indexes speed reads but slow INSERT/UPDATE/DELETE and use storage. Find missing/unused ones with `sys.dm_db_missing_index_details` and `sys.dm_db_index_usage_stats` (validate suggestions — don't blindly create).
+Costs: indexes speed reads but slow INSERT/UPDATE/DELETE and use storage. Find missing/unused ones with `sys.dm_db_missing_index_details` and `sys.dm_db_index_usage_stats` (validate suggestions: don't blindly create).
 
 ## Lesson: [Intermediate|High] Execution plans, seeks vs scans and SARGability
 
-- **Index Seek** — navigates the B-tree to matching rows (good for selective predicates).
-- **Index/Table Scan** — reads everything (fine for small tables or returning most rows).
-- **Key Lookup** — after a non-clustered seek, fetch extra columns from the clustered index; many lookups → add `INCLUDE` columns.
+- **Index Seek**: navigates the B-tree to matching rows (good for selective predicates).
+- **Index/Table Scan**: reads everything (fine for small tables or returning most rows).
+- **Key Lookup**: after a non-clustered seek, fetch extra columns from the clustered index; many lookups → add `INCLUDE` columns.
 - **SARGable** (Search ARGument-able) predicates can use an index seek:
 
 ```sql
@@ -468,10 +468,10 @@ Read plans right-to-left, top-to-bottom; look at thick arrows, estimated vs actu
 
 ## Lesson: [Advanced|High] Statistics, parameter sniffing and Query Store
 
-- **Statistics** — histograms of value distribution that the optimizer uses to estimate row counts. Auto-created/updated; refresh with `UPDATE STATISTICS` or maintenance jobs.
-- **Parameter sniffing** — the first execution's parameter values shape the cached plan; a plan good for a small customer can be terrible for a huge one. Fixes: `OPTION (RECOMPILE)`, `OPTIMIZE FOR (@p UNKNOWN)` or a specific value, splitting procs, plan forcing in Query Store, SQL 2022's Parameter Sensitive Plan optimisation.
-- **Query Store** (2016+) — records queries, plans and runtime stats over time; find regressed queries and force a known-good plan.
-- **Index maintenance** — fragmentation matters less on SSDs; prioritise statistics updates. Rebuild (offline/online) vs reorganise.
+- **Statistics**: histograms of value distribution that the optimizer uses to estimate row counts. Auto-created/updated; refresh with `UPDATE STATISTICS` or maintenance jobs.
+- **Parameter sniffing**: the first execution's parameter values shape the cached plan; a plan good for a small customer can be terrible for a huge one. Fixes: `OPTION (RECOMPILE)`, `OPTIMIZE FOR (@p UNKNOWN)` or a specific value, splitting procs, plan forcing in Query Store, SQL 2022's Parameter Sensitive Plan optimisation.
+- **Query Store** (2016+): records queries, plans and runtime stats over time; find regressed queries and force a known-good plan.
+- **Index maintenance**: fragmentation matters less on SSDs; prioritise statistics updates. Rebuild (offline/online) vs reorganise.
 
 ## Lesson: [Advanced|High] Transactions, isolation levels and locking
 
@@ -484,7 +484,7 @@ ACID: **Atomicity** (all or nothing), **Consistency** (constraints hold), **Isol
 | REPEATABLE READ | ✗ | ✗ | ✓ | Holds shared locks till end of transaction |
 | SERIALIZABLE | ✗ | ✗ | ✗ | Range locks; most blocking |
 | SNAPSHOT | ✗ | ✗ | ✗ | Row versions in tempdb; readers don't block writers; update conflicts detected |
-| READ COMMITTED SNAPSHOT (RCSI) | ✗ | ✓ | ✓ | Database option; statement-level versioning — default in Azure SQL Database |
+| READ COMMITTED SNAPSHOT (RCSI) | ✗ | ✓ | ✓ | Database option; statement-level versioning: default in Azure SQL Database |
 
 Lock modes: **Shared (S)**, **Exclusive (X)**, **Update (U)**, **Intent (IS/IX)**, schema locks. Granularity: row → page → table (lock escalation at ~5,000 locks).
 
@@ -492,12 +492,12 @@ Lock modes: **Shared (S)**, **Exclusive (X)**, **Update (U)**, **Intent (IS/IX)*
 
 ## Lesson: [Advanced|Medium] Partitioning, columnstore, temporal and security features
 
-- **Table partitioning** — split a large table by a range (e.g. month) on a partition function/scheme; enables partition elimination and fast `SWITCH`/`TRUNCATE ... WITH (PARTITIONS (...))` for data retention.
-- **Columnstore** — column-wise compressed storage; huge gains for analytics/aggregates (data warehouses).
-- **Temporal tables** — `SYSTEM_VERSIONING = ON` keeps full row history; query `FOR SYSTEM_TIME AS OF`.
-- **JSON** — `OPENJSON`, `JSON_VALUE`, `JSON_QUERY`, `FOR JSON PATH` (2016+); native `json` type in SQL Server 2025.
-- **Security** — logins (server) vs users (database), roles, `GRANT/DENY/REVOKE`, schemas; **Row-Level Security**, **Dynamic Data Masking**, **Always Encrypted**, **TDE** (encryption at rest), auditing.
-- **High availability / DR** — Always On Availability Groups, Failover Cluster Instances, log shipping, backups: **full**, **differential**, **transaction log** (with FULL recovery model enables point-in-time restore).
+- **Table partitioning**: split a large table by a range (e.g. month) on a partition function/scheme; enables partition elimination and fast `SWITCH`/`TRUNCATE ... WITH (PARTITIONS (...))` for data retention.
+- **Columnstore**: column-wise compressed storage; huge gains for analytics/aggregates (data warehouses).
+- **Temporal tables**: `SYSTEM_VERSIONING = ON` keeps full row history; query `FOR SYSTEM_TIME AS OF`.
+- **JSON**: `OPENJSON`, `JSON_VALUE`, `JSON_QUERY`, `FOR JSON PATH` (2016+); native `json` type in SQL Server 2025.
+- **Security**: logins (server) vs users (database), roles, `GRANT/DENY/REVOKE`, schemas; **Row-Level Security**, **Dynamic Data Masking**, **Always Encrypted**, **TDE** (encryption at rest), auditing.
+- **High availability / DR**: Always On Availability Groups, Failover Cluster Instances, log shipping, backups: **full**, **differential**, **transaction log** (with FULL recovery model enables point-in-time restore).
 
 # Module: Connecting Applications to SQL Server
 
@@ -512,7 +512,7 @@ User ID=shop_app;Password=***;                    ← SQL authentication   OR   
 Encrypt=True;TrustServerCertificate=False;        ← TLS (Encrypt=True is the default since Microsoft.Data.SqlClient 4.0)
 Connection Timeout=30;                            ← seconds to wait for a connection
 MultipleActiveResultSets=False;                   ← MARS
-Application Name=Shop.Api;                        ← shows in sys.dm_exec_sessions — great for diagnostics
+Application Name=Shop.Api;                        ← shows in sys.dm_exec_sessions: great for diagnostics
 Max Pool Size=100;Min Pool Size=0                 ← connection pooling (on by default)
 ```
 
@@ -520,7 +520,7 @@ Max Pool Size=100;Min Pool Size=0                 ← connection pooling (on by 
 |---|---|---|
 | Windows (Integrated) | On-premises, domain/IIS app pool identity | `Trusted_Connection=True` |
 | SQL authentication | Simple setups, non-Windows clients | `User ID=...;Password=...` |
-| Microsoft Entra ID (Azure AD) — managed identity | Azure SQL from Azure services — no password | `Authentication=Active Directory Managed Identity` (or `Active Directory Default`) |
+| Microsoft Entra ID (Azure AD): managed identity | Azure SQL from Azure services, no password | `Authentication=Active Directory Managed Identity` (or `Active Directory Default`) |
 
 **Where to keep it:** `appsettings.json` / `web.config` for non-secret parts, secrets in User Secrets (dev), environment variables, **Azure Key Vault** or managed identity (production). Never in source control or front-end code.
 
@@ -538,8 +538,8 @@ Max Pool Size=100;Min Pool Size=0                 ← connection pooling (on by 
 | SSIS | OLE DB / ADO.NET connection managers (MSOLEDBSQL provider) | Connection manager + project parameters for environments |
 | SSRS | Shared data sources (stored credentials or Windows integrated) | Data source in Report Server |
 | Node.js | `mssql` (tedious), Prisma, Sequelize | `new sql.ConnectionPool({ server, database, user, password, options: { encrypt: true } })` |
-| Next.js | Server Components / route handlers with `mssql` or Prisma — never client code | see the Next.js course |
-| React / Angular / Vue / AngularJS | **Through an HTTP API** (ASP.NET Core / Node) — browsers never connect directly | `fetch('/api/products')` / `HttpClient.get(...)` / `$http.get(...)` |
+| Next.js | Server Components / route handlers with `mssql` or Prisma: never client code | see the Next.js course |
+| React / Angular / Vue / AngularJS | **Through an HTTP API** (ASP.NET Core / Node): browsers never connect directly | `fetch('/api/products')` / `HttpClient.get(...)` / `$http.get(...)` |
 | Python | `pyodbc` / `mssql-python` with ODBC Driver 18 | `pyodbc.connect("DRIVER={ODBC Driver 18 for SQL Server};SERVER=...;DATABASE=Shop;Trusted_Connection=yes;Encrypt=yes")` |
 | Java | Microsoft JDBC driver | `jdbc:sqlserver://host:1433;databaseName=Shop;encrypt=true` |
 | Power BI / Excel | Built-in SQL Server connector (Import or DirectQuery) | Server + database + credentials, on-premises data gateway for cloud refresh |
@@ -560,9 +560,9 @@ while (await reader.ReadAsync(ct)) Console.WriteLine($"{reader.GetInt32(0)} {rea
 |---|---|
 | "A network-related or instance-specific error… (error: 26/40)" | Wrong server/instance name, SQL Browser stopped (named instances), TCP/IP disabled in SQL Server Configuration Manager, firewall port 1433 closed |
 | "Login failed for user" (18456) | Wrong credentials, SQL authentication not enabled (mixed mode), login has no access to the database, IIS app pool identity has no login |
-| "The certificate chain was issued by an authority that is not trusted" | `Encrypt=True` with a self-signed server certificate — install a trusted certificate, or `TrustServerCertificate=True` for **local development only** |
-| "Timeout expired… pool" | Connection leaks (not disposed) or too many concurrent requests — `using`/`await using`, check pool size, find long queries |
-| Azure SQL "Cannot open server… not allowed" | Server firewall — add the client IP or use private endpoints / allow Azure services |
+| "The certificate chain was issued by an authority that is not trusted" | `Encrypt=True` with a self-signed server certificate: install a trusted certificate, or `TrustServerCertificate=True` for **local development only** |
+| "Timeout expired… pool" | Connection leaks (not disposed) or too many concurrent requests: `using`/`await using`, check pool size, find long queries |
+| Azure SQL "Cannot open server… not allowed" | Server firewall: add the client IP or use private endpoints / allow Azure services |
 
 # Interview
 
@@ -576,7 +576,7 @@ INNER JOIN (matching rows in both), LEFT/RIGHT OUTER JOIN (all rows from one sid
 
 ## [Beginner|High] What is the difference between WHERE and HAVING?
 
-WHERE filters individual rows **before** grouping and can't use aggregates. HAVING filters groups **after** GROUP BY and can use aggregates (`HAVING COUNT(*) > 5`). Put non-aggregate conditions in WHERE for performance — fewer rows get grouped.
+WHERE filters individual rows **before** grouping and can't use aggregates. HAVING filters groups **after** GROUP BY and can use aggregates (`HAVING COUNT(*) > 5`). Put non-aggregate conditions in WHERE for performance: fewer rows get grouped.
 
 ## [Beginner|High] What is a primary key vs a unique key vs a foreign key?
 
@@ -584,11 +584,11 @@ Primary key: uniquely identifies each row, NOT NULL, one per table, creates a cl
 
 ## [Beginner|High] What is normalisation? Explain 1NF, 2NF and 3NF.
 
-Organising tables to reduce redundancy and update anomalies. 1NF: atomic columns and no repeating groups. 2NF: 1NF and every non-key column depends on the **whole** primary key (no partial dependency — relevant for composite keys). 3NF: 2NF and no transitive dependency (non-key columns depend only on the key, e.g. move DeptName out of Employees into Departments). Data warehouses deliberately denormalise for read speed.
+Organising tables to reduce redundancy and update anomalies. 1NF: atomic columns and no repeating groups. 2NF: 1NF and every non-key column depends on the **whole** primary key (no partial dependency, relevant for composite keys). 3NF: 2NF and no transitive dependency (non-key columns depend only on the key, e.g. move DeptName out of Employees into Departments). Data warehouses deliberately denormalise for read speed.
 
 ## [Beginner|High] Clustered vs non-clustered index?
 
-A clustered index sorts and stores the table's data rows in key order — the leaf level is the data; only one per table. A non-clustered index is a separate structure with key columns and a pointer (clustered key or RID) back to the row; up to 999 per table. Clustered is ideal for range queries on the key; non-clustered for selective lookups on other columns, ideally covering with INCLUDE columns.
+A clustered index sorts and stores the table's data rows in key order: the leaf level is the data; only one per table. A non-clustered index is a separate structure with key columns and a pointer (clustered key or RID) back to the row; up to 999 per table. Clustered is ideal for range queries on the key; non-clustered for selective lookups on other columns, ideally covering with INCLUDE columns.
 
 ## [Beginner|High] Write a query to find the second (or Nth) highest salary.
 
@@ -634,7 +634,7 @@ All are window ranking functions. For salaries 100, 90, 90, 80: ROW_NUMBER gives
 
 ## [Intermediate|High] What is a CTE? When would you use a recursive CTE?
 
-A Common Table Expression (`WITH name AS (...)`) is a named temporary result set for a single statement — improves readability, can be referenced multiple times in that statement, and supports recursion. A recursive CTE has an anchor member UNION ALL a recursive member referencing the CTE; used for hierarchies (org charts, category trees, bill of materials) and generating sequences. Default max recursion 100 (`OPTION (MAXRECURSION n)`).
+A Common Table Expression (`WITH name AS (...)`) is a named temporary result set for a single statement: improves readability, can be referenced multiple times in that statement, and supports recursion. A recursive CTE has an anchor member UNION ALL a recursive member referencing the CTE; used for hierarchies (org charts, category trees, bill of materials) and generating sequences. Default max recursion 100 (`OPTION (MAXRECURSION n)`).
 
 ## [Intermediate|High] Stored procedure vs function?
 
@@ -650,7 +650,7 @@ Two (or more) transactions each hold locks the other needs, so neither can proce
 
 ## [Intermediate|High] Temp table vs table variable vs CTE?
 
-Temp tables (`#t`) live in tempdb for the session/proc, have statistics, support any indexes, and are rolled back with transactions — good for larger intermediate data. Table variables (`@t`) are scoped to the batch, have no column statistics (estimates improved by 2019 deferred compilation), aren't affected by rollback, best for small sets. CTEs aren't stored at all — they're inlined into the single statement.
+Temp tables (`#t`) live in tempdb for the session/proc, have statistics, support any indexes, and are rolled back with transactions: good for larger intermediate data. Table variables (`@t`) are scoped to the batch, have no column statistics (estimates improved by 2019 deferred compilation), aren't affected by rollback, best for small sets. CTEs aren't stored at all, they're inlined into the single statement.
 
 ## [Intermediate|High] What makes a query non-SARGable? Give examples.
 
@@ -662,7 +662,7 @@ ISNULL(expr, replacement) is T-SQL-specific, takes two arguments, and returns th
 
 ## [Intermediate|Medium] What are the magic tables in triggers?
 
-`inserted` and `deleted` — virtual tables available inside DML triggers (and OUTPUT clauses). INSERT: `inserted` has new rows. DELETE: `deleted` has removed rows. UPDATE: `deleted` holds old values and `inserted` new values. Triggers fire once per statement, so always write set-based logic that handles multiple rows.
+`inserted` and `deleted`: virtual tables available inside DML triggers (and OUTPUT clauses). INSERT: `inserted` has new rows. DELETE: `deleted` has removed rows. UPDATE: `deleted` holds old values and `inserted` new values. Triggers fire once per statement, so always write set-based logic that handles multiple rows.
 
 ## [Advanced|High] What is parameter sniffing and how do you fix it?
 
@@ -674,11 +674,11 @@ When a parameterised query/proc compiles, the optimizer "sniffs" the first param
 
 ## [Advanced|Medium] What does NOLOCK do and why is it dangerous?
 
-`WITH (NOLOCK)` = READ UNCOMMITTED for that table: no shared locks, so it isn't blocked by writers. Dangers: dirty reads of uncommitted data that may roll back, missing or duplicate rows due to page splits during scans, and errors (601) on data movement. It isn't a performance fix for blocking — use READ COMMITTED SNAPSHOT isolation instead, which gives non-blocking reads of committed data.
+`WITH (NOLOCK)` = READ UNCOMMITTED for that table: no shared locks, so it isn't blocked by writers. Dangers: dirty reads of uncommitted data that may roll back, missing or duplicate rows due to page splits during scans, and errors (601) on data movement. It isn't a performance fix for blocking: use READ COMMITTED SNAPSHOT isolation instead, which gives non-blocking reads of committed data.
 
 ## [Advanced|Medium] Explain the backup types and recovery models.
 
-Recovery models: SIMPLE (log truncated at checkpoint, no log backups, restore only to the last full/diff), FULL (all logged, log backups required, point-in-time restore), BULK_LOGGED (minimal logging for bulk ops, point-in-time limited). Backups: Full (whole DB), Differential (changes since the last full), Transaction log (log records since the last log backup — keeps the log from growing in FULL). Restore sequence: full → latest differential → all log backups in order (`STOPAT` for point in time). Test restores regularly.
+Recovery models: SIMPLE (log truncated at checkpoint, no log backups, restore only to the last full/diff), FULL (all logged, log backups required, point-in-time restore), BULK_LOGGED (minimal logging for bulk ops, point-in-time limited). Backups: Full (whole DB), Differential (changes since the last full), Transaction log (log records since the last log backup, keeps the log from growing in FULL). Restore sequence: full → latest differential → all log backups in order (`STOPAT` for point in time). Test restores regularly.
 
 ## [Advanced|Low] What is lock escalation?
 
@@ -709,7 +709,7 @@ Likely blocking: the finance job holds long locks (large UPDATEs, SERIALIZABLE, 
 
 ## [Scenario|Medium] How would you design tables for an e-commerce order system?
 
-Customers(CustomerId PK, Name, Email UNIQUE), Addresses(AddressId, CustomerId FK, ...), Products(ProductId PK, Sku UNIQUE, Name, Price, CategoryId FK), Categories(self-referencing ParentId), Orders(OrderId PK, CustomerId FK, OrderDate, Status, ShippingAddressId FK, Total), OrderItems(OrderId FK, ProductId FK, Qty, UnitPrice — copy the price at order time; PK (OrderId, ProductId) or surrogate), Payments(PaymentId, OrderId FK, Amount, Method, Status, ProviderRef UNIQUE), Inventory(ProductId, WarehouseId, Qty, RowVersion). Indexes on FKs and common filters (Orders(CustomerId, OrderDate DESC)), CHECK constraints (Qty > 0), rowversion for concurrency, audit columns.
+Customers(CustomerId PK, Name, Email UNIQUE), Addresses(AddressId, CustomerId FK, ...), Products(ProductId PK, Sku UNIQUE, Name, Price, CategoryId FK), Categories(self-referencing ParentId), Orders(OrderId PK, CustomerId FK, OrderDate, Status, ShippingAddressId FK, Total), OrderItems(OrderId FK, ProductId FK, Qty, UnitPrice: copy the price at order time; PK (OrderId, ProductId) or surrogate), Payments(PaymentId, OrderId FK, Amount, Method, Status, ProviderRef UNIQUE), Inventory(ProductId, WarehouseId, Qty, RowVersion). Indexes on FKs and common filters (Orders(CustomerId, OrderDate DESC)), CHECK constraints (Qty > 0), rowversion for concurrency, audit columns.
 
 ## [Scenario|Medium] You must load 50 million rows into a table that is queried 24/7. How do you avoid downtime?
 
@@ -717,7 +717,7 @@ Load into a **staging table** with the same structure (bulk insert, minimal logg
 
 ## [Beginner|High] What are the ACID properties of a transaction?
 
-Atomicity — all statements in a transaction succeed or none do (rollback on failure). Consistency — a transaction moves the database from one valid state to another, respecting constraints, keys and rules. Isolation — concurrent transactions don't see each other's uncommitted work, controlled by isolation levels and locks/row versions. Durability — once committed, changes survive crashes because the log is hardened to disk (write-ahead logging). Example: a money transfer debits one account and credits another inside one transaction so it can never half-complete.
+Atomicity: all statements in a transaction succeed or none do (rollback on failure). Consistency, a transaction moves the database from one valid state to another, respecting constraints, keys and rules. Isolation, concurrent transactions don't see each other's uncommitted work, controlled by isolation levels and locks/row versions. Durability, once committed, changes survive crashes because the log is hardened to disk (write-ahead logging). Example: a money transfer debits one account and credits another inside one transaction so it can never half-complete.
 
 # Cheatsheet
 

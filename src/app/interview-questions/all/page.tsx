@@ -6,8 +6,8 @@ import { pageMeta } from "@/lib/seo";
 import { Ease, Priority } from "@/components/Badges";
 
 export const metadata: Metadata = pageMeta({
-  title: "All Interview Questions — Topic-wise List with Priority",
-  description: "Every interview question on DevLadder listed topic by topic — fundamentals, .NET, SQL Server, cloud, frontend, automation and career — with must-know priority and how easy each one is to answer.",
+  title: "All Interview Questions: Topic-wise List with Priority",
+  description: "Every interview question on DevLadder listed topic by topic, fundamentals, .NET, SQL Server, cloud, frontend, automation and career, with must-know priority and how easy each one is to answer.",
   path: "/interview-questions/all",
 });
 
@@ -21,13 +21,13 @@ export default function AllQuestions() {
   return (
     <>
       <div className="crumbs"><Link href="/interview-questions">Interview Questions</Link> › All questions</div>
-      <h1>All Interview Questions — Topic-wise</h1>
+      <h1>All Interview Questions: Topic-wise</h1>
       <p className="muted">
         {rows.length} questions in learning order. Inside each topic the <b>must-know</b> questions come first, then the rest from easy to
         hard. Click a question to open its course&apos;s Q&amp;A page with the short bullet-point answer.
       </p>
       <div className="qi-legend">
-        <span className="badge High">★ Must know</span><span className="muted small">{must} questions — asked in almost every interview</span>
+        <span className="badge High">★ Must know</span><span className="muted small">{must} questions: asked in almost every interview</span>
         <span className="badge ease-Easy">Easy to answer</span><span className="badge ease-Medium">Medium to answer</span><span className="badge ease-Hard">Hard to answer</span>
       </div>
       <div className="role-courses">

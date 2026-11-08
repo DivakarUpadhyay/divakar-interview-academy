@@ -6,7 +6,7 @@ import { tool } from "@/lib/tools";
 import JwtDecoder from "./JwtDecoder";
 
 const t = tool("jwt-decoder");
-export const metadata: Metadata = pageMeta({ title: `${t.name} — Free Online JSON Web Token Viewer`, description: t.description, path: `/tools/${t.slug}` });
+export const metadata: Metadata = pageMeta({ title: `${t.name}: Free Online JSON Web Token Viewer`, description: t.description, path: `/tools/${t.slug}` });
 
 export default function Page() {
   return (
@@ -29,7 +29,7 @@ export default function Page() {
         <p>Learn authentication end to end in the free <Link href="/courses/aspnet-core-webapi">ASP.NET Core Web API course</Link>.</p>
       </>}
       faq={[
-        ["Is it safe to paste a JWT here?", "The token is decoded only in your browser and never sent anywhere. Still, a live token is a credential — prefer test tokens, and never paste signing secrets or private keys into any website."],
+        ["Is it safe to paste a JWT here?", "The token is decoded only in your browser and never sent anywhere. Still, a live token is a credential: prefer test tokens, and never paste signing secrets or private keys into any website."],
         ["Is a JWT encrypted?", "A normal JWT (JWS) is only Base64URL-encoded and signed, so anyone can read the claims. The signature proves it was not changed; it does not hide the content."],
         ["Why is my token expired?", "The exp claim is a Unix time in seconds. When the current time passes it, APIs reject the token and the client should use a refresh token or sign in again."],
         ["Does this verify the signature?", "No. Verification needs the issuer's secret or public key; do it in your server code, as in the ASP.NET Core example above."],

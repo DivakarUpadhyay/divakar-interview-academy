@@ -80,7 +80,7 @@ export default function AdminDashboard() {
           <li>Page views so far this month: <b>{num(monthSoFar)}</b>; projected for the whole month: <b>{num(projectedPv)}</b></li>
           <li>Estimated earnings this month: <b>{usd(earn(RPM.low))}</b> (low) · <b>{usd(earn(RPM.typical))}</b> (typical) · <b>{usd(earn(RPM.high))}</b> (high)</li>
           <li>At the current pace, reaching the ${PAYOUT} payout takes about{" "}
-            <b>{Number.isFinite(monthsToPayout(RPM.typical)) ? `${monthsToPayout(RPM.typical).toFixed(1)} months` : "—"}</b> (typical RPM).</li>
+            <b>{Number.isFinite(monthsToPayout(RPM.typical)) ? `${monthsToPayout(RPM.typical).toFixed(1)} months` : "-"}</b> (typical RPM).</li>
         </ul>
         <p className="muted small">AdSense status: <b>{ADSENSE_STATUS}</b>. Estimates use ${RPM.low}–${RPM.high} per 1,000 page views; your real RPM appears in AdSense → Reports after approval.</p>
       </div>
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
             return (
               <div key={k} className="card">
                 <span className="muted small">{label}</span>
-                {v ? <b className={v.good >= 0.9 ? "admin-good" : "admin-bad"}>{Math.round(v.good * 100)}% good</b> : <b>—</b>}
+                {v ? <b className={v.good >= 0.9 ? "admin-good" : "admin-bad"}>{Math.round(v.good * 100)}% good</b> : <b>-</b>}
                 {v && <span className="small muted">{Math.round(v.ni * 100)}% needs improvement · {Math.round(v.poor * 100)}% poor · {num(v.samples)} loads</span>}
               </div>
             );
@@ -140,9 +140,9 @@ export default function AdminDashboard() {
       </table></div>
 
       <div className="admin-cols">
-        <div><h2>Top pages</h2><ol>{data.pages.map((p) => <li key={p.path}><code>{p.path}</code> — {num(p.pageViews)}</li>)}</ol></div>
-        <div><h2>Countries</h2><ol>{data.countries.map((c) => <li key={c.name}>{c.name} — {num(c.pageViews)}</li>)}</ol></div>
-        <div><h2>Where visitors come from</h2><ol>{data.referrers.map((r) => <li key={r.host}>{r.host} — {num(r.pageViews)}</li>)}</ol></div>
+        <div><h2>Top pages</h2><ol>{data.pages.map((p) => <li key={p.path}><code>{p.path}</code>: {num(p.pageViews)}</li>)}</ol></div>
+        <div><h2>Countries</h2><ol>{data.countries.map((c) => <li key={c.name}>{c.name}: {num(c.pageViews)}</li>)}</ol></div>
+        <div><h2>Where visitors come from</h2><ol>{data.referrers.map((r) => <li key={r.host}>{r.host}: {num(r.pageViews)}</li>)}</ol></div>
       </div>
     </div>
   );

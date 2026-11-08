@@ -11,7 +11,7 @@ summary: The tech lead vs engineering manager role, SDLC and Agile/Scrum/Kanban,
 
 # Overview
 
-**Managerial / techno-managerial rounds** (often with a delivery manager, engineering manager, director or client) test whether you can deliver through a team — not just code. For senior developer, tech lead, team lead, project lead and engineering manager roles, expect questions on:
+**Managerial / techno-managerial rounds** (often with a delivery manager, engineering manager, director or client) test whether you can deliver through a team, not just code. For senior developer, tech lead, team lead, project lead and engineering manager roles, expect questions on:
 
 - **Delivery**: planning, estimation, sprint management, risk, deadlines, scope changes.
 - **People**: delegation, mentoring, motivation, feedback, underperformers, conflict, hiring.
@@ -35,7 +35,7 @@ Management and delivery methods have evolved:
 | Year | Milestone |
 |---|---|
 | 1970 | Winston Royce's paper (commonly cited as the origin of the "Waterfall" model, though it argued for iteration) |
-| 1986 | Takeuchi & Nonaka's "The New New Product Development Game" — inspiration for Scrum |
+| 1986 | Takeuchi & Nonaka's "The New New Product Development Game": inspiration for Scrum |
 | 1995 | Scrum presented by Ken Schwaber and Jeff Sutherland |
 | 1996–1999 | Extreme Programming (Kent Beck) |
 | **2001** | **Agile Manifesto** (4 values, 12 principles) |
@@ -53,11 +53,11 @@ Management and delivery methods have evolved:
 **Scrum lifecycle (per sprint, 1–4 weeks, commonly 2):**
 
 1. **Product Backlog** (owned by the Product Owner, ordered by value) with refinement sessions.
-2. **Sprint Planning** — why (Sprint Goal), what (selected backlog items), how (plan/tasks) → **Sprint Backlog**.
-3. **Daily Scrum** — 15 minutes for Developers to inspect progress toward the Sprint Goal and adapt.
+2. **Sprint Planning**: why (Sprint Goal), what (selected backlog items), how (plan/tasks) → **Sprint Backlog**.
+3. **Daily Scrum**: 15 minutes for Developers to inspect progress toward the Sprint Goal and adapt.
 4. Development work; **Definition of Done** applied to every increment.
-5. **Sprint Review** — demo the increment to stakeholders, adapt the backlog.
-6. **Sprint Retrospective** — improve how the team works.
+5. **Sprint Review**: demo the increment to stakeholders, adapt the backlog.
+6. **Sprint Retrospective**: improve how the team works.
 7. Repeat.
 
 Scrum roles (accountabilities): **Product Owner**, **Scrum Master**, **Developers**. Artifacts: **Product Backlog** (commitment: Product Goal), **Sprint Backlog** (Sprint Goal), **Increment** (Definition of Done).
@@ -92,7 +92,7 @@ Scrum roles (accountabilities): **Product Owner**, **Scrum Master**, **Developer
 | Reports status | Owns status, risks and expectations with stakeholders |
 | Responds to decisions | Makes and explains decisions, accepts accountability |
 
-Typical lead time split: ~30–60% hands-on technical work, the rest planning, reviews, mentoring, meetings and stakeholder communication. A common trap: being the "hero" who does the hardest work alone — it doesn't scale and blocks the team's growth.
+Typical lead time split: ~30–60% hands-on technical work, the rest planning, reviews, mentoring, meetings and stakeholder communication. A common trap: being the "hero" who does the hardest work alone, it doesn't scale and blocks the team's growth.
 
 ## Lesson: [Basic|High] Agile, Scrum and Kanban essentials
 
@@ -116,30 +116,30 @@ Terms: **user story** ("As a … I want … so that …") with **acceptance crit
 - For fixed-date/fixed-scope client projects: bottom-up estimates in hours/days + **three-point estimates** (optimistic, most likely, pessimistic → PERT: (O + 4M + P) / 6) + contingency (often 15–25%) + explicit assumptions.
 - Include non-coding work: code review, testing, deployment, documentation, meetings, holidays, support load.
 - Re-estimate when you learn more; communicate changes early.
-- Make trade-offs explicit: **scope, time, cost, quality** (the iron triangle — quality shouldn't be the variable).
+- Make trade-offs explicit: **scope, time, cost, quality** (the iron triangle, quality shouldn't be the variable).
 
 ## Lesson: [Intermediate|High] Delegation and task allocation
 
 - Delegate **outcomes**, not just tasks: context (why), expected result, constraints, deadline, how and when to check in.
 - Match tasks to **skill and growth**: stretch tasks for growth with support; critical-path work to experienced members; pair juniors with seniors.
 - Use situational leadership: **directing** (new/low skill) → **coaching** → **supporting** → **delegating** (expert, motivated).
-- Avoid single points of failure — rotate knowledge (pairing, documentation, code reviews).
+- Avoid single points of failure: rotate knowledge (pairing, documentation, code reviews).
 - Track on the board, not via constant status chasing; be available to unblock.
 
 ## Lesson: [Intermediate|High] Mentoring, feedback and 1:1s
 
-- **1:1s** (weekly/biweekly, 30 min): their agenda first — blockers, growth, wellbeing, feedback both ways.
+- **1:1s** (weekly/biweekly, 30 min): their agenda first, blockers, growth, wellbeing, feedback both ways.
 - Feedback models: **SBI** (Situation – Behaviour – Impact), timely, specific, private for criticism, public for praise.
 
 > "In yesterday's client call (situation), you jumped in to correct the client mid-sentence twice (behaviour). The client seemed annoyed and the call ran long (impact). Next time, can you note your point and raise it when they finish? Happy to role-play before the next call."
 
 - Growth: individual development plans, stretch assignments, certifications, tech talks, gradual ownership.
-- Psychological safety: people can admit mistakes and ask questions without fear — the strongest predictor of team effectiveness in Google's Project Aristotle research.
+- Psychological safety: people can admit mistakes and ask questions without fear, the strongest predictor of team effectiveness in Google's Project Aristotle research.
 
 ## Lesson: [Intermediate|High] Handling underperformance
 
-1. **Observe and gather facts** (missed deliverables, quality issues) — not impressions.
-2. **Talk privately and early**: share specific examples, listen — find the cause (unclear expectations, skill gap, personal issue, motivation, wrong role).
+1. **Observe and gather facts** (missed deliverables, quality issues), not impressions.
+2. **Talk privately and early**: share specific examples, listen, find the cause (unclear expectations, skill gap, personal issue, motivation, wrong role).
 3. **Agree a plan**: clear expectations, support (training, pairing, smaller tasks), timeline, check-ins.
 4. **Follow up** regularly; recognise improvement.
 5. If no improvement: involve your manager/HR for a formal **performance improvement plan (PIP)**, document everything, be fair and consistent.
@@ -153,19 +153,19 @@ Approach:
 
 1. Talk to each person privately; understand interests behind positions.
 2. Bring them together; set ground rules; focus on facts and shared goals (customer, quality, deadline).
-3. Generate options; decide using agreed criteria (data, spike/prototype, architecture principles) — or the lead decides if needed ("disagree and commit").
+3. Generate options; decide using agreed criteria (data, spike/prototype, architecture principles), or the lead decides if needed ("disagree and commit").
 4. Document the decision (ADR) and follow up.
 
-Thomas-Kilmann modes: competing, collaborating, compromising, avoiding, accommodating — collaborating is ideal for important issues; compromising when time is short.
+Thomas-Kilmann modes: competing, collaborating, compromising, avoiding, accommodating, collaborating is ideal for important issues; compromising when time is short.
 
 # Module: Delivery and Stakeholders
 
 ## Lesson: [Intermediate|High] Stakeholder management and communication
 
 - Identify stakeholders (client, PO, users, other teams, management) and what each cares about.
-- Regular **status reporting**: progress vs plan, RAG (red/amber/green) status, risks, decisions needed, next steps — short and factual.
+- Regular **status reporting**: progress vs plan, RAG (red/amber/green) status, risks, decisions needed, next steps, short and factual.
 - **No surprises**: share bad news early with a plan ("We're 1 week behind on the payment module because the gateway sandbox was down for 3 days; options: A) cut feature X from this release, B) add one developer for 2 weeks, C) move the date to the 20th. I recommend A.").
-- Say **no** (or "not now") with reasons and alternatives; protect the team from constant scope changes — route them through the backlog/change request process.
+- Say **no** (or "not now") with reasons and alternatives; protect the team from constant scope changes: route them through the backlog/change request process.
 - Manage expectations in writing: scope, assumptions, acceptance criteria.
 
 ## Lesson: [Intermediate|High] Risk management and scope changes
@@ -184,7 +184,7 @@ Thomas-Kilmann modes: competing, collaborating, compromising, avoiding, accommod
 
 ## Lesson: [Advanced|High] Technical decision-making, debt and quality
 
-- Decide with **criteria**: requirements (functional + non-functional — performance, scalability, security, availability, cost), team skills, time to market, maintainability, vendor lock-in.
+- Decide with **criteria**: requirements (functional + non-functional, performance, scalability, security, availability, cost), team skills, time to market, maintainability, vendor lock-in.
 - Use **spikes/proofs of concept** for uncertain choices; document with **Architecture Decision Records** (context, decision, alternatives, consequences).
 - **Technical debt**: make it visible (backlog items with impact), allocate capacity (e.g. 15–20% per sprint), pay down debt in areas that change often, avoid "big rewrite" unless justified.
 - Quality gates: code review standards, automated tests, CI checks, static analysis, Definition of Done.
@@ -193,7 +193,7 @@ Thomas-Kilmann modes: competing, collaborating, compromising, avoiding, accommod
 ## Lesson: [Intermediate|Medium] Hiring and building teams
 
 - Define the role (must-have vs nice-to-have skills), structured interview with consistent questions and scoring rubric, realistic coding/design tasks, panel diversity, and fast feedback to candidates.
-- Hire for **skills + learning ability + collaboration**; avoid "culture fit" as an excuse for bias — look for "culture add".
+- Hire for **skills + learning ability + collaboration**; avoid "culture fit" as an excuse for bias: look for "culture add".
 - Onboarding plan: documentation, buddy, first-week small task in production, 30-60-90 goals.
 - Retention: growth opportunities, recognition, fair workload, good tooling, meaningful work, career conversations.
 
@@ -203,13 +203,13 @@ Thomas-Kilmann modes: competing, collaborating, compromising, avoiding, accommod
 - **Flow**: cycle time, throughput, WIP, blocked time.
 - **Quality**: escaped defects, incident count/severity, test coverage trend.
 - **Team health**: engagement surveys, attrition, on-call load.
-- Avoid misuse: never compare individuals by velocity, lines of code or commits — it destroys trust and encourages gaming (Goodhart's law: when a measure becomes a target, it ceases to be a good measure).
+- Avoid misuse: never compare individuals by velocity, lines of code or commits, it destroys trust and encourages gaming (Goodhart's law: when a measure becomes a target, it ceases to be a good measure).
 
 # Interview
 
 ## [Beginner|High] What is the difference between a tech lead and an engineering manager?
 
-A tech lead owns technical direction for a team: architecture and design decisions, code quality, breaking down work, unblocking developers and mentoring — and still writes significant code. An engineering manager owns people and delivery: hiring, career growth, performance reviews, team health, process and cross-team coordination, with less hands-on coding. In smaller teams (and in many Indian IT services companies' "team lead" roles) one person does parts of both.
+A tech lead owns technical direction for a team: architecture and design decisions, code quality, breaking down work, unblocking developers and mentoring, and still writes significant code. An engineering manager owns people and delivery: hiring, career growth, performance reviews, team health, process and cross-team coordination, with less hands-on coding. In smaller teams (and in many Indian IT services companies' "team lead" roles) one person does parts of both.
 
 ## [Beginner|High] Explain Scrum roles, events and artifacts.
 
@@ -217,15 +217,15 @@ Accountabilities: Product Owner (maximises value, owns and orders the Product Ba
 
 ## [Beginner|High] What is the difference between Agile and Waterfall?
 
-Waterfall is sequential — requirements, design, build, test, deploy — each phase completed before the next, with change being costly; it suits fixed, well-understood requirements and regulated contexts. Agile delivers in short iterations with working software each cycle, continuous feedback, and embraces change; it suits evolving requirements. Many enterprises use hybrids (fixed milestones with agile execution).
+Waterfall is sequential: requirements, design, build, test, deploy, each phase completed before the next, with change being costly; it suits fixed, well-understood requirements and regulated contexts. Agile delivers in short iterations with working software each cycle, continuous feedback, and embraces change; it suits evolving requirements. Many enterprises use hybrids (fixed milestones with agile execution).
 
 ## [Beginner|Medium] What are story points and velocity?
 
-Story points are relative estimates of effort, complexity and uncertainty (often Fibonacci: 1, 2, 3, 5, 8, 13), agreed by the team with planning poker — not hours. Velocity is the average number of points a team completes per sprint, used to forecast how much to plan. Velocity is team-specific: don't compare teams or use it as a performance target.
+Story points are relative estimates of effort, complexity and uncertainty (often Fibonacci: 1, 2, 3, 5, 8, 13), agreed by the team with planning poker, not hours. Velocity is the average number of points a team completes per sprint, used to forecast how much to plan. Velocity is team-specific: don't compare teams or use it as a performance target.
 
-## [Beginner|Medium] Scrum vs Kanban — when would you use each?
+## [Beginner|Medium] Scrum vs Kanban: when would you use each?
 
-Scrum works well for product development where you can plan in fixed sprints with a stable team and regular reviews. Kanban suits continuous, unpredictable inflow like support, maintenance and operations: work is pulled through columns with WIP limits, measured by cycle time. Teams often combine them ("Scrumban") — e.g. sprints for features with a Kanban lane for production support.
+Scrum works well for product development where you can plan in fixed sprints with a stable team and regular reviews. Kanban suits continuous, unpredictable inflow like support, maintenance and operations: work is pulled through columns with WIP limits, measured by cycle time. Teams often combine them ("Scrumban"): e.g. sprints for features with a Kanban lane for production support.
 
 ## [Intermediate|High] How do you estimate a project or a large feature?
 
@@ -233,7 +233,7 @@ Clarify scope and acceptance criteria; break it into small tasks (≤ 2–3 days
 
 ## [Intermediate|High] How do you delegate work in your team?
 
-I delegate outcomes with context: why it matters, what done looks like, constraints, deadline and check-in points. I match tasks to skills and growth goals — a stretch task for a junior with a senior pairing, critical-path work for experienced people — and adjust my involvement to their experience (directing for new members, delegating to experts). Work is tracked on the board, I stay available to unblock, and I avoid taking the hardest tasks myself all the time so the team grows and I don't become a bottleneck.
+I delegate outcomes with context: why it matters, what done looks like, constraints, deadline and check-in points. I match tasks to skills and growth goals: a stretch task for a junior with a senior pairing, critical-path work for experienced people, and adjust my involvement to their experience (directing for new members, delegating to experts). Work is tracked on the board, I stay available to unblock, and I avoid taking the hardest tasks myself all the time so the team grows and I don't become a bottleneck.
 
 ## [Intermediate|High] How do you mentor junior developers?
 
@@ -241,7 +241,7 @@ Regular 1:1s and pairing sessions; clear coding standards and examples; code rev
 
 ## [Intermediate|High] How do you handle a team member who is underperforming?
 
-Gather facts first, then talk privately and early with specific examples, and listen to understand the cause (unclear expectations, skill gap, personal issues, motivation, wrong role). Agree on a concrete improvement plan with support — training, pairing, smaller scoped tasks — and regular check-ins. Recognise improvements. If there's no progress after a fair period, involve my manager and HR for a formal plan, documenting everything and treating the person with respect throughout.
+Gather facts first, then talk privately and early with specific examples, and listen to understand the cause (unclear expectations, skill gap, personal issues, motivation, wrong role). Agree on a concrete improvement plan with support: training, pairing, smaller scoped tasks, and regular check-ins. Recognise improvements. If there's no progress after a fair period, involve my manager and HR for a formal plan, documenting everything and treating the person with respect throughout.
 
 ## [Intermediate|High] How do you resolve a conflict between two team members?
 
@@ -261,7 +261,7 @@ Change the format (Start/Stop/Continue, 4Ls, sailboat, timeline), focus on one o
 
 ## [Intermediate|Medium] How do you handle technical debt?
 
-Make it visible as backlog items describing the business impact (slower delivery, incidents, security risk); prioritise debt in areas that change often or cause incidents; reserve regular capacity (e.g. 15–20% per sprint) or attach refactoring to related feature work (Boy Scout rule); prevent new debt with Definition of Done, reviews and automated quality gates; and avoid big-bang rewrites unless the case is very strong — prefer incremental Strangler Fig approaches.
+Make it visible as backlog items describing the business impact (slower delivery, incidents, security risk); prioritise debt in areas that change often or cause incidents; reserve regular capacity (e.g. 15–20% per sprint) or attach refactoring to related feature work (Boy Scout rule); prevent new debt with Definition of Done, reviews and automated quality gates; and avoid big-bang rewrites unless the case is very strong: prefer incremental Strangler Fig approaches.
 
 ## [Advanced|High] How do you make architecture or technology decisions in a team?
 
@@ -269,7 +269,7 @@ Start from requirements (including non-functional ones and constraints like budg
 
 ## [Advanced|High] How do you measure your team's performance?
 
-At team level, never individuals by raw output: DORA metrics (deployment frequency, lead time, change failure rate, time to restore), flow metrics (cycle time, throughput, WIP), quality (escaped defects, incident trends), predictability (planned vs delivered), and team health (engagement, attrition, on-call load). Business outcomes — features adopted, customer issues resolved — matter most. I use metrics to find improvement opportunities, not to rank people.
+At team level, never individuals by raw output: DORA metrics (deployment frequency, lead time, change failure rate, time to restore), flow metrics (cycle time, throughput, WIP), quality (escaped defects, incident trends), predictability (planned vs delivered), and team health (engagement, attrition, on-call load). Business outcomes: features adopted, customer issues resolved, matter most. I use metrics to find improvement opportunities, not to rank people.
 
 ## [Advanced|Medium] How would you build and scale a new team from 3 to 10 developers?
 
@@ -277,19 +277,19 @@ Define the team's mission and the roles needed (mix of seniorities and skills); 
 
 ## [Scenario|High] Your project is two weeks from the deadline and you realise it will be late by one week. What do you do?
 
-Verify the estimate with the team and find the cause. Inform stakeholders immediately — no surprises — with options: reduce scope (ship must-haves first, defer nice-to-haves), add focused help where it actually speeds things up (not late-stage new joiners on complex code — Brooks's law), remove distractions from the team, parallelise testing, or move the date. Give a recommendation, get a decision in writing, update the plan, and run a retrospective later on why the risk wasn't spotted earlier.
+Verify the estimate with the team and find the cause. Inform stakeholders immediately: no surprises, with options: reduce scope (ship must-haves first, defer nice-to-haves), add focused help where it actually speeds things up (not late-stage new joiners on complex code, Brooks's law), remove distractions from the team, parallelise testing, or move the date. Give a recommendation, get a decision in writing, update the plan, and run a retrospective later on why the risk wasn't spotted earlier.
 
 ## [Scenario|High] A critical production issue occurs on Friday evening. Walk me through how you handle it.
 
-Acknowledge and assess severity; assemble the right people (on-call, owners) and appoint an incident lead; open a communication channel and inform stakeholders with regular updates. Prioritise restoring service — roll back the last deployment, toggle a feature flag, fail over, scale up — before deep root-cause analysis. Once stable, monitor, then do a blameless post-mortem the next week with a timeline, root causes (5 Whys), and owned action items (tests, alerts, runbooks, safer deployments). Make sure people who worked late get time off.
+Acknowledge and assess severity; assemble the right people (on-call, owners) and appoint an incident lead; open a communication channel and inform stakeholders with regular updates. Prioritise restoring service: roll back the last deployment, toggle a feature flag, fail over, scale up, before deep root-cause analysis. Once stable, monitor, then do a blameless post-mortem the next week with a timeline, root causes (5 Whys), and owned action items (tests, alerts, runbooks, safer deployments). Make sure people who worked late get time off.
 
 ## [Scenario|High] The client keeps adding requirements without changing the deadline. How do you manage it?
 
-Make the impact visible: maintain a prioritised backlog with estimates, show the client what each new request displaces, and agree priorities together (MoSCoW: Must/Should/Could/Won't). Use a change-request process for contractual scope, protect the current sprint, and propose phased delivery — an MVP by the date, the rest in later releases. Document decisions and keep the relationship collaborative rather than confrontational.
+Make the impact visible: maintain a prioritised backlog with estimates, show the client what each new request displaces, and agree priorities together (MoSCoW: Must/Should/Could/Won't). Use a change-request process for contractual scope, protect the current sprint, and propose phased delivery: an MVP by the date, the rest in later releases. Document decisions and keep the relationship collaborative rather than confrontational.
 
 ## [Scenario|High] Your best developer resigns in the middle of a critical release. What do you do?
 
-Have an honest conversation to understand the reasons — if it's fixable (role, growth, compensation) and appropriate, explore a counter-offer with my manager, but don't rely on it. Immediately plan the knowledge transfer: document their modules, pair them with others during the notice period, record walkthroughs, and review critical code together. Re-plan the release with stakeholders based on reduced capacity. Longer term, reduce single points of failure by rotating ownership, and look at retention across the team.
+Have an honest conversation to understand the reasons: if it's fixable (role, growth, compensation) and appropriate, explore a counter-offer with my manager, but don't rely on it. Immediately plan the knowledge transfer: document their modules, pair them with others during the notice period, record walkthroughs, and review critical code together. Re-plan the release with stakeholders based on reduced capacity. Longer term, reduce single points of failure by rotating ownership, and look at retention across the team.
 
 ## [Scenario|Medium] Two senior developers disagree strongly on using microservices versus a modular monolith for a new product. How do you decide?
 
@@ -301,7 +301,7 @@ Talk privately and with care: ask how they're doing and what's driving the extra
 
 ## [Scenario|Medium] You are asked to lead a team working on a technology you don't know well. How do you approach it?
 
-Be honest about the gap and learn fast: study the architecture and fundamentals, pair with the team's experts and rely on them for detailed technical decisions, while I contribute leadership strengths — planning, unblocking, stakeholder management, quality practices. I'd get hands-on with small tasks to build credibility, use external help (docs, vendor support, other teams) and set myself a learning plan with milestones.
+Be honest about the gap and learn fast: study the architecture and fundamentals, pair with the team's experts and rely on them for detailed technical decisions, while I contribute leadership strengths, planning, unblocking, stakeholder management, quality practices. I'd get hands-on with small tasks to build credibility, use external help (docs, vendor support, other teams) and set myself a learning plan with milestones.
 
 # Cheatsheet
 
