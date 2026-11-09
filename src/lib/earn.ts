@@ -22,7 +22,7 @@ export const BOOKING_URL = "";
 export const bookingHref = (session: string) => BOOKING_URL || form(session);
 
 /** The downloadable interview pack (Gumroad / Lemon Squeezy product page). Empty = "notify me" form. */
-export const PREP_PACK = { url: "", price: "US$9" };
+export const PREP_PACK = { url: "https://divakaru.gumroad.com/l/net-interview-prep-pack", price: "US$9" };
 export const prepPackHref = () => PREP_PACK.url || form("Interview Prep Pack");
 
 export const HIRE_HREF = form("Project or job enquiry");
