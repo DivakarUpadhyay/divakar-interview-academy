@@ -7,6 +7,8 @@ import { TOOLS } from "@/lib/tools";
 
 // Tutorialsteacher-style menu bar: one mega menu per subject (columns = groups, basics → advanced), then practice and more.
 const PRACTICE = [
+  ["/interview-prep-pack", "📕 Interview Prep Pack", "237 must-know questions, cheat sheets and a 30-day plan (PDF)"],
+  ["/mentoring", "🎤 Mock Interview with a Developer", "One-to-one practice with honest feedback"],
   ["/notebook", "📒 My Notebook", "Revise list, important topics, notes, interview-day checklist"],
   ["/practice", "Mock Interview Test", "Timed random questions, then self-score"],
   ["/interview", "All Interview Q&A", "Filter every question by course, level and priority"],
@@ -30,7 +32,24 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
   const prefetched = useRef(new Set<string>());
   const [open, setOpen] = useState(false);
   const [drop, setDrop] = useState<string | null>(null);
-  useEffect(() => { setOpen(false); setDrop(null); }, [path]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => { setOpen(false); setDrop(null); setLoading(false); }, [path]);
+
+  // Instant feedback on navigation: close menus and show a thin progress bar the moment an internal link is
+  // clicked, instead of leaving the dropdown open until the next page has downloaded.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement).closest("a");
+      const href = a?.getAttribute("href");
+      if (!a || !href || !href.startsWith("/") || a.target === "_blank") return;
+      if (href.split("#")[0] === location.pathname) return;
+      setDrop(null); setOpen(false); setLoading(true);
+    };
+    // Capture phase: runs before Next.js <Link> handles (and prevents) the click.
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
 
   const toggleTheme = () => {
     const root = document.documentElement;
@@ -69,6 +88,7 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
 
   return (
     <>
+      {loading && <div className="nav-progress" role="progressbar" aria-label="Loading page" />}
       <div className="topbar container">
         <Link href="/" className="brand">
           <span className="brand-mark">DL</span>

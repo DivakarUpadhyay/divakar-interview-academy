@@ -505,3 +505,14 @@ main.container { min-height: calc(100vh - 120px); min-height: calc(100svh - 120p
 .error-page pre.error-snippet { background: var(--code-bg); color: var(--code-text); }
 .error-page pre code { background: none; color: inherit; white-space: inherit; }
 .error-page li { margin: .35em 0; }
+
+/* Navigation feedback: thin bar at the very top while the next page loads */
+.nav-progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 100; pointer-events: none;
+  background: linear-gradient(90deg, var(--accent), #74c0fc); transform-origin: left; animation: nav-progress 1.4s ease-out forwards; }
+@keyframes nav-progress { 0% { transform: scaleX(0); } 60% { transform: scaleX(.75); } 100% { transform: scaleX(.92); } }
+@media (prefers-reduced-motion: reduce) { .nav-progress { animation: none; transform: scaleX(.6); } }
+/* Home: popular row (tools, error fixes, paid products) */
+.popular { margin: 6px 0 10px; }
+.popular-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.popular-card { display: grid; gap: 4px; color: var(--text); }
+.popular-card span { color: var(--muted); font-size: .9rem; }

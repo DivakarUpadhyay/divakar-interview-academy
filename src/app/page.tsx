@@ -34,6 +34,15 @@ export default function Home() {
           </Link>
         </div>
       </section>
+      <section className="popular">
+        <h2 className="home-title">Popular on DevLadder</h2>
+        <div className="popular-grid">
+          <Link href="/tools" className="card popular-card"><b>🛠️ Free developer tools</b><span>JSON and SQL formatter, regex tester, JWT decoder. Nothing is uploaded.</span></Link>
+          <Link href="/errors" className="card popular-card"><b>🩹 Fix common errors</b><span>SQL Server, EF Core, ASP.NET Core and Docker errors explained, with fixes.</span></Link>
+          <Link href="/interview-prep-pack" className="card popular-card"><b>📕 Interview Prep Pack</b><span>237 must-know .NET questions, cheat sheets and a 30-day plan in one PDF.</span></Link>
+          <Link href="/mentoring" className="card popular-card"><b>🎤 Mock interview</b><span>Practise one to one with a .NET developer and get honest feedback.</span></Link>
+        </div>
+      </section>
       <h2 className="home-title">Learn Programming</h2>
       <p className="home-sub">Each subject runs from basics to advanced: study the topics left to right. The bar under a tile shows your progress.</p>
       {menu.map((t) => (
