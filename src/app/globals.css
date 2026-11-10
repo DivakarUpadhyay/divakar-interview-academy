@@ -499,3 +499,9 @@ main.container { min-height: calc(100vh - 120px); min-height: calc(100svh - 120p
 .request-form input, .request-form select, .request-form textarea { font: inherit; font-weight: 400; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); }
 .request-form .btn { justify-self: start; }
 .request-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+/* Error-fix pages */
+.error-page pre { max-width: 100%; overflow-x: auto; padding: 12px 14px; border-radius: 8px; }
+.error-page pre.error-message { background: var(--high-soft); color: var(--text); border-left: 4px solid var(--high); white-space: pre-wrap; }
+.error-page pre.error-snippet { background: var(--code-bg); color: var(--code-text); }
+.error-page pre code { background: none; color: inherit; white-space: inherit; }
+.error-page li { margin: .35em 0; }

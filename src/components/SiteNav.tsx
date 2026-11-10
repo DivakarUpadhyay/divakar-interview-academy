@@ -112,6 +112,7 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
                   <span><b>{t.name}</b><br /><span className="hint">{t.short}</span></span>
                 </Link>
               ))}
+              <Link href="/errors" className={path.startsWith("/errors") ? "active" : ""}><span><b>Fix common errors</b><br /><span className="hint">SQL Server, EF Core, ASP.NET Core, Docker</span></span></Link>
               <Link href="/tools" className={path === "/tools" ? "active" : ""}><b>All free tools →</b></Link>
             </div>
           </div>

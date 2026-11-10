@@ -256,6 +256,120 @@ Common issues: app listening on `localhost` instead of `0.0.0.0` inside the cont
 | **Azure Functions on Container Apps** | Event-driven functions in containers |
 | **Azure Container Registry (ACR)** | Private registry, geo-replication, ACR Tasks builds |
 
+# Module: Operations and Troubleshooting
+
+## Lesson: [Intermediate|High] Health checks, restart policies and graceful shutdown
+
+A container being "running" doesn't mean your app works. Health checks tell Docker (or Kubernetes) whether the app can actually serve requests, restart policies decide what happens when it crashes, and graceful shutdown makes sure in-flight requests finish when you deploy.
+
+**1. Expose a health endpoint in ASP.NET Core**
+
+```csharp
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ShopDbContext>();   // package: Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore
+
+var app = builder.Build();
+app.MapHealthChecks("/health");            // 200 Healthy, 503 Unhealthy
+```
+
+Keep the check cheap: it runs every few seconds. Check the things the app can't work without (database, cache), not every downstream API.
+
+**2. Let Docker or Compose call it**
+
+```yaml
+services:
+  api:
+    image: shop-api:1.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 20s     # give the app time to start before failures count
+    stop_grace_period: 40s
+```
+
+The official `aspnet` images don't include `curl`. Either install it in your final stage (`RUN apt-get update && apt-get install -y curl`), or skip the container-level check and let the platform probe the endpoint (Kubernetes liveness/readiness probes, Azure Container Apps health probes). Chiseled images have no shell at all, so platform probes are the only option there.
+
+**3. Restart policies**
+
+| Policy | Behaviour |
+|---|---|
+| `no` | Default. Never restart |
+| `on-failure[:5]` | Restart only when the process exits with a non-zero code, optionally at most 5 times |
+| `always` | Always restart, also after the Docker daemon restarts |
+| `unless-stopped` | Like `always`, but stays stopped if you stopped it yourself |
+
+**4. Graceful shutdown**
+
+`docker stop` sends **SIGTERM**, waits (10 seconds by default), then sends **SIGKILL**. ASP.NET Core handles SIGTERM: it stops accepting new requests and waits for running ones to finish, up to `HostOptions.ShutdownTimeout` (30 seconds by default in current .NET). If Docker's wait is shorter than the app's, requests get cut off mid-way, so set `stop_grace_period` (Compose) or `docker stop -t 40` longer than the app's timeout.
+
+Use the **exec form** `ENTRYPOINT ["dotnet", "Shop.Api.dll"]`. The shell form (`ENTRYPOINT dotnet Shop.Api.dll`) wraps your app in `/bin/sh`, which doesn't forward SIGTERM, so the app gets killed after the timeout instead of shutting down cleanly.
+
+## Lesson: [Intermediate|High] Configuration and secrets for .NET containers
+
+Build the image **once** and run the same image in every environment. Everything that differs between environments (connection strings, API keys, feature flags) comes from outside the image at runtime.
+
+**Environment variables override appsettings.json.** Nested keys use a double underscore:
+
+| appsettings.json key | Environment variable |
+|---|---|
+| `ConnectionStrings:Default` | `ConnectionStrings__Default` |
+| `Smtp:Host` | `Smtp__Host` |
+| `Logging:LogLevel:Default` | `Logging__LogLevel__Default` |
+
+Useful built-in variables: `ASPNETCORE_ENVIRONMENT` (`Development`, `Staging`, `Production`) and `ASPNETCORE_HTTP_PORTS` (the .NET 8+ images listen on **8080** by default).
+
+**Compose: `.env` vs `env_file`.** They do different jobs and are easy to mix up:
+
+- A `.env` file next to `compose.yaml` fills in `${VARIABLES}` inside the compose file itself.
+- `env_file: app.env` passes every line of that file into the container as environment variables.
+
+Keep both out of Git and commit an `app.env.example` with placeholder values instead.
+
+**Secrets as files.** Environment variables show up in `docker inspect` and crash dumps. For passwords, mount them as files:
+
+```yaml
+services:
+  api:
+    image: shop-api:1.0
+    secrets:
+      - db_password
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt   # mounted read-only at /run/secrets/db_password
+```
+
+```csharp
+// Each file in the folder becomes a config key named after the file.
+// package: Microsoft.Extensions.Configuration.KeyPerFile
+builder.Configuration.AddKeyPerFile("/run/secrets", optional: true);
+var password = builder.Configuration["db_password"];
+```
+
+In the cloud, use the platform's secret store instead: Azure Key Vault references in Container Apps or App Service, Kubernetes Secrets, or AWS Secrets Manager. Never put secrets in `ENV`, `ARG` or a copied file in the Dockerfile; they stay readable in the image layers forever.
+
+## Lesson: [Intermediate|High] Common Docker errors and how to fix them
+
+These are the errors people hit most when containerising .NET apps, with the usual cause and fix.
+
+**Container exits with code 137.** The process was killed with SIGKILL, almost always because it ran out of memory (`docker inspect api` shows `"OOMKilled": true`), or because `docker stop` timed out. Raise the memory limit (`--memory 1g`), find the leak with `dotnet-counters`, or lengthen the stop timeout.
+
+**"Bind for 0.0.0.0:8080 failed: port is already allocated".** Another container or a local process already uses that host port. Find it with `docker ps` (or `netstat -ano | findstr :8080` on Windows), stop it, or map a different host port: `-p 8081:8080`.
+
+**The app works inside the container but the browser can't reach it.** Check the mapping goes to the port the app listens on. Since .NET 8 the images listen on **8080**, so old `-p 80:80` mappings stop working. The app must also listen on `0.0.0.0`, not `localhost`, inside the container.
+
+**"Cannot connect to SQL Server" from the API container.** Inside Compose, use the **service name** as the server (`Server=sql`), not `localhost`: `localhost` inside a container means the container itself. From your host machine, `localhost,1433` is correct. Also add `TrustServerCertificate=True` for the self-signed certificate in development.
+
+**"exec /entrypoint.sh: no such file or directory" although the file exists.** The script was saved with Windows (CRLF) line endings, so Linux looks for `/bin/sh\r`. Convert it to LF (in VS Code, click "CRLF" in the status bar) and add `*.sh text eol=lf` to `.gitattributes`.
+
+**"exec format error".** The image was built for a different CPU architecture, for example arm64 on an Apple Silicon Mac, then run on an amd64 server. Build for the target: `docker build --platform linux/amd64 .`
+
+**"Permission denied" writing to a volume.** The .NET 8+ images can run as the non-root `app` user (UID 1654, `USER $APP_UID`), which can't write to folders owned by root. Give that user ownership of the folder in the Dockerfile (`RUN mkdir /data && chown $APP_UID /data`) or on the host.
+
+**"no space left on device".** Old images, stopped containers and build cache pile up. See usage with `docker system df` and clean up with `docker system prune` (add `-a` to also remove unused images, and `--volumes` only if you are sure you don't need the data).
+
 # Interview
 
 ## [Beginner|High] What is Docker and why use it?

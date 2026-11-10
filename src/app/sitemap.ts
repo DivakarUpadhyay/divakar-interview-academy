@@ -3,6 +3,7 @@ import { getAllLessonParams, getCourses } from "@/lib/db";
 import { ROLES } from "@/lib/roles";
 import { SITE_URL } from "@/lib/seo";
 import { TOOLS } from "@/lib/tools";
+import { ERRORS } from "@/lib/errors";
 
 export const dynamic = "force-static";
 
@@ -26,6 +27,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url("/api-docs", 0.3),
     url("/tools", 0.9, "weekly"),
     ...TOOLS.map((t) => url(`/tools/${t.slug}`, 0.9, "weekly")),
+    url("/errors", 0.9, "weekly"),
+    ...ERRORS.map((e) => url(`/errors/${e.slug}`, 0.8)),
     url("/mentoring", 0.7),
     url("/interview-prep-pack", 0.7),
     url("/hire", 0.5),
