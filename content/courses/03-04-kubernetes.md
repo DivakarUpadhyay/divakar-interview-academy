@@ -11,9 +11,9 @@ summary: Cluster architecture, pods, deployments, services, ingress, ConfigMaps 
 
 # Overview
 
-**Kubernetes** is an open-source **container orchestration** platform: you declare the desired state (e.g. "run 3 replicas of shop-api:1.4, expose them on port 80"), and Kubernetes continuously makes the actual state match, scheduling containers onto machines, restarting failed ones, scaling, rolling out updates and load balancing.
+**Kubernetes** is an open-source container orchestration platform: you declare the desired state (e.g. "run 3 replicas of shop-api:1.4, expose them on port 80"), and Kubernetes continuously makes the actual state match, scheduling containers onto machines, restarting failed ones, scaling, rolling out updates and load balancing.
 
-Created at **Google** (inspired by its internal Borg system), open-sourced in 2014, donated to the **CNCF** (Cloud Native Computing Foundation) in 2015. "K8s" = K + 8 letters + s.
+Created at **Google** (inspired by its internal Borg system), open-sourced in 2014, donated to the CNCF (Cloud Native Computing Foundation) in 2015. "K8s" = K + 8 letters + s.
 
 Managed offerings: **AKS** (Azure Kubernetes Service), EKS (AWS), GKE (Google). Local: kind, minikube, k3d, Docker Desktop's Kubernetes.
 
@@ -33,17 +33,17 @@ What Kubernetes gives you: self-healing, horizontal scaling, service discovery a
 | 1.27–1.30 | 2023–2024 | In-place pod resize (alpha), sidecar containers (beta 1.29), Gateway API v1.0 (separate project) |
 | 1.31–1.34 | 2024–2025 | Sidecars GA (1.33), in-place pod resize beta, Dynamic Resource Allocation for GPUs (GA 1.34) |
 
-Kubernetes releases **three minor versions per year**, each supported upstream for about **14 months** (≈ the three latest minors). AKS supports roughly the latest three GA minor versions (plus Long-Term Support for selected versions on Premium tier): clusters must be upgraded regularly.
+Kubernetes releases **three minor versions per year**, each supported upstream for about 14 months (≈ the three latest minors). AKS supports roughly the latest three GA minor versions (plus Long-Term Support for selected versions on Premium tier): clusters must be upgraded regularly.
 
 # Lifecycle
 
-**Pod lifecycle phases:** **Pending** (accepted, waiting for scheduling/image pull) → **Running** (bound to a node, at least one container running) → **Succeeded** (all containers exited 0, Jobs) or **Failed** (a container exited non-zero and won't restart), plus **Unknown** (node unreachable).
+**Pod lifecycle phases:** Pending (accepted, waiting for scheduling/image pull) → Running (bound to a node, at least one container running) → Succeeded (all containers exited 0, Jobs) or Failed (a container exited non-zero and won't restart), plus Unknown (node unreachable).
 
 Container states: Waiting (e.g. `ContainerCreating`, `ImagePullBackOff`, `CrashLoopBackOff`), Running, Terminated.
 
-**Pod startup sequence:** scheduler picks a node → kubelet pulls images → **init containers** run in order to completion → app containers (and sidecars) start → `postStart` hook → **startup probe** → **readiness probe** passes → pod added to Service endpoints → **liveness probe** keeps checking.
+**Pod startup sequence:** scheduler picks a node → kubelet pulls images → init containers run in order to completion → app containers (and sidecars) start → `postStart` hook → startup probe → readiness probe passes → pod added to Service endpoints → liveness probe keeps checking.
 
-**Pod termination:** pod marked Terminating → removed from Service endpoints → `preStop` hook → **SIGTERM** sent → app shuts down gracefully → after `terminationGracePeriodSeconds` (default **30 s**) → SIGKILL.
+**Pod termination:** pod marked Terminating → removed from Service endpoints → `preStop` hook → SIGTERM sent → app shuts down gracefully → after `terminationGracePeriodSeconds` (default 30 s) → SIGKILL.
 
 **Deployment rollout lifecycle:** new ReplicaSet created → pods scaled up/old down according to `maxSurge`/`maxUnavailable` → readiness gates progress → rollout complete (or stuck → `kubectl rollout undo`). Revision history kept (`revisionHistoryLimit`, default 10).
 
@@ -92,7 +92,7 @@ Everything is **declarative**: you `kubectl apply` YAML manifests describing des
 
 ## Lesson: [Basic|High] Pods, ReplicaSets and Deployments
 
-- **Pod**: smallest deployable unit: one or more containers sharing network (same IP, localhost) and volumes. Pods are **ephemeral**: never manage them directly in production.
+- **Pod**: smallest deployable unit: one or more containers sharing network (same IP, localhost) and volumes. Pods are ephemeral: never manage them directly in production.
 - **ReplicaSet**: keeps N identical pods running.
 - **Deployment**: manages ReplicaSets for stateless apps; adds rolling updates, rollbacks and history.
 
@@ -134,7 +134,7 @@ spec:
             failureThreshold: 3
 ```
 
-**Labels** (key/value tags) + **selectors** connect objects: the Deployment selects its pods, a Service selects pods to route to.
+**Labels** (key/value tags) + selectors connect objects: the Deployment selects its pods, a Service selects pods to route to.
 
 ## Lesson: [Basic|High] Services and service types
 
@@ -162,7 +162,7 @@ spec:
 
 ## Lesson: [Intermediate|High] Ingress and the Gateway API
 
-An **Ingress** routes external HTTP(S) traffic to Services by host and path, with TLS termination: one load balancer for many services. It needs an **ingress controller** (ingress-nginx, Azure Application Gateway Ingress Controller / Application Gateway for Containers, Traefik, HAProxy).
+An **Ingress** routes external HTTP(S) traffic to Services by host and path, with TLS termination: one load balancer for many services. It needs an ingress controller (ingress-nginx, Azure Application Gateway Ingress Controller / Application Gateway for Containers, Traefik, HAProxy).
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -218,7 +218,7 @@ volumeMounts:
 # volumes: - name: cfg  configMap: { name: shop-config }
 ```
 
-Secrets are only **base64-encoded**, not encrypted, by default: enable etcd encryption at rest, restrict access with RBAC, and prefer external secret stores: **Azure Key Vault via the Secrets Store CSI Driver**, External Secrets Operator, plus **Workload Identity** so pods authenticate to Azure without stored credentials. Env vars from ConfigMaps don't update in running pods (restart needed); mounted files do update.
+Secrets are only **base64-encoded**, not encrypted, by default: enable etcd encryption at rest, restrict access with RBAC, and prefer external secret stores: Azure Key Vault via the Secrets Store CSI Driver, External Secrets Operator, plus Workload Identity so pods authenticate to Azure without stored credentials. Env vars from ConfigMaps don't update in running pods (restart needed); mounted files do update.
 
 # Module: Running Workloads Well
 
@@ -234,10 +234,10 @@ Probe types: `httpGet`, `tcpSocket`, `exec`, `grpc`. In ASP.NET Core map separat
 
 ## Lesson: [Intermediate|High] Resources, QoS and autoscaling
 
-- **requests**: what the scheduler reserves (placement decisions). **limits**: the maximum: CPU over limit is **throttled**; memory over limit → container **OOMKilled**.
-- QoS classes: **Guaranteed** (requests = limits for all), **Burstable** (requests < limits), **BestEffort** (none, evicted first).
+- **requests**: what the scheduler reserves (placement decisions). limits: the maximum: CPU over limit is throttled; memory over limit → container OOMKilled.
+- QoS classes: **Guaranteed** (requests = limits for all), Burstable (requests < limits), BestEffort (none, evicted first).
 - **HPA** (Horizontal Pod Autoscaler): scales replicas on CPU/memory or custom/external metrics.
-- **VPA**: recommends/adjusts requests. **Cluster Autoscaler** / AKS **Node Auto Provisioning (Karpenter)**: adds/removes nodes when pods can't be scheduled.
+- **VPA**: recommends/adjusts requests. Cluster Autoscaler / AKS Node Auto Provisioning (Karpenter): adds/removes nodes when pods can't be scheduled.
 - **KEDA**: scale on events (Service Bus queue length, Kafka lag, cron), including to zero.
 - **PodDisruptionBudget**: keep minimum replicas available during voluntary disruptions (node upgrades/drains).
 - **ResourceQuota / LimitRange**: per-namespace caps and defaults.
@@ -268,7 +268,7 @@ spec:
 ## Lesson: [Intermediate|Medium] Storage: volumes, PV, PVC and StorageClass
 
 - **Volume** types: `emptyDir` (scratch, lives with the pod), `configMap`, `secret`, `hostPath` (avoid), `persistentVolumeClaim`, CSI volumes.
-- **PersistentVolume (PV)**: a piece of storage in the cluster. **PersistentVolumeClaim (PVC)**: a pod's request for storage (size, access mode). **StorageClass**: how to provision dynamically (AKS: `managed-csi` Azure Disk, `azurefile-csi` Azure Files).
+- **PersistentVolume (PV)**: a piece of storage in the cluster. PersistentVolumeClaim (PVC): a pod's request for storage (size, access mode). StorageClass: how to provision dynamically (AKS: `managed-csi` Azure Disk, `azurefile-csi` Azure Files).
 - Access modes: ReadWriteOnce (one node), ReadOnlyMany, ReadWriteMany (Azure Files), ReadWriteOncePod.
 - Reclaim policy: Delete or Retain.
 
@@ -277,8 +277,8 @@ For production databases, prefer managed services (Azure SQL, Cosmos DB, Azure D
 ## Lesson: [Intermediate|High] Namespaces, RBAC and security
 
 - **Namespaces**: logical partitions (dev/test/team-a) for names, quotas, RBAC and network policies.
-- **RBAC**: `Role`/`ClusterRole` (verbs on resources) bound to users/groups/ServiceAccounts with `RoleBinding`/`ClusterRoleBinding`. AKS integrates with **Microsoft Entra ID** and Azure RBAC.
-- **ServiceAccounts**: identities for pods; with AKS **Workload Identity** they map to Entra managed identities to access Key Vault, Storage, SQL without secrets.
+- **RBAC**: `Role`/`ClusterRole` (verbs on resources) bound to users/groups/ServiceAccounts with `RoleBinding`/`ClusterRoleBinding`. AKS integrates with Microsoft Entra ID and Azure RBAC.
+- **ServiceAccounts**: identities for pods; with AKS Workload Identity they map to Entra managed identities to access Key Vault, Storage, SQL without secrets.
 - **NetworkPolicies**: firewall rules between pods (default: all pods can talk to each other).
 - **Pod Security Standards** (Privileged/Baseline/Restricted) via Pod Security Admission; run as non-root, read-only root FS, drop capabilities.
 - Image hygiene: private registry (ACR attached to AKS), scanning, admission policies (Azure Policy/Gatekeeper/Kyverno).
@@ -366,7 +366,7 @@ az aks nodepool add -g rg-shop --cluster-name aks-shop -n gpupool --node-vm-size
 ```
 
 - Control plane free tier vs **Standard** tier (financially backed SLA) vs Premium (LTS).
-- **System** node pool (critical add-ons) + **user** node pools; spot node pools for cheap batch.
+- **System** node pool (critical add-ons) + user node pools; spot node pools for cheap batch.
 - Networking: kubenet (legacy), **Azure CNI** / Azure CNI Overlay, Cilium dataplane.
 - Integrations: ACR, Key Vault CSI driver, Workload Identity, Azure Monitor/Container Insights + Managed Prometheus/Grafana, Application Gateway for Containers, Azure Policy, Defender for Containers, KEDA and Dapr add-ons, **AKS Automatic** (opinionated, managed configuration).
 - Alternatives when you don't need full Kubernetes: **Azure Container Apps** (built on Kubernetes + KEDA + Envoy, fully managed).
@@ -451,7 +451,7 @@ Pod requests exceed free allocatable memory on all nodes. Options: check whether
 
 ## [Scenario|Medium] The API in AKS must read secrets from Azure Key Vault without storing any credentials. How?
 
-Enable the OIDC issuer and **Workload Identity** on AKS; create a user-assigned managed identity with Key Vault access (RBAC role "Key Vault Secrets User"); create a federated credential linking the identity to the Kubernetes ServiceAccount; annotate the ServiceAccount and label pods to use it. Then either use the **Secrets Store CSI Driver** (mount secrets as files/sync to K8s Secrets) or call Key Vault from code with `DefaultAzureCredential`. No passwords stored anywhere.
+Enable the OIDC issuer and **Workload Identity** on AKS; create a user-assigned managed identity with Key Vault access (RBAC role "Key Vault Secrets User"); create a federated credential linking the identity to the Kubernetes ServiceAccount; annotate the ServiceAccount and label pods to use it. Then either use the Secrets Store CSI Driver (mount secrets as files/sync to K8s Secrets) or call Key Vault from code with `DefaultAzureCredential`. No passwords stored anywhere.
 
 ## [Scenario|Medium] Should you run SQL Server inside Kubernetes for production?
 

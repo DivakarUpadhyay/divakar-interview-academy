@@ -11,14 +11,14 @@ summary: DbContext, code-first and database-first, conventions and Fluent API, r
 
 # Overview
 
-**Entity Framework Core (EF Core)** is Microsoft's open-source **ORM** (Object-Relational Mapper) for .NET. You work with C# classes (entities) and LINQ; EF Core generates SQL, tracks changes and maps results back to objects.
+**Entity Framework Core (EF Core)** is Microsoft's open-source ORM (Object-Relational Mapper) for .NET. You work with C# classes (entities) and LINQ; EF Core generates SQL, tracks changes and maps results back to objects.
 
 Supported databases (providers): SQL Server / Azure SQL, SQLite, PostgreSQL (Npgsql), MySQL/MariaDB (Pomelo), Oracle, Cosmos DB, In-Memory (testing only).
 
 Workflows:
 
-- **Code-first**: write entity classes, generate the schema with **migrations** (most common for new apps).
-- **Database-first**: **scaffold** classes from an existing DB (`dotnet ef dbcontext scaffold`).
+- **Code-first**: write entity classes, generate the schema with migrations (most common for new apps).
+- **Database-first**: scaffold classes from an existing DB (`dotnet ef dbcontext scaffold`).
 
 **EF6** (Entity Framework 6) is the older .NET Framework ORM, now in maintenance; EF Core is the modern rewrite (and EF6 also runs on .NET Core 3.1+ for migration scenarios).
 
@@ -41,7 +41,7 @@ EF Core majors follow .NET's yearly November releases and support policy (even =
 
 # Lifecycle
 
-**DbContext lifecycle** (ASP.NET Core): registered **scoped** → one instance per HTTP request → created via DI → used for queries and changes → `SaveChanges()` → disposed at the end of the request. A DbContext is a **unit of work**, **not thread-safe**, and meant to be **short-lived**.
+**DbContext lifecycle** (ASP.NET Core): registered scoped → one instance per HTTP request → created via DI → used for queries and changes → `SaveChanges()` → disposed at the end of the request. A DbContext is a unit of work, not thread-safe, and meant to be short-lived.
 
 **Entity states (change tracking):**
 
@@ -57,7 +57,7 @@ EF Core majors follow .NET's yearly November releases and support policy (even =
 
 **SaveChanges lifecycle:** `DetectChanges()` (snapshot comparison) → order commands by dependencies → begin transaction (implicit) → batch INSERT/UPDATE/DELETE → read back generated values (identity, rowversion) → commit → states become `Unchanged`.
 
-**Migration lifecycle:** change model → `dotnet ef migrations add Name` (generates Up/Down C#) → review → `dotnet ef database update` in dev → in prod apply via **SQL script** (`migrations script --idempotent`) or **migration bundle** in CI/CD.
+**Migration lifecycle:** change model → `dotnet ef migrations add Name` (generates Up/Down C#) → review → `dotnet ef database update` in dev → in prod apply via SQL script (`migrations script --idempotent`) or migration bundle in CI/CD.
 
 # Tools
 
@@ -76,7 +76,7 @@ EF Core majors follow .NET's yearly November releases and support policy (even =
 
 ## Lesson: [Basic|High] What an ORM is, and EF6 vs EF Core
 
-An **ORM** (object-relational mapper) maps classes to tables and objects to rows, generating SQL so you work with C# objects and LINQ instead of `DataReader` loops. **Entity Framework** is Microsoft's ORM, in two generations:
+An **ORM** (object-relational mapper) maps classes to tables and objects to rows, generating SQL so you work with C# objects and LINQ instead of `DataReader` loops. Entity Framework is Microsoft's ORM, in two generations:
 
 | | **Entity Framework 6 (EF6)** | **EF Core** |
 |---|---|---|
@@ -89,7 +89,7 @@ An **ORM** (object-relational mapper) maps classes to tables and objects to rows
 | Performance | Slower | Much faster (compiled queries, batching, no-tracking, split queries) |
 | Extras | Spatial, entity splitting, stored-proc mapping in EDMX | Global query filters, owned/complex types, JSON columns, bulk `ExecuteUpdate/ExecuteDelete`, temporal tables, interceptors, many providers (SQL Server, PostgreSQL, SQLite, Cosmos DB) |
 
-**EF6 Database First with EDMX (legacy apps):** Add → ADO.NET Entity Data Model → "EF Designer from database" → pick tables/procedures → Visual Studio generates `ShopModel.edmx` (diagram) + T4 templates that generate entity classes and a `ShopEntities : DbContext`. Changing the database means **"Update Model from Database"** in the designer. The connection string contains metadata (`metadata=res://*/ShopModel.csdl|...;provider=System.Data.SqlClient;provider connection string="..."`).
+**EF6 Database First with EDMX (legacy apps):** Add → ADO.NET Entity Data Model → "EF Designer from database" → pick tables/procedures → Visual Studio generates `ShopModel.edmx` (diagram) + T4 templates that generate entity classes and a `ShopEntities : DbContext`. Changing the database means "Update Model from Database" in the designer. The connection string contains metadata (`metadata=res://*/ShopModel.csdl|...;provider=System.Data.SqlClient;provider connection string="..."`).
 
 ```csharp
 // EF6 (System.Data.Entity): .NET Framework MVC 5 / Web Forms
@@ -359,7 +359,7 @@ catch (DbUpdateConcurrencyException ex)
 }
 ```
 
-**Optimistic concurrency** (rowversion / `IsConcurrencyToken()`): no locks; detect conflicts on save, default choice for web apps. **Pessimistic** (locks: `SELECT ... WITH (UPDLOCK)`, serializable transactions): prevents conflicts but reduces throughput.
+**Optimistic concurrency** (rowversion / `IsConcurrencyToken()`): no locks; detect conflicts on save, default choice for web apps. Pessimistic (locks: `SELECT ... WITH (UPDLOCK)`, serializable transactions): prevents conflicts but reduces throughput.
 
 ## Lesson: [Intermediate|High] Transactions
 
@@ -450,7 +450,7 @@ Code-first: you design entity classes and DbContext; migrations create and evolv
 
 ## [Beginner|High] What is DbContext? Is it thread-safe? What lifetime should it have?
 
-DbContext represents a session with the database: it holds DbSets, the change tracker, configuration, and implements unit of work (`SaveChanges`). It is **not thread-safe**: never share it across concurrent operations (no parallel `await`s on the same context). Register it **scoped** in ASP.NET Core (one per request) and keep it short-lived; use `IDbContextFactory` for background services, Blazor Server or parallel work.
+DbContext represents a session with the database: it holds DbSets, the change tracker, configuration, and implements unit of work (`SaveChanges`). It is **not thread-safe**: never share it across concurrent operations (no parallel `await`s on the same context). Register it scoped in ASP.NET Core (one per request) and keep it short-lived; use `IDbContextFactory` for background services, Blazor Server or parallel work.
 
 ## [Beginner|High] What are migrations? What commands do you use?
 
@@ -518,7 +518,7 @@ Add a `rowversion` concurrency token (`[Timestamp] byte[] RowVersion`). Send the
 
 ## [Scenario|High] You need to delete 5 million log rows older than 90 days nightly without blocking the app. What do you do?
 
-Don't load entities. Use `ExecuteDeleteAsync` in **batches** (e.g. loop deleting `Take(10_000)` by key range or `TOP (10000)` raw SQL until 0 rows) to keep transactions small and avoid lock escalation and log growth; run off-peak via a background job; ensure an index on the date column. Better long-term: **table partitioning** by month and `TRUNCATE`/switch out old partitions, or a retention policy in a time-series store.
+Don't load entities. Use `ExecuteDeleteAsync` in **batches** (e.g. loop deleting `Take(10_000)` by key range or `TOP (10000)` raw SQL until 0 rows) to keep transactions small and avoid lock escalation and log growth; run off-peak via a background job; make sure the date column is indexed. Better long-term: table partitioning by month and `TRUNCATE`/switch out old partitions, or a retention policy in a time-series store.
 
 ## [Scenario|Medium] Deploying a migration renamed a column and dropped production data. How do you prevent this?
 

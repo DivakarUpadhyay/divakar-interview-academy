@@ -92,7 +92,7 @@ When you type `https://www.shop.com/orders` and press Enter, a dozen systems coo
 
 ## Lesson: [Basic|High] IP addresses, subnets, ports, NAT and IPv6
 
-**IPv4**: 32 bits written as four numbers `192.168.1.25` (≈4.3 billion addresses, exhausted). **IPv6**: 128 bits `2001:db8::1` (practically unlimited).
+**IPv4**: 32 bits written as four numbers `192.168.1.25` (≈4.3 billion addresses, exhausted). IPv6: 128 bits `2001:db8::1` (practically unlimited).
 
 | Range | Meaning |
 |---|---|
@@ -103,7 +103,7 @@ When you type `https://www.shop.com/orders` and press Enter, a dozen systems coo
 
 **Subnet / CIDR:** `192.168.1.0/24` = the first 24 bits are the network part → 256 addresses (254 usable hosts). `/16` = 65,536 addresses. Cloud virtual networks (Azure VNet, AWS VPC) are designed with CIDR blocks and subnets for web, app and database tiers.
 
-**DHCP** gives devices an IP, gateway and DNS automatically. **Default gateway** = the router to other networks.
+**DHCP** gives devices an IP, gateway and DNS automatically. Default gateway = the router to other networks.
 
 **NAT (network address translation):** your home router has one public IP; it rewrites many private addresses to it and tracks connections, that's why your laptop isn't directly reachable from the internet. Port forwarding opens a hole for a specific port.
 
@@ -169,7 +169,7 @@ ipconfig /flushdns             # clear Windows DNS cache
 3. Client verifies the certificate: issued by a trusted CA (chain to a root in the OS/browser store), not expired, hostname matches, not revoked.
 4. Both derive the same session keys (Diffie-Hellman) → encrypted HTTP flows.
 
-HTTPS gives **confidentiality** (encryption), **integrity** (no tampering) and **authentication** (you're talking to the real `shop.com`). It does **not** make the application itself secure.
+HTTPS gives **confidentiality** (encryption), integrity (no tampering) and authentication (you're talking to the real `shop.com`). It does not make the application itself secure.
 
 Certificates: **DV** (domain validated, Let's Encrypt, free, 90 days), OV/EV (organisation checks). Wildcard `*.shop.com`; SAN certificates list several names. Private key must stay secret on the server/Key Vault.
 
@@ -202,7 +202,7 @@ Set-Cookie: theme=dark; Path=/; Secure; HttpOnly; SameSite=Lax
 | DELETE | Remove | ❌ | ✅ |
 | HEAD / OPTIONS | Headers only / capabilities (CORS preflight) | ✅ | ✅ |
 
-Status classes: **1xx** info, **2xx** success (200, 201, 204), **3xx** redirect (301 permanent, 302/307 temporary, 304 not modified), **4xx** client error (400, 401, 403, 404, 409, 429), **5xx** server error (500, 502 bad gateway, 503 unavailable, 504 gateway timeout).
+Status classes: **1xx** info, 2xx success (200, 201, 204), 3xx redirect (301 permanent, 302/307 temporary, 304 not modified), 4xx client error (400, 401, 403, 404, 409, 429), 5xx server error (500, 502 bad gateway, 503 unavailable, 504 gateway timeout).
 
 **HTTP versions:**
 
@@ -243,7 +243,7 @@ HTTP is **stateless**: each request stands alone; state is carried by cookies, t
 1. Receive HTML bytes → decode → tokenize → build the **DOM**.
 2. Find `<link rel=stylesheet>` → download → build the **CSSOM** (CSS blocks rendering).
 3. Find `<script>` → download and execute (blocks parsing unless `defer`/`async`/`type=module`).
-4. DOM + CSSOM → **render tree** → **layout** (positions/sizes) → **paint** → **composite** layers on the GPU.
+4. DOM + CSSOM → **render tree** → layout (positions/sizes) → paint → composite layers on the GPU.
 5. Images, fonts, more scripts are requested in parallel; the page becomes interactive when JavaScript has run.
 6. JavaScript changes (DOM updates) may trigger re-layout and re-paint.
 
@@ -283,7 +283,7 @@ Behind a proxy the app sees the proxy's IP: read the original client IP and sche
 - **Site**: bindings (protocol + IP + port + host name, e.g. `https *:443 www.shop.com` with a certificate).
 - **Application pool**: the worker process (`w3wp.exe`) running your app; isolation, identity (ApplicationPoolIdentity), recycling, .NET CLR version ("No Managed Code" for ASP.NET Core).
 - **HTTP.sys** receives requests in the kernel and queues them per app pool.
-- **ASP.NET Core Module (ANCM)**: runs ASP.NET Core **in-process** (inside w3wp, fastest) or **out-of-process** (IIS proxies to Kestrel).
+- **ASP.NET Core Module (ANCM)**: runs ASP.NET Core in-process (inside w3wp, fastest) or out-of-process (IIS proxies to Kestrel).
 - **web.config**: module and handler settings; for Core it points IIS at `dotnet YourApp.dll` or the app's exe.
 
 ```xml
@@ -310,7 +310,7 @@ Behind a proxy the app sees the proxy's IP: read the original client IP and sche
 
 Trade-off: the less you manage, the less control you have, but also less patching, scaling and security work. A typical .NET stack today: React/Angular on Static Web Apps or a CDN, API on App Service/Container Apps, Azure SQL Database, Key Vault for secrets, Application Insights for monitoring.
 
-**Scaling:** vertical (bigger machine) vs horizontal (more instances behind a load balancer, app must be stateless). **High availability:** multiple instances across availability zones, health checks, database replicas, backups and a tested restore.
+**Scaling:** vertical (bigger machine) vs horizontal (more instances behind a load balancer, app must be stateless). High availability: multiple instances across availability zones, health checks, database replicas, backups and a tested restore.
 
 # Module: Putting a Site Live
 

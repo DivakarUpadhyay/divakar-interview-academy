@@ -45,7 +45,7 @@ Industry trend to mention: many teams moved **back** to modular monoliths after 
 1. Client → **API gateway** (YARP / Azure API Management): TLS, auth token validation, routing, rate limiting.
 2. Gateway → **service A** over HTTP/gRPC (service discovery finds an instance).
 3. Service A reads/writes **its own database**.
-4. Service A publishes an **event** (OrderPlaced) via the outbox to a **message broker**.
+4. Service A publishes an **event** (OrderPlaced) via the outbox to a message broker.
 5. Services B and C consume the event asynchronously and update their own data.
 6. Every hop carries a **trace id** (W3C `traceparent`) so one distributed trace shows the whole flow.
 
@@ -143,7 +143,7 @@ builder.Services.AddHttpClient<CatalogClient>(c => c.BaseAddress = new Uri("http
        .AddStandardResilienceHandler();   // retry, circuit breaker, timeouts
 ```
 
-**API gateway**: single entry point for clients: routing, TLS termination, authentication, rate limiting, request aggregation, caching. In .NET: **YARP**; in Azure: **API Management** or Application Gateway. **Backend-for-Frontend (BFF)**: a gateway per client type (web, mobile) shaped for that client.
+**API gateway**: single entry point for clients: routing, TLS termination, authentication, rate limiting, request aggregation, caching. In .NET: YARP; in Azure: API Management or Application Gateway. Backend-for-Frontend (BFF): a gateway per client type (web, mobile) shaped for that client.
 
 ```json
 // YARP appsettings.json
@@ -188,7 +188,7 @@ Benefits: temporal decoupling (consumer can be down), load levelling (queue abso
 
 **Database per service:** each service owns its data; others access it only via the service's API or events. This keeps services independently deployable, but you lose cross-service ACID transactions and joins.
 
-**Saga**: a long business transaction made of local transactions, each with a **compensating action** if a later step fails:
+**Saga**: a long business transaction made of local transactions, each with a compensating action if a later step fails:
 
 ```text
 PlaceOrder:  Orders: create (Pending) → Payment: charge → Inventory: reserve → Orders: confirm
@@ -211,7 +211,7 @@ await tx.CommitAsync();
 
 **Inbox / idempotent consumer**: store processed message ids so duplicates are ignored.
 
-**CAP theorem (short version):** during a network partition a distributed system must choose Consistency or Availability. Most microservice systems choose availability + **eventual consistency** for cross-service data.
+**CAP theorem (short version):** during a network partition a distributed system must choose Consistency or Availability. Most microservice systems choose availability + eventual consistency for cross-service data.
 
 ## Lesson: [Advanced|Medium] CQRS and event sourcing
 
@@ -253,7 +253,7 @@ builder.Services.AddHttpClient<PaymentClient>()
     });
 ```
 
-Also: **health checks** (`AddHealthChecks()`, `/health/live` and `/health/ready` for Kubernetes probes) and **graceful degradation**.
+Also: **health checks** (`AddHealthChecks()`, `/health/live` and `/health/ready` for Kubernetes probes) and graceful degradation.
 
 ## Lesson: [Intermediate|High] Observability: logs, metrics and distributed traces
 
@@ -269,7 +269,7 @@ builder.Services.AddOpenTelemetry()
     .WithMetrics(m => m.AddAspNetCoreInstrumentation().AddRuntimeInstrumentation().AddOtlpExporter());
 ```
 
-The **trace id** flows automatically through HttpClient and most message libraries (W3C Trace Context), so one request can be followed across every service. **.NET Aspire** wires OpenTelemetry, health checks, resilience and service discovery by default (`AddServiceDefaults()`) and shows everything in its dashboard.
+The **trace id** flows automatically through HttpClient and most message libraries (W3C Trace Context), so one request can be followed across every service. .NET Aspire wires OpenTelemetry, health checks, resilience and service discovery by default (`AddServiceDefaults()`) and shows everything in its dashboard.
 
 Golden signals to alert on: **latency, traffic, errors, saturation**.
 
@@ -277,7 +277,7 @@ Golden signals to alert on: **latency, traffic, errors, saturation**.
 
 **Scaling:**
 
-- **Vertical**: bigger machine (simple, limited). **Horizontal**: more instances behind a load balancer; services must be **stateless** (session in Redis/cookies, files in Blob storage).
+- **Vertical**: bigger machine (simple, limited). Horizontal: more instances behind a load balancer; services must be stateless (session in Redis/cookies, files in Blob storage).
 - **Database scaling**: indexes first, then read replicas, caching, partitioning, and finally sharding.
 - **Autoscaling**: Kubernetes HPA / KEDA (scale on queue length), App Service autoscale, Container Apps scale rules.
 

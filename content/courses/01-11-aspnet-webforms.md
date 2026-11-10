@@ -11,7 +11,7 @@ summary: How ASP.NET Web Forms works inside IIS (application and page life cycle
 
 # Overview
 
-**ASP.NET Web Forms** (2002, .NET Framework) lets developers build web pages the way they built Windows Forms: drag **server controls** onto a page, double-click a button and write a C#/VB.NET **event handler**. The framework hides HTTP's statelessness using **PostBack** (forms post to the same page) and **ViewState** (control state stored in a hidden field).
+**ASP.NET Web Forms** (2002, .NET Framework) lets developers build web pages the way they built Windows Forms: drag server controls onto a page, double-click a button and write a C#/VB.NET event handler. The framework hides HTTP's statelessness using PostBack (forms post to the same page) and ViewState (control state stored in a hidden field).
 
 | Strength | Weakness |
 |---|---|
@@ -20,7 +20,7 @@ summary: How ASP.NET Web Forms works inside IIS (application and page life cycle
 | Huge control ecosystem (Telerik, DevExpress, Infragistics) | Tightly coupled to IIS/System.Web; not in .NET Core |
 | Still powers many enterprise/government intranets | No new features; migration needed for modern .NET |
 
-Web Forms remains supported on **.NET Framework 4.8/4.8.1** (as part of Windows), so these apps keep running, and developers who understand them are needed for maintenance and migration. Community project **WebFormsCore**/Blazor migration tools exist, but there is no official Web Forms for .NET Core.
+Web Forms remains supported on **.NET Framework 4.8/4.8.1** (as part of Windows), so these apps keep running, and developers who understand them are needed for maintenance and migration. Community project WebFormsCore/Blazor migration tools exist, but there is no official Web Forms for .NET Core.
 
 # Versions
 
@@ -85,7 +85,7 @@ Mnemonic: **"SILVER"**: Start, Init, Load, Validate, Event handling, Render (plu
 
 ## Lesson: [Basic|High] Project types and folder structure
 
-**Web Site project** (File → New → Web Site): no project file; every `.cs` file compiled dynamically on the server; `App_Code` for classes. **Web Application project** (preferred for real apps): a `.csproj`, compiled into one DLL in `bin`, better for source control and builds.
+**Web Site project** (File → New → Web Site): no project file; every `.cs` file compiled dynamically on the server; `App_Code` for classes. Web Application project (preferred for real apps): a `.csproj`, compiled into one DLL in `bin`, better for source control and builds.
 
 ```text
 ShopWeb/                        (ASP.NET Web Application, .NET Framework 4.8)
@@ -165,7 +165,7 @@ public partial class Products : System.Web.UI.Page
 }
 ```
 
-**Control categories:** HTML controls (`<input>`: plain), **HTML server controls** (`<input runat="server">`: accessible in code), **Web server controls** (`<asp:TextBox>`), **validation controls**, **data controls** (GridView, Repeater, ListView, DetailsView, FormView), **navigation** (Menu, TreeView, SiteMapPath), **login controls**, **user controls** (.ascx) and **custom controls**.
+**Control categories:** HTML controls (`<input>`: plain), HTML server controls (`<input runat="server">`: accessible in code), Web server controls (`<asp:TextBox>`), validation controls, data controls (GridView, Repeater, ListView, DetailsView, FormView), navigation (Menu, TreeView, SiteMapPath), login controls, user controls (.ascx) and custom controls.
 
 **Inline code expressions:** `<%= value %>` (write, not encoded), `<%: value %>` (HTML-encoded, use this), `<%# Eval("Name") %>` (data binding), `<%$ ConnectionStrings:Shop %>` (expression builder).
 
@@ -174,7 +174,7 @@ public partial class Products : System.Web.UI.Page
 ## Lesson: [Intermediate|High] PostBack, AutoPostBack and ViewState: how they work
 
 - A Web Forms page wraps everything in **one `<form runat="server">`** that posts back to the same URL.
-- **PostBack** = the browser submits the form to the same page; the page object is **created again from scratch** on the server, rebuilds controls, restores state and raises the events.
+- **PostBack** = the browser submits the form to the same page; the page object is created again from scratch on the server, rebuilds controls, restores state and raises the events.
 - `AutoPostBack="true"` makes controls like DropDownList post immediately on change (via `__doPostBack` JavaScript); `__EVENTTARGET` and `__EVENTARGUMENT` hidden fields tell the server which control fired.
 - `IsPostBack` is `false` on the first GET and `true` on postbacks.
 
@@ -185,7 +185,7 @@ public partial class Products : System.Web.UI.Page
 ```
 
 - Stores control properties that changed programmatically (e.g. a Label's text, a GridView's data) so they survive postbacks.
-- Base64-encoded, **signed** (MAC) to prevent tampering, optionally encrypted (`ViewStateEncryptionMode`), but **not secret by default**; never store sensitive data.
+- Base64-encoded, **signed** (MAC) to prevent tampering, optionally encrypted (`ViewStateEncryptionMode`), but not secret by default; never store sensitive data.
 - Grows page size and slows requests: large GridViews can produce hundreds of KB.
 - Control: `EnableViewState="false"` per control/page, `ViewStateMode="Disabled"` + enable selectively (4.0+), store state elsewhere.
 - **ControlState**: a small, separate state that controls need to function (e.g. GridView page index); cannot be turned off.
@@ -222,7 +222,7 @@ Response.Cookies.Add(new HttpCookie("theme", "dark") { Expires = DateTime.Now.Ad
 Response.Redirect("Orders.aspx?customerId=" + customerId, endResponse: false);
 ```
 
-**Session modes** (web.config `<sessionState mode="...">`): **InProc** (fastest; lost on app-pool recycle; not shared in a web farm), **StateServer** (separate Windows service; survives recycles), **SQLServer** (durable, shared across a farm), **Custom** (Redis provider), **Off**. Objects stored out-of-process must be `[Serializable]`.
+**Session modes** (web.config `<sessionState mode="...">`): InProc (fastest; lost on app-pool recycle; not shared in a web farm), StateServer (separate Windows service; survives recycles), SQLServer (durable, shared across a farm), Custom (Redis provider), Off. Objects stored out-of-process must be `[Serializable]`.
 
 **Page navigation:** `Response.Redirect` (browser makes a new request, URL changes, 302), `Server.Transfer` (server switches page, URL doesn't change, same request), cross-page posting (`PostBackUrl`).
 
@@ -329,7 +329,7 @@ GridView events: `RowDataBound` (format each row), `RowCommand` (custom buttons 
 <asp:UpdateProgress runat="server" AssociatedUpdatePanelID="upCart"><ProgressTemplate>Loading…</ProgressTemplate></asp:UpdateProgress>
 ```
 
-An **UpdatePanel** performs a *partial postback*: the **whole page life cycle still runs on the server** and the full ViewState is posted, but only the panel's HTML is replaced in the browser. It feels faster but isn't lighter on the server. Alternatives: `[WebMethod]` page methods / ASMX or Web API endpoints called with jQuery `$.ajax` / `fetch` for truly light calls.
+An **UpdatePanel** performs a *partial postback*: the whole page life cycle still runs on the server and the full ViewState is posted, but only the panel's HTML is replaced in the browser. It feels faster but isn't lighter on the server. Alternatives: `[WebMethod]` page methods / ASMX or Web API endpoints called with jQuery `$.ajax` / `fetch` for truly light calls.
 
 # Module: Application Configuration, Security and Errors
 
@@ -382,7 +382,7 @@ public class Global : HttpApplication
 
 Config inheritance: `machine.config` → root `web.config` (Framework folder) → site `web.config` → sub-folder `web.config`s. Changing web.config **restarts the application**.
 
-**HTTP module** (`IHttpModule`): hooks pipeline events for every request (auth, logging, URL rewriting). **HTTP handler** (`IHttpHandler`), produces the response for a request type (`.aspx` page handler, `.ashx` generic handler for files/images/JSON).
+**HTTP module** (`IHttpModule`): hooks pipeline events for every request (auth, logging, URL rewriting). HTTP handler (`IHttpHandler`), produces the response for a request type (`.aspx` page handler, `.ashx` generic handler for files/images/JSON).
 
 ```csharp
 public class ThumbnailHandler : IHttpHandler          // Thumbnail.ashx
@@ -398,7 +398,7 @@ public class ThumbnailHandler : IHttpHandler          // Thumbnail.ashx
 
 ## Lesson: [Intermediate|High] Authentication, security and custom error handling in Web Forms
 
-- **Windows authentication** (intranet, Active Directory) or **Forms authentication** (login page + encrypted auth cookie, `FormsAuthentication.SetAuthCookie`); later **ASP.NET Identity** (OWIN) replaced Membership providers.
+- **Windows authentication** (intranet, Active Directory) or Forms authentication (login page + encrypted auth cookie, `FormsAuthentication.SetAuthCookie`); later ASP.NET Identity (OWIN) replaced Membership providers.
 - Authorization in web.config `<authorization>` per folder/page, or in code `User.IsInRole("Admin")`.
 - Built-in protections: request validation (blocks `<script>` in input), ViewState MAC, event validation; still **HTML-encode output** (`<%: %>`, `Server.HtmlEncode`), use parameterised SQL, set `ViewStateUserKey` against CSRF, `requireSSL`, `HttpOnly` cookies.
 
@@ -418,7 +418,7 @@ protected void Page_Error(object sender, EventArgs e)
 // 4. web.config <customErrors> (ASP.NET) and <httpErrors> (IIS): friendly pages, never show stack traces to users
 ```
 
-`customErrors mode="On"` shows custom pages to everyone; `RemoteOnly` shows details only on the server; `Off` shows the "yellow screen of death": never in production. ELMAH or log4net/NLog/Serilog capture errors (see the **Exception Handling** and **Logging** courses).
+`customErrors mode="On"` shows custom pages to everyone; `RemoteOnly` shows details only on the server; `Off` shows the "yellow screen of death": never in production. ELMAH or log4net/NLog/Serilog capture errors (see the **Exception Handling** and Logging courses).
 
 ## Lesson: [Advanced|Medium] Performance tuning and migrating Web Forms to modern .NET
 
@@ -515,7 +515,7 @@ InProc session lost when the app pool recycles (scheduled recycling, memory limi
 
 ## Page life cycle
 
-PreInit → Init → InitComplete → (LoadViewState, LoadPostData) → PreLoad → **Load** → control events → LoadComplete → **PreRender** → SaveStateComplete → **Render** → Unload.
+PreInit → Init → InitComplete → (LoadViewState, LoadPostData) → PreLoad → **Load** → control events → LoadComplete → PreRender → SaveStateComplete → Render → Unload.
 
 ## Application pipeline
 

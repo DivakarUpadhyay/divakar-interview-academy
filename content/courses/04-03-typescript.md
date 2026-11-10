@@ -11,7 +11,7 @@ summary: Why TypeScript, basic and object types, interfaces vs type aliases, uni
 
 # Overview
 
-**TypeScript** is JavaScript with a static type system, created by Microsoft (lead designer Anders Hejlsberg, also the designer of C#). TypeScript code is **compiled (transpiled) to plain JavaScript**; types exist only at compile time and are erased at runtime.
+**TypeScript** is JavaScript with a static type system, created by Microsoft (lead designer Anders Hejlsberg, also the designer of C#). TypeScript code is compiled (transpiled) to plain JavaScript; types exist only at compile time and are erased at runtime.
 
 Why teams use it:
 
@@ -123,7 +123,7 @@ type Manager = Employee & { reports: Employee[] };              // intersect typ
 
 Common guidance: `interface` for public object contracts (and library augmentation), `type` for unions and computed types. Be consistent.
 
-**Structural typing:** TypeScript compares **shapes**, not names, any object with the right properties is assignable, unlike C#'s nominal types.
+**Structural typing:** TypeScript compares shapes, not names, any object with the right properties is assignable, unlike C#'s nominal types.
 
 ## Lesson: [Basic|High] Functions, unions and narrowing
 
@@ -314,7 +314,7 @@ function OrderTable({ orders, onSelect }: Props) { /* … */ }
 const [selected, setSelected] = useState<Order | null>(null);
 ```
 
-> **Interview tip:** `http.get<T>()` and `as T` are **promises to the compiler, not checks**. Mention generating types from OpenAPI and validating at the boundary.
+> **Interview tip:** `http.get<T>()` and `as T` are promises to the compiler, not checks. Mention generating types from OpenAPI and validating at the boundary.
 
 # Interview
 

@@ -11,13 +11,13 @@ summary: The MVC pattern, request lifecycle, routing, controllers, model binding
 
 # Overview
 
-**ASP.NET Core MVC** is a framework for building server-rendered web apps using the **Model–View–Controller** pattern on top of the ASP.NET Core pipeline.
+**ASP.NET Core MVC** is a framework for building server-rendered web apps using the Model–View–Controller pattern on top of the ASP.NET Core pipeline.
 
 - **Model**: data and business rules (entities, view models, validation).
-- **View**: the UI, written in **Razor** (`.cshtml`: HTML + C#).
+- **View**: the UI, written in Razor (`.cshtml`: HTML + C#).
 - **Controller**: handles the request, calls services, picks a view or result.
 
-The same framework also offers **Razor Pages** (page-focused: each `.cshtml` has a `PageModel`), **Web API** controllers (JSON, no views, next course) and **Blazor** (component-based UI in C#).
+The same framework also offers **Razor Pages** (page-focused: each `.cshtml` has a `PageModel`), Web API controllers (JSON, no views, next course) and Blazor (component-based UI in C#).
 
 Interview focus areas: request lifecycle, routing, model binding/validation, filters, `ViewData`/`ViewBag`/`TempData`, partial views vs view components, tag helpers, authentication/authorisation, antiforgery.
 
@@ -41,13 +41,13 @@ Interview focus areas: request lifecycle, routing, model binding/validation, fil
 **MVC request lifecycle (in order):**
 
 1. **Request arrives** at Kestrel (possibly via IIS/Nginx).
-2. **Middleware pipeline** runs in registration order: exception handler → HSTS/HTTPS redirection → static files → **routing** → CORS → **authentication** → **authorization** → session → endpoints.
+2. **Middleware pipeline** runs in registration order: exception handler → HSTS/HTTPS redirection → static files → routing → CORS → authentication → authorization → session → endpoints.
 3. **Endpoint routing** matches the URL to a controller action (conventional or attribute routes).
 4. **Controller creation**: the controller factory creates the controller via DI.
-5. **Filter pipeline** begins: **authorization filters** → **resource filters** (before) → **model binding** → **model validation** → **action filters** (OnActionExecuting).
+5. **Filter pipeline** begins: authorization filters → resource filters (before) → model binding → model validation → action filters (OnActionExecuting).
 6. **Action method executes** and returns an `IActionResult` (`View()`, `RedirectToAction()`, `Json()`, ...).
-7. **Action filters** (OnActionExecuted) → **result filters** (OnResultExecuting).
-8. **Result execution**: for `ViewResult`, the **view engine** finds the `.cshtml`, runs `_ViewStart`, layout, view, partials/view components, and writes HTML.
+7. **Action filters** (OnActionExecuted) → result filters (OnResultExecuting).
+8. **Result execution**: for `ViewResult`, the view engine finds the `.cshtml`, runs `_ViewStart`, layout, view, partials/view components, and writes HTML.
 9. **Result filters** (OnResultExecuted) → resource filters (after).
 10. **Exception filters** handle unhandled exceptions from controller/action stages.
 11. Response flows back out through middleware to the client.
@@ -57,10 +57,10 @@ Interview focus areas: request lifecycle, routing, model binding/validation, fil
 # Tools
 
 - **Visual Studio**: MVC templates, scaffolding (controllers + views from a model), Razor IntelliSense, Browser Link, Hot Reload.
-- **`dotnet new mvc`**, **`dotnet new webapp`** (Razor Pages), `dotnet aspnet-codegenerator` (scaffolding CLI).
+- **`dotnet new mvc`**, `dotnet new webapp` (Razor Pages), `dotnet aspnet-codegenerator` (scaffolding CLI).
 - **LibMan / npm**: client libraries (Bootstrap, jQuery validation).
 - **ASP.NET Core Identity** + scaffolded Identity UI.
-- **Browser DevTools**, **Fiddler**, **Postman**: inspect requests.
+- **Browser DevTools**, Fiddler, Postman: inspect requests.
 - **Glimpse-style diagnostics**: `app.UseDeveloperExceptionPage()` (default in Development), logging.
 
 # Module: MVC Basics
@@ -155,10 +155,10 @@ app.Run();                                               // 6. start Kestrel and
 
 **Phase 1: Startup (once):**
 
-1. `WebApplication.CreateBuilder` creates the **generic host**: loads configuration (appsettings.json → appsettings.{Env}.json → user secrets → environment variables → command line), sets up logging, creates the `IServiceCollection` and configures **Kestrel** as the `IServer`.
+1. `WebApplication.CreateBuilder` creates the **generic host**: loads configuration (appsettings.json → appsettings.{Env}.json → user secrets → environment variables → command line), sets up logging, creates the `IServiceCollection` and configures Kestrel as the `IServer`.
 2. You register services; `builder.Build()` creates the root **`IServiceProvider`**.
 3. `Use...` calls compose the **middleware pipeline** into a single `RequestDelegate` (each middleware wraps the next).
-4. `MapControllerRoute`/`MapControllers` registers **endpoint data sources**: at startup MVC discovers controllers (public classes ending in `Controller` in the app's assemblies, the *application parts*), builds an `ActionDescriptor` for every action (routes, HTTP methods, filters, parameters) and turns them into **endpoints**.
+4. `MapControllerRoute`/`MapControllers` registers **endpoint data sources**: at startup MVC discovers controllers (public classes ending in `Controller` in the app's assemblies, the *application parts*), builds an `ActionDescriptor` for every action (routes, HTTP methods, filters, parameters) and turns them into endpoints.
 5. `app.Run()` starts hosted services and Kestrel, which listens on the configured ports.
 
 **Phase 2: Each request:**
@@ -300,7 +300,7 @@ public IActionResult Search(
 
 Complex types bind by property name (`Address.City` → `input.Address.City`). Collections bind by index (`Items[0].Qty`).
 
-**Over-posting / mass assignment:** binding directly to entities lets attackers set fields like `IsAdmin`. Use **view models / input models** with only the allowed fields (or `[Bind("Name,Price")]`).
+**Over-posting / mass assignment:** binding directly to entities lets attackers set fields like `IsAdmin`. Use view models / input models with only the allowed fields (or `[Bind("Name,Price")]`).
 
 ## Lesson: [Basic|High] Validation with data annotations
 
@@ -406,7 +406,7 @@ TempData["Message"] = "Saved";           // read once on next request; TempData.
 <environment include="Development"><script src="~/js/site.js"></script></environment>
 ```
 
-Old style **HTML helpers**: `@Html.TextBoxFor(m => m.Name)`, `@Html.ActionLink("View", "Details", new { id })`. Tag helpers look like HTML, are designer-friendly, and the `<form>` tag helper **adds the antiforgery token automatically**.
+Old style **HTML helpers**: `@Html.TextBoxFor(m => m.Name)`, `@Html.ActionLink("View", "Details", new { id })`. Tag helpers look like HTML, are designer-friendly, and the `<form>` tag helper adds the antiforgery token automatically.
 
 Custom tag helper: a class deriving from `TagHelper` overriding `Process(TagHelperContext, TagHelperOutput)`.
 
@@ -479,8 +479,8 @@ public class ApprovalsController : Controller
 }
 ```
 
-- **Authentication** = who you are (cookie, JWT, OpenID Connect with Microsoft Entra ID/Google). **Authorisation** = what you may do (roles, claims, policies, resource-based checks via `IAuthorizationService`).
-- MVC apps typically use **cookie authentication**; APIs use **JWT bearer tokens**.
+- **Authentication** = who you are (cookie, JWT, OpenID Connect with Microsoft Entra ID/Google). Authorisation = what you may do (roles, claims, policies, resource-based checks via `IAuthorizationService`).
+- MVC apps typically use **cookie authentication**; APIs use JWT bearer tokens.
 - Identity stores users, hashed passwords (PBKDF2), roles, claims, 2FA, lockout, external logins.
 
 ## Lesson: [Intermediate|High] Security: antiforgery, XSS, HTTPS, CORS
@@ -533,7 +533,7 @@ public class EditModel(AppDbContext db) : PageModel
 
 ## [Beginner|High] What is MVC? Explain the role of each component.
 
-Model–View–Controller separates an app into three parts. The **Model** holds data, business rules and validation (entities, view models). The **View** renders UI from a model (Razor `.cshtml`). The **Controller** receives the request, works with services and models, and returns a result (view, redirect, JSON). Benefits: separation of concerns, testable controllers, parallel work on UI and logic, and clean URLs through routing.
+Model–View–Controller separates an app into three parts. The **Model** holds data, business rules and validation (entities, view models). The View renders UI from a model (Razor `.cshtml`). The Controller receives the request, works with services and models, and returns a result (view, redirect, JSON). Benefits: separation of concerns, testable controllers, parallel work on UI and logic, and clean URLs through routing.
 
 ## [Beginner|High] Explain the ASP.NET Core MVC request lifecycle.
 
@@ -561,11 +561,11 @@ Data annotations (`[Required]`, `[StringLength]`, `[Range]`, `[EmailAddress]`, `
 
 ## [Intermediate|High] Partial view vs view component: when do you use which?
 
-Use a **partial view** to reuse markup when the parent already has the data (e.g. a product card in a list). Use a **view component** when the widget needs its own logic and data from services, independent of the page's model (shopping cart badge, navigation menu, "latest posts"). View components replace MVC 5 child actions and can be invoked as tag helpers (`<vc:cart />`).
+Use a **partial view** to reuse markup when the parent already has the data (e.g. a product card in a list). Use a view component when the widget needs its own logic and data from services, independent of the page's model (shopping cart badge, navigation menu, "latest posts"). View components replace MVC 5 child actions and can be invoked as tag helpers (`<vc:cart />`).
 
 ## [Intermediate|High] What are filters? List the types and their execution order.
 
-Filters run code at specific stages of the MVC action pipeline: **Authorization** → **Resource** → (model binding) → **Action** → action → **Action** (after) → **Result** → result execution → **Result** (after). **Exception** filters catch unhandled exceptions from these stages. They can be applied globally, per controller or per action (in that order on the way in), and use DI via `ServiceFilter`/`TypeFilter`. Use cases: auth, logging, caching, validation, error handling.
+Filters run code at specific stages of the MVC action pipeline: **Authorization** → Resource → (model binding) → Action → action → Action (after) → Result → result execution → Result (after). Exception filters catch unhandled exceptions from these stages. They can be applied globally, per controller or per action (in that order on the way in), and use DI via `ServiceFilter`/`TypeFilter`. Use cases: auth, logging, caching, validation, error handling.
 
 ## [Intermediate|High] What is the difference between middleware and filters?
 
@@ -597,7 +597,7 @@ In production, `app.UseExceptionHandler("/Home/Error")` (shows a friendly error 
 
 ## [Advanced|High] How does authentication differ between an MVC app and a Web API?
 
-MVC apps usually use **cookie authentication**: after login (Identity or OpenID Connect via Entra ID), an encrypted auth cookie identifies the user on each request, and antiforgery tokens protect forms. Web APIs consumed by SPAs or mobile apps usually use **JWT bearer tokens** in the `Authorization` header, validated statelessly (issuer, audience, signature, expiry). In both, authorisation uses `[Authorize]` with roles, claims or policies. For SPAs, a BFF (Backend-for-Frontend) that keeps tokens server-side and uses cookies is now recommended for security.
+MVC apps usually use **cookie authentication**: after login (Identity or OpenID Connect via Entra ID), an encrypted auth cookie identifies the user on each request, and antiforgery tokens protect forms. Web APIs consumed by SPAs or mobile apps usually use JWT bearer tokens in the `Authorization` header, validated statelessly (issuer, audience, signature, expiry). In both, authorisation uses `[Authorize]` with roles, claims or policies. For SPAs, a BFF (Backend-for-Frontend) that keeps tokens server-side and uses cookies is now recommended for security.
 
 ## [Advanced|Medium] How would you implement resource-based authorisation (e.g. only the owner can edit a document)?
 
@@ -609,7 +609,7 @@ Inject dependencies through interfaces and mock them (Moq/NSubstitute). Instanti
 
 ## [Scenario|High] Users double-click "Place Order" and two orders are created. How do you fix it?
 
-Defence in layers: (1) disable the button on submit with JavaScript; (2) use **Post-Redirect-Get**; (3) make the server **idempotent**: generate an order token (GUID) when rendering the form, store it in a hidden field, and enforce a unique constraint on it in the DB, so a second POST with the same token is rejected or returns the existing order. The DB unique constraint is the only fully reliable guard.
+Defence in layers: (1) disable the button on submit with JavaScript; (2) use **Post-Redirect-Get**; (3) make the server idempotent: generate an order token (GUID) when rendering the form, store it in a hidden field, and enforce a unique constraint on it in the DB, so a second POST with the same token is rejected or returns the existing order. The DB unique constraint is the only fully reliable guard.
 
 ## [Scenario|High] A product page shows another customer's order when the URL ID is changed. What is the bug and the fix?
 
@@ -627,7 +627,7 @@ Use cache busting. `asp-append-version="true"` on `<script>`, `<link>` and `<img
 
 ## Request lifecycle
 
-Middleware → Routing → Controller (DI) → **Authorization filter** → **Resource filter** → Model binding → Validation → **Action filter** → **Action** → **Action filter** → **Result filter** → View render → **Result filter** → Response. Exception filters wrap the action/result stages.
+Middleware → Routing → Controller (DI) → **Authorization filter** → Resource filter → Model binding → Validation → Action filter → Action → Action filter → Result filter → View render → Result filter → Response. Exception filters wrap the action/result stages.
 
 ## Middleware order (MVC)
 

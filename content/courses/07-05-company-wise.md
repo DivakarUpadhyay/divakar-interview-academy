@@ -22,7 +22,7 @@ Every company type tests the same core skills: fundamentals, problem solving, pr
 | **Startups** | Practical coding/take-home tasks, ownership, speed, full-stack breadth, culture |
 | **Taiwan employers** | Hardware/semiconductor/electronics giants, software companies and foreign firms in Taipei; language requirements vary; work permit eligibility matters for foreigners |
 
-> **Important:** interview processes change frequently and differ by role, level and team. The patterns below are general and based on publicly shared information (company career pages and candidate reports). Always check **recent** candidate experiences (Glassdoor, AmbitionBox, LeetCode Discuss, Blind, PTT Tech_Job for Taiwan) and ask the recruiter about the exact rounds.
+> **Important:** interview processes change frequently and differ by role, level and team. The patterns below are general and based on publicly shared information (company career pages and candidate reports). Always check recent candidate experiences (Glassdoor, AmbitionBox, LeetCode Discuss, Blind, PTT Tech_Job for Taiwan) and ask the recruiter about the exact rounds.
 
 # Versions
 
@@ -77,10 +77,10 @@ For **experienced .NET developers** (2–10 years), expect:
 
 ## Lesson: [Basic|Medium] Fresher hiring patterns (typical, verify current details)
 
-- **TCS**: the **TCS NQT** (National Qualifier Test) is used for fresher hiring, with role tiers commonly known as **Ninja** and **Digital** (and **Prime** for the highest tier in recent drives). Interviews typically combine technical, managerial and HR discussions.
-- **Infosys**: fresher roles include Systems Engineer and higher tiers such as **Digital Specialist Engineer** and **Specialist Programmer**; coding competitions such as **HackWithInfy** have been used as a hiring channel.
-- **Wipro**: **Elite NLTH** (National Level Talent Hunt) for freshers; online assessment + interviews.
-- **Cognizant**: fresher tracks named **GenC**, **GenC Next**, **GenC Pro/Elevate** (names change between years).
+- **TCS**: the TCS NQT (National Qualifier Test) is used for fresher hiring, with role tiers commonly known as Ninja and Digital (and Prime for the highest tier in recent drives). Interviews typically combine technical, managerial and HR discussions.
+- **Infosys**: fresher roles include Systems Engineer and higher tiers such as Digital Specialist Engineer and Specialist Programmer; coding competitions such as HackWithInfy have been used as a hiring channel.
+- **Wipro**: Elite NLTH (National Level Talent Hunt) for freshers; online assessment + interviews.
+- **Cognizant**: fresher tracks named GenC, GenC Next, GenC Pro/Elevate (names change between years).
 - **Accenture**: online assessments covering cognitive abilities, technical MCQs, coding and a communication assessment, followed by an interview.
 - **Capgemini**: has used game-based aptitude tests alongside pseudo-code, English and technical assessments.
 - **HCLTech, Tech Mahindra, LTIMindtree**: online assessment + technical + HR, with role-specific variants.
@@ -111,9 +111,9 @@ Expect drill-down questions on anything you mention, only mention what you can e
 
 ## Lesson: [Intermediate|High] Microsoft and Google: what to expect
 
-**Microsoft** (typical, varies by team): recruiter screen → one or more technical screens → a loop of around 4–5 interviews covering coding (DSA), design (system/object-oriented design for experienced roles), and behavioural/collaboration questions. Culture emphasis: **growth mindset**, collaboration, customer focus. Knowledge of Azure/.NET helps for many teams but isn't always required.
+**Microsoft** (typical, varies by team): recruiter screen → one or more technical screens → a loop of around 4–5 interviews covering coding (DSA), design (system/object-oriented design for experienced roles), and behavioural/collaboration questions. Culture emphasis: growth mindset, collaboration, customer focus. Knowledge of Azure/.NET helps for many teams but isn't always required.
 
-**Google** (typical): recruiter screen → technical phone/video screen → several interviews (often 4–5) covering coding/algorithms, system design (for experienced roles) and a **Googleyness & Leadership** behavioural interview. Interview feedback is reviewed by a **hiring committee**, followed by team matching. Coding is usually in a shared doc/editor without IDE autocomplete: practise writing clean code by hand.
+**Google** (typical): recruiter screen → technical phone/video screen → several interviews (often 4–5) covering coding/algorithms, system design (for experienced roles) and a Googleyness & Leadership behavioural interview. Interview feedback is reviewed by a hiring committee, followed by team matching. Coding is usually in a shared doc/editor without IDE autocomplete: practise writing clean code by hand.
 
 Common across these companies: arrays/strings, hash maps, two pointers, sliding window, trees/graphs (BFS/DFS), heaps, dynamic programming (more at Google), and design topics (URL shortener, rate limiter, chat system, news feed, distributed cache).
 
@@ -150,7 +150,7 @@ Classic problems: URL shortener, rate limiter, notification system, chat (WebSoc
 - Major employers include semiconductor and electronics companies (TSMC, MediaTek, Foxconn/Hon Hai, ASUS, Acer, Quanta, Delta Electronics), software and internet companies (Trend Micro, Appier, Gogoro, LINE Taiwan/LY Corporation, Shopee Taiwan, KKCompany), and foreign multinationals' Taipei offices (Microsoft, Google Taiwan hardware teams, Amazon Web Services, NVIDIA and others).
 - **Language**: many local companies interview and work in Mandarin; English-only roles exist mainly in multinationals, startups with international teams and some R&D centres, filter job posts (e.g. "English" on 104/Yourator/CakeResume/LinkedIn).
 - **Process**: online application → HR phone screen → technical test or take-home → 1–3 interviews (team lead, manager, sometimes department head) → offer with monthly salary + bonus discussion.
-- **Work authorisation**: foreign professionals need an employer-sponsored work permit or a **Taiwan Employment Gold Card**; be ready to state your status clearly.
+- **Work authorisation**: foreign professionals need an employer-sponsored work permit or a Taiwan Employment Gold Card; be ready to state your status clearly.
 - **Culture tips**: punctuality, politeness and humility; prepare a short self-introduction; bring/attach transcripts or certificates if asked; follow up through the recruiter.
 
 # Interview

@@ -11,7 +11,7 @@ summary: What Node.js is and how it works inside (V8, libuv, the event loop phas
 
 # Overview
 
-**Node.js** is a JavaScript **runtime** that runs JavaScript outside the browser: on servers, build tools and CLIs. It uses Google's **V8** engine to execute JavaScript and **libuv** to provide non-blocking I/O through an **event loop**, so one process can handle thousands of concurrent connections with a single main thread.
+**Node.js** is a JavaScript runtime that runs JavaScript outside the browser: on servers, build tools and CLIs. It uses Google's V8 engine to execute JavaScript and libuv to provide non-blocking I/O through an event loop, so one process can handle thousands of concurrent connections with a single main thread.
 
 | Used for | Examples |
 |---|---|
@@ -38,7 +38,7 @@ Node.js vs ASP.NET Core: both are fast, cross-platform backends. Node shares one
 | 24 | 2025 (LTS from Oct 2025) | npm 11, V8 13.x, `URLPattern` global, TypeScript type stripping on by default |
 | 25 | 2025 (Current) | Next "current" line; even versions become LTS each October |
 
-Release model: a new major every April and October; **even-numbered** releases become **LTS** (30 months of support). Use an Active/Maintenance LTS version in production.
+Release model: a new major every April and October; **even-numbered** releases become LTS (30 months of support). Use an Active/Maintenance LTS version in production.
 
 # Lifecycle
 
@@ -100,7 +100,7 @@ Your JavaScript
 
 - **Single-threaded** for your JavaScript: only one callback runs at a time, no locks needed for shared variables.
 - **Non-blocking I/O:** waiting for the network/disk doesn't block the thread; Node continues with other work.
-- Great for **I/O-bound** work (APIs, proxies, real-time). **CPU-bound** work (image processing, big JSON parsing, heavy loops) blocks the event loop for everyone: move it to **worker threads**, a separate service, or a queue.
+- Great for **I/O-bound** work (APIs, proxies, real-time). CPU-bound work (image processing, big JSON parsing, heavy loops) blocks the event loop for everyone: move it to worker threads, a separate service, or a queue.
 
 ```js
 // Blocking vs non-blocking
@@ -149,7 +149,7 @@ export default add;
 }
 ```
 
-- **dependencies** ship to production; **devDependencies** only for development/build.
+- **dependencies** ship to production; devDependencies only for development/build.
 - **Semantic versioning:** `^5.1.0` allows 5.x.x updates, `~5.1.0` allows 5.1.x, exact `5.1.0` pins.
 - **package-lock.json** records exact installed versions: commit it; use `npm ci` in CI for reproducible installs.
 - `npm audit` checks known vulnerabilities; `npm outdated` shows updates.

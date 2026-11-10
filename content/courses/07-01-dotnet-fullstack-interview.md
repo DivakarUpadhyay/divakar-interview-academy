@@ -24,7 +24,7 @@ Interviewers for this role do not want five separate specialists. They test whet
 | Delivery | Git, Azure DevOps / GitHub Actions, Docker, Azure | Branching, pipelines, config, secrets, monitoring |
 | Design | SOLID, patterns, clean architecture | Layering, testability, trade-offs |
 
-This course is the **glue**: each lesson follows one concern across the whole stack. The deep dives live in the individual courses (C#, Web API, EF Core, SQL Server, Angular, React …). Use the **.NET Full Stack Developer** question bank (Interview Questions menu) to drill every question from all of those courses in one place.
+This course is the **glue**: each lesson follows one concern across the whole stack. The deep dives live in the individual courses (C#, Web API, EF Core, SQL Server, Angular, React …). Use the .NET Full Stack Developer question bank (Interview Questions menu) to drill every question from all of those courses in one place.
 
 # Versions
 
@@ -86,7 +86,7 @@ Most companies (product companies, service companies and startups) use some mix 
 **What separates a strong full stack candidate:**
 
 - Explains **one real feature end to end**: UI → API → DB → back, including errors and security.
-- Knows **why** (trade-offs), not only **what** (definitions).
+- Knows **why** (trade-offs), not only what (definitions).
 - Writes working code live: a LINQ query, a SQL query, a component, an endpoint.
 - Talks about production: logging, performance, deployment, incidents.
 
@@ -112,7 +112,7 @@ Draw it as you talk:
   Entra ID login            Serilog -> App Insights          Nightly SSIS/ETL
 ```
 
-> **Interview tip:** Always end with **your** contribution and **one measurable result**. Interviewers remember numbers.
+> **Interview tip:** Always end with your contribution and one measurable result. Interviewers remember numbers.
 
 # Module: End-to-End Request Flow
 
@@ -169,14 +169,14 @@ public async Task<PagedResult<OrderDto>> GetPageAsync(int customerId, int page, 
 
 **7. Back up the stack**: DTOs serialised to JSON by `System.Text.Json` → `200 OK` → Angular deserialises → the template renders with `@for`.
 
-> **Interview tip:** Mention **async all the way** (frees threads while waiting for SQL), **CancellationToken** (stops work when the user navigates away), **AsNoTracking** and **projection**. These four show production experience.
+> **Interview tip:** Mention async all the way (frees threads while waiting for SQL), CancellationToken (stops work when the user navigates away), AsNoTracking and projection. These four show production experience.
 
 ## Lesson: [Intermediate|High] Authentication end to end: JWT, refresh tokens, CORS
 
 **Typical flow (token-based, SPA + API):**
 
 1. User logs in (own endpoint, or an identity provider such as Microsoft Entra ID / Auth0 / Duende IdentityServer using OAuth 2.0 + OpenID Connect with PKCE).
-2. The SPA receives an **access token** (short-lived JWT, e.g. 15–60 min) and often a **refresh token** (long-lived, rotated).
+2. The SPA receives an **access token** (short-lived JWT, e.g. 15–60 min) and often a refresh token (long-lived, rotated).
 3. An HTTP interceptor adds `Authorization: Bearer <access token>` to API calls.
 4. The API validates signature, issuer, audience and expiry; builds `ClaimsPrincipal`; `[Authorize]` and policies check roles/claims.
 5. On `401`, the SPA uses the refresh token to get a new access token, or redirects to login.
@@ -248,7 +248,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log) 
 
 **UI side:** one HTTP interceptor maps 400 → show field errors, 401 → refresh/login, 403 → "not allowed", 500 → toast + correlation id.
 
-**Logging:** structured logs (`{OrderId}` placeholders, not string concatenation), a **correlation id** per request passed from UI to API to downstream services, log levels used properly, no passwords/tokens/PII in logs.
+**Logging:** structured logs (`{OrderId}` placeholders, not string concatenation), a correlation id per request passed from UI to API to downstream services, log levels used properly, no passwords/tokens/PII in logs.
 
 # Module: Building a Feature Full Stack
 
@@ -362,7 +362,7 @@ var totals = await db.Orders.Select(o => new { o.Id, Qty = o.Lines.Sum(l => l.Qt
 
 ## Lesson: [Advanced|Medium] Deployment: config, secrets, Docker, CI/CD, Azure
 
-**Configuration per environment:** `appsettings.json` → `appsettings.{Environment}.json` → environment variables → Azure App Configuration / Key Vault. Bind to options classes (`IOptions<T>`). Never commit secrets; use User Secrets locally and **Key Vault + Managed Identity** in Azure.
+**Configuration per environment:** `appsettings.json` → `appsettings.{Environment}.json` → environment variables → Azure App Configuration / Key Vault. Bind to options classes (`IOptions<T>`). Never commit secrets; use User Secrets locally and Key Vault + Managed Identity in Azure.
 
 **Container image for the API:**
 
@@ -401,7 +401,7 @@ web/
   shop-ui/              Angular or React app
 ```
 
-**Dependency rule:** dependencies point **inwards**: Api → Application → Domain; Infrastructure implements interfaces defined in Application. That is the **Dependency Inversion Principle** in practice, and it is what makes services unit-testable (mock `IOrderRepository`).
+**Dependency rule:** dependencies point inwards: Api → Application → Domain; Infrastructure implements interfaces defined in Application. That is the Dependency Inversion Principle in practice, and it is what makes services unit-testable (mock `IOrderRepository`).
 
 | Question | Answer |
 |---|---|
@@ -443,7 +443,7 @@ Form validation → service calls `POST /api/...` with JSON → interceptor adds
 
 ## [Beginner|High] What is the difference between authentication and authorization? Which status codes do they return?
 
-Authentication proves **who** the caller is (token, cookie); failure → **401 Unauthorized**. Authorization decides **what** an authenticated caller may do (roles, policies, claims); failure → **403 Forbidden**. In ASP.NET Core: `UseAuthentication()` then `UseAuthorization()`, `[Authorize(Roles = "Admin")]` or policies.
+Authentication proves **who** the caller is (token, cookie); failure → 401 Unauthorized. Authorization decides what an authenticated caller may do (roles, policies, claims); failure → 403 Forbidden. In ASP.NET Core: `UseAuthentication()` then `UseAuthorization()`, `[Authorize(Roles = "Admin")]` or policies.
 
 ## [Beginner|High] What is CORS and why do you get a CORS error only in the browser?
 
@@ -459,7 +459,7 @@ Server-side: the API takes `page`, `size` (clamped to a maximum, e.g. 100), `sor
 
 ## [Intermediate|High] Where do you store the JWT in an SPA, and how do you refresh it?
 
-Safest: don't expose tokens to JavaScript, use a **Backend-for-Frontend** that keeps tokens server-side and gives the browser an HttpOnly, Secure, SameSite cookie. If the SPA holds tokens, keep the short-lived access token **in memory** (not `localStorage`, which XSS can read) and use refresh-token rotation via the identity provider (MSAL / oidc-client handle this). On a 401 the interceptor refreshes once and retries; if refresh fails, redirect to login.
+Safest: don't expose tokens to JavaScript, use a **Backend-for-Frontend** that keeps tokens server-side and gives the browser an HttpOnly, Secure, SameSite cookie. If the SPA holds tokens, keep the short-lived access token in memory (not `localStorage`, which XSS can read) and use refresh-token rotation via the identity provider (MSAL / oidc-client handle this). On a 401 the interceptor refreshes once and retries; if refresh fails, redirect to login.
 
 ## [Intermediate|High] How do you handle errors globally in both the API and the UI?
 
@@ -535,7 +535,7 @@ Open DevTools console and Network: typical causes are a wrong `base href` / `bas
 
 ## [Scenario|Medium] An order must be saved, stock reduced and an email sent. How do you keep these consistent?
 
-Order and stock in the **same database transaction** (`SaveChangesAsync` on one DbContext, or an explicit transaction). The email is a side effect outside the database, so use the **outbox pattern**: in the same transaction insert an "OrderPlaced" row into an Outbox table; a background worker reads it, publishes/sends the email and marks it done. If the app crashes after commit, the worker still sends it; consumers are idempotent so a retry doesn't send twice.
+Order and stock in the **same database transaction** (`SaveChangesAsync` on one DbContext, or an explicit transaction). The email is a side effect outside the database, so use the outbox pattern: in the same transaction insert an "OrderPlaced" row into an Outbox table; a background worker reads it, publishes/sends the email and marks it done. If the app crashes after commit, the worker still sends it; consumers are idempotent so a retry doesn't send twice.
 
 # Cheatsheet
 

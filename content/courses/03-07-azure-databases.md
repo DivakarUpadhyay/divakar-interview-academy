@@ -83,15 +83,15 @@ Azure SQL Database runs the **same SQL Server engine** (always the latest versio
 | **Business Critical** | Local SSD, Always On replicas (incl. a free readable secondary), lowest latency | High I/O OLTP, low latency, read scale-out |
 | **Hyperscale** | Distributed storage up to 128 TB, fast backups/restores, up to 4 read replicas (named replicas too) | Large or fast-growing databases |
 
-**Serverless** (General Purpose / Hyperscale): compute auto-scales between min and max vCores and can **auto-pause** when idle (GP), you pay per second of compute used. Great for dev/test and intermittent workloads; first query after pause has a resume delay.
+**Serverless** (General Purpose / Hyperscale): compute auto-scales between min and max vCores and can auto-pause when idle (GP), you pay per second of compute used. Great for dev/test and intermittent workloads; first query after pause has a resume delay.
 
 **Elastic pools:** many databases share a pool of resources, ideal for SaaS with a database per tenant where each tenant's usage peaks at different times.
 
 ## Lesson: [Intermediate|High] Security: networking, Entra authentication, managed identity, encryption, auditing
 
-**Network:** server-level and database-level **firewall rules** (allowed IP ranges), "Allow Azure services" switch (broad, prefer narrower options), **private endpoints** (database gets a private IP in your VNet; public access disabled), VNet service endpoints.
+**Network:** server-level and database-level firewall rules (allowed IP ranges), "Allow Azure services" switch (broad, prefer narrower options), private endpoints (database gets a private IP in your VNet; public access disabled), VNet service endpoints.
 
-**Authentication:** SQL logins, or **Microsoft Entra ID** users/groups and **managed identities** (recommended, no passwords). Entra-only authentication can be enforced.
+**Authentication:** SQL logins, or Microsoft Entra ID users/groups and managed identities (recommended, no passwords). Entra-only authentication can be enforced.
 
 ```sql
 -- In the user database, as the Entra admin: create a user for the App Service's managed identity
@@ -121,11 +121,11 @@ ALTER ROLE db_datawriter ADD MEMBER [shop-api-prod];
 
 ## Lesson: [Intermediate|High] High availability, geo-replication, failover groups and backups
 
-- **Built-in HA:** every database has an availability SLA (99.99 %; up to 99.995 % with zone redundancy on Business Critical/Premium). Replicas/standby compute handle hardware failures automatically: apps must **retry transient errors** during failovers.
+- **Built-in HA:** every database has an availability SLA (99.99 %; up to 99.995 % with zone redundancy on Business Critical/Premium). Replicas/standby compute handle hardware failures automatically: apps must retry transient errors during failovers.
 - **Zone redundancy:** replicas spread across availability zones in the region.
 - **Active geo-replication:** up to 4 readable secondaries in other regions (single database).
-- **Failover groups:** group of databases replicated to another region with a **listener endpoint** (`shop-fg.database.windows.net` read-write, `shop-fg.secondary...` read-only), connection strings don't change after failover.
-- **Backups:** automatic full (weekly), differential (12–24 h) and log backups (every ~5–10 min); **point-in-time restore (PITR)** within the retention period (1–35 days); **long-term retention (LTR)** up to 10 years; geo-redundant backup storage for **geo-restore**.
+- **Failover groups:** group of databases replicated to another region with a listener endpoint (`shop-fg.database.windows.net` read-write, `shop-fg.secondary...` read-only), connection strings don't change after failover.
+- **Backups:** automatic full (weekly), differential (12–24 h) and log backups (every ~5–10 min); point-in-time restore (PITR) within the retention period (1–35 days); long-term retention (LTR) up to 10 years; geo-redundant backup storage for geo-restore.
 - **RPO/RTO:** geo-replication gives RPO of seconds; PITR is for "oops, someone deleted data" (restores to a new database).
 
 ```bash
@@ -141,7 +141,7 @@ options.UseSqlServer(cs, sql => sql.EnableRetryOnFailure(maxRetryCount: 6, maxRe
 
 - **Query Store**: on by default: top resource-consuming queries, regressed plans, plan forcing.
 - **Automatic tuning**: `FORCE_LAST_GOOD_PLAN` (on by default), optional automatic `CREATE INDEX`/`DROP INDEX` recommendations.
-- **Query Performance Insight** and **Intelligent Insights** in the portal; Azure Monitor metrics (CPU %, Data IO %, Log IO %, DTU/vCore usage, deadlocks, connection failures, storage).
+- **Query Performance Insight** and Intelligent Insights in the portal; Azure Monitor metrics (CPU %, Data IO %, Log IO %, DTU/vCore usage, deadlocks, connection failures, storage).
 - DMVs work as on-prem (`sys.dm_exec_requests`, `sys.dm_db_resource_stats` for the last hour at 15-second granularity).
 - Typical fixes are the same as SQL Server (indexes, SARGable queries, parameter sniffing), plus **right-sizing** the tier, read scale-out for reports (`ApplicationIntent=ReadOnly`), and connection pooling (many short-lived connections from serverless functions can exhaust limits).
 - **Resource limits:** each tier caps CPU, I/O, log rate, workers and sessions, "throttling" shows up as `LOG_RATE_GOVERNOR`, `RESOURCE_SEMAPHORE` waits or error 10928/10936 (worker/session limits).
@@ -162,9 +162,9 @@ options.UseSqlServer(cs, sql => sql.EnableRetryOnFailure(maxRetryCount: 6, maxRe
 **Key concepts:**
 
 - **Account → database → container → items** (JSON documents).
-- **Partition key**: chooses how data is spread across physical partitions. Pick a property with **high cardinality** and even access (e.g. `/customerId`, `/tenantId`); queries that include the partition key are cheap, cross-partition queries cost more. A **hot partition** limits throughput.
-- **Request Units (RU/s)**: the currency of throughput: a 1 KB point read ≈ 1 RU; writes and queries cost more. Provisioned (manual or **autoscale**) or **serverless** (pay per RU consumed).
-- **Consistency levels** (strongest → weakest): **Strong**, **Bounded staleness**, **Session** (default, read-your-own-writes per session), **Consistent prefix**, **Eventual**. Weaker = lower latency and cost, higher availability.
+- **Partition key**: chooses how data is spread across physical partitions. Pick a property with high cardinality and even access (e.g. `/customerId`, `/tenantId`); queries that include the partition key are cheap, cross-partition queries cost more. A hot partition limits throughput.
+- **Request Units (RU/s)**: the currency of throughput: a 1 KB point read ≈ 1 RU; writes and queries cost more. Provisioned (manual or autoscale) or serverless (pay per RU consumed).
+- **Consistency levels** (strongest → weakest): Strong, Bounded staleness, Session (default, read-your-own-writes per session), Consistent prefix, Eventual. Weaker = lower latency and cost, higher availability.
 - **Global distribution:** add regions with one click, optional multi-region writes, automatic failover.
 - **Change feed**: ordered stream of changes for event-driven processing (Azure Functions trigger), materialised views, sync to search.
 
@@ -181,7 +181,7 @@ var query = container.GetItemQueryIterator<Order>(new QueryDefinition("SELECT * 
 
 - **Azure Database for PostgreSQL – Flexible Server / MySQL – Flexible Server:** managed open-source engines with zone-redundant HA, automated backups/PITR, read replicas, stop/start to save cost, extensions (PostGIS, pgvector).
 - **Azure Cache for Redis / Azure Managed Redis:** in-memory key-value store, cache-aside for DB queries, session state, distributed locks, rate limiting, pub/sub. Use with `IDistributedCache`/`HybridCache` in ASP.NET Core.
-- **Azure Storage:** Blob (files, images, backups), Table (simple key-value), Queue; **Azure Data Lake Storage Gen2** for analytics.
+- **Azure Storage:** Blob (files, images, backups), Table (simple key-value), Queue; Azure Data Lake Storage Gen2 for analytics.
 - **Azure Data Explorer / Fabric Real-Time Intelligence:** time-series and log analytics with KQL (IoT, telemetry).
 
 | Data | Store |
@@ -212,7 +212,7 @@ var query = container.GetItemQueryIterator<Order>(new QueryDefinition("SELECT * 
 - Right-size from metrics (many databases are over-provisioned); scale down at night with automation for non-production.
 - **Serverless** for dev/test and intermittent workloads (auto-pause).
 - **Elastic pools** for many small databases with uneven usage.
-- **Reserved capacity** (1 or 3 years) and **Azure Hybrid Benefit** for steady production workloads.
+- **Reserved capacity** (1 or 3 years) and Azure Hybrid Benefit for steady production workloads.
 - Read replicas for reporting instead of scaling the primary.
 - Cosmos DB: choose a good partition key (fewer RUs), autoscale or serverless, index only needed paths, use point reads.
 - Delete unused databases/backups; set LTR policies deliberately; monitor with Cost Management budgets and alerts.

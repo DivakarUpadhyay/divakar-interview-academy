@@ -11,7 +11,7 @@ summary: Types, control flow, collections, generics, delegates, async/await, mem
 
 # Overview
 
-**C#** (pronounced "C sharp") is a modern, object-oriented, type-safe language created by Microsoft (lead designer Anders Hejlsberg) and standardised as ECMA-334. It compiles to **IL (Intermediate Language)** which the **.NET runtime (CLR)** turns into machine code with a JIT (or ahead of time with Native AOT).
+**C#** (pronounced "C sharp") is a modern, object-oriented, type-safe language created by Microsoft (lead designer Anders Hejlsberg) and standardised as ECMA-334. It compiles to IL (Intermediate Language) which the .NET runtime (CLR) turns into machine code with a JIT (or ahead of time with Native AOT).
 
 Where C# is used:
 
@@ -49,7 +49,7 @@ Why interviewers care: almost every .NET round starts with C# fundamentals (valu
 **How a C# program runs**
 
 1. **Write** `.cs` files inside a project (`.csproj`).
-2. **Build**: the Roslyn compiler turns C# into **IL** plus metadata, packaged in an **assembly** (`.dll`/`.exe`).
+2. **Build**: the Roslyn compiler turns C# into IL plus metadata, packaged in an assembly (`.dll`/`.exe`).
 3. **Load**: the CLR loads the assembly, verifies the IL and resolves dependencies.
 4. **JIT compile**: each method is compiled to native code the first time it is called (tiered compilation re-optimises hot methods). Native AOT compiles everything ahead of time instead.
 5. **Execute**: managed code runs with type safety, exception handling and the garbage collector managing the heap.
@@ -76,7 +76,7 @@ Why interviewers care: almost every .NET round starts with C# fundamentals (valu
 
 ## Lesson: [Basic|High] What C# and .NET are
 
-C# is the **language**; .NET is the **platform** (runtime + base class library + SDK). You write C#, the compiler produces IL, and the .NET runtime executes it.
+C# is the **language**; .NET is the platform (runtime + base class library + SDK). You write C#, the compiler produces IL, and the .NET runtime executes it.
 
 - **CLR** (Common Language Runtime): JIT, GC, type safety, exception handling, threading.
 - **BCL** (Base Class Library): `System`, `System.Collections.Generic`, `System.IO`, `System.Net.Http`, ...
@@ -142,7 +142,7 @@ Console.WriteLine(JsonSerializer.Serialize(c));
 - Implicit usings (`<ImplicitUsings>enable</ImplicitUsings>` in the .csproj) auto-import `System`, `System.Linq`, `System.Collections.Generic`, `System.IO`, `System.Threading.Tasks` and more.
 - A namespace is not an assembly: one assembly (DLL) can contain many namespaces and one namespace can span many assemblies.
 
-**Keywords** are reserved words with special meaning: `class`, `int`, `if`, `return`, `public`, `static`, `new`, `this`, `base`, `null`, `true`... You can't use them as identifiers unless prefixed with `@` (`int @class = 5;`). **Contextual keywords** are only special in certain places and can otherwise be used as names: `var`, `async`, `await`, `get`, `set`, `init`, `value`, `yield`, `record`, `required`, `where`, `select`, `field` (C# 14).
+**Keywords** are reserved words with special meaning: `class`, `int`, `if`, `return`, `public`, `static`, `new`, `this`, `base`, `null`, `true`... You can't use them as identifiers unless prefixed with `@` (`int @class = 5;`). Contextual keywords are only special in certain places and can otherwise be used as names: `var`, `async`, `await`, `get`, `set`, `init`, `value`, `yield`, `record`, `required`, `where`, `select`, `field` (C# 14).
 
 **Naming conventions:** `PascalCase` for types, methods, properties and namespaces; `camelCase` for locals and parameters; `_camelCase` for private fields; interfaces start with `I` (`IRepository`); async methods end with `Async`.
 
@@ -401,7 +401,7 @@ DateTime indiaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, india);
 | `TimeSpan` | A duration | Differences, timeouts |
 | `TimeProvider` (.NET 8) | Abstraction of "now" | Unit-testable time |
 
-> **Interview tip:** `DateTime` is a **struct** (value type) and is immutable, `d.AddDays(1)` returns a new value, it doesn't change `d`. Store UTC, convert to local only for display.
+> **Interview tip:** `DateTime` is a struct (value type) and is immutable, `d.AddDays(1)` returns a new value, it doesn't change `d`. Store UTC, convert to local only for display.
 
 # Module: Arrays and Collections
 
@@ -481,7 +481,7 @@ List<int> list = [.. nums, 10];   // spread
 | `SortedList` | `SortedList<TKey, TValue>` |
 | `Stack`, `Queue` | `Stack<T>`, `Queue<T>` |
 
-Generic collections are **type-safe** (compile-time errors instead of runtime `InvalidCastException`) and **faster for value types** (no boxing). Use the non-generic ones only when maintaining old code.
+Generic collections are **type-safe** (compile-time errors instead of runtime `InvalidCastException`) and faster for value types (no boxing). Use the non-generic ones only when maintaining old code.
 
 ## Lesson: [Basic|High] List<T> and Dictionary<TKey, TValue> in depth
 
@@ -714,7 +714,7 @@ Console.WriteLine(p);                                // "Read, Delete"
 
 ## Lesson: [Basic|High] Boxing and unboxing
 
-**Boxing** wraps a value type in an object on the heap; **unboxing** extracts it back with an explicit cast.
+**Boxing** wraps a value type in an object on the heap; unboxing extracts it back with an explicit cast.
 
 ```csharp
 int n = 42;
@@ -783,7 +783,7 @@ Console.WriteLine(new { A = 1 }.Equals(new { A = 1 }));   // True: value equalit
 
 Limits: only usable with `var` (no type name), can't be returned from a method in a typed way (use a record or tuple instead), properties only.
 
-**`dynamic` (C# 4):** type checking moves from compile time to **runtime** (Dynamic Language Runtime).
+**`dynamic` (C# 4):** type checking moves from compile time to runtime (Dynamic Language Runtime).
 
 ```csharp
 dynamic d = 10;
@@ -972,7 +972,7 @@ public interface IConsumer<in T> { void Consume(T item); }   // T only in input 
 
 Arrays are covariant too (`object[] objs = new string[3];`), but it's **unsafe**: `objs[0] = 1;` compiles and throws `ArrayTypeMismatchException` at runtime, one reason to prefer generic collections.
 
-> **Interview tip:** Remember "**out** = things come **out** (return values) → covariance; **in** = things go **in** (parameters) → contravariance". Variance works only for interfaces and delegates, and only with reference types (`IEnumerable<int>` is not an `IEnumerable<object>`).
+> **Interview tip:** Remember "out = things come out (return values) → covariance; in = things go in (parameters) → contravariance". Variance works only for interfaces and delegates, and only with reference types (`IEnumerable<int>` is not an `IEnumerable<object>`).
 
 ## Lesson: [Intermediate|Medium] Pattern matching, tuples and deconstruction
 
@@ -1091,7 +1091,7 @@ Guidelines: name ends with `Exception`; derive from `Exception` (not `Applicatio
 
 ## Lesson: [Intermediate|High] IDisposable, using and the garbage collector
 
-The **GC** frees managed memory automatically. It is **generational**: Gen 0 (new, collected often), Gen 1 (buffer), Gen 2 (long-lived). Objects ≥ 85,000 bytes go to the **Large Object Heap**.
+The **GC** frees managed memory automatically. It is generational: Gen 0 (new, collected often), Gen 1 (buffer), Gen 2 (long-lived). Objects ≥ 85,000 bytes go to the Large Object Heap.
 
 Unmanaged resources (file handles, sockets, DB connections) must be released deterministically with `IDisposable`:
 
@@ -1274,7 +1274,7 @@ Rules:
 - Pass `CancellationToken` through.
 - In library code, `ConfigureAwait(false)` avoids capturing the synchronisation context (ASP.NET Core has none).
 
-> **Interview tip:** async is about **scalability**, not speed. One request doesn't get faster; the server handles more concurrent requests because threads aren't blocked waiting on I/O.
+> **Interview tip:** async is about scalability, not speed. One request doesn't get faster; the server handles more concurrent requests because threads aren't blocked waiting on I/O.
 
 ## Lesson: [Intermediate|High] Threads, Tasks, Parallel and thread safety
 
@@ -1300,7 +1300,7 @@ await sem.WaitAsync();
 try { await CallApiAsync(); } finally { sem.Release(); }
 ```
 
-**Race condition:** two threads read-modify-write shared state without synchronisation. **Deadlock:** two threads each hold a lock the other needs, avoid by always taking locks in the same order and keeping lock scopes small. You cannot `await` inside a `lock` block: use `SemaphoreSlim`.
+**Race condition:** two threads read-modify-write shared state without synchronisation. Deadlock: two threads each hold a lock the other needs, avoid by always taking locks in the same order and keeping lock scopes small. You cannot `await` inside a `lock` block: use `SemaphoreSlim`.
 
 ## Lesson: [Advanced|Medium] IEnumerable, yield and async streams
 
@@ -1372,7 +1372,7 @@ customer?.Address = newAddress;                         // assigns only if custo
 
 ## [Beginner|High] What is the difference between a value type and a reference type?
 
-A **value type** variable holds the data itself (`int`, `bool`, `decimal`, `DateTime`, any `struct`/`enum`). Assigning it copies the value. A **reference type** variable holds a reference to an object on the managed heap (`class`, `string`, arrays, delegates, `record`). Assigning it copies the reference, so two variables can point to the same object.
+A **value type** variable holds the data itself (`int`, `bool`, `decimal`, `DateTime`, any `struct`/`enum`). Assigning it copies the value. A reference type variable holds a reference to an object on the managed heap (`class`, `string`, arrays, delegates, `record`). Assigning it copies the reference, so two variables can point to the same object.
 
 ```csharp
 var a = new List<int>(); var b = a; b.Add(1);   // a.Count == 1: same object
@@ -1383,7 +1383,7 @@ Value types are stored inline (stack for locals, inside the parent object for fi
 
 ## [Beginner|High] What is the difference between `string` and `StringBuilder`?
 
-`string` is **immutable**: every concatenation creates a new string object, so building a string in a loop causes many allocations (O(n²) copying). `StringBuilder` keeps a **mutable buffer** and appends in place; call `ToString()` once at the end. Use `StringBuilder` for loops or many appends, plain strings/interpolation for a handful of pieces.
+`string` is **immutable**: every concatenation creates a new string object, so building a string in a loop causes many allocations (O(n²) copying). `StringBuilder` keeps a mutable buffer and appends in place; call `ToString()` once at the end. Use `StringBuilder` for loops or many appends, plain strings/interpolation for a handful of pieces.
 
 ## [Beginner|High] Explain `const` vs `readonly` vs `static readonly`.
 
@@ -1399,7 +1399,7 @@ Boxing converts a value type to `object` (or an interface) by allocating a heap 
 
 ## [Beginner|High] What is the difference between `==` and `.Equals()`?
 
-For **reference types**, `==` compares references unless the operator is overloaded; `Equals()` is virtual and can be overridden to compare content. `string` overloads both to compare text. **Records** generate value-based `Equals` and `==`. For value types, `Equals` compares content. When you override `Equals`, also override `GetHashCode` (objects that are equal must have the same hash code, or dictionaries break).
+For **reference types**, `==` compares references unless the operator is overloaded; `Equals()` is virtual and can be overridden to compare content. `string` overloads both to compare text. Records generate value-based `Equals` and `==`. For value types, `Equals` compares content. When you override `Equals`, also override `GetHashCode` (objects that are equal must have the same hash code, or dictionaries break).
 
 ## [Beginner|High] What are `ref`, `out` and `in` parameters?
 
@@ -1411,7 +1411,7 @@ All three pass an argument **by reference**:
 
 ## [Beginner|Medium] What is the difference between `var`, `dynamic` and `object`?
 
-`var` is **compile-time** type inference: the variable is strongly typed (`var x = 5` is an `int`). `object` is the base type; you need casts to use members. `dynamic` skips compile-time checks and resolves members **at runtime** through the DLR; errors appear as `RuntimeBinderException`. Use `dynamic` only for COM interop, dynamic JSON or scripting scenarios.
+`var` is **compile-time** type inference: the variable is strongly typed (`var x = 5` is an `int`). `object` is the base type; you need casts to use members. `dynamic` skips compile-time checks and resolves members at runtime through the DLR; errors appear as `RuntimeBinderException`. Use `dynamic` only for COM interop, dynamic JSON or scripting scenarios.
 
 ## [Beginner|Medium] What is the difference between an array, `ArrayList` and `List<T>`?
 
@@ -1422,7 +1422,7 @@ An array has a fixed size and a single element type. `ArrayList` (non-generic, l
 - `IEnumerable<T>`: forward-only iteration (`foreach`), deferred execution with LINQ to Objects, runs **in memory**.
 - `ICollection<T>`: adds `Count`, `Add`, `Remove`, `Contains`.
 - `IList<T>`: adds index access and `Insert`.
-- `IQueryable<T>`: builds an **expression tree** that a provider (EF Core) translates to SQL and runs **in the database**.
+- `IQueryable<T>`: builds an **expression tree** that a provider (EF Core) translates to SQL and runs in the database.
 
 ```csharp
 db.Orders.Where(o => o.Total > 100).ToList();                 // IQueryable: WHERE in SQL
@@ -1439,7 +1439,7 @@ No new thread is created by `await`. The compiler turns the method into a **stat
 
 ## [Intermediate|High] What is the difference between `Task.WhenAll` and awaiting tasks one by one?
 
-Awaiting sequentially makes total time the **sum** of the calls; starting all tasks and then `await Task.WhenAll(...)` makes it roughly the **longest** single call. `WhenAll` throws the first exception when awaited, but the returned task's `Exception` holds all of them. Use `WhenAny` for "first to finish" or timeouts.
+Awaiting sequentially makes total time the **sum** of the calls; starting all tasks and then `await Task.WhenAll(...)` makes it roughly the longest single call. `WhenAll` throws the first exception when awaited, but the returned task's `Exception` holds all of them. Use `WhenAny` for "first to finish" or timeouts.
 
 ## [Intermediate|High] Why is `async void` dangerous?
 
@@ -1447,11 +1447,11 @@ Callers can't await it, so they can't know when it finishes, and an exception th
 
 ## [Intermediate|High] What is `IDisposable` and the `using` statement? Dispose vs Finalize?
 
-`IDisposable.Dispose()` releases unmanaged resources (connections, file handles) **deterministically**. `using` guarantees `Dispose` is called even if an exception is thrown (compiles to `try/finally`). A **finaliser** is called by the GC at an unpredictable time and costs an extra GC cycle; it is only a safety net for raw unmanaged handles. In `Dispose` call `GC.SuppressFinalize(this)` if a finaliser exists. Most code just wraps `SafeHandle` and never writes a finaliser.
+`IDisposable.Dispose()` releases unmanaged resources (connections, file handles) **deterministically**. `using` guarantees `Dispose` is called even if an exception is thrown (compiles to `try/finally`). A finaliser is called by the GC at an unpredictable time and costs an extra GC cycle; it is only a safety net for raw unmanaged handles. In `Dispose` call `GC.SuppressFinalize(this)` if a finaliser exists. Most code just wraps `SafeHandle` and never writes a finaliser.
 
 ## [Intermediate|High] Explain garbage collection generations.
 
-The heap is split into **Gen 0** (new objects, collected very often and cheaply), **Gen 1** (survivors of Gen 0, a buffer), and **Gen 2** (long-lived objects, collected rarely and expensively). Most objects die young, so collecting Gen 0 frequently is efficient. Objects of 85,000 bytes or more go to the **Large Object Heap**, collected with Gen 2. .NET has workstation and server GC modes, plus background (concurrent) GC for Gen 2.
+The heap is split into **Gen 0** (new objects, collected very often and cheaply), Gen 1 (survivors of Gen 0, a buffer), and Gen 2 (long-lived objects, collected rarely and expensively). Most objects die young, so collecting Gen 0 frequently is efficient. Objects of 85,000 bytes or more go to the Large Object Heap, collected with Gen 2. .NET has workstation and server GC modes, plus background (concurrent) GC for Gen 2.
 
 ## [Intermediate|Medium] What are extension methods? Any limitations?
 
@@ -1495,7 +1495,7 @@ A multidimensional (rectangular) array `int[,]` is one object where every row ha
 
 ## [Beginner|Medium] What is a namespace? Explain the two meanings of `using`.
 
-A namespace groups related types and prevents name clashes (`Shop.Models.Order` vs `Billing.Order`). The `using` **directive** (`using System.Text;`) imports a namespace, plus `using static`, aliases and `global using`. The `using` **statement/declaration** (`using var conn = new SqlConnection(...)`) calls `Dispose()` automatically at the end of the scope, even if an exception is thrown.
+A namespace groups related types and prevents name clashes (`Shop.Models.Order` vs `Billing.Order`). The `using` **directive** (`using System.Text;`) imports a namespace, plus `using static`, aliases and `global using`. The `using` statement/declaration (`using var conn = new SqlConnection(...)`) calls `Dispose()` automatically at the end of the scope, even if an exception is thrown.
 
 ## [Beginner|Medium] What are anonymous types?
 
@@ -1544,7 +1544,7 @@ An enum whose values are powers of two (`Read = 1, Write = 2, Delete = 4`) so se
 
 ## [Advanced|High] What causes a deadlock with async code and how do you avoid it?
 
-Classic case: in a UI app or old ASP.NET (with a synchronisation context), code calls `task.Result`. The blocked thread holds the context; the awaited method's continuation needs the same context to resume, so both wait forever. Fixes: go **async all the way** (`await` instead of `.Result`), use `ConfigureAwait(false)` in library code, and never mix blocking and async calls. ASP.NET Core has no synchronisation context, but blocking still causes **thread-pool starvation** under load.
+Classic case: in a UI app or old ASP.NET (with a synchronisation context), code calls `task.Result`. The blocked thread holds the context; the awaited method's continuation needs the same context to resume, so both wait forever. Fixes: go **async all the way** (`await` instead of `.Result`), use `ConfigureAwait(false)` in library code, and never mix blocking and async calls. ASP.NET Core has no synchronisation context, but blocking still causes thread-pool starvation under load.
 
 ## [Advanced|Medium] What are `Span<T>` and `Memory<T>`?
 
@@ -1552,11 +1552,11 @@ Classic case: in a UI app or old ASP.NET (with a synchronisation context), code 
 
 ## [Advanced|Medium] What is the difference between `Task` and `ValueTask`?
 
-`Task` is a class, so every async call that returns one allocates (except cached completed tasks). `ValueTask<T>` is a struct that avoids the allocation when the result is often available **synchronously** (e.g. from a cache). Rules: await a `ValueTask` only **once**, don't await it concurrently, and convert with `.AsTask()` if you need to. The default is still `Task`.
+`Task` is a class, so every async call that returns one allocates (except cached completed tasks). `ValueTask<T>` is a struct that avoids the allocation when the result is often available **synchronously** (e.g. from a cache). Rules: await a `ValueTask` only once, don't await it concurrently, and convert with `.AsTask()` if you need to. The default is still `Task`.
 
 ## [Advanced|Low] What are covariance and contravariance?
 
-They allow implicit conversion of generic type arguments. **Covariance** (`out T`) works for outputs: `IEnumerable<string>` → `IEnumerable<object>`. **Contravariance** (`in T`) works for inputs: `Action<object>` → `Action<string>`, `IComparer<Animal>` used as `IComparer<Dog>`. Only interfaces and delegates support this, and only for reference types.
+They allow implicit conversion of generic type arguments. **Covariance** (`out T`) works for outputs: `IEnumerable<string>` → `IEnumerable<object>`. Contravariance (`in T`) works for inputs: `Action<object>` → `Action<string>`, `IComparer<Animal>` used as `IComparer<Dog>`. Only interfaces and delegates support this, and only for reference types.
 
 ## [Advanced|Low] What are source generators and why are they replacing reflection?
 

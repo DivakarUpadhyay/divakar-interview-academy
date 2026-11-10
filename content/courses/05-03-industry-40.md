@@ -23,7 +23,7 @@ summary: The four industrial revolutions and Industry 4.0 pillars, IIoT architec
 
 **Pillars / technologies:** Industrial IoT (IIoT), cloud and edge computing, big data and analytics, AI/ML, digital twins and simulation, horizontal and vertical system integration (ERP ↔ MES ↔ machines), additive manufacturing, augmented reality, autonomous robots/AMRs, cybersecurity.
 
-**Why companies invest:** higher **OEE**, less unplanned downtime, better quality (fewer defects and scrap), traceability for regulations and recalls, energy savings, faster changeovers, data-driven decisions instead of paper and Excel.
+**Why companies invest:** higher OEE, less unplanned downtime, better quality (fewer defects and scrap), traceability for regulations and recalls, energy savings, faster changeovers, data-driven decisions instead of paper and Excel.
 
 # Versions
 
@@ -103,7 +103,7 @@ Enterprise → Site → Area → Work centre / Production line → Work unit / M
 | Maintenance integration | Machine states → CMMS work orders |
 | Material/inventory on the floor | WIP, consumption, kanban |
 
-ERP plans **what and when** (days/weeks); MES executes **how** (minutes/seconds); PLCs control **the machine** (milliseconds).
+ERP plans **what and when** (days/weeks); MES executes how (minutes/seconds); PLCs control the machine (milliseconds).
 
 # Module: IIoT Architecture and Protocols
 
@@ -130,7 +130,7 @@ Machines/PLCs ──OPC UA/Modbus──► Edge gateway (filter, buffer, compute
 
 ## Lesson: [Intermediate|High] MQTT, Sparkplug B and the Unified Namespace
 
-**MQTT**: lightweight publish/subscribe protocol over TCP (1883, TLS 8883). Clients publish to **topics**; the **broker** delivers to subscribers.
+**MQTT**: lightweight publish/subscribe protocol over TCP (1883, TLS 8883). Clients publish to topics; the broker delivers to subscribers.
 
 | Feature | Meaning |
 |---|---|
@@ -172,7 +172,7 @@ await client.PublishAsync(new MqttApplicationMessageBuilder()
 | Performance | (Ideal cycle time × Total count) ÷ Run time | Slow cycles, minor stops |
 | Quality | Good count ÷ Total count | Scrap, rework, start-up rejects |
 
-**Worked example (one shift):** planned time 480 min; downtime 60 min → run time 420 min → **Availability = 87.5 %**. Ideal cycle time 1.0 min/part; 380 parts produced → **Performance = 380 ÷ 420 = 90.5 %**. 361 good parts → **Quality = 95 %**. **OEE = 0.875 × 0.905 × 0.95 ≈ 75.2 %**. (World-class benchmark often quoted ≈ 85 %; many plants start at 40–60 %.)
+**Worked example (one shift):** planned time 480 min; downtime 60 min → run time 420 min → Availability = 87.5 %. Ideal cycle time 1.0 min/part; 380 parts produced → Performance = 380 ÷ 420 = 90.5 %. 361 good parts → Quality = 95 %. OEE = 0.875 × 0.905 × 0.95 ≈ 75.2 %. (World-class benchmark often quoted ≈ 85 %; many plants start at 40–60 %.)
 
 **Six big losses (TPM):** breakdowns, setup/adjustments (→ availability); small stops, reduced speed (→ performance); start-up rejects, production rejects (→ quality).
 
@@ -188,7 +188,7 @@ SELECT  s.LineId, s.ShiftDate, s.Shift,
 FROM mes.ShiftSummary s;
 ```
 
-Other KPIs: **MTBF** (mean time between failures), **MTTR** (mean time to repair), throughput, first pass yield (FPY), scrap rate, cycle time, takt time (available time ÷ customer demand), energy per unit, schedule adherence.
+Other KPIs: **MTBF** (mean time between failures), MTTR (mean time to repair), throughput, first pass yield (FPY), scrap rate, cycle time, takt time (available time ÷ customer demand), energy per unit, schedule adherence.
 
 ## Lesson: [Intermediate|High] Traceability, genealogy and quality (SPC)
 
@@ -204,7 +204,7 @@ WITH Tree AS (
 SELECT DISTINCT ParentSerial FROM Tree;
 ```
 
-**SPC (Statistical Process Control):** control charts (X̄–R, I-MR) with control limits at ±3σ; rules (Western Electric/Nelson) flag out-of-control trends before parts go out of tolerance. **Cp/Cpk** measure process capability against specification limits (Cpk ≥ 1.33 a common target).
+**SPC (Statistical Process Control):** control charts (X̄–R, I-MR) with control limits at ±3σ; rules (Western Electric/Nelson) flag out-of-control trends before parts go out of tolerance. Cp/Cpk measure process capability against specification limits (Cpk ≥ 1.33 a common target).
 
 ## Lesson: [Intermediate|Medium] Time-series data at scale
 

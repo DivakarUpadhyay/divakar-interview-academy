@@ -11,7 +11,7 @@ summary: What Dapper is and how it works inside, Query/QueryFirst/QuerySingle/Ex
 
 # Overview
 
-**Dapper** is a lightweight object mapper ("micro-ORM") created by Stack Overflow (Sam Saffron and Marc Gravell, 2011). It adds extension methods to `IDbConnection` that run **your SQL** and map the results to objects: nearly as fast as hand-written ADO.NET, with a fraction of the code.
+**Dapper** is a lightweight object mapper ("micro-ORM") created by Stack Overflow (Sam Saffron and Marc Gravell, 2011). It adds extension methods to `IDbConnection` that run your SQL and map the results to objects: nearly as fast as hand-written ADO.NET, with a fraction of the code.
 
 | | ADO.NET | Dapper | EF Core |
 |---|---|---|---|
@@ -35,14 +35,14 @@ Many teams combine them: **EF Core for writes, Dapper for complex reads/reports*
 | 2023 | Dapper 2.1: AOT-friendlier work begins; **Dapper.AOT** (source-generated, no runtime reflection emit) |
 | 2024–2025 | Dapper 2.1.x maintained; works with `Microsoft.Data.SqlClient`, Npgsql, MySqlConnector, SQLite |
 
-Related packages: **Dapper.Contrib** / **Dapper.SimpleCRUD** (generated CRUD), **Dapper.AOT**, **DapperQueryBuilder**, **Dapper.Bulk**.
+Related packages: **Dapper.Contrib** / Dapper.SimpleCRUD (generated CRUD), Dapper.AOT, DapperQueryBuilder, Dapper.Bulk.
 
 # Lifecycle
 
 **What happens when you call `connection.Query<Order>(sql, new { CustomerId = 42 })`:**
 
 1. Dapper builds a **cache key** from the SQL text, the parameter object's type and the result type.
-2. First time only: it generates (via IL emit / compiled code) a **parameter writer** that turns the anonymous object's properties into `DbParameter`s, and a **row mapper** that reads a `DbDataReader` row into an `Order` by matching column names to properties/constructor parameters. These are cached: later calls are fast.
+2. First time only: it generates (via IL emit / compiled code) a **parameter writer** that turns the anonymous object's properties into `DbParameter`s, and a row mapper that reads a `DbDataReader` row into an `Order` by matching column names to properties/constructor parameters. These are cached: later calls are fast.
 3. Opens the connection if it is closed (and closes it again afterwards).
 4. Creates a `DbCommand`, adds parameters, executes `ExecuteReader`.
 5. Maps each row with the cached mapper; with `buffered: true` (default) it reads all rows into a `List<T>` before returning.

@@ -11,7 +11,7 @@ summary: .NET Framework vs .NET Core vs modern .NET, CLR, JIT/AOT, GC, assemblie
 
 # Overview
 
-**.NET** is Microsoft's free, open-source, cross-platform developer platform. Today "**.NET**" (5, 6, 7, 8, 9, 10…) means the unified, cross-platform successor of **.NET Core**. The older **.NET Framework** (1.0–4.8.1) is Windows-only and in maintenance mode.
+**.NET** is Microsoft's free, open-source, cross-platform developer platform. Today ".NET" (5, 6, 7, 8, 9, 10…) means the unified, cross-platform successor of .NET Core. The older .NET Framework (1.0–4.8.1) is Windows-only and in maintenance mode.
 
 | | .NET Framework | .NET Core / modern .NET |
 |---|---|---|
@@ -22,7 +22,7 @@ summary: .NET Framework vs .NET Core vs modern .NET, CLR, JIT/AOT, GC, assemblie
 | Deployment | Machine-wide install | Side-by-side, self-contained, single-file, containers, Native AOT |
 | Performance | Good | Much faster (Span, tiered JIT, PGO) |
 
-Building blocks: **runtime** (CLR, GC, JIT), **libraries** (BCL), **SDK** (compilers, `dotnet` CLI, MSBuild), **ASP.NET Core** and **Windows Desktop** runtimes.
+Building blocks: **runtime** (CLR, GC, JIT), libraries (BCL), SDK (compilers, `dotnet` CLI, MSBuild), ASP.NET Core and Windows Desktop runtimes.
 
 # Versions
 
@@ -40,14 +40,14 @@ Building blocks: **runtime** (CLR, GC, JIT), **libraries** (BCL), **SDK** (compi
 | .NET 9 | Nov 2024 | STS | HybridCache, `Lock` type, OpenAPI built in; STS support was extended to 24 months, so it also ends **10 Nov 2026** |
 | .NET 10 | Nov 2025 | **LTS** | C# 14, supported until Nov 2028 |
 
-**Release cadence:** a new major version every **November**. Even numbers are **LTS** (3 years of support); odd numbers are **STS** (24 months since .NET 9; previously 18). Monthly patch releases ("Patch Tuesday").
+**Release cadence:** a new major version every November. Even numbers are LTS (3 years of support); odd numbers are STS (24 months since .NET 9; previously 18). Monthly patch releases ("Patch Tuesday").
 
 # Lifecycle
 
 **Application startup lifecycle (generic host / ASP.NET Core):**
 
 1. `Main` / top-level statements run.
-2. `WebApplication.CreateBuilder(args)` (or `Host.CreateApplicationBuilder`) creates the host builder: loads **configuration** (appsettings.json → appsettings.{Environment}.json → user secrets in Development → environment variables → command line), sets up **logging** and the **DI container**.
+2. `WebApplication.CreateBuilder(args)` (or `Host.CreateApplicationBuilder`) creates the host builder: loads **configuration** (appsettings.json → appsettings.{Environment}.json → user secrets in Development → environment variables → command line), sets up logging and the DI container.
 3. You register services: `builder.Services.Add...`.
 4. `builder.Build()` builds the service provider and the app.
 5. You configure the **middleware pipeline** (`app.Use...`) and endpoints.
@@ -55,7 +55,7 @@ Building blocks: **runtime** (CLR, GC, JIT), **libraries** (BCL), **SDK** (compi
 7. Requests are processed through middleware → endpoint.
 8. On shutdown (Ctrl+C / SIGTERM): `IHostApplicationLifetime.ApplicationStopping` fires, hosted services `StopAsync`, the container disposes singletons.
 
-**Build/compile lifecycle:** source → Roslyn → IL assembly (.dll) + metadata + PDB → (publish) → at runtime JIT → native code. With **Native AOT**, IL is compiled to a native executable at publish time (no JIT, fast startup, smaller memory, but no runtime code generation and limited reflection).
+**Build/compile lifecycle:** source → Roslyn → IL assembly (.dll) + metadata + PDB → (publish) → at runtime JIT → native code. With Native AOT, IL is compiled to a native executable at publish time (no JIT, fast startup, smaller memory, but no runtime code generation and limited reflection).
 
 **Support lifecycle:** Preview → RC (go-live) → GA (November) → patches → end of support (LTS 3 years, STS 2 years).
 
@@ -113,7 +113,7 @@ dotnet add Shop.Api reference Shop.Core
 dotnet add Shop.Api package Microsoft.EntityFrameworkCore.SqlServer
 ```
 
-> **Deep dive:** how the CLR, JIT, memory and the garbage collector work inside is covered in the **.NET Internals: CLR, Memory & GC** course.
+> **Deep dive:** how the CLR, JIT, memory and the garbage collector work inside is covered in the .NET Internals: CLR, Memory & GC course.
 
 # Module: Hosting, Configuration, DI and Logging
 
@@ -234,7 +234,7 @@ Hosting ASP.NET Core: **Kestrel** (built-in cross-platform web server) behind II
 2. Upgrade dependencies to versions that support .NET Standard 2.0 / modern .NET.
 3. Convert projects to **SDK-style** `.csproj`; move class libraries to `netstandard2.0` or multi-target first.
 4. Use **.NET Upgrade Assistant** (or GitHub Copilot app modernization) to automate conversions.
-5. ASP.NET MVC/Web API → ASP.NET Core (incrementally with **YARP** reverse proxy + **System.Web adapters**: Strangler Fig).
+5. ASP.NET MVC/Web API → ASP.NET Core (incrementally with **YARP** reverse proxy + System.Web adapters: Strangler Fig).
 6. Replace: `web.config` app settings → `appsettings.json` + Options; `HttpContext.Current` → injected `IHttpContextAccessor`; Global.asax → Program.cs middleware; WCF server → gRPC/REST or CoreWCF; EF6 → EF Core (or keep EF6, which runs on .NET Core 3.1+).
 7. Test thoroughly, benchmark, deploy side by side, switch traffic gradually.
 
@@ -250,7 +250,7 @@ The Common Language Runtime is .NET's execution engine. It loads assemblies, ver
 
 ## [Beginner|High] What is JIT compilation? What are ReadyToRun and Native AOT?
 
-JIT (Just-In-Time) compiles IL to machine code at runtime, the first time each method is called. Tiered compilation first produces quick code, then re-optimises hot methods, with Dynamic PGO using live profiling. **ReadyToRun** ships precompiled code inside assemblies to cut startup time, while keeping JIT as a fallback. **Native AOT** compiles the entire app to a native executable at publish time: fastest startup, smallest memory, no JIT. The cost is no dynamic code generation and limited reflection, so it needs trimming-compatible libraries.
+JIT (Just-In-Time) compiles IL to machine code at runtime, the first time each method is called. Tiered compilation first produces quick code, then re-optimises hot methods, with Dynamic PGO using live profiling. **ReadyToRun** ships precompiled code inside assemblies to cut startup time, while keeping JIT as a fallback. Native AOT compiles the entire app to a native executable at publish time: fastest startup, smallest memory, no JIT. The cost is no dynamic code generation and limited reflection, so it needs trimming-compatible libraries.
 
 ## [Beginner|High] What are LTS and STS releases?
 
@@ -286,7 +286,7 @@ Framework-dependent: small output, but requires the matching .NET runtime on the
 
 ## [Advanced|High] How does the .NET garbage collector work? Workstation vs Server GC?
 
-It's a generational, mark-and-compact (tracing) collector. It marks objects reachable from roots, then sweeps or compacts Gen 0/1/2; the LOH holds objects of 85,000 bytes or more and is collected with Gen 2. Collections are triggered by allocation budgets. **Workstation GC** uses one heap, tuned for responsiveness on client apps. **Server GC** uses a heap and GC thread per core for throughput and is the ASP.NET Core default; DATAS in .NET 9+ adapts the heap count dynamically. **Background GC** collects Gen 2 concurrently while Gen 0/1 collections continue.
+It's a generational, mark-and-compact (tracing) collector. It marks objects reachable from roots, then sweeps or compacts Gen 0/1/2; the LOH holds objects of 85,000 bytes or more and is collected with Gen 2. Collections are triggered by allocation budgets. **Workstation GC** uses one heap, tuned for responsiveness on client apps. Server GC uses a heap and GC thread per core for throughput and is the ASP.NET Core default; DATAS in .NET 9+ adapts the heap count dynamically. Background GC collects Gen 2 concurrently while Gen 0/1 collections continue.
 
 ## [Advanced|Medium] What are the limitations of Native AOT?
 
@@ -294,7 +294,7 @@ No runtime code generation (`Reflection.Emit`, some dynamic proxies), limited re
 
 ## [Advanced|Medium] How would you migrate a large ASP.NET MVC 5 app on .NET Framework 4.8 to .NET 10?
 
-Incrementally, with the **Strangler Fig** pattern. Put a new ASP.NET Core app with **YARP** in front, which proxies unknown routes to the old app. Use **System.Web adapters** to share session/auth. Move class libraries to `netstandard2.0`/multi-target first, then migrate controllers and views route by route, replacing `System.Web` dependencies, `HttpContext.Current`, `web.config` settings and Global.asax with modern equivalents. Use the Upgrade Assistant for mechanical changes. EF6 can stay initially (it runs on modern .NET) and move to EF Core later. Ship each slice to production behind the proxy.
+Incrementally, with the **Strangler Fig** pattern. Put a new ASP.NET Core app with YARP in front, which proxies unknown routes to the old app. Use System.Web adapters to share session/auth. Move class libraries to `netstandard2.0`/multi-target first, then migrate controllers and views route by route, replacing `System.Web` dependencies, `HttpContext.Current`, `web.config` settings and Global.asax with modern equivalents. Use the Upgrade Assistant for mechanical changes. EF6 can stay initially (it runs on modern .NET) and move to EF Core later. Ship each slice to production behind the proxy.
 
 ## [Scenario|High] Your ASP.NET Core API on .NET 8 must keep getting security patches after November 2026. What do you do and when?
 
@@ -306,7 +306,7 @@ That points to **thread-pool starvation**: synchronous blocking (`.Result`, `.Wa
 
 ## [Scenario|Medium] Configuration works locally but in Azure App Service the app uses the wrong connection string. How do you debug it?
 
-Check `ASPNETCORE_ENVIRONMENT` on the App Service (it decides which appsettings.{env}.json loads). App Service **Connection strings** and **App settings** become environment variables and override JSON. Check the key names (`ConnectionStrings__Db`, or the connection-strings section with the right type). Check slot settings after a swap and Key Vault references resolving (managed identity permissions). Log the configuration *source* (never the secret value) at startup, or use `builder.Configuration.GetDebugView()` locally.
+Check `ASPNETCORE_ENVIRONMENT` on the App Service (it decides which appsettings.{env}.json loads). App Service **Connection strings** and App settings become environment variables and override JSON. Check the key names (`ConnectionStrings__Db`, or the connection-strings section with the right type). Check slot settings after a swap and Key Vault references resolving (managed identity permissions). Log the configuration *source* (never the secret value) at startup, or use `builder.Configuration.GetDebugView()` locally.
 
 # Cheatsheet
 

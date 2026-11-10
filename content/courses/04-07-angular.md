@@ -18,7 +18,7 @@ Key characteristics:
 - **Component-based**: UI built from components (TypeScript class + HTML template + styles).
 - **TypeScript-first** with decorators (`@Component`, `@Injectable`, `@Input`...).
 - **Dependency injection** built in, hierarchical.
-- **RxJS** observables for async streams; **Signals** (v16+) for fine-grained reactivity.
+- **RxJS** observables for async streams; Signals (v16+) for fine-grained reactivity.
 - **Opinionated** structure: great for large enterprise teams.
 - **Standalone components** (default since v19) replace NgModules for most apps.
 
@@ -42,7 +42,7 @@ Angular ≠ AngularJS: Angular (2016+) is a complete rewrite of AngularJS (1.x, 
 | 20 | May 2025 | Signal APIs stable (`effect`, `linkedSignal`, `toSignal`), zoneless promoted, `*ngIf/*ngFor/*ngSwitch` deprecated in favour of control flow |
 | **21** | Nov 2025 | **Zoneless by default** for new apps, experimental **Signal Forms**, **Vitest** as default test runner, Angular Aria (accessible headless components) |
 
-**Release cadence:** a major version roughly every **6 months** (May and November). Each major gets **6 months active support + 12 months LTS = 18 months**. Upgrade with `ng update` (guide at angular.dev/update-guide).
+**Release cadence:** a major version roughly every 6 months (May and November). Each major gets 6 months active support + 12 months LTS = 18 months. Upgrade with `ng update` (guide at angular.dev/update-guide).
 
 # Lifecycle
 
@@ -62,7 +62,7 @@ Angular ≠ AngularJS: Angular (2016+) is a complete rewrite of AngularJS (1.x, 
 
 Newer alternatives: `afterNextRender` / `afterEveryRender` (DOM work after rendering), `DestroyRef` + `takeUntilDestroyed()` for cleanup, signal inputs instead of `ngOnChanges`.
 
-**Change detection lifecycle:** an event (click, HTTP response, timer) → with **zone.js**, Angular detects that async work finished and runs change detection from the root down (all components with `Default` strategy; `OnPush` components only if inputs changed, an event fired in them, an async pipe emitted or a signal they read changed) → DOM updated. **Zoneless** (default for new apps in v21): change detection is scheduled by signals, `markForCheck`, events and the async pipe, no zone.js.
+**Change detection lifecycle:** an event (click, HTTP response, timer) → with zone.js, Angular detects that async work finished and runs change detection from the root down (all components with `Default` strategy; `OnPush` components only if inputs changed, an event fired in them, an async pipe emitted or a signal they read changed) → DOM updated. Zoneless (default for new apps in v21): change detection is scheduled by signals, `markForCheck`, events and the async pipe, no zone.js.
 
 # Tools
 
@@ -175,7 +175,7 @@ Classic decorators still work: `@Input()`, `@Output() select = new EventEmitter<
 
 Legacy structural directives (deprecated in v20, still common in existing code): `*ngIf="cond; else loading"`, `*ngFor="let o of orders; trackBy: trackById"`, `[ngSwitch]`. Attribute directives: `[ngClass]`, `[ngStyle]`, `[(ngModel)]`.
 
-Pipes transform values in templates: `date`, `currency`, `number`, `percent`, `uppercase`, `lowercase`, `titlecase`, `json`, `slice`, `keyvalue`, **`async`** (subscribes to an Observable/Promise and unsubscribes automatically). Pipes are **pure** by default (re-run only when inputs change).
+Pipes transform values in templates: `date`, `currency`, `number`, `percent`, `uppercase`, `lowercase`, `titlecase`, `json`, `slice`, `keyvalue`, **`async`** (subscribes to an Observable/Promise and unsubscribes automatically). Pipes are pure by default (re-run only when inputs change).
 
 ```ts
 @Pipe({ name: "statusLabel" })
@@ -386,7 +386,7 @@ results$ = this.search.valueChanges.pipe(
 | `takeUntil`, `takeUntilDestroyed`, `take(1)`, `first` | Completion/unsubscription |
 | `shareReplay` | Multicast and cache the last value |
 
-**Subjects**: `Subject` (no initial value), `BehaviorSubject` (has current value, simple state), `ReplaySubject(n)`, `AsyncSubject`. **Cold** observables start per subscriber (HTTP); **hot** share one source (DOM events, Subjects).
+**Subjects**: `Subject` (no initial value), `BehaviorSubject` (has current value, simple state), `ReplaySubject(n)`, `AsyncSubject`. Cold observables start per subscriber (HTTP); hot share one source (DOM events, Subjects).
 
 **Unsubscribing**: the `async` pipe, `takeUntilDestroyed()`, `toSignal()`: avoid manual subscriptions that leak.
 
@@ -418,7 +418,7 @@ Signals tell Angular exactly which components depend on which state, enabling fi
 ## Lesson: [Advanced|High] Change detection: Default vs OnPush, zone.js vs zoneless
 
 - **Default strategy**: after any async event, Angular checks the whole component tree.
-- **`ChangeDetectionStrategy.OnPush`**: a component is checked only when an input **reference** changes, an event originates in it (or children), an `async` pipe emits, a signal it reads changes, or `markForCheck()` is called. Use immutable data. Big performance win.
+- **`ChangeDetectionStrategy.OnPush`**: a component is checked only when an input reference changes, an event originates in it (or children), an `async` pipe emits, a signal it reads changes, or `markForCheck()` is called. Use immutable data. Big performance win.
 - **zone.js** patches async APIs (setTimeout, promises, events) to know when to run change detection.
 - **Zoneless** (`provideZonelessChangeDetection()`, default for new apps in v21): no zone.js; change detection is triggered by signals, `markForCheck`, template events, async pipe → smaller bundles, better performance, clearer stack traces. Third-party code that mutates state outside Angular needs signals or `markForCheck`.
 - `ChangeDetectorRef`: `markForCheck()`, `detectChanges()`, `detach()`.
@@ -451,7 +451,7 @@ Signals tell Angular exactly which components depend on which state, enabling fi
 ## Lesson: [Advanced|Medium] State management: services with signals, NgRx
 
 - Small/medium apps: **services with signals** (or BehaviorSubject) exposing read-only state and methods.
-- Large apps: **NgRx Store** (Redux pattern): **Actions** (events) → **Reducers** (pure functions producing new state) → **Store** (single immutable state tree) → **Selectors** (memoised queries); **Effects** handle side effects (HTTP) and dispatch new actions. Redux DevTools for time-travel debugging.
+- Large apps: **NgRx Store** (Redux pattern): Actions (events) → Reducers (pure functions producing new state) → Store (single immutable state tree) → Selectors (memoised queries); Effects handle side effects (HTTP) and dispatch new actions. Redux DevTools for time-travel debugging.
 - **NgRx Signal Store**: lighter, signal-based store (`signalStore`, `withState`, `withComputed`, `withMethods`).
 
 ```ts
@@ -581,7 +581,7 @@ Interpolation `{{ }}` and property binding `[prop]="expr"` (component → view),
 
 ## [Beginner|High] What are directives? Types of directives?
 
-Classes that add behaviour to elements. **Components** are directives with templates. **Attribute directives** change appearance/behaviour (`ngClass`, `ngStyle`, custom `appHighlight`). **Structural directives** change DOM layout by adding/removing elements (`*ngIf`, `*ngFor`, `*ngSwitch`: now largely replaced by built-in control flow `@if`, `@for`, `@switch`).
+Classes that add behaviour to elements. **Components** are directives with templates. Attribute directives change appearance/behaviour (`ngClass`, `ngStyle`, custom `appHighlight`). Structural directives change DOM layout by adding/removing elements (`*ngIf`, `*ngFor`, `*ngSwitch`: now largely replaced by built-in control flow `@if`, `@for`, `@switch`).
 
 ## [Beginner|High] What are pipes? Pure vs impure?
 

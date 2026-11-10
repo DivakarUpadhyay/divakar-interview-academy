@@ -11,7 +11,7 @@ summary: VB.NET syntax and program structure, data types and Option Strict/Expli
 
 # Overview
 
-**Visual Basic .NET** is a .NET language that compiles to the **same IL** as C# and uses the same CLR, base class library, ASP.NET, ADO.NET and Entity Framework. Many enterprise and government systems (especially .NET Framework Web Forms and WinForms apps from 2002–2015) are written in VB.NET, so developers are often hired to **maintain** or **migrate** them.
+**Visual Basic .NET** is a .NET language that compiles to the same IL as C# and uses the same CLR, base class library, ASP.NET, ADO.NET and Entity Framework. Many enterprise and government systems (especially .NET Framework Web Forms and WinForms apps from 2002–2015) are written in VB.NET, so developers are often hired to maintain or migrate them.
 
 | | VB.NET | C# |
 |---|---|---|
@@ -124,7 +124,7 @@ Dim str2 As String = TryCast(o, String)     ' returns Nothing if wrong type (C# 
 Dim v = CType(o, String)                    ' general conversion
 ```
 
-**Option Strict On**: the most important setting: it forbids implicit narrowing conversions (`Dim i As Integer = 3.7` fails) and late binding on `Object`. With it **Off**, VB silently converts types and resolves members at runtime: a source of hidden bugs. Turn it on for every project (Project Properties → Compile).
+**Option Strict On**: the most important setting: it forbids implicit narrowing conversions (`Dim i As Integer = 3.7` fails) and late binding on `Object`. With it Off, VB silently converts types and resolves members at runtime: a source of hidden bugs. Turn it on for every project (Project Properties → Compile).
 
 ## Lesson: [Basic|High] Operators, conditions and loops
 

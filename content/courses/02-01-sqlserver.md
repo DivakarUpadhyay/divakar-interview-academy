@@ -11,7 +11,7 @@ summary: Database design and normalisation, data types, constraints, joins, subq
 
 # Overview
 
-**Microsoft SQL Server** is a relational database management system (RDBMS). **T-SQL (Transact-SQL)** is Microsoft's extension of ANSI SQL with variables, control flow, error handling, stored procedures and more.
+**Microsoft SQL Server** is a relational database management system (RDBMS). T-SQL (Transact-SQL) is Microsoft's extension of ANSI SQL with variables, control flow, error handling, stored procedures and more.
 
 The SQL Server family:
 
@@ -55,9 +55,9 @@ SQL statement categories:
 
 1. **Parse**: syntax check, build a parse tree.
 2. **Bind (algebrize)**: resolve names, types, permissions.
-3. **Optimise**: the cost-based **query optimizer** uses statistics to choose an **execution plan** (join types, index seeks vs scans, parallelism).
+3. **Optimise**: the cost-based query optimizer uses statistics to choose an execution plan (join types, index seeks vs scans, parallelism).
 4. **Plan cache**: plan stored for reuse (parameterised queries reuse plans).
-5. **Execute**: the storage engine reads pages from the **buffer pool** (memory) or disk, acquiring locks/latches.
+5. **Execute**: the storage engine reads pages from the buffer pool (memory) or disk, acquiring locks/latches.
 6. **Return** results to the client.
 
 **Logical query processing order** (not the written order):
@@ -66,7 +66,7 @@ SQL statement categories:
 
 That's why you can't use a `SELECT` alias in `WHERE`, but you can in `ORDER BY`.
 
-**Transaction lifecycle:** `BEGIN TRAN` → statements write to the **transaction log** first (write-ahead logging) → `COMMIT` (durable once the log is hardened) or `ROLLBACK` (undo using the log). Checkpoints write dirty pages to data files; recovery replays/undoes the log after a crash.
+**Transaction lifecycle:** `BEGIN TRAN` → statements write to the transaction log first (write-ahead logging) → `COMMIT` (durable once the log is hardened) or `ROLLBACK` (undo using the log). Checkpoints write dirty pages to data files; recovery replays/undoes the log after a crash.
 
 **Database development lifecycle:** requirements → conceptual model (ER diagram) → logical design (normalisation) → physical design (types, indexes, partitions) → implementation (DDL scripts/migrations) → testing → deployment (DACPAC/scripts) → monitoring and tuning → maintenance (backups, index/statistics maintenance).
 
@@ -133,7 +133,7 @@ Types: `INT/BIGINT`, `DECIMAL(p,s)` for money (avoid `FLOAT`), `VARCHAR` (1 byte
 | **BCNF** | Every determinant is a candidate key | Stricter 3NF for overlapping candidate keys |
 | 4NF / 5NF | No multi-valued / join dependencies | Rare in interviews |
 
-**Denormalisation**: deliberately adding redundancy (e.g. storing `OrderTotal`, reporting tables, star schemas) to speed reads at the cost of update complexity. OLTP systems: normalise to 3NF. Data warehouses: denormalised **star schemas** (facts + dimensions).
+**Denormalisation**: deliberately adding redundancy (e.g. storing `OrderTotal`, reporting tables, star schemas) to speed reads at the cost of update complexity. OLTP systems: normalise to 3NF. Data warehouses: denormalised star schemas (facts + dimensions).
 
 ## Lesson: [Basic|Medium] DDL vs DML; DELETE vs TRUNCATE vs DROP
 
@@ -202,7 +202,7 @@ FROM Customers c
 CROSS APPLY (SELECT TOP (3) OrderId, Total FROM Orders WHERE CustomerId = c.CustomerId ORDER BY Total DESC) o;
 ```
 
-Physical join algorithms the optimizer picks: **Nested Loops** (small outer input + indexed inner), **Merge Join** (both inputs sorted on the key), **Hash Match** (large unsorted inputs).
+Physical join algorithms the optimizer picks: **Nested Loops** (small outer input + indexed inner), Merge Join (both inputs sorted on the key), Hash Match (large unsorted inputs).
 
 ## Lesson: [Basic|High] GROUP BY, HAVING and aggregates
 
@@ -426,11 +426,11 @@ END;
 
 ## Lesson: [Intermediate|High] Clustered, non-clustered, covering and filtered indexes
 
-- **Clustered index**: defines the physical order of rows (the table *is* the B-tree leaf level). **One per table**. Default on the PK. Best on narrow, unique, ever-increasing keys (INT IDENTITY).
+- **Clustered index**: defines the physical order of rows (the table *is* the B-tree leaf level). One per table. Default on the PK. Best on narrow, unique, ever-increasing keys (INT IDENTITY).
 - **Non-clustered index**: separate B-tree with key columns + a row locator (clustered key, or RID for heaps). Up to 999 per table.
 - **Covering index**: contains all columns a query needs (keys + `INCLUDE` columns) → no key lookups.
 - **Filtered index**: index on a subset (`WHERE IsActive = 1`).
-- **Unique index**, **composite index** (column order matters: equality columns first, then range/sort), **columnstore** (analytics, compression), **full-text**, **XML/spatial**.
+- **Unique index**, composite index (column order matters: equality columns first, then range/sort), columnstore (analytics, compression), full-text, XML/spatial.
 - **Heap**: table without a clustered index.
 
 ```sql
@@ -475,7 +475,7 @@ Read plans right-to-left, top-to-bottom; look at thick arrows, estimated vs actu
 
 ## Lesson: [Advanced|High] Transactions, isolation levels and locking
 
-ACID: **Atomicity** (all or nothing), **Consistency** (constraints hold), **Isolation** (concurrent transactions don't interfere), **Durability** (committed = survives crashes).
+ACID: **Atomicity** (all or nothing), Consistency (constraints hold), Isolation (concurrent transactions don't interfere), Durability (committed = survives crashes).
 
 | Isolation level | Dirty read | Non-repeatable read | Phantom | Notes |
 |---|---|---|---|---|
@@ -486,9 +486,9 @@ ACID: **Atomicity** (all or nothing), **Consistency** (constraints hold), **Isol
 | SNAPSHOT | ✗ | ✗ | ✗ | Row versions in tempdb; readers don't block writers; update conflicts detected |
 | READ COMMITTED SNAPSHOT (RCSI) | ✗ | ✓ | ✓ | Database option; statement-level versioning: default in Azure SQL Database |
 
-Lock modes: **Shared (S)**, **Exclusive (X)**, **Update (U)**, **Intent (IS/IX)**, schema locks. Granularity: row → page → table (lock escalation at ~5,000 locks).
+Lock modes: **Shared (S)**, Exclusive (X), Update (U), Intent (IS/IX), schema locks. Granularity: row → page → table (lock escalation at ~5,000 locks).
 
-**Blocking** = one session waits for another's lock. **Deadlock** = two sessions wait on each other; SQL Server kills one (the victim, error **1205**). Reduce deadlocks: access objects in the same order, keep transactions short, add proper indexes (fewer locks), use RCSI/SNAPSHOT, and retry on 1205.
+**Blocking** = one session waits for another's lock. Deadlock = two sessions wait on each other; SQL Server kills one (the victim, error 1205). Reduce deadlocks: access objects in the same order, keep transactions short, add proper indexes (fewer locks), use RCSI/SNAPSHOT, and retry on 1205.
 
 ## Lesson: [Advanced|Medium] Partitioning, columnstore, temporal and security features
 
@@ -496,8 +496,8 @@ Lock modes: **Shared (S)**, **Exclusive (X)**, **Update (U)**, **Intent (IS/IX)*
 - **Columnstore**: column-wise compressed storage; huge gains for analytics/aggregates (data warehouses).
 - **Temporal tables**: `SYSTEM_VERSIONING = ON` keeps full row history; query `FOR SYSTEM_TIME AS OF`.
 - **JSON**: `OPENJSON`, `JSON_VALUE`, `JSON_QUERY`, `FOR JSON PATH` (2016+); native `json` type in SQL Server 2025.
-- **Security**: logins (server) vs users (database), roles, `GRANT/DENY/REVOKE`, schemas; **Row-Level Security**, **Dynamic Data Masking**, **Always Encrypted**, **TDE** (encryption at rest), auditing.
-- **High availability / DR**: Always On Availability Groups, Failover Cluster Instances, log shipping, backups: **full**, **differential**, **transaction log** (with FULL recovery model enables point-in-time restore).
+- **Security**: logins (server) vs users (database), roles, `GRANT/DENY/REVOKE`, schemas; Row-Level Security, Dynamic Data Masking, Always Encrypted, TDE (encryption at rest), auditing.
+- **High availability / DR**: Always On Availability Groups, Failover Cluster Instances, log shipping, backups: full, differential, transaction log (with FULL recovery model enables point-in-time restore).
 
 # Module: Connecting Applications to SQL Server
 
@@ -522,7 +522,7 @@ Max Pool Size=100;Min Pool Size=0                 ← connection pooling (on by 
 | SQL authentication | Simple setups, non-Windows clients | `User ID=...;Password=...` |
 | Microsoft Entra ID (Azure AD): managed identity | Azure SQL from Azure services, no password | `Authentication=Active Directory Managed Identity` (or `Active Directory Default`) |
 
-**Where to keep it:** `appsettings.json` / `web.config` for non-secret parts, secrets in User Secrets (dev), environment variables, **Azure Key Vault** or managed identity (production). Never in source control or front-end code.
+**Where to keep it:** `appsettings.json` / `web.config` for non-secret parts, secrets in User Secrets (dev), environment variables, Azure Key Vault or managed identity (production). Never in source control or front-end code.
 
 **Every technology at a glance:**
 
@@ -576,7 +576,7 @@ INNER JOIN (matching rows in both), LEFT/RIGHT OUTER JOIN (all rows from one sid
 
 ## [Beginner|High] What is the difference between WHERE and HAVING?
 
-WHERE filters individual rows **before** grouping and can't use aggregates. HAVING filters groups **after** GROUP BY and can use aggregates (`HAVING COUNT(*) > 5`). Put non-aggregate conditions in WHERE for performance: fewer rows get grouped.
+WHERE filters individual rows **before** grouping and can't use aggregates. HAVING filters groups after GROUP BY and can use aggregates (`HAVING COUNT(*) > 5`). Put non-aggregate conditions in WHERE for performance: fewer rows get grouped.
 
 ## [Beginner|High] What is a primary key vs a unique key vs a foreign key?
 
@@ -686,7 +686,7 @@ When a single statement acquires roughly 5,000+ row/page locks on one object, SQ
 
 ## [Scenario|High] A report query that used to take 2 seconds now takes 2 minutes. Nothing in the code changed. What do you check?
 
-Something changed in data or plans. Check Query Store for a **plan regression** (different plan since date X) and force the old plan as a stopgap; check **statistics** staleness after big data loads (update them); **parameter sniffing** (different first-call parameters); data growth crossing a threshold; new blocking (`sp_WhoIsActive`, wait stats); index changes or dropped indexes; server pressure (memory grants, tempdb spills, CPU). Then fix permanently with indexes/query rewrite.
+Something changed in data or plans. Check Query Store for a **plan regression** (different plan since date X) and force the old plan as a stopgap; check statistics staleness after big data loads (update them); parameter sniffing (different first-call parameters); data growth crossing a threshold; new blocking (`sp_WhoIsActive`, wait stats); index changes or dropped indexes; server pressure (memory grants, tempdb spills, CPU). Then fix permanently with indexes/query rewrite.
 
 ## [Scenario|High] Write a query to get each department's top 3 earners.
 
@@ -713,7 +713,7 @@ Customers(CustomerId PK, Name, Email UNIQUE), Addresses(AddressId, CustomerId FK
 
 ## [Scenario|Medium] You must load 50 million rows into a table that is queried 24/7. How do you avoid downtime?
 
-Load into a **staging table** with the same structure (bulk insert, minimal logging, no indexes during load, then build indexes), validate, then **partition switch** it into the main partitioned table (metadata-only, near-instant) or swap via `sp_rename` inside a short transaction. Alternatively insert in small batches with throttling during low traffic. Use RCSI so readers aren't blocked, and keep statistics updated afterwards.
+Load into a **staging table** with the same structure (bulk insert, minimal logging, no indexes during load, then build indexes), validate, then partition switch it into the main partitioned table (metadata-only, near-instant) or swap via `sp_rename` inside a short transaction. Alternatively insert in small batches with throttling during low traffic. Use RCSI so readers aren't blocked, and keep statistics updated afterwards.
 
 ## [Beginner|High] What are the ACID properties of a transaction?
 

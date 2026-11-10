@@ -11,9 +11,9 @@ summary: Modules, controllers, $scope, two-way data binding, directives, filters
 
 # Overview
 
-**AngularJS** (Angular 1.x) is the original JavaScript MVC/MVVM framework from Google (2010) that popularised **two-way data binding**, **directives** and **dependency injection** in the browser.
+**AngularJS** (Angular 1.x) is the original JavaScript MVC/MVVM framework from Google (2010) that popularised two-way data binding, directives and dependency injection in the browser.
 
-**Important fact:** AngularJS reached **end of life on 31 December 2021**: Google no longer provides updates or security fixes. It is **different** from **Angular** (2+), a complete TypeScript rewrite. Interviews ask about AngularJS when a company maintains or is migrating a legacy app.
+**Important fact:** AngularJS reached end of life on 31 December 2021: Google no longer provides updates or security fixes. It is different from Angular (2+), a complete TypeScript rewrite. Interviews ask about AngularJS when a company maintains or is migrating a legacy app.
 
 Core building blocks:
 
@@ -51,10 +51,10 @@ After EOL, commercial extended support exists from third parties (e.g. HeroDevs 
 
 1. Browser loads `angular.js`, then app scripts.
 2. On DOMContentLoaded, AngularJS finds `ng-app` (or you call `angular.bootstrap(element, ["app"])`).
-3. The **injector** is created; module **config** blocks run (providers only), then **run** blocks.
+3. The **injector** is created; module config blocks run (providers only), then run blocks.
 4. **Compile phase**: `$compile` walks the DOM, collects directives, runs their `compile` functions (template manipulation).
 5. **Link phase**: each directive's `link` function (pre-link and post-link) connects scope to DOM and sets up `$watch`es and event listeners.
-6. **Runtime**: events (`ng-click`, `$http` response, `$timeout`) trigger `$scope.$apply()` → **$digest loop**: all watchers are dirty-checked repeatedly until no values change (max 10 iterations, otherwise `infdig` error) → DOM updated.
+6. **Runtime**: events (`ng-click`, `$http` response, `$timeout`) trigger `$scope.$apply()` → $digest loop: all watchers are dirty-checked repeatedly until no values change (max 10 iterations, otherwise `infdig` error) → DOM updated.
 7. **Destroy**: when a scope is removed (route change, `ng-if` false), `$destroy` event fires; clean up listeners/timers.
 
 **Component lifecycle hooks (1.5+):** `$onInit` → `$onChanges(changesObj)` (one-way binding changes) → `$doCheck` → `$postLink` → `$onDestroy`.
@@ -64,7 +64,7 @@ After EOL, commercial extended support exists from third parties (e.g. HeroDevs 
 - `angular.js` / `angular.min.js` (CDN or npm `angular`), modules `angular-route`, `angular-animate`, `angular-messages`, `angular-sanitize`.
 - **UI-Router** (`@uirouter/angularjs`): state-based routing (more popular than ngRoute).
 - **Batarang** (old Chrome extension) and browser DevTools (`angular.element($0).scope()` in the console).
-- **Karma** (test runner) + **Jasmine** + **angular-mocks** (`ngMock`, `$httpBackend`); **Protractor** for E2E (deprecated in 2022–2023: use Playwright/Cypress).
+- **Karma** (test runner) + Jasmine + angular-mocks (`ngMock`, `$httpBackend`); Protractor for E2E (deprecated in 2022–2023: use Playwright/Cypress).
 - Grunt/Gulp/Bower historically; webpack later.
 - **ngUpgrade** / `@angular/upgrade`: run AngularJS and Angular side by side during migration.
 
@@ -98,7 +98,7 @@ After EOL, commercial extended support exists from third parties (e.g. HeroDevs 
 </html>
 ```
 
-**Two-way binding**: `ng-model` updates the model when the user types, and the view updates when the model changes (via the digest cycle). **Controller-as** avoids `$scope` prototype inheritance pitfalls ("always have a dot in ng-model").
+**Two-way binding**: `ng-model` updates the model when the user types, and the view updates when the model changes (via the digest cycle). Controller-as avoids `$scope` prototype inheritance pitfalls ("always have a dot in ng-model").
 
 ## Lesson: [Basic|High] Built-in directives
 
@@ -141,7 +141,7 @@ Filters in templates run on **every digest**: expensive filters on large `ng-rep
 
 ## Lesson: [Basic|High] AngularJS (1.x) project folder structure: with sample files
 
-AngularJS apps (2010–2021) usually have no CLI; files are loaded by `<script>` tags or bundled with Gulp/Grunt/webpack. Two common layouts: **by type** (small apps) and **by feature** (recommended by the John Papa style guide).
+AngularJS apps (2010–2021) usually have no CLI; files are loaded by `<script>` tags or bundled with Gulp/Grunt/webpack. Two common layouts: **by type** (small apps) and by feature (recommended by the John Papa style guide).
 
 ```text
 shop-web/                              (often inside an ASP.NET MVC 5 project's Scripts/app folder)
@@ -403,7 +403,7 @@ angular.module("shopApp", ["ngRoute"])
   }]);
 ```
 
-**UI-Router** uses **states** (`$stateProvider.state("orders.detail", {...})`), nested views and named views: better for complex apps. `resolve` loads data before the route activates.
+**UI-Router** uses states (`$stateProvider.state("orders.detail", {...})`), nested views and named views: better for complex apps. `resolve` loads data before the route activates.
 
 ## Lesson: [Intermediate|Medium] Forms and validation
 
@@ -427,7 +427,7 @@ Form/field states: `$pristine/$dirty`, `$valid/$invalid`, `$touched/$untouched`,
 **Migration paths:**
 
 1. Prepare: upgrade to 1.8, use **components** + controller-as + one-way bindings, TypeScript and a bundler, remove `$scope` soup.
-2. **Hybrid app with ngUpgrade** (`UpgradeModule`): bootstrap both frameworks; **downgrade** new Angular components/services to use in AngularJS, **upgrade** AngularJS services to inject in Angular; migrate feature by feature, route by route.
+2. **Hybrid app with ngUpgrade** (`UpgradeModule`): bootstrap both frameworks; downgrade new Angular components/services to use in AngularJS, upgrade AngularJS services to inject in Angular; migrate feature by feature, route by route.
 3. Or rewrite incrementally behind a reverse proxy / micro-frontends (different routes served by different apps).
 4. Remove AngularJS when the last feature moves.
 
@@ -457,7 +457,7 @@ Directives are markers on DOM elements (attributes, elements, classes, comments)
 
 ## [Intermediate|High] What is the difference between service, factory and provider?
 
-All produce injectable singletons. A **factory** is a function whose returned value is the service. A **service** is a constructor function instantiated with `new` (methods on `this`). A **provider** is the most configurable: an object with a `$get` method, plus configuration methods available in `config()` blocks before the app runs (factory and service are shorthands built on providers). Constants are injectable in config; values are not.
+All produce injectable singletons. A **factory** is a function whose returned value is the service. A service is a constructor function instantiated with `new` (methods on `this`). A provider is the most configurable: an object with a `$get` method, plus configuration methods available in `config()` blocks before the app runs (factory and service are shorthands built on providers). Constants are injectable in config; values are not.
 
 ## [Intermediate|High] Explain the digest cycle. When do you need $apply?
 
@@ -473,7 +473,7 @@ The `$injector` looks at a function's parameter names (or explicit annotations) 
 
 ## [Intermediate|Medium] What is the difference between $emit and $broadcast?
 
-Both dispatch scope events. `$emit` sends an event **upwards** from the current scope through its parents to `$rootScope`. `$broadcast` sends it **downwards** to all child scopes. Listen with `$on`. Overusing events makes data flow hard to follow: prefer services or component bindings; always deregister `$rootScope.$on` listeners on `$destroy`.
+Both dispatch scope events. `$emit` sends an event **upwards** from the current scope through its parents to `$rootScope`. `$broadcast` sends it downwards to all child scopes. Listen with `$on`. Overusing events makes data flow hard to follow: prefer services or component bindings; always deregister `$rootScope.$on` listeners on `$destroy`.
 
 ## [Intermediate|Medium] What are filters? How do you create a custom filter?
 

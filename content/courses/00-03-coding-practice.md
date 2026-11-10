@@ -16,7 +16,7 @@ Most .NET interviews include a **coding round**: 1–3 problems in 30–60 minut
 What interviewers score:
 
 1. **Clarifying** the problem and edge cases before coding.
-2. A working **brute-force** idea, then an **optimised** one.
+2. A working **brute-force** idea, then an optimised one.
 3. Clean, compiling code with good names.
 4. **Testing** with examples and edge cases out loud.
 5. Stating **time and space complexity**.
@@ -50,7 +50,7 @@ Algorithms don't have versions, but the C# features you can use in a coding roun
 # Tools
 
 - **Visual Studio / VS Code / Rider** with `dotnet new console` for practice.
-- **LINQPad**, **dotnetfiddle.net**, **SharpLab**: quick online/offline runners.
+- **LINQPad**, dotnetfiddle.net, SharpLab: quick online/offline runners.
 - **LeetCode, HackerRank, Codility, CodeSignal, GeeksforGeeks**: practice platforms (HackerRank/Codility are often used by Indian service companies for online tests).
 - **NeetCode 150 / Blind 75**: curated problem lists by pattern.
 - **BenchmarkDotNet**: compare approaches.
@@ -74,7 +74,7 @@ Big-O describes how time or memory grows as input size *n* grows (worst case, ig
 
 C# collection costs: `List<T>.Add` amortised O(1), `Insert(0)` O(n), `Contains` O(n); `Dictionary`/`HashSet` add/lookup O(1) average; `SortedDictionary` O(log n); `Array.Sort`/`List.Sort` O(n log n).
 
-> **Interview tip:** always state both time and **space** complexity, e.g. "O(n) time, O(n) extra space for the dictionary."
+> **Interview tip:** always state both time and space complexity, e.g. "O(n) time, O(n) extra space for the dictionary."
 
 ## Lesson: [Basic|High] String programs
 
@@ -396,7 +396,7 @@ static Node? Middle(Node? head)
 
 ## Lesson: [Advanced|Medium] LRU cache (design + code)
 
-Least Recently Used cache with O(1) `Get` and `Put`: a **Dictionary** for lookup + a **doubly linked list** for recency order.
+Least Recently Used cache with O(1) `Get` and `Put`: a **Dictionary** for lookup + a doubly linked list for recency order.
 
 ```csharp
 public class LruCache<TKey, TValue>(int capacity) where TKey : notnull
@@ -454,7 +454,7 @@ static int BinarySearch(int[] a, int target)
 | Quick | O(n log n) | O(n log n) | O(n²) | O(log n) | No |
 | Heap | O(n log n) | O(n log n) | O(n log n) | O(1) | No |
 
-.NET's `Array.Sort`/`List.Sort` use **introsort** (quicksort + heapsort + insertion sort): O(n log n) worst case, **not stable**. LINQ `OrderBy` **is stable**.
+.NET's `Array.Sort`/`List.Sort` use **introsort** (quicksort + heapsort + insertion sort): O(n log n) worst case, not stable. LINQ `OrderBy` is stable.
 
 ```csharp
 // Bubble sort with early exit
@@ -512,7 +512,7 @@ static void Permute(string prefix, string rest, List<string> output)
 }
 ```
 
-Recursion needs a **base case**; deep recursion can cause `StackOverflowException`, which **cannot be caught** in .NET: convert to iteration for large inputs.
+Recursion needs a **base case**; deep recursion can cause `StackOverflowException`, which cannot be caught in .NET: convert to iteration for large inputs.
 
 # Module: Trees and Graphs
 
@@ -698,7 +698,7 @@ On a **sorted** array, compare with the middle element and discard half each tim
 
 ## [Intermediate|Medium] What sorting algorithm does .NET use? Is it stable?
 
-`Array.Sort` and `List<T>.Sort` use **introspective sort** (quicksort, switching to heapsort when recursion is too deep, and insertion sort for small partitions). It's O(n log n) worst case and **not stable**. `Enumerable.OrderBy` (LINQ) is a **stable** sort. Use LINQ when equal elements must keep their original order.
+`Array.Sort` and `List<T>.Sort` use **introspective sort** (quicksort, switching to heapsort when recursion is too deep, and insertion sort for small partitions). It's O(n log n) worst case and not stable. `Enumerable.OrderBy` (LINQ) is a stable sort. Use LINQ when equal elements must keep their original order.
 
 ## [Intermediate|Medium] Find the height of a binary tree and print it level by level.
 
@@ -722,7 +722,7 @@ If the distinct IPs fit in memory: stream the file line by line (`File.ReadLines
 
 ## [Scenario|High] The interviewer says your O(n²) solution works: "can you do better?" What's your approach?
 
-Find the repeated work in the inner loop. Usual upgrades: (1) a **hash map/set** to replace an inner search, O(n²) → O(n); (2) **sort + two pointers**, O(n log n); (3) a **sliding window** for contiguous subarray/substring problems; (4) **prefix sums** for range sums; (5) a **heap** for top-K; (6) **binary search** on a sorted structure or on the answer; (7) **memoisation/DP** for overlapping subproblems. Say the trade-off (more memory for less time).
+Find the repeated work in the inner loop. Usual upgrades: (1) a **hash map/set** to replace an inner search, O(n²) → O(n); (2) sort + two pointers, O(n log n); (3) a sliding window for contiguous subarray/substring problems; (4) prefix sums for range sums; (5) a heap for top-K; (6) binary search on a sorted structure or on the answer; (7) memoisation/DP for overlapping subproblems. Say the trade-off (more memory for less time).
 
 ## [Scenario|Medium] You get stuck halfway through a coding problem in an interview. What do you do?
 

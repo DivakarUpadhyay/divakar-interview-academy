@@ -53,10 +53,10 @@ Providers: `Microsoft.Data.SqlClient` (SQL Server, the current, recommended pack
 
 # Tools
 
-- **SQL Server Management Studio (SSMS)** / **Azure Data Studio** (retiring Feb 2026 in favour of the VS Code MSSQL extension): write and test SQL.
+- **SQL Server Management Studio (SSMS)** / Azure Data Studio (retiring Feb 2026 in favour of the VS Code MSSQL extension): write and test SQL.
 - **SQL Server Profiler / Extended Events**: see what your app sends.
 - **Visual Studio Server Explorer / SQL Server Object Explorer**.
-- **Dapper**, **Dapper.Contrib**, **DbUp** (migrations as SQL scripts), **RepoDB**.
+- **Dapper**, Dapper.Contrib, DbUp (migrations as SQL scripts), RepoDB.
 - **Testcontainers for .NET**: real SQL Server in Docker for tests.
 - **Polly**: retry transient SQL errors (or `SqlRetryLogicProvider` in SqlClient 3.0+).
 
@@ -286,7 +286,7 @@ await conn.ExecuteAsync("INSERT ...", param, tx);
 await tx.CommitAsync();
 ```
 
-**Dapper vs EF Core:** Dapper, full SQL control, fastest mapping, great for reads/reports/stored procedures; no change tracking, migrations or LINQ. EF Core: productivity, LINQ, change tracking, migrations, relationships. Many systems use **both**: EF Core for writes (commands), Dapper for complex reads (queries), a light CQRS.
+**Dapper vs EF Core:** Dapper, full SQL control, fastest mapping, great for reads/reports/stored procedures; no change tracking, migrations or LINQ. EF Core: productivity, LINQ, change tracking, migrations, relationships. Many systems use both: EF Core for writes (commands), Dapper for complex reads (queries), a light CQRS.
 
 # Interview
 
@@ -360,7 +360,7 @@ Stream the file (don't load it all) with a CSV reader (CsvHelper) exposing an `I
 
 ## [Scenario|Medium] A query is fast in SSMS but slow from the application. Why?
 
-Common causes: (1) **different SET options**: SSMS uses `ARITHABORT ON`, apps usually OFF, so they get different cached plans; (2) **parameter sniffing**: the app's cached plan was compiled for an atypical parameter value; (3) parameter **type mismatch** (nvarchar parameter vs varchar column → implicit conversion, scan); (4) app reading huge result sets slowly or network latency. Investigate with Query Store / actual execution plans, fix types, consider `OPTION (RECOMPILE)` or `OPTIMIZE FOR`, update statistics, add proper indexes.
+Common causes: (1) **different SET options**: SSMS uses `ARITHABORT ON`, apps usually OFF, so they get different cached plans; (2) parameter sniffing: the app's cached plan was compiled for an atypical parameter value; (3) parameter type mismatch (nvarchar parameter vs varchar column → implicit conversion, scan); (4) app reading huge result sets slowly or network latency. Investigate with Query Store / actual execution plans, fix types, consider `OPTION (RECOMPILE)` or `OPTIMIZE FOR`, update statistics, add proper indexes.
 
 # Cheatsheet
 

@@ -69,12 +69,15 @@ export default function Home() {
       </section>
 
       <section className="site-intro">
-        <h2>DEVLADDER</h2>
+        <h2>About DevLadder</h2>
         <p>
-          DevLadder is a free, step-by-step learning path: computer fundamentals, DSA and system design; the whole .NET
-          ecosystem from C# and VB.NET internals to ASP.NET Core; SQL Server and its internals; IIS, Azure, AWS and Google Cloud; Node.js,
-          Next.js, Angular, React and Vue; automation and Industry 4.0. Every course has lessons with examples, interview questions with
-          short bullet-point answers (must-know ones marked), and a one-page cheat sheet.
+          I built DevLadder after nine years of working as a .NET developer, because I kept seeing the same thing in interviews:
+          people knew the tools but couldn&apos;t explain the basics behind them. So every course here starts simple and climbs one step at
+          a time, from how a computer works to C#, ASP.NET Core, SQL Server, the cloud and front-end frameworks.
+        </p>
+        <p>
+          Each course has short lessons with real examples, the interview questions that actually come up (the important ones are
+          marked), and a one-page cheat sheet for the night before. It&apos;s all free, and you don&apos;t need an account.
         </p>
         <p className="muted small">
           {s.courses} courses · {s.lessons} lessons · {s.questions} interview Q&amp;A · {s.scenarios} scenario questions ·{" "}

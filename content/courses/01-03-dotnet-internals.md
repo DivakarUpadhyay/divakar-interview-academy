@@ -11,7 +11,7 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 
 # Overview
 
-**.NET** is a developer platform: a **runtime** that executes code (the CLR), a huge **class library** (BCL), **languages** (C#, VB.NET, F#), **SDK tools** (`dotnet` CLI, compilers, NuGet) and **app models** (ASP.NET, WinForms, WPF, MAUI, Worker Services).
+**.NET** is a developer platform: a runtime that executes code (the CLR), a huge class library (BCL), languages (C#, VB.NET, F#), SDK tools (`dotnet` CLI, compilers, NuGet) and app models (ASP.NET, WinForms, WPF, MAUI, Worker Services).
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
@@ -89,17 +89,17 @@ summary: Every .NET version from .NET Framework 1.0 to .NET 10, the .NET archite
 | .NET 10 | Nov 2025 | **LTS** | 14 | Extension members, `field` keyword, file-based apps (`dotnet run app.cs`), JIT de-virtualisation and stack allocation improvements, EF Core 10, ASP.NET Core 10 |
 | .NET 11 | Nov 2026 (expected) | STS | 15 | In preview during 2026 |
 
-**Support policy:** a new version every November; **LTS** (even numbers) = 3 years of support, **STS** (odd numbers) = 2 years (extended from 18 months starting with .NET 9). **.NET Standard** (1.0–2.1) was a specification of APIs shared by Framework, Core, Xamarin and Unity: target `netstandard2.0` only for libraries that must still run on .NET Framework.
+**Support policy:** a new version every November; LTS (even numbers) = 3 years of support, STS (odd numbers) = 2 years (extended from 18 months starting with .NET 9). .NET Standard (1.0–2.1) was a specification of APIs shared by Framework, Core, Xamarin and Unity: target `netstandard2.0` only for libraries that must still run on .NET Framework.
 
 # Lifecycle
 
 **From source code to running program:**
 
 1. **Write** C#/VB.NET/F# source.
-2. **Compile**: Roslyn (`csc`/`vbc`, run by `dotnet build`/MSBuild) produces an **assembly** (`.dll`/`.exe`) containing **IL** + **metadata** (types, members, references) + **manifest** (assembly name, version, culture, references, resources).
+2. **Compile**: Roslyn (`csc`/`vbc`, run by `dotnet build`/MSBuild) produces an assembly (`.dll`/`.exe`) containing IL + metadata (types, members, references) + manifest (assembly name, version, culture, references, resources).
 3. **Launch**: the host (`dotnet.exe`/apphost/IIS ANCM) reads `*.runtimeconfig.json`, locates the right runtime version and starts the CLR (`coreclr.dll` / `libcoreclr.so`).
 4. **Load**: the assembly loader loads the assembly and its dependencies (`*.deps.json`) into an AssemblyLoadContext.
-5. **Type loading**: the first use of a type builds its **MethodTable** (type info, method slots), runs its static constructor.
+5. **Type loading**: the first use of a type builds its MethodTable (type info, method slots), runs its static constructor.
 6. **JIT**: the first call to a method compiles its IL to native code (tier 0, quick), replaces the stub; hot methods are recompiled with full optimisations (tier 1, possibly using profile data, Dynamic PGO).
 7. **Execute**: native code runs on the CPU; allocations go to the managed heap; the GC reclaims unreachable objects; exceptions unwind stack frames.
 8. **Shutdown**: finalizers may run, the process exits and the OS frees everything.
@@ -210,7 +210,7 @@ An **assembly** is the unit of deployment, versioning and security: a `.dll` or 
 | **Manifest** | Assembly identity (name, **version**, culture, public key token), list of files, referenced assemblies |
 | Resources | Embedded files, localised strings |
 
-Kinds: **private** assemblies (in the app folder, the norm today), **shared** assemblies in the **GAC** (Global Assembly Cache, .NET Framework only, `C:\Windows\Microsoft.NET\assembly`), **satellite** assemblies (localised resources, `fr\MyApp.resources.dll`).
+Kinds: **private** assemblies (in the app folder, the norm today), shared assemblies in the GAC (Global Assembly Cache, .NET Framework only, `C:\Windows\Microsoft.NET\assembly`), satellite assemblies (localised resources, `fr\MyApp.resources.dll`).
 
 **Strong name** = name + version + culture + public key token, signed with a key pair; required for the GAC in .NET Framework. Version format: `major.minor.build.revision`. Binding redirects in `app.config`/`web.config` solved "DLL hell" version conflicts in Framework; modern .NET resolves versions via NuGet and `deps.json` (no GAC).
 
@@ -222,13 +222,13 @@ Kinds: **private** assemblies (in the app folder, the norm today), **shared** as
 </dependentAssembly>
 ```
 
-**AppDomain vs AssemblyLoadContext:** .NET Framework used **AppDomains** to isolate and unload code inside one process (IIS used one per web app). .NET Core removed multiple AppDomains; use **AssemblyLoadContext** (collectible contexts can be unloaded: plugins) or separate processes/containers for isolation.
+**AppDomain vs AssemblyLoadContext:** .NET Framework used AppDomains to isolate and unload code inside one process (IIS used one per web app). .NET Core removed multiple AppDomains; use AssemblyLoadContext (collectible contexts can be unloaded: plugins) or separate processes/containers for isolation.
 
 # Module: Memory Management
 
 ## Lesson: [Basic|High] Stack, heap and how value and reference types are laid out
 
-Each **thread** has a **stack** (1 MB default on Windows, 8 MB typical on Linux) holding frames: arguments, locals, return addresses, spilled registers. The **managed heap** is shared by the process and holds objects.
+Each **thread** has a stack (1 MB default on Windows, 8 MB typical on Linux) holding frames: arguments, locals, return addresses, spilled registers. The managed heap is shared by the process and holds objects.
 
 Every heap object has a header:
 
@@ -265,8 +265,8 @@ Where things live:
 **Collection: mark, (sweep), compact:**
 
 1. **Suspend** managed threads at safe points (for blocking GCs).
-2. **Mark**: starting from **roots** (stack slots and registers, static fields, GC handles, finalization queue), follow references and mark reachable objects.
-3. **Plan/compact**: slide surviving objects together, update all references; free space becomes one contiguous block (no fragmentation). Sometimes it only **sweeps** (builds a free list) when compaction isn't worth it.
+2. **Mark**: starting from roots (stack slots and registers, static fields, GC handles, finalization queue), follow references and mark reachable objects.
+3. **Plan/compact**: slide surviving objects together, update all references; free space becomes one contiguous block (no fragmentation). Sometimes it only sweeps (builds a free list) when compaction isn't worth it.
 4. **Resume** threads.
 
 **Generations** (the "weak generational hypothesis": most objects die young):
@@ -279,7 +279,7 @@ Where things live:
 | **LOH**: Large Object Heap | Objects ≥ **85,000 bytes** (big arrays, big strings) | Only with gen 2; **not compacted by default** (can fragment) |
 | **POH**: Pinned Object Heap (.NET 5+) | Objects allocated as pinned (`GC.AllocateArray(..., pinned: true)`) | With gen 2, never moved |
 
-Objects that survive a collection are **promoted** to the next generation. Gen-2 objects referencing gen-0 objects are tracked with a **card table** so gen-0 GCs don't have to scan all of gen 2.
+Objects that survive a collection are **promoted** to the next generation. Gen-2 objects referencing gen-0 objects are tracked with a card table so gen-0 GCs don't have to scan all of gen 2.
 
 **GC modes:**
 
@@ -309,7 +309,7 @@ var info = GC.GetGCMemoryInfo();   // heap size, fragmentation, pause durations
 
 ## Lesson: [Intermediate|High] Finalization, IDisposable and the Dispose pattern
 
-The GC frees **managed memory** only. **Unmanaged resources** (file handles, sockets, database connections, OS handles, native memory) must be released explicitly: that's what `IDisposable` is for.
+The GC frees **managed memory** only. Unmanaged resources (file handles, sockets, database connections, OS handles, native memory) must be released explicitly: that's what `IDisposable` is for.
 
 ```csharp
 public sealed class ReportWriter : IDisposable
@@ -395,17 +395,17 @@ Take two snapshots some minutes apart, compare object counts by type, then use *
 
 ## Lesson: [Intermediate|High] Type loading, method calls and virtual dispatch
 
-- When a type is first used, the CLR loads its metadata and builds an **EEClass** (static type info) and a **MethodTable** (per-type runtime structure: size, base type, interfaces, **vtable** of method slots).
+- When a type is first used, the CLR loads its metadata and builds an **EEClass** (static type info) and a MethodTable (per-type runtime structure: size, base type, interfaces, vtable of method slots).
 - **Static constructor** (`static Foo() { }`) runs once before first use of the type (thread-safe, guaranteed by the CLR).
 - **Non-virtual call:** direct call to the method's code address (after JIT).
 - **Virtual call:** load the object's MethodTable pointer → read the slot for that method → call it. Overrides replace the slot in the derived type's vtable: that's runtime polymorphism.
 - **Interface call:** resolved through virtual stub dispatch (cached per call site).
-- **Sealed classes** and the JIT's **devirtualisation** (helped by PGO) turn virtual calls into direct calls and allow inlining: a reason to mark classes `sealed` when not designed for inheritance.
+- **Sealed classes** and the JIT's devirtualisation (helped by PGO) turn virtual calls into direct calls and allow inlining: a reason to mark classes `sealed` when not designed for inheritance.
 - **Generics:** for reference-type arguments the JIT shares one native implementation (`List<string>` and `List<Customer>` share code); for value types it generates specialised code (`List<int>`, `List<double>`), no boxing and full speed.
 
 ## Lesson: [Intermediate|High] Threads, the thread pool and how async/await works inside
 
-**Managed threads** map 1:1 to OS threads. Creating them is expensive, so .NET uses the **ThreadPool**: worker threads that run queued work items (`Task.Run`, timers, continuations) plus I/O completion handling. It **injects threads gradually** (hill-climbing) when work is queued faster than it completes: blocking calls cause **thread-pool starvation** (slow responses, growing queues).
+**Managed threads** map 1:1 to OS threads. Creating them is expensive, so .NET uses the ThreadPool: worker threads that run queued work items (`Task.Run`, timers, continuations) plus I/O completion handling. It injects threads gradually (hill-climbing) when work is queued faster than it completes: blocking calls cause thread-pool starvation (slow responses, growing queues).
 
 **async/await under the hood:**
 
@@ -420,22 +420,22 @@ public async Task<int> GetCountAsync()
 1. The compiler rewrites the method into a **state machine** struct (`IAsyncStateMachine`) with a `MoveNext()` method; locals become fields.
 2. At `await`, if the task isn't complete, the state machine registers a continuation and **returns to the caller**: the thread goes back to the pool (no thread waits for the network).
 3. When the I/O completes (signalled by the OS via IOCP/epoll), a pool thread runs `MoveNext()` again from the saved state.
-4. **SynchronizationContext:** UI apps and classic ASP.NET resume on the original context (UI thread/request context); ASP.NET Core has **no** SynchronizationContext, so continuations run on any pool thread. `ConfigureAwait(false)` in libraries avoids capturing a context.
+4. **SynchronizationContext:** UI apps and classic ASP.NET resume on the original context (UI thread/request context); ASP.NET Core has no SynchronizationContext, so continuations run on any pool thread. `ConfigureAwait(false)` in libraries avoids capturing a context.
 5. Blocking on async (`.Result`, `.Wait()`) holds a thread and, with a single-threaded context, can **deadlock**.
 
 **ExecutionContext** flows ambient data (AsyncLocal, culture, activity/trace id) across awaits automatically.
 
 ## Lesson: [Advanced|Medium] Exceptions, boxing, strings and other runtime behaviours
 
-**Exceptions inside the CLR:** `throw` creates the exception object and captures the stack trace; the runtime does a **two-pass** unwind, first finds a matching `catch` (running exception filters `when (...)` without unwinding), then unwinds frames running `finally` blocks. Throwing is expensive (stack walk): don't use exceptions for normal control flow. Unhandled exceptions on any thread terminate the process (after `AppDomain.UnhandledException` fires).
+**Exceptions inside the CLR:** `throw` creates the exception object and captures the stack trace; the runtime does a two-pass unwind, first finds a matching `catch` (running exception filters `when (...)` without unwinding), then unwinds frames running `finally` blocks. Throwing is expensive (stack walk): don't use exceptions for normal control flow. Unhandled exceptions on any thread terminate the process (after `AppDomain.UnhandledException` fires).
 
 **Boxing:** converting a value type to `object`/interface allocates a heap object with a header and copies the value; unboxing type-checks and copies back. Generics avoid it.
 
-**Strings:** immutable UTF-16 reference types; literals are **interned** (one instance per value per process); concatenation in loops creates garbage, use `StringBuilder`, `string.Create`, interpolation handlers, or `Span<char>`.
+**Strings:** immutable UTF-16 reference types; literals are interned (one instance per value per process); concatenation in loops creates garbage, use `StringBuilder`, `string.Create`, interpolation handlers, or `Span<char>`.
 
 **Type safety and verification:** the CLR prevents treating memory as the wrong type; `unsafe` code with pointers opts out (requires `AllowUnsafeBlocks`).
 
-**Reflection and metadata:** `typeof(T).GetMethods()` reads the assembly metadata at runtime, flexible but slow and AOT-unfriendly; **source generators** (System.Text.Json, logging, regex) do the work at compile time instead.
+**Reflection and metadata:** `typeof(T).GetMethods()` reads the assembly metadata at runtime, flexible but slow and AOT-unfriendly; source generators (System.Text.Json, logging, regex) do the work at compile time instead.
 
 **Interop:** P/Invoke (`[LibraryImport("user32.dll")]` source-generated in .NET 7+, `[DllImport]` before) calls native functions with marshalling of parameters; COM interop for Office automation and legacy components.
 

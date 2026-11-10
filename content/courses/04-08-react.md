@@ -11,18 +11,18 @@ summary: JSX, components and props, state, events, conditional rendering and lis
 
 # Overview
 
-**React** is a JavaScript library for building user interfaces from **components**, created at **Facebook (Meta)** by Jordan Walke and open-sourced in 2013. It is the most widely used frontend library.
+**React** is a JavaScript library for building user interfaces from components, created at Facebook (Meta) by Jordan Walke and open-sourced in 2013. It is the most widely used frontend library.
 
 Core ideas:
 
 - **Declarative UI**: describe what the UI should look like for a given state; React updates the DOM.
-- **Components**: functions returning **JSX**; compose them like building blocks.
-- **One-way data flow**: data flows down via **props**; events flow up via callbacks.
-- **State + re-render**: when state changes, React re-renders the component and **reconciles** the result against the previous render, updating only what changed in the DOM.
+- **Components**: functions returning JSX; compose them like building blocks.
+- **One-way data flow**: data flows down via props; events flow up via callbacks.
+- **State + re-render**: when state changes, React re-renders the component and reconciles the result against the previous render, updating only what changed in the DOM.
 - **Hooks** (2019): state and side effects in function components.
 - **"Learn once, write anywhere"**: React DOM (web), React Native (mobile), React Server Components.
 
-React is a *library*; for routing, data fetching, SSR and bundling you add tools or use a **framework** such as **Next.js** or **React Router (framework mode, formerly Remix)**: the React docs recommend starting new apps with a framework (or Vite for a pure client app). Create React App was **deprecated in February 2025**.
+React is a *library*; for routing, data fetching, SSR and bundling you add tools or use a **framework** such as Next.js or React Router (framework mode, formerly Remix): the React docs recommend starting new apps with a framework (or Vite for a pure client app). Create React App was deprecated in February 2025.
 
 # Versions
 
@@ -37,14 +37,14 @@ React is a *library*; for routing, data fetching, SSR and bundling you add tools
 | **19** | Dec 2024 | **Actions**, `useActionState`, `useOptimistic`, `use()`, form `action`, `ref` as a prop, Server Components & Server Actions stable, document metadata, resource preloading |
 | 19.1 / 19.2 | 2025 | Owner stacks; 19.2 (Oct 2025): `<Activity>`, `useEffectEvent`, partial pre-rendering, `cacheSignal` |
 
-Ecosystem milestones: **React Compiler 1.0** (Oct 2025, automatic memoisation), React Native New Architecture default (0.76, 2024), React and React Native moved to the **React Foundation** under the Linux Foundation (announced Oct 2025). Next.js: 13 (App Router, 2022), 14, 15 (2024, React 19), 16 (2025, Turbopack default).
+Ecosystem milestones: **React Compiler 1.0** (Oct 2025, automatic memoisation), React Native New Architecture default (0.76, 2024), React and React Native moved to the React Foundation under the Linux Foundation (announced Oct 2025). Next.js: 13 (App Router, 2022), 14, 15 (2024, React 19), 16 (2025, Turbopack default).
 
 # Lifecycle
 
 **Component lifecycle (function components):**
 
 1. **Mount**: React calls the component function (render) → commits DOM → runs `useLayoutEffect` → browser paints → runs `useEffect` callbacks.
-2. **Update**: triggered by a state change, new props from the parent re-rendering, or a context change → render again → React **diffs** the new element tree with the old one (reconciliation) → commits minimal DOM changes → runs effect **cleanups** for changed dependencies, then the new effects.
+2. **Update**: triggered by a state change, new props from the parent re-rendering, or a context change → render again → React diffs the new element tree with the old one (reconciliation) → commits minimal DOM changes → runs effect cleanups for changed dependencies, then the new effects.
 3. **Unmount**: effect cleanups run (unsubscribe, clear timers).
 
 In development **Strict Mode** mounts components twice (mount → unmount → mount) to reveal missing cleanups.
@@ -59,7 +59,7 @@ In development **Strict Mode** mounts components twice (mount → unmount → mo
 | `shouldComponentUpdate` | `React.memo` |
 | `this.state` / `setState` | `useState` / `useReducer` |
 
-**Render phases:** **render phase** (pure, call components, compute the tree; can be paused/interrupted in concurrent mode) → **commit phase** (apply DOM mutations, run layout effects, then passive effects).
+**Render phases:** render phase (pure, call components, compute the tree; can be paused/interrupted in concurrent mode) → commit phase (apply DOM mutations, run layout effects, then passive effects).
 
 # Tools
 
@@ -130,7 +130,7 @@ function Counter() {
 }
 ```
 
-- State updates are **asynchronous and batched**: `count` doesn't change until the next render. Use the **functional form** (`c => c + 1`) when the new value depends on the old one.
+- State updates are **asynchronous and batched**: `count` doesn't change until the next render. Use the functional form (`c => c + 1`) when the new value depends on the old one.
 - Never mutate state (`form.name = "x"`); create new objects/arrays (`[...items, newItem]`, `items.filter(...)`, `items.map(...)`).
 - Lazy initial state for expensive computation: `useState(() => loadFromStorage())`.
 - Events are React **synthetic events** wrapping native ones; `e.preventDefault()` for forms.
@@ -147,7 +147,7 @@ function Counter() {
 </ul>
 ```
 
-**Keys** let React match list items between renders. Use a **stable, unique ID** from data. Using the array index as key breaks state and animations when items are inserted, removed or reordered (inputs keep the wrong value).
+**Keys** let React match list items between renders. Use a stable, unique ID from data. Using the array index as key breaks state and animations when items are inserted, removed or reordered (inputs keep the wrong value).
 
 ## Lesson: [Basic|High] Controlled vs uncontrolled forms
 
@@ -177,7 +177,7 @@ function SearchForm() {
 }
 ```
 
-For real forms, **React Hook Form** (uncontrolled, performant) + **Zod** schema validation is common; React 19 adds form **Actions** (below).
+For real forms, **React Hook Form** (uncontrolled, performant) + Zod schema validation is common; React 19 adds form Actions (below).
 
 ## Lesson: [Basic|High] React project folder structure: with sample files (Vite + TypeScript)
 
@@ -253,7 +253,7 @@ Next.js projects use the `app/` folder conventions instead (see the **Next.js** 
 
 ## Lesson: [Intermediate|High] Connecting a React app to SQL Server (through an API)
 
-A browser app **never connects to SQL Server directly**: it would expose the connection string and SQL Server doesn't speak HTTP. The pattern is: **React → HTTP API (ASP.NET Core or Node.js) → SQL Server**.
+A browser app **never connects to SQL Server directly**: it would expose the connection string and SQL Server doesn't speak HTTP. The pattern is: React → HTTP API (ASP.NET Core or Node.js) → SQL Server.
 
 ```text
 React (browser)  ──fetch JSON──▶  ASP.NET Core Web API / Node Express  ──ADO.NET/EF/Dapper or mssql──▶  SQL Server
@@ -365,7 +365,7 @@ const OrderRow = memo(function OrderRow({ order, onSelect }) {  // skip re-rende
 });
 ```
 
-- `useMemo` caches a **value**; `useCallback` caches a **function** (`useCallback(fn, deps)` = `useMemo(() => fn, deps)`).
+- `useMemo` caches a **value**; `useCallback` caches a function (`useCallback(fn, deps)` = `useMemo(() => fn, deps)`).
 - `React.memo` caches a **component's render** for the same props: useful only if props are stable (hence `useCallback`/`useMemo` for objects and functions passed down).
 - Don't memoise everything: it has its own cost. The **React Compiler** (1.0, Oct 2025) adds memoisation automatically at build time, making most manual `useMemo`/`useCallback`/`memo` unnecessary in new code.
 - `forwardRef` is no longer needed in React 19: `ref` is a regular prop for function components.
@@ -425,7 +425,7 @@ function useDebounce(value, ms = 300) {
 }
 ```
 
-**Rules of Hooks:** 1) call hooks only at the **top level** of a component or custom hook (not in loops, conditions, nested functions or after early returns), React relies on call order; 2) call them only from React function components or custom hooks. Custom hook names start with `use`. Exception: the new `use()` API can be called conditionally.
+**Rules of Hooks:** 1) call hooks only at the top level of a component or custom hook (not in loops, conditions, nested functions or after early returns), React relies on call order; 2) call them only from React function components or custom hooks. Custom hook names start with `use`. Exception: the new `use()` API can be called conditionally.
 
 # Module: React 19 and Server Components
 
@@ -465,9 +465,9 @@ Also: `useFormStatus` (pending state for a submit button inside a form), `useTra
 ## Lesson: [Advanced|High] Server Components, SSR and Next.js basics
 
 - **CSR** (client-side rendering): browser downloads JS and renders, slower first paint, weak SEO.
-- **SSR** (server-side rendering): server renders HTML per request, client **hydrates** to make it interactive.
-- **SSG** (static generation): HTML at build time; **ISR** regenerates periodically.
-- **React Server Components (RSC)**: components that run **only on the server** (can read databases/files directly, ship zero JS); **Client Components** (`"use client"`) handle state and events. **Server Actions/Functions** (`"use server"`) are server functions callable from forms/client code.
+- **SSR** (server-side rendering): server renders HTML per request, client hydrates to make it interactive.
+- **SSG** (static generation): HTML at build time; ISR regenerates periodically.
+- **React Server Components (RSC)**: components that run only on the server (can read databases/files directly, ship zero JS); Client Components (`"use client"`) handle state and events. Server Actions/Functions (`"use server"`) are server functions callable from forms/client code.
 
 ```tsx
 // Next.js App Router: app/orders/page.tsx (Server Component by default)
@@ -569,7 +569,7 @@ Error boundaries catch errors during rendering, lifecycle and constructors of ch
 
 1. Measure first: React DevTools **Profiler**, why-did-you-render, Lighthouse/Core Web Vitals.
 2. Avoid unnecessary re-renders: keep state as local as possible, split components, `memo` + stable props (or React Compiler), split contexts.
-3. Correct **keys** for lists; **virtualise** long lists (TanStack Virtual, react-window).
+3. Correct **keys** for lists; virtualise long lists (TanStack Virtual, react-window).
 4. **Code splitting** with `lazy`/dynamic import and route-based splitting.
 5. `useTransition`/`useDeferredValue` to keep typing responsive during heavy updates.
 6. Debounce expensive inputs; avoid creating objects/functions inline for memoised children (or use the compiler).
@@ -590,7 +590,7 @@ test("shows an error for an invalid email", async () => {
 });
 ```
 
-React Testing Library philosophy: test **behaviour as a user sees it** (roles, labels, text), not implementation details (state, internal methods). Mock network calls with **MSW** (Mock Service Worker). E2E with Playwright.
+React Testing Library philosophy: test **behaviour as a user sees it** (roles, labels, text), not implementation details (state, internal methods). Mock network calls with MSW (Mock Service Worker). E2E with Playwright.
 
 # Interview
 

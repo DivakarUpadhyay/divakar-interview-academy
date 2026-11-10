@@ -11,7 +11,7 @@ summary: Creational, structural and behavioural Gang-of-Four patterns with C# co
 
 # Overview
 
-A **design pattern** is a proven, reusable solution to a common design problem: a template, not finished code. The classic catalogue is *Design Patterns: Elements of Reusable Object-Oriented Software* (1994) by the **Gang of Four** (Gamma, Helm, Johnson, Vlissides), with **23 patterns** in three groups:
+A **design pattern** is a proven, reusable solution to a common design problem: a template, not finished code. The classic catalogue is *Design Patterns: Elements of Reusable Object-Oriented Software* (1994) by the Gang of Four (Gamma, Helm, Johnson, Vlissides), with 23 patterns in three groups:
 
 | Group | Purpose | Patterns |
 |---|---|---|
@@ -327,7 +327,7 @@ public class GetOrderHandler(AppDbContext db) : IRequestHandler<GetOrder, OrderD
 
 ## Lesson: [Intermediate|High] Repository and Unit of Work
 
-**Repository**: a collection-like abstraction over data access. **Unit of Work**: tracks changes and commits them in **one transaction**.
+**Repository**: a collection-like abstraction over data access. Unit of Work: tracks changes and commits them in one transaction.
 
 ```csharp
 public interface IOrderRepository
@@ -344,15 +344,15 @@ public class OrderRepository(AppDbContext db) : IOrderRepository
 }
 ```
 
-Note: EF Core's `DbSet<T>` already is a repository and `DbContext` a unit of work. Many teams use `DbContext` directly. Others add repositories per **aggregate** to keep EF out of the domain and simplify testing. A **generic** repository over EF often adds little value: be ready to discuss this trade-off.
+Note: EF Core's `DbSet<T>` already is a repository and `DbContext` a unit of work. Many teams use `DbContext` directly. Others add repositories per **aggregate** to keep EF out of the domain and simplify testing. A generic repository over EF often adds little value: be ready to discuss this trade-off.
 
 ## Lesson: [Advanced|High] CQRS, Outbox and Saga
 
-**CQRS**: separate the **write model** (commands that change state, with validation and business rules) from the **read model** (queries optimised for display, e.g. Dapper or views). It can share one database or use separate read stores.
+**CQRS**: separate the write model (commands that change state, with validation and business rules) from the read model (queries optimised for display, e.g. Dapper or views). It can share one database or use separate read stores.
 
-**Transactional Outbox**: to reliably publish an event when data changes, save the event in an `Outbox` table **in the same DB transaction** as the business data; a background worker publishes it to the broker and marks it sent. This avoids "saved but message lost" or "message sent but save rolled back".
+**Transactional Outbox**: to reliably publish an event when data changes, save the event in an `Outbox` table in the same DB transaction as the business data; a background worker publishes it to the broker and marks it sent. This avoids "saved but message lost" or "message sent but save rolled back".
 
-**Saga**: manage a business transaction spanning several services (each with its own DB) as a sequence of local transactions with **compensating actions** on failure (orchestration via a coordinator, or choreography via events).
+**Saga**: manage a business transaction spanning several services (each with its own DB) as a sequence of local transactions with compensating actions on failure (orchestration via a coordinator, or choreography via events).
 
 ## Lesson: [Advanced|High] Resilience patterns: Retry, Circuit Breaker, Timeout, Bulkhead
 
@@ -380,13 +380,13 @@ public class Mailer(IOptions<SmtpSettings> opt) { private readonly SmtpSettings 
 
 `IOptions<T>` (singleton, read once), `IOptionsSnapshot<T>` (scoped, re-read per request), `IOptionsMonitor<T>` (singleton with change notifications).
 
-Also: **Specification** pattern (encapsulate query criteria), **Result** pattern (return success/failure objects instead of throwing for expected errors), **Null Object**, **Lazy loading**.
+Also: **Specification** pattern (encapsulate query criteria), Result pattern (return success/failure objects instead of throwing for expected errors), Null Object, Lazy loading.
 
 # Interview
 
 ## [Beginner|High] What are design patterns? Name the three GoF categories.
 
-Reusable, named solutions to recurring design problems. GoF (1994) lists 23 in three categories: **Creational** (Singleton, Factory Method, Abstract Factory, Builder, Prototype), **Structural** (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy), **Behavioural** (Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor).
+Reusable, named solutions to recurring design problems. GoF (1994) lists 23 in three categories: **Creational** (Singleton, Factory Method, Abstract Factory, Builder, Prototype), Structural (Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy), Behavioural (Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor).
 
 ## [Beginner|High] How do you implement a thread-safe Singleton in C#?
 
@@ -394,7 +394,7 @@ Use `Lazy<T>`: `private static readonly Lazy<Svc> _i = new(() => new Svc()); pub
 
 ## [Beginner|High] What is the difference between Factory Method and Abstract Factory?
 
-Factory Method creates **one product**, and subclasses (or a method) decide which concrete class to create. Abstract Factory creates a **family of related products** through an interface with several create methods (button + textbox for a theme; connection + command + parameter for a DB provider). Factory Method uses inheritance; Abstract Factory uses composition (you pass the factory object).
+Factory Method creates **one product**, and subclasses (or a method) decide which concrete class to create. Abstract Factory creates a family of related products through an interface with several create methods (button + textbox for a theme; connection + command + parameter for a DB provider). Factory Method uses inheritance; Abstract Factory uses composition (you pass the factory object).
 
 ## [Beginner|High] What is the Strategy pattern? Where have you used it?
 
@@ -402,11 +402,11 @@ It encapsulates interchangeable algorithms behind an interface and selects one a
 
 ## [Intermediate|High] What is the difference between Decorator and Adapter?
 
-A Decorator keeps the **same interface** and **adds behaviour** (caching, logging, retry) by wrapping an object. You can stack several. An Adapter **changes the interface** so an incompatible class fits what the client expects (wrapping a vendor SDK behind `ISmsSender`). In short, Decorator = same interface + extra behaviour; Adapter = different interface, same behaviour.
+A Decorator keeps the **same interface** and adds behaviour (caching, logging, retry) by wrapping an object. You can stack several. An Adapter changes the interface so an incompatible class fits what the client expects (wrapping a vendor SDK behind `ISmsSender`). In short, Decorator = same interface + extra behaviour; Adapter = different interface, same behaviour.
 
 ## [Intermediate|High] Explain the Repository and Unit of Work patterns. Do you need them with EF Core?
 
-A Repository hides data access behind a collection-like interface; Unit of Work groups changes into one transaction. EF Core already implements both (`DbSet<T>`, `DbContext.SaveChanges`). Adding them on top is optional. **Pros:** domain code doesn't reference EF, queries are centralised, testing is easier. **Cons:** extra layers, and generic repositories often leak `IQueryable` or limit EF features. A balanced answer: aggregate-specific repositories in DDD/Clean Architecture; direct `DbContext` usage in simpler apps, with integration tests using SQLite/Testcontainers.
+A Repository hides data access behind a collection-like interface; Unit of Work groups changes into one transaction. EF Core already implements both (`DbSet<T>`, `DbContext.SaveChanges`). Adding them on top is optional. **Pros:** domain code doesn't reference EF, queries are centralised, testing is easier. Cons: extra layers, and generic repositories often leak `IQueryable` or limit EF features. A balanced answer: aggregate-specific repositories in DDD/Clean Architecture; direct `DbContext` usage in simpler apps, with integration tests using SQLite/Testcontainers.
 
 ## [Intermediate|High] How is ASP.NET Core middleware an example of Chain of Responsibility?
 
@@ -430,7 +430,7 @@ Mediator centralises communication so components don't reference each other dire
 
 ## [Intermediate|Medium] Template Method vs Strategy?
 
-Both vary part of an algorithm. **Template Method** uses **inheritance**: the base class fixes the skeleton and subclasses override steps, decided at compile time. **Strategy** uses **composition**: the whole algorithm is an injected object, swappable at runtime. Prefer Strategy for flexibility; Template Method suits frameworks with a fixed workflow (e.g. ETL importers, `BackgroundService.ExecuteAsync`).
+Both vary part of an algorithm. **Template Method** uses inheritance: the base class fixes the skeleton and subclasses override steps, decided at compile time. Strategy uses composition: the whole algorithm is an injected object, swappable at runtime. Prefer Strategy for flexibility; Template Method suits frameworks with a fixed workflow (e.g. ETL importers, `BackgroundService.ExecuteAsync`).
 
 ## [Advanced|High] Explain CQRS. When is it worth it?
 
@@ -438,15 +438,15 @@ Command Query Responsibility Segregation splits writes (commands, rich domain mo
 
 ## [Advanced|High] What is the Outbox pattern and why is it needed?
 
-It's for publishing an integration event reliably when a DB change commits. Writing to the DB and then publishing to a broker is not atomic (dual-write problem). With Outbox, the event row is inserted into an `OutboxMessages` table **in the same transaction** as the business change. A background processor reads unsent rows, publishes them, and marks them sent. Delivery is **at-least-once**, so consumers must be idempotent (Inbox table or dedupe key). Libraries: MassTransit, NServiceBus, Wolverine, CAP.
+It's for publishing an integration event reliably when a DB change commits. Writing to the DB and then publishing to a broker is not atomic (dual-write problem). With Outbox, the event row is inserted into an `OutboxMessages` table **in the same transaction** as the business change. A background processor reads unsent rows, publishes them, and marks them sent. Delivery is at-least-once, so consumers must be idempotent (Inbox table or dedupe key). Libraries: MassTransit, NServiceBus, Wolverine, CAP.
 
 ## [Advanced|High] How do Retry and Circuit Breaker work together?
 
-Retry handles brief transient faults (timeouts, 503, 429) with exponential backoff and jitter. The Circuit Breaker wraps retries: if failures exceed a threshold, it **opens** and fails fast for a break period, protecting the struggling dependency and your own threads. Then it goes **half-open** to probe, and **closes** on success. In .NET 8+, `AddStandardResilienceHandler()` configures them with timeouts and rate limiting. Retry only idempotent operations, or use idempotency keys.
+Retry handles brief transient faults (timeouts, 503, 429) with exponential backoff and jitter. The Circuit Breaker wraps retries: if failures exceed a threshold, it **opens** and fails fast for a break period, protecting the struggling dependency and your own threads. Then it goes half-open to probe, and closes on success. In .NET 8+, `AddStandardResilienceHandler()` configures them with timeouts and rate limiting. Retry only idempotent operations, or use idempotency keys.
 
 ## [Advanced|Medium] What is the Saga pattern?
 
-It coordinates a distributed transaction across microservices without 2PC: a sequence of local transactions, each publishing an event or command. If a step fails, **compensating transactions** undo earlier steps (refund the payment, release the stock). **Orchestration**: a central saga orchestrator (state machine) tells services what to do. **Choreography**: services react to each other's events. Orchestration is easier to follow; choreography is more decoupled.
+It coordinates a distributed transaction across microservices without 2PC: a sequence of local transactions, each publishing an event or command. If a step fails, **compensating transactions** undo earlier steps (refund the payment, release the stock). Orchestration: a central saga orchestrator (state machine) tells services what to do. Choreography: services react to each other's events. Orchestration is easier to follow; choreography is more decoupled.
 
 ## [Advanced|Low] What is the Specification pattern?
 
@@ -458,11 +458,11 @@ A **Decorator**: `CachedProductRepository : IProductRepository` wraps the existi
 
 ## [Scenario|High] Your app must support three SMS vendors and switch between them by configuration or when one is down. Design it.
 
-Define `ISmsSender`. Write an **Adapter** per vendor SDK (`TwilioSender`, `GupshupSender`, `MsgKitSender`), registered as keyed services or `IEnumerable<ISmsSender>`. Choose the active one from `IOptionsMonitor<SmsOptions>` (Strategy) so config changes apply without a restart. Add a **failover decorator** that tries the primary and, on failure or an open circuit (Polly Circuit Breaker), uses the secondary. Log the vendor used, and make sends idempotent with a message ID.
+Define `ISmsSender`. Write an **Adapter** per vendor SDK (`TwilioSender`, `GupshupSender`, `MsgKitSender`), registered as keyed services or `IEnumerable<ISmsSender>`. Choose the active one from `IOptionsMonitor<SmsOptions>` (Strategy) so config changes apply without a restart. Add a failover decorator that tries the primary and, on failure or an open circuit (Polly Circuit Breaker), uses the secondary. Log the vendor used, and make sends idempotent with a message ID.
 
 ## [Scenario|Medium] An expense approval needs Team Lead below ₹10,000, Manager up to ₹1,00,000, and Director above. Which pattern?
 
-**Chain of Responsibility**: `IApprover` with `SetNext(IApprover)` and `Handle(Expense)`. Each approver handles it if the amount is within its limit, otherwise it passes it on. Build the chain from configuration so limits and new levels don't need code changes. A **State** pattern can track the expense's lifecycle (Submitted → Approved/Rejected → Paid).
+**Chain of Responsibility**: `IApprover` with `SetNext(IApprover)` and `Handle(Expense)`. Each approver handles it if the amount is within its limit, otherwise it passes it on. Build the chain from configuration so limits and new levels don't need code changes. A State pattern can track the expense's lifecycle (Submitted → Approved/Rejected → Paid).
 
 ## [Scenario|Medium] When an order is placed you must save it, publish `OrderPlaced` to Service Bus, and never lose the message even if the broker is down. How?
 

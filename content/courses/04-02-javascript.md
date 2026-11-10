@@ -11,9 +11,9 @@ summary: Types, scope, hoisting, closures, this, prototypes, classes, the event 
 
 # Overview
 
-**JavaScript** is the programming language of the web: it runs in every browser and, through **Node.js**, on servers, CLIs and build tools. It is dynamically typed, single-threaded with an **event loop**, prototype-based, and supports functional and object-oriented styles.
+**JavaScript** is the programming language of the web: it runs in every browser and, through Node.js, on servers, CLIs and build tools. It is dynamically typed, single-threaded with an event loop, prototype-based, and supports functional and object-oriented styles.
 
-The language standard is **ECMAScript** (ECMA-262), maintained by **TC39**. Browsers implement it in engines: **V8** (Chrome, Edge, Node.js), **SpiderMonkey** (Firefox), **JavaScriptCore** (Safari).
+The language standard is **ECMAScript** (ECMA-262), maintained by TC39. Browsers implement it in engines: V8 (Chrome, Edge, Node.js), SpiderMonkey (Firefox), JavaScriptCore (Safari).
 
 **TypeScript** (Microsoft, 2012) is a typed superset of JavaScript that compiles to JS: the default for Angular and widely used with React, Vue and Node.
 
@@ -38,7 +38,7 @@ Every frontend framework interview (jQuery, Angular, React, Vue) starts with Jav
 | ES2024 | 2024 | `Object.groupBy`/`Map.groupBy`, `Promise.withResolvers`, resizable ArrayBuffer |
 | ES2025 | 2025 | Iterator helpers (`.map/.filter/.take` on iterators), **Set methods** (`union`, `intersection`, `difference`...), `Promise.try`, JSON modules / import attributes, `RegExp.escape` |
 
-TypeScript: 1.0 (2014), 2.0 (2016, strict null checks), 3.x, 4.x (2020–2023), **5.0** (2023, decorators standard), then regular 5.x releases. **TypeScript 7** is a native port of the compiler to Go (codename "Project Corsa", previewed since 2025) that makes builds roughly 10× faster.
+TypeScript: 1.0 (2014), 2.0 (2016, strict null checks), 3.x, 4.x (2020–2023), **5.0** (2023, decorators standard), then regular 5.x releases. TypeScript 7 is a native port of the compiler to Go (codename "Project Corsa", previewed since 2025) that makes builds roughly 10× faster.
 
 # Lifecycle
 
@@ -49,11 +49,11 @@ TypeScript: 1.0 (2014), 2.0 (2016, strict null checks), 3.x, 4.x (2020–2023), 
 3. **DOMContentLoaded**: DOM ready (deferred scripts done).
 4. **load**: all images, styles, iframes loaded.
 5. User interaction → events → event loop runs handlers.
-6. **visibilitychange / pagehide** → **beforeunload** → **unload** (avoid unload; use pagehide/visibilitychange).
+6. **visibilitychange / pagehide** → beforeunload → unload (avoid unload; use pagehide/visibilitychange).
 
-**Execution lifecycle of code:** the engine parses source → creates the **global execution context** (creation phase: memory for variables/functions = *hoisting*; execution phase: runs line by line) → each function call pushes a new execution context on the **call stack** → returns pop it. Async callbacks wait in **task queues** until the stack is empty (the **event loop**).
+**Execution lifecycle of code:** the engine parses source → creates the global execution context (creation phase: memory for variables/functions = *hoisting*; execution phase: runs line by line) → each function call pushes a new execution context on the call stack → returns pop it. Async callbacks wait in task queues until the stack is empty (the event loop).
 
-**Event loop order:** run the current script (macrotask) → drain **all microtasks** (promise callbacks, `queueMicrotask`, `MutationObserver`) → render (requestAnimationFrame, style, layout, paint) → next macrotask (`setTimeout`, `setInterval`, I/O, UI events, `MessageChannel`).
+**Event loop order:** run the current script (macrotask) → drain all microtasks (promise callbacks, `queueMicrotask`, `MutationObserver`) → render (requestAnimationFrame, style, layout, paint) → next macrotask (`setTimeout`, `setInterval`, I/O, UI events, `MessageChannel`).
 
 # Tools
 
@@ -146,7 +146,7 @@ const merged = { ...defaults, ...options };          // spread object (later win
 
 **Arrow functions:** no own `this`, `arguments`, `super` or `prototype`; can't be used with `new`; implicit return for single expressions. Great for callbacks; avoid as object methods that need `this`.
 
-**Higher-order functions** take or return functions (`map`, `filter`, `setTimeout`, debounce). **Pure functions** return the same output for the same input with no side effects.
+**Higher-order functions** take or return functions (`map`, `filter`, `setTimeout`, debounce). Pure functions return the same output for the same input with no side effects.
 
 ## Lesson: [Basic|High] Arrays and objects: the essential methods
 
@@ -281,9 +281,9 @@ console.log("2: script end");
 // Order: 1, 2, 3, 4, 5, 6
 ```
 
-- JavaScript runs on **one main thread** with a **call stack**.
+- JavaScript runs on **one main thread** with a call stack.
 - Web APIs (timers, fetch, DOM events) run outside JS and enqueue callbacks.
-- After the current task finishes, the engine drains the **microtask queue** completely, then may render, then takes the next **macrotask**.
+- After the current task finishes, the engine drains the **microtask queue** completely, then may render, then takes the next macrotask.
 - Long synchronous work blocks rendering and input → use async chunks, `requestIdleCallback`, or **Web Workers** for CPU-heavy work.
 - Node.js has a similar loop with phases (timers, poll, check) and `process.nextTick` (runs before promise microtasks).
 
@@ -373,7 +373,7 @@ list.addEventListener("click", e => {
 });
 ```
 
-**Event propagation phases:** capture (window → target) → target → **bubble** (target → window). Listeners run in the bubble phase by default (`{ capture: true }` for capture). `e.target` = element clicked; `e.currentTarget` = element the listener is on.
+**Event propagation phases:** capture (window → target) → target → bubble (target → window). Listeners run in the bubble phase by default (`{ capture: true }` for capture). `e.target` = element clicked; `e.currentTarget` = element the listener is on.
 
 Performance: batch DOM writes (DocumentFragment, `append(...nodes)`), avoid layout thrashing (reading `offsetHeight` after writes in a loop), use `requestAnimationFrame` for visual updates.
 
@@ -391,7 +391,7 @@ Never store auth tokens in localStorage if you can avoid it (readable by any XSS
 
 Other APIs: `fetch`, `AbortController`, `IntersectionObserver` (lazy load, infinite scroll), `ResizeObserver`, `MutationObserver`, Web Workers, Service Workers (offline/PWA), WebSockets, `history.pushState` (SPA routing), Clipboard, Geolocation, Notifications.
 
-**CORS**: the browser blocks reading cross-origin responses unless the server sends `Access-Control-Allow-Origin`; preflight `OPTIONS` for non-simple requests. It's fixed on the **server**, not in JS.
+**CORS**: the browser blocks reading cross-origin responses unless the server sends `Access-Control-Allow-Origin`; preflight `OPTIONS` for non-simple requests. It's fixed on the server, not in JS.
 
 ## Lesson: [Intermediate|High] Debounce, throttle, memoisation and other utilities
 
@@ -450,8 +450,8 @@ const validator = new Proxy({}, {
 ## Lesson: [Advanced|Medium] Memory leaks, performance and security
 
 - **Memory leaks**: forgotten timers/intervals, event listeners on removed elements, global variables, closures holding large data, detached DOM nodes, growing caches. Find with DevTools Memory → heap snapshots.
-- **Performance**: code splitting and lazy loading, tree shaking, minification, compression, caching (HTTP + service worker), avoid long tasks (> 50 ms), virtualise long lists, debounce input, use `defer`, optimise images, measure Core Web Vitals (**LCP**, **INP**, **CLS**).
-- **Security**: **XSS** (never insert untrusted HTML, use `textContent`, sanitise with DOMPurify, Content-Security-Policy), **CSRF** (SameSite cookies, tokens), avoid `eval`/`new Function`, validate on the server, keep dependencies patched (`npm audit`), Subresource Integrity for CDN scripts.
+- **Performance**: code splitting and lazy loading, tree shaking, minification, compression, caching (HTTP + service worker), avoid long tasks (> 50 ms), virtualise long lists, debounce input, use `defer`, optimise images, measure Core Web Vitals (LCP, INP, CLS).
+- **Security**: XSS (never insert untrusted HTML, use `textContent`, sanitise with DOMPurify, Content-Security-Policy), CSRF (SameSite cookies, tokens), avoid `eval`/`new Function`, validate on the server, keep dependencies patched (`npm audit`), Subresource Integrity for CDN scripts.
 
 ## Lesson: [Intermediate|High] TypeScript essentials
 
@@ -515,7 +515,7 @@ A closure is a function that remembers the variables from the scope where it was
 
 ## [Intermediate|High] Explain the event loop.
 
-JavaScript executes on a single thread with a call stack. Asynchronous operations (timers, network, events) are handled by the browser/Node APIs, which queue callbacks when done. When the call stack is empty, the event loop first runs **all microtasks** (promise reactions, `queueMicrotask`), then (in browsers) lets rendering happen, then picks the next **macrotask** (setTimeout, I/O, UI events). That's why a resolved promise's `.then` runs before a `setTimeout(..., 0)` callback.
+JavaScript executes on a single thread with a call stack. Asynchronous operations (timers, network, events) are handled by the browser/Node APIs, which queue callbacks when done. When the call stack is empty, the event loop first runs **all microtasks** (promise reactions, `queueMicrotask`), then (in browsers) lets rendering happen, then picks the next macrotask (setTimeout, I/O, UI events). That's why a resolved promise's `.then` runs before a `setTimeout(..., 0)` callback.
 
 ## [Intermediate|High] What is a Promise? Explain Promise.all, allSettled, race and any.
 

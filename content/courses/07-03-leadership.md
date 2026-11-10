@@ -48,23 +48,23 @@ Management and delivery methods have evolved:
 
 # Lifecycle
 
-**SDLC (Software Development Life Cycle) phases:** Requirements → Analysis → Design → Implementation → Testing → Deployment → Maintenance. Models: **Waterfall** (sequential), **V-Model** (testing paired with each phase), **Iterative/Incremental**, **Spiral** (risk-driven), **Agile** (Scrum, Kanban, XP), **DevOps** (continuous delivery and operations).
+**SDLC (Software Development Life Cycle) phases:** Requirements → Analysis → Design → Implementation → Testing → Deployment → Maintenance. Models: Waterfall (sequential), V-Model (testing paired with each phase), Iterative/Incremental, Spiral (risk-driven), Agile (Scrum, Kanban, XP), DevOps (continuous delivery and operations).
 
 **Scrum lifecycle (per sprint, 1–4 weeks, commonly 2):**
 
 1. **Product Backlog** (owned by the Product Owner, ordered by value) with refinement sessions.
-2. **Sprint Planning**: why (Sprint Goal), what (selected backlog items), how (plan/tasks) → **Sprint Backlog**.
+2. **Sprint Planning**: why (Sprint Goal), what (selected backlog items), how (plan/tasks) → Sprint Backlog.
 3. **Daily Scrum**: 15 minutes for Developers to inspect progress toward the Sprint Goal and adapt.
 4. Development work; **Definition of Done** applied to every increment.
 5. **Sprint Review**: demo the increment to stakeholders, adapt the backlog.
 6. **Sprint Retrospective**: improve how the team works.
 7. Repeat.
 
-Scrum roles (accountabilities): **Product Owner**, **Scrum Master**, **Developers**. Artifacts: **Product Backlog** (commitment: Product Goal), **Sprint Backlog** (Sprint Goal), **Increment** (Definition of Done).
+Scrum roles (accountabilities): **Product Owner**, Scrum Master, Developers. Artifacts: Product Backlog (commitment: Product Goal), Sprint Backlog (Sprint Goal), Increment (Definition of Done).
 
-**Team development lifecycle (Tuckman):** **Forming** → **Storming** → **Norming** → **Performing** (→ Adjourning). A lead adapts style: directive early, coaching during storming, supportive/delegating when performing.
+**Team development lifecycle (Tuckman):** Forming → Storming → Norming → Performing (→ Adjourning). A lead adapts style: directive early, coaching during storming, supportive/delegating when performing.
 
-**Incident lifecycle:** detect → triage/assess severity → communicate → mitigate/restore → resolve root cause → **blameless post-mortem** → follow-up actions.
+**Incident lifecycle:** detect → triage/assess severity → communicate → mitigate/restore → resolve root cause → blameless post-mortem → follow-up actions.
 
 # Tools
 
@@ -107,12 +107,12 @@ Typical lead time split: ~30–60% hands-on technical work, the rest planning, r
 | Metrics | Velocity, burndown | Cycle time, lead time, throughput, CFD |
 | Best for | Product development with planning cycles | Support/maintenance, ops, unpredictable work |
 
-Terms: **user story** ("As a … I want … so that …") with **acceptance criteria** (Given/When/Then), **story points** (relative effort/complexity, Fibonacci), **velocity**, **Definition of Ready / Done**, **epic → feature → story → task**, **spike** (time-boxed research), **MVP**, **INVEST** (Independent, Negotiable, Valuable, Estimable, Small, Testable).
+Terms: **user story** ("As a … I want … so that …") with acceptance criteria (Given/When/Then), story points (relative effort/complexity, Fibonacci), velocity, Definition of Ready / Done, epic → feature → story → task, spike (time-boxed research), MVP, INVEST (Independent, Negotiable, Valuable, Estimable, Small, Testable).
 
 ## Lesson: [Intermediate|High] Estimation and planning
 
 - Break work down until pieces are ≤ 1–3 days; unknowns become spikes.
-- **Relative estimation** (story points + planning poker) builds shared understanding; use historical **velocity** for sprint capacity.
+- **Relative estimation** (story points + planning poker) builds shared understanding; use historical velocity for sprint capacity.
 - For fixed-date/fixed-scope client projects: bottom-up estimates in hours/days + **three-point estimates** (optimistic, most likely, pessimistic → PERT: (O + 4M + P) / 6) + contingency (often 15–25%) + explicit assumptions.
 - Include non-coding work: code review, testing, deployment, documentation, meetings, holidays, support load.
 - Re-estimate when you learn more; communicate changes early.
@@ -122,7 +122,7 @@ Terms: **user story** ("As a … I want … so that …") with **acceptance crit
 
 - Delegate **outcomes**, not just tasks: context (why), expected result, constraints, deadline, how and when to check in.
 - Match tasks to **skill and growth**: stretch tasks for growth with support; critical-path work to experienced members; pair juniors with seniors.
-- Use situational leadership: **directing** (new/low skill) → **coaching** → **supporting** → **delegating** (expert, motivated).
+- Use situational leadership: **directing** (new/low skill) → coaching → supporting → delegating (expert, motivated).
 - Avoid single points of failure: rotate knowledge (pairing, documentation, code reviews).
 - Track on the board, not via constant status chasing; be available to unblock.
 
@@ -172,20 +172,20 @@ Thomas-Kilmann modes: competing, collaborating, compromising, avoiding, accommod
 
 - Maintain a **risk register**: risk, probability, impact, owner, mitigation, contingency.
 - Common risks: unclear requirements, dependencies on other teams/vendors, key-person dependency, new technology, environments, data migration, performance, security/compliance.
-- Strategies: **avoid**, **mitigate**, **transfer**, **accept**.
+- Strategies: **avoid**, mitigate, transfer, accept.
 - **Scope creep**: every change goes through impact analysis (effort, timeline, risk) → agreement with the PO/client → change request or backlog reprioritisation. In fixed-price projects, formal change requests matter.
 
 ## Lesson: [Intermediate|High] Production incidents and post-mortems
 
 - Define **severity levels** (Sev1: full outage/revenue impact; Sev2: major feature down; Sev3: minor).
-- During an incident: an **incident commander** coordinates; separate roles for investigation and communication; focus on **restoring service first** (rollback, failover, feature flag off), root cause later; regular updates to stakeholders/status page.
+- During an incident: an **incident commander** coordinates; separate roles for investigation and communication; focus on restoring service first (rollback, failover, feature flag off), root cause later; regular updates to stakeholders/status page.
 - **Blameless post-mortem**: timeline, impact, root cause(s) (5 Whys), what went well, what didn't, action items with owners and dates.
-- Track **MTTR** (mean time to restore) and **change failure rate**; invest in monitoring, alerting, runbooks and safe deployments.
+- Track **MTTR** (mean time to restore) and change failure rate; invest in monitoring, alerting, runbooks and safe deployments.
 
 ## Lesson: [Advanced|High] Technical decision-making, debt and quality
 
 - Decide with **criteria**: requirements (functional + non-functional, performance, scalability, security, availability, cost), team skills, time to market, maintainability, vendor lock-in.
-- Use **spikes/proofs of concept** for uncertain choices; document with **Architecture Decision Records** (context, decision, alternatives, consequences).
+- Use **spikes/proofs of concept** for uncertain choices; document with Architecture Decision Records (context, decision, alternatives, consequences).
 - **Technical debt**: make it visible (backlog items with impact), allocate capacity (e.g. 15–20% per sprint), pay down debt in areas that change often, avoid "big rewrite" unless justified.
 - Quality gates: code review standards, automated tests, CI checks, static analysis, Definition of Done.
 - Build vs buy: core differentiators → build; commodity → buy/open source.

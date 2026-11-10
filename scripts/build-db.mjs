@@ -55,7 +55,7 @@ function answerHtml(markdown) {
   parts = parts.flatMap((p) => (p.length > 170 && p.includes("; ") ? p.split("; ").map((x, i, a) => (i < a.length - 1 ? `${x};` : x)) : [p]));
   if (parts.length < 2) return md(text);
   const [first, ...rest] = parts;
-  return `<p class="q-short"><strong>In short:</strong> ${marked.parseInline(first)}</p>\n<ul class="q-points">${rest.map((r) => `<li>${marked.parseInline(r)}</li>`).join("")}</ul>\n`;
+  return `<p class="q-short">${marked.parseInline(first)}</p>\n<ul class="q-points">${rest.map((r) => `<li>${marked.parseInline(r)}</li>`).join("")}</ul>\n`;
 }
 const plain = (s) => (s || "").replace(/[#>*_`|]/g, " ").replace(/\s+/g, " ").trim();
 

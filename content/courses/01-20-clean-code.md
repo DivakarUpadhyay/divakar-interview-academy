@@ -108,7 +108,7 @@ public decimal Ship(Order? o)
 
 ## Lesson: [Basic|Medium] Comments, formatting and magic numbers
 
-- Good code explains **what**; comments explain **why** (business reason, workaround, link to ticket).
+- Good code explains **what**; comments explain why (business reason, workaround, link to ticket).
 - Delete commented-out code: Git remembers it.
 - Replace magic numbers/strings with named constants or enums: `if (age >= LegalDrivingAge)`.
 - XML doc comments (`///`) for public APIs.
@@ -219,11 +219,11 @@ var repo2 = Substitute.For<IOrderRepository>();
 await repo2.Received(1).AddAsync(Arg.Is<Order>(o => o.Id == 1));
 ```
 
-Test doubles: **Dummy** (unused), **Stub** (returns canned data), **Fake** (working lightweight version, e.g. in-memory repo), **Mock** (verifies interactions), **Spy** (records calls). Don't mock what you don't own (e.g. `HttpClient`): wrap it or use a fake `HttpMessageHandler`.
+Test doubles: **Dummy** (unused), Stub (returns canned data), Fake (working lightweight version, e.g. in-memory repo), Mock (verifies interactions), Spy (records calls). Don't mock what you don't own (e.g. `HttpClient`): wrap it or use a fake `HttpMessageHandler`.
 
 ## Lesson: [Intermediate|High] Test pyramid, integration tests and TDD
 
-**Test pyramid:** many fast **unit** tests → fewer **integration** tests (API + real DB) → few **end-to-end/UI** tests (Playwright/Selenium).
+**Test pyramid:** many fast unit tests → fewer integration tests (API + real DB) → few end-to-end/UI tests (Playwright/Selenium).
 
 ```csharp
 // Integration test with WebApplicationFactory
@@ -256,7 +256,7 @@ git push -u origin feature/1234-export-csv
 # open PR → CI runs → review → squash merge
 ```
 
-- Branching models: **trunk-based** (short-lived branches, feature flags, common with CI/CD) vs **GitFlow** (develop/release/hotfix branches, heavier).
+- Branching models: **trunk-based** (short-lived branches, feature flags, common with CI/CD) vs GitFlow (develop/release/hotfix branches, heavier).
 - `merge` keeps history with a merge commit; `rebase` rewrites your commits on top of the target for a linear history (never rebase shared branches).
 - Good PRs: small (< ~400 lines), one purpose, description with why + how to test, screenshots for UI.
 - Resolve conflicts locally, re-run tests.
@@ -304,11 +304,11 @@ A unit test verifies a small piece of logic (a method/class) in isolation from e
 
 ## [Beginner|Medium] What are xUnit, NUnit and MSTest? Differences?
 
-All three are .NET test frameworks. **xUnit** (most common in new .NET Core projects): new class instance per test, constructor/`IDisposable` for setup/teardown, `[Fact]/[Theory]`, fixtures for shared state. **NUnit**: `[Test]`, `[TestCase]`, `[SetUp]/[TearDown]`, rich constraint assertions. **MSTest**: Microsoft's, `[TestMethod]`, `[DataRow]`, `[TestInitialize]`, well integrated into Visual Studio. Functionally similar; teams pick by convention.
+All three are .NET test frameworks. **xUnit** (most common in new .NET Core projects): new class instance per test, constructor/`IDisposable` for setup/teardown, `[Fact]/[Theory]`, fixtures for shared state. NUnit: `[Test]`, `[TestCase]`, `[SetUp]/[TearDown]`, rich constraint assertions. MSTest: Microsoft's, `[TestMethod]`, `[DataRow]`, `[TestInitialize]`, well integrated into Visual Studio. Functionally similar; teams pick by convention.
 
 ## [Intermediate|High] What is mocking? Mock vs stub vs fake?
 
-Mocking replaces a real dependency with a controllable test double. A **stub** returns predefined data (state-based testing). A **mock** also verifies that expected interactions happened (`Verify(..., Times.Once)`). A **fake** is a working lightweight implementation (in-memory repository, fake clock). Use stubs/fakes by default; verify interactions only when the interaction *is* the behaviour (e.g. "an email was sent").
+Mocking replaces a real dependency with a controllable test double. A **stub** returns predefined data (state-based testing). A mock also verifies that expected interactions happened (`Verify(..., Times.Once)`). A fake is a working lightweight implementation (in-memory repository, fake clock). Use stubs/fakes by default; verify interactions only when the interaction *is* the behaviour (e.g. "an email was sent").
 
 ## [Intermediate|High] How do you unit-test code that uses `DateTime.Now`, `HttpClient` or a database?
 
@@ -322,7 +322,7 @@ Test-Driven Development: Red (write a failing test for the next small behaviour)
 
 ## [Intermediate|High] What is the test pyramid?
 
-Many fast, cheap **unit tests** at the base; fewer **integration/API tests** (real DB, real HTTP pipeline via `WebApplicationFactory`) in the middle; very few slow, brittle **end-to-end UI tests** (Playwright) at the top. An inverted pyramid ("ice-cream cone") with mostly manual/UI tests is slow and flaky.
+Many fast, cheap **unit tests** at the base; fewer integration/API tests (real DB, real HTTP pipeline via `WebApplicationFactory`) in the middle; very few slow, brittle end-to-end UI tests (Playwright) at the top. An inverted pyramid ("ice-cream cone") with mostly manual/UI tests is slow and flaky.
 
 ## [Intermediate|High] What do you check in a code review?
 
@@ -330,7 +330,7 @@ Correctness and edge cases, tests, design (SOLID, right layer), readability, per
 
 ## [Intermediate|Medium] What are code smells? Name five and their fixes.
 
-Symptoms that suggest a deeper design problem: **Long Method** → Extract Method; **God Class** → Extract Class (SRP); **Duplicate Code** → extract shared method; **Switch on type** → polymorphism/Strategy; **Primitive Obsession** → value objects; **Long Parameter List** → parameter object; **Feature Envy** → Move Method.
+Symptoms that suggest a deeper design problem: **Long Method** → Extract Method; God Class → Extract Class (SRP); Duplicate Code → extract shared method; Switch on type → polymorphism/Strategy; Primitive Obsession → value objects; Long Parameter List → parameter object; Feature Envy → Move Method.
 
 ## [Intermediate|Medium] Merge vs rebase? What is a squash merge?
 
@@ -338,7 +338,7 @@ Symptoms that suggest a deeper design problem: **Long Method** → Extract Metho
 
 ## [Intermediate|Medium] Trunk-based development vs GitFlow?
 
-**Trunk-based**: everyone integrates into `main` at least daily via short-lived branches; incomplete features hidden behind feature flags; enables CI/CD. **GitFlow**: long-lived `develop`, `release/*`, `hotfix/*` branches; fits scheduled releases and multiple supported versions but causes merge pain. Most modern teams use trunk-based or GitHub Flow.
+**Trunk-based**: everyone integrates into `main` at least daily via short-lived branches; incomplete features hidden behind feature flags; enables CI/CD. GitFlow: long-lived `develop`, `release/*`, `hotfix/*` branches; fits scheduled releases and multiple supported versions but causes merge pain. Most modern teams use trunk-based or GitHub Flow.
 
 ## [Advanced|Medium] What is mutation testing?
 

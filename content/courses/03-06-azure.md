@@ -48,13 +48,13 @@ Cloud Services (classic) were retired in **August 2024**; the classic deployment
 
 # Lifecycle
 
-**Azure resource hierarchy:** Microsoft Entra tenant → **Management groups** → **Subscriptions** (billing and access boundary) → **Resource groups** (lifecycle container, deploy, manage and delete together) → **Resources**.
+**Azure resource hierarchy:** Microsoft Entra tenant → Management groups → Subscriptions (billing and access boundary) → Resource groups (lifecycle container, deploy, manage and delete together) → Resources.
 
-**Resource lifecycle:** plan (region, SKU, naming, tags) → provision via **ARM** (portal, CLI, PowerShell, Bicep/Terraform) → configure (identity, networking, scaling) → deploy app → monitor (Azure Monitor, alerts) → scale/optimise → update/patch (PaaS: automatic) → decommission (delete resource group).
+**Resource lifecycle:** plan (region, SKU, naming, tags) → provision via ARM (portal, CLI, PowerShell, Bicep/Terraform) → configure (identity, networking, scaling) → deploy app → monitor (Azure Monitor, alerts) → scale/optimise → update/patch (PaaS: automatic) → decommission (delete resource group).
 
-**Request flow for a typical web app:** user → Azure Front Door (global CDN, WAF) → App Service / Container Apps (behind private networking) → app reads secrets from Key Vault with a **managed identity** → Azure SQL / Cosmos DB through private endpoints → events to Service Bus → background processing by Functions → telemetry to Application Insights.
+**Request flow for a typical web app:** user → Azure Front Door (global CDN, WAF) → App Service / Container Apps (behind private networking) → app reads secrets from Key Vault with a managed identity → Azure SQL / Cosmos DB through private endpoints → events to Service Bus → background processing by Functions → telemetry to Application Insights.
 
-**Azure Well-Architected Framework** pillars: **Reliability, Security, Cost Optimization, Operational Excellence, Performance Efficiency**.
+**Azure Well-Architected Framework** pillars: Reliability, Security, Cost Optimization, Operational Excellence, Performance Efficiency.
 
 # Tools
 
@@ -81,14 +81,14 @@ Cloud Services (classic) were retired in **August 2024**; the classic deployment
 - **Region**: a set of datacenters in a geography (e.g. Central India: Pune). Choose for latency, data residency, service availability, price.
 - **Availability zones**: physically separate datacenters within a region (own power, cooling, network); zone-redundant services survive a datacenter failure.
 - **Region pairs**: regions paired for disaster recovery and staggered updates.
-- **Subscription**: billing + access boundary; **resource group**: logical container (same lifecycle); **management groups**: apply policies across subscriptions.
-- **Tags** (env, owner, cost-centre), **naming conventions**, **resource locks** (CanNotDelete, ReadOnly), **Azure Policy** (enforce rules: allowed regions, required tags), **RBAC** (who can do what).
+- **Subscription**: billing + access boundary; resource group: logical container (same lifecycle); management groups: apply policies across subscriptions.
+- **Tags** (env, owner, cost-centre), naming conventions, resource locks (CanNotDelete, ReadOnly), Azure Policy (enforce rules: allowed regions, required tags), RBAC (who can do what).
 
 ## Lesson: [Basic|High] Identity: Microsoft Entra ID, RBAC and managed identities
 
-- **Microsoft Entra ID** (formerly Azure Active Directory): cloud identity provider: users, groups, app registrations (OAuth 2.0/OIDC), conditional access, MFA. **Entra External ID** for customer-facing apps (successor of Azure AD B2C for new projects).
+- **Microsoft Entra ID** (formerly Azure Active Directory): cloud identity provider: users, groups, app registrations (OAuth 2.0/OIDC), conditional access, MFA. Entra External ID for customer-facing apps (successor of Azure AD B2C for new projects).
 - **Azure RBAC**: role assignments = security principal + role definition (Owner, Contributor, Reader, or data roles like *Storage Blob Data Reader*, *Key Vault Secrets User*) + scope (management group/subscription/RG/resource).
-- **Managed identities**: Azure-managed service principals for Azure resources; no secrets in code or config. **System-assigned** (tied to one resource's lifecycle) or **user-assigned** (standalone, shareable).
+- **Managed identities**: Azure-managed service principals for Azure resources; no secrets in code or config. System-assigned (tied to one resource's lifecycle) or user-assigned (standalone, shareable).
 
 ```csharp
 // Same code works locally (Visual Studio/Azure CLI login) and in Azure (managed identity)
@@ -107,8 +107,8 @@ builder.Configuration.AddAzureKeyVault(new Uri("https://kv-shop.vault.azure.net/
 PaaS for web apps and APIs (.NET, Java, Node, Python, PHP; Windows or Linux; code or containers).
 
 - **App Service plan** = the VMs you pay for (tier: Free/Basic/Standard/Premium v3/Isolated v2); many apps can share a plan.
-- Features: **deployment slots** (staging → swap for zero downtime), autoscale (scale out instances) and scale up (bigger SKU), custom domains + managed TLS certificates, **Easy Auth** (built-in authentication), VNet integration and private endpoints, health check path, always on, backups, WebJobs.
-- Configuration: **App settings** and **connection strings** become environment variables (override appsettings.json); **Key Vault references** `@Microsoft.KeyVault(SecretUri=...)`.
+- Features: **deployment slots** (staging → swap for zero downtime), autoscale (scale out instances) and scale up (bigger SKU), custom domains + managed TLS certificates, Easy Auth (built-in authentication), VNet integration and private endpoints, health check path, always on, backups, WebJobs.
+- Configuration: **App settings** and connection strings become environment variables (override appsettings.json); Key Vault references `@Microsoft.KeyVault(SecretUri=...)`.
 
 ```bash
 az appservice plan create -g rg-shop -n plan-shop --sku P1v3 --is-linux
@@ -121,7 +121,7 @@ az webapp deployment slot swap -g rg-shop -n app-shop-api --slot staging
 
 ## Lesson: [Intermediate|High] Azure Functions (serverless)
 
-Event-driven code that runs on **triggers** with declarative **bindings** (input/output), scaling automatically.
+Event-driven code that runs on **triggers** with declarative bindings (input/output), scaling automatically.
 
 | Hosting plan | Notes |
 |---|---|
@@ -131,7 +131,7 @@ Event-driven code that runs on **triggers** with declarative **bindings** (input
 | Dedicated (App Service plan) | Run on existing plan, predictable cost |
 | Container Apps | Functions in containers |
 
-.NET uses the **isolated worker model** (the in-process model ends support on **10 November 2026**).
+.NET uses the **isolated worker model** (the in-process model ends support on 10 November 2026).
 
 ```csharp
 public class OrderFunctions(ILogger<OrderFunctions> log)
@@ -178,8 +178,8 @@ Triggers: HTTP, Timer, Queue Storage, Blob, Service Bus, Event Grid, Event Hubs,
 | **Table Storage** | NoSQL key-attribute | Cheap structured data |
 | **Azure Files** | SMB/NFS file shares | Lift-and-shift shared folders |
 
-- Access tiers for blobs: **Hot**, **Cool** (30-day min), **Cold** (90-day min), **Archive** (180-day min, offline, rehydrate hours); lifecycle management policies move/delete automatically.
-- Redundancy: **LRS** (3 copies in one datacenter), **ZRS** (across zones), **GRS/RA-GRS** (plus secondary region), **GZRS/RA-GZRS**.
+- Access tiers for blobs: **Hot**, Cool (30-day min), Cold (90-day min), Archive (180-day min, offline, rehydrate hours); lifecycle management policies move/delete automatically.
+- Redundancy: **LRS** (3 copies in one datacenter), ZRS (across zones), GRS/RA-GRS (plus secondary region), GZRS/RA-GZRS.
 - Secure access: Entra ID RBAC + managed identity (preferred), **SAS tokens** (time-limited, scoped; user delegation SAS best), account keys (avoid), private endpoints, firewall.
 
 ```csharp
@@ -197,7 +197,7 @@ await container.GetBlobClient($"{invoiceId}.pdf").UploadAsync(pdfStream, overwri
 - APIs: **NoSQL** (native), MongoDB (RU and vCore), Apache Cassandra, Gremlin (graph), Table, plus PostgreSQL (distributed, Citus).
 - **Partition key** choice is critical: high cardinality, evenly distributed, used in most queries (avoid hot partitions; cross-partition queries cost more).
 - **Request Units (RU/s)**: throughput currency: provisioned (manual/autoscale) or serverless.
-- **Consistency levels** (strongest → weakest): **Strong, Bounded Staleness, Session (default), Consistent Prefix, Eventual**.
+- **Consistency levels** (strongest → weakest): Strong, Bounded Staleness, Session (default), Consistent Prefix, Eventual.
 - Change feed for event-driven processing; TTL; multi-region writes.
 
 ```csharp
@@ -238,7 +238,7 @@ processor.ProcessErrorAsync += args => Task.CompletedTask;
 await processor.StartProcessingAsync();
 ```
 
-**Logic Apps**: low-code workflows with hundreds of connectors (Office 365, SAP, Salesforce). **API Management (APIM)**: API gateway: publish, secure (JWT validation, subscription keys), throttle (rate-limit policies), transform, cache, version, developer portal.
+**Logic Apps**: low-code workflows with hundreds of connectors (Office 365, SAP, Salesforce). API Management (APIM): API gateway: publish, secure (JWT validation, subscription keys), throttle (rate-limit policies), transform, cache, version, developer portal.
 
 # Module: Security, Networking and Operations
 
@@ -250,15 +250,15 @@ await processor.StartProcessingAsync();
 
 ## Lesson: [Intermediate|Medium] Networking basics
 
-- **Virtual Network (VNet)** with **subnets**; **NSGs** (network security groups: allow/deny rules); **peering** between VNets; **VPN Gateway**/**ExpressRoute** to on-prem.
-- **Private Endpoint** (private IP for a PaaS service inside your VNet) vs **Service Endpoint** (optimised route, service still public IP); **Private DNS zones**.
-- Load balancing: **Azure Load Balancer** (L4, regional), **Application Gateway** (L7 regional + WAF), **Front Door** (L7 global, CDN, WAF), **Traffic Manager** (DNS-based global).
-- **Azure Firewall**, **DDoS Protection**, **Bastion** (secure RDP/SSH without public IPs), NAT Gateway.
+- **Virtual Network (VNet)** with subnets; NSGs (network security groups: allow/deny rules); peering between VNets; VPN Gateway/ExpressRoute to on-prem.
+- **Private Endpoint** (private IP for a PaaS service inside your VNet) vs Service Endpoint (optimised route, service still public IP); Private DNS zones.
+- Load balancing: **Azure Load Balancer** (L4, regional), Application Gateway (L7 regional + WAF), Front Door (L7 global, CDN, WAF), Traffic Manager (DNS-based global).
+- **Azure Firewall**, DDoS Protection, Bastion (secure RDP/SSH without public IPs), NAT Gateway.
 
 ## Lesson: [Intermediate|High] Monitoring with Azure Monitor and Application Insights
 
-- **Azure Monitor**: metrics and logs platform; **Log Analytics workspace** stores logs queried with **KQL**; **alerts** (metric, log, activity log) → action groups (email, SMS, Teams, webhooks, Functions).
-- **Application Insights**: APM for apps: requests, dependencies (SQL/HTTP), exceptions, traces, live metrics, application map, availability tests, distributed tracing. In .NET use the **Azure Monitor OpenTelemetry Distro** (`builder.Services.AddOpenTelemetry().UseAzureMonitor()`).
+- **Azure Monitor**: metrics and logs platform; Log Analytics workspace stores logs queried with KQL; alerts (metric, log, activity log) → action groups (email, SMS, Teams, webhooks, Functions).
+- **Application Insights**: APM for apps: requests, dependencies (SQL/HTTP), exceptions, traces, live metrics, application map, availability tests, distributed tracing. In .NET use the Azure Monitor OpenTelemetry Distro (`builder.Services.AddOpenTelemetry().UseAzureMonitor()`).
 
 ```kusto
 requests
@@ -274,9 +274,9 @@ exceptions
 
 ## Lesson: [Intermediate|Medium] Cost management and governance
 
-- Pricing levers: right-size SKUs, autoscale, **reserved instances** / **savings plans** (1 or 3 years), **spot VMs**, serverless/scale-to-zero, dev/test pricing, auto-shutdown of dev VMs, storage tiers and lifecycle rules, delete orphaned resources (disks, public IPs).
-- **Azure Cost Management** budgets and alerts, tags for chargeback, **Azure Advisor** recommendations, **Pricing Calculator** and TCO calculator.
-- Governance: **Azure Policy**, management groups, RBAC least privilege, resource locks, **landing zones** (Cloud Adoption Framework).
+- Pricing levers: right-size SKUs, autoscale, **reserved instances** / savings plans (1 or 3 years), spot VMs, serverless/scale-to-zero, dev/test pricing, auto-shutdown of dev VMs, storage tiers and lifecycle rules, delete orphaned resources (disks, public IPs).
+- **Azure Cost Management** budgets and alerts, tags for chargeback, Azure Advisor recommendations, Pricing Calculator and TCO calculator.
+- Governance: **Azure Policy**, management groups, RBAC least privilege, resource locks, landing zones (Cloud Adoption Framework).
 
 ## Lesson: [Advanced|High] Reference architecture: scalable .NET web application on Azure
 
@@ -318,7 +318,7 @@ Availability zones are physically separate datacenters within a region with inde
 
 ## [Intermediate|High] Service Bus vs Event Grid vs Event Hubs: when do you use each?
 
-Service Bus is for high-value business **messages** between services where every message must be processed: queues/topics, FIFO with sessions, transactions, duplicate detection, dead-lettering (orders, payments). Event Grid routes discrete **events** (something happened) to subscribers via push with filtering: reacting to blob uploads, resource changes or custom app events. Event Hubs ingests high-volume **event streams** (telemetry, logs, IoT) with partitions, retention and replay for stream processing.
+Service Bus is for high-value business **messages** between services where every message must be processed: queues/topics, FIFO with sessions, transactions, duplicate detection, dead-lettering (orders, payments). Event Grid routes discrete events (something happened) to subscribers via push with filtering: reacting to blob uploads, resource changes or custom app events. Event Hubs ingests high-volume event streams (telemetry, logs, IoT) with partitions, retention and replay for stream processing.
 
 ## [Intermediate|High] What are Azure Functions triggers and bindings? Which hosting plan would you choose?
 
@@ -362,7 +362,7 @@ Short term: configure **autoscale** rules (scale out on CPU > 70% and schedule-b
 
 ## [Scenario|High] An order API must notify inventory, billing and email services reliably when an order is placed. Design it on Azure.
 
-The API saves the order and writes an outbox record in the same transaction; a background publisher sends an `OrderPlaced` message to a **Service Bus topic**. Inventory, billing and email each have their own **subscription** (with filters if needed), processed by Functions/Container Apps workers with peek-lock, retries, dead-letter queue monitoring and idempotent handlers (dedupe by MessageId). Managed identities for access, Application Insights distributed tracing across services, alerts on DLQ count.
+The API saves the order and writes an outbox record in the same transaction; a background publisher sends an `OrderPlaced` message to a **Service Bus topic**. Inventory, billing and email each have their own subscription (with filters if needed), processed by Functions/Container Apps workers with peek-lock, retries, dead-letter queue monitoring and idempotent handlers (dedupe by MessageId). Managed identities for access, Application Insights distributed tracing across services, alerts on DLQ count.
 
 ## [Scenario|High] A developer's connection string with the SQL admin password was found in appsettings.json in the repo. How do you fix the design?
 
@@ -374,7 +374,7 @@ Put Azure Front Door (CDN + global edge, TLS termination, caching static content
 
 ## [Scenario|Medium] Blob uploads must trigger thumbnail generation automatically. Which services?
 
-Blob Storage (uploads via SAS or managed identity) → **Event Grid** `BlobCreated` event (filtered by container/suffix) → **Azure Function** (Event Grid trigger, Flex Consumption) that generates the thumbnail and writes it to a `thumbnails` container with an output binding. Add retries/dead-lettering on the Event Grid subscription, and Application Insights for monitoring. For high volume, put a Service Bus/Storage queue between them.
+Blob Storage (uploads via SAS or managed identity) → **Event Grid** `BlobCreated` event (filtered by container/suffix) → Azure Function (Event Grid trigger, Flex Consumption) that generates the thumbnail and writes it to a `thumbnails` container with an output binding. Add retries/dead-lettering on the Event Grid subscription, and Application Insights for monitoring. For high volume, put a Service Bus/Storage queue between them.
 
 # Cheatsheet
 

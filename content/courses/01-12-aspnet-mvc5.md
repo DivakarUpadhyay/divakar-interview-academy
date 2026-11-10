@@ -11,7 +11,7 @@ summary: The MVC pattern, the classic MVC 5 project and folder structure (App_St
 
 # Overview
 
-**ASP.NET MVC** (2009) brought the **Model–View–Controller** pattern to ASP.NET on .NET Framework as an alternative to Web Forms: no ViewState, no page life cycle, full control of HTML, clean URLs and testable controllers. **MVC 5** (2013) is the final version; its successor is **ASP.NET Core MVC**.
+**ASP.NET MVC** (2009) brought the Model–View–Controller pattern to ASP.NET on .NET Framework as an alternative to Web Forms: no ViewState, no page life cycle, full control of HTML, clean URLs and testable controllers. MVC 5 (2013) is the final version; its successor is ASP.NET Core MVC.
 
 | Part | Responsibility | Example |
 |---|---|---|
@@ -254,7 +254,7 @@ Razor basics: `@expression` (HTML-encoded automatically), `@{ code block }`, `@i
 
 ## Lesson: [Intermediate|High] Model binding and validation
 
-The **DefaultModelBinder** fills action parameters and complex objects from **value providers**: form fields, route data, query string, posted files, matching by name (including nested `Address.City`, indexed `Lines[0].Qty`).
+The **DefaultModelBinder** fills action parameters and complex objects from value providers: form fields, route data, query string, posted files, matching by name (including nested `Address.City`, indexed `Lines[0].Qty`).
 
 ```csharp
 public class ProductEditModel
@@ -348,7 +348,7 @@ BundleTable.EnableOptimizations = true;   // or compilation debug="false" in web
 
 **ASP.NET Identity + OWIN:** `Startup.Auth.cs` configures cookie authentication (`UseCookieAuthentication`), external logins (Google, Microsoft), `UserManager`/`SignInManager` with EF tables (`AspNetUsers`, `AspNetRoles`); `[Authorize(Roles = "Admin")]` protects actions.
 
-**Web API 2** in the same project: `ApiController` classes under `/api/...`, configured in `WebApiConfig.Register` (`config.MapHttpAttributeRoutes()`), returning data with content negotiation (JSON/XML). MVC and Web API 2 have **separate** pipelines, filters and DI resolvers in .NET Framework: ASP.NET Core unifies them.
+**Web API 2** in the same project: `ApiController` classes under `/api/...`, configured in `WebApiConfig.Register` (`config.MapHttpAttributeRoutes()`), returning data with content negotiation (JSON/XML). MVC and Web API 2 have separate pipelines, filters and DI resolvers in .NET Framework: ASP.NET Core unifies them.
 
 ## Lesson: [Intermediate|High] Error handling, custom error pages and logging in MVC 5
 
@@ -407,7 +407,7 @@ public class GlobalExceptionFilter : IExceptionFilter
 | Auth | OWIN/Identity 2, Forms auth | ASP.NET Core Identity, cookie/JWT handlers |
 | Static files | Served by IIS | `UseStaticFiles()` from `wwwroot` |
 
-**Migration path:** move business/data logic into libraries; create a new ASP.NET Core project; port controllers (mostly the same code), views (mostly the same Razor, replace child actions and bundling), filters (similar interfaces), configuration and DI; use the **.NET Upgrade Assistant** and **System.Web adapters**; for big apps migrate incrementally behind **YARP** (route migrated paths to the new app, the rest to the old app, share authentication).
+**Migration path:** move business/data logic into libraries; create a new ASP.NET Core project; port controllers (mostly the same code), views (mostly the same Razor, replace child actions and bundling), filters (similar interfaces), configuration and DI; use the .NET Upgrade Assistant and System.Web adapters; for big apps migrate incrementally behind YARP (route migrated paths to the new app, the rest to the old app, share authentication).
 
 # Interview
 

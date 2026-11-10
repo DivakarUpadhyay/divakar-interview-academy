@@ -11,7 +11,7 @@ summary: Document structure, semantic HTML, forms and accessibility, the CSS cas
 
 # Overview
 
-**HTML** (HyperText Markup Language) describes the **structure and meaning** of a page; **CSS** (Cascading Style Sheets) describes **how it looks**; JavaScript adds behaviour. Every frontend framework (Angular, React, Vue) still renders HTML and CSS, so these basics are asked in every frontend and full stack interview.
+**HTML** (HyperText Markup Language) describes the structure and meaning of a page; CSS (Cascading Style Sheets) describes how it looks; JavaScript adds behaviour. Every frontend framework (Angular, React, Vue) still renders HTML and CSS, so these basics are asked in every frontend and full stack interview.
 
 | Topic | What interviewers check |
 |---|---|
@@ -48,7 +48,7 @@ Frameworks: Bootstrap 5 (2021, no jQuery), Tailwind CSS 4 (2025, CSS-first confi
 5. **Paint**: fill pixels (text, colours, borders, shadows).
 6. **Composite**: layers combined on the GPU.
 
-CSS is **render-blocking** and synchronous `<script>` is **parser-blocking**: so put CSS in `<head>`, use `defer`/`type="module"` for scripts, and animate `transform`/`opacity` (composite only) rather than `width`/`top` (layout every frame).
+CSS is **render-blocking** and synchronous `<script>` is parser-blocking: so put CSS in `<head>`, use `defer`/`type="module"` for scripts, and animate `transform`/`opacity` (composite only) rather than `width`/`top` (layout every frame).
 
 # Tools
 
@@ -260,7 +260,7 @@ header { grid-area: header; }  aside { grid-area: sidebar; }  main { grid-area: 
 .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 ```
 
-**Flexbox vs Grid:** Flexbox lays out along **one** axis and sizes from the content (toolbars, nav bars, button groups). Grid controls **rows and columns together** from the container (page layouts, card grids, forms). They combine well: Grid for the page, Flexbox inside components.
+**Flexbox vs Grid:** Flexbox lays out along one axis and sizes from the content (toolbars, nav bars, button groups). Grid controls rows and columns together from the container (page layouts, card grids, forms). They combine well: Grid for the page, Flexbox inside components.
 
 ## Lesson: [Intermediate|High] Responsive design: mobile first, media and container queries
 
@@ -333,7 +333,7 @@ Common breakpoints (Bootstrap 5): 576, 768, 992, 1200, 1400 px, but choose break
 - `<script defer>` or `type="module"`; avoid render-blocking third-party scripts.
 - Images: modern formats (WebP/AVIF), correct sizes, `width`/`height` attributes to prevent layout shift, `loading="lazy"` below the fold.
 - Fonts: `font-display: swap`, preload the main font, limit weights.
-- Core Web Vitals: **LCP** (largest content paint ≤ 2.5 s), **INP** (interaction to next paint ≤ 200 ms), **CLS** (layout shift ≤ 0.1).
+- Core Web Vitals: **LCP** (largest content paint ≤ 2.5 s), INP (interaction to next paint ≤ 200 ms), CLS (layout shift ≤ 0.1).
 - SEO basics: unique `<title>` and meta description, one `h1`, semantic structure, descriptive link text, `alt` text, canonical URLs, Open Graph tags for sharing.
 
 # Interview

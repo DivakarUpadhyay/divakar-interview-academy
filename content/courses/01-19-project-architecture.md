@@ -11,7 +11,7 @@ summary: How real .NET solutions are organised, solution and project structure, 
 
 # Overview
 
-**Architecture** = how code is split into parts, what each part is responsible for, and which parts may depend on which. A good structure makes code **easy to find, change, test and deploy**.
+**Architecture** = how code is split into parts, what each part is responsible for, and which parts may depend on which. A good structure makes code easy to find, change, test and deploy.
 
 | Style | Core idea | Typical fit |
 |---|---|---|
@@ -50,13 +50,13 @@ HTTP request
  ← result → DTO → HTTP response
 ```
 
-**Dependency rule:** source-code dependencies point **inwards** (Api → Application → Domain; Infrastructure → Application/Domain). The Domain knows nothing about EF Core, ASP.NET or SQL.
+**Dependency rule:** source-code dependencies point inwards (Api → Application → Domain; Infrastructure → Application/Domain). The Domain knows nothing about EF Core, ASP.NET or SQL.
 
 # Tools
 
 - `dotnet new sln`, `dotnet new classlib/webapi/xunit`, `dotnet sln add`, `dotnet add reference`.
 - Templates: `Clean.Architecture.Solution.Template` (Jason Taylor), `Ardalis.CleanArchitecture.Template`, .NET Aspire starter.
-- Architecture tests: **NetArchTest**, **ArchUnitNET** (enforce "Domain must not reference Infrastructure").
+- Architecture tests: **NetArchTest**, ArchUnitNET (enforce "Domain must not reference Infrastructure").
 - Visual Studio dependency diagrams / code maps, NDepend.
 - Diagrams: C4 model, draw.io, Structurizr.
 
@@ -162,7 +162,7 @@ All three share one idea: **the domain and use cases are the centre; frameworks,
                   dependencies point INWARD only
 ```
 
-- **Hexagonal (ports & adapters):** the application exposes **ports** (interfaces like `IOrderRepository`, `IPaymentGateway`); **adapters** implement them (SQL adapter, Stripe adapter) or drive the app (REST controller, message consumer).
+- **Hexagonal (ports & adapters):** the application exposes ports (interfaces like `IOrderRepository`, `IPaymentGateway`); adapters implement them (SQL adapter, Stripe adapter) or drive the app (REST controller, message consumer).
 - **Onion:** concentric rings, Domain Model → Domain Services → Application Services → outer ring (UI, infrastructure, tests).
 - **Clean Architecture:** Entities → Use Cases → Interface Adapters → Frameworks & Drivers; same dependency rule.
 
@@ -264,11 +264,11 @@ public static class PlaceOrder
 }
 ```
 
-**Pros:** a change touches one folder; features can use different techniques (EF here, Dapper there); easy to delete a feature; fits CQRS. **Cons:** possible duplication between slices; needs discipline to extract real shared domain logic.
+**Pros:** a change touches one folder; features can use different techniques (EF here, Dapper there); easy to delete a feature; fits CQRS. Cons: possible duplication between slices; needs discipline to extract real shared domain logic.
 
 ## Lesson: [Intermediate|Medium] Modular monolith and DDD building blocks
 
-**Modular monolith**: one deployable application, divided into **modules** by business capability; each module has its own folders/projects, its own database schema and a small public API; modules communicate via interfaces or in-process events.
+**Modular monolith**: one deployable application, divided into modules by business capability; each module has its own folders/projects, its own database schema and a small public API; modules communicate via interfaces or in-process events.
 
 ```text
 src/
@@ -296,7 +296,7 @@ Rules: no module reads another's tables; communication through a module's public
 
 ## Lesson: [Advanced|High] CQRS, MediatR and cross-cutting concerns placement
 
-**CQRS** separates **commands** (change state, return little) from **queries** (return data, no side effects). In a single app it usually means separate handler classes and models; reads can use Dapper/views while writes use EF Core and rich domain models.
+**CQRS** separates commands (change state, return little) from queries (return data, no side effects). In a single app it usually means separate handler classes and models; reads can use Dapper/views while writes use EF Core and rich domain models.
 
 ```csharp
 public sealed record GetOrdersQuery(int CustomerId, int Page) : IRequest<PagedList<OrderDto>>;

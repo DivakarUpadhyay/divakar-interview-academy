@@ -11,7 +11,7 @@ summary: Testing fundamentals and the test pyramid, NUnit/xUnit, Selenium WebDri
 
 # Overview
 
-**Test automation** means writing code that tests software automatically and repeatably: UI tests that drive a browser, API tests that call endpoints, and unit/integration tests that check code directly. An **SDET** (Software Development Engineer in Test) or automation engineer builds and maintains these frameworks and runs them in CI/CD.
+**Test automation** means writing code that tests software automatically and repeatably: UI tests that drive a browser, API tests that call endpoints, and unit/integration tests that check code directly. An SDET (Software Development Engineer in Test) or automation engineer builds and maintains these frameworks and runs them in CI/CD.
 
 **The test pyramid** (Mike Cohn):
 

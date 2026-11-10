@@ -21,7 +21,7 @@ A **custom control/component** packages markup + behaviour so it can be reused a
 | Blazor | **Razor component** (`.razor`) with parameters, events, child content; component libraries |
 | WinForms / WPF | UserControl → derived control → owner-drawn/custom control with templates (WPF) |
 
-Interview focus: the **difference between user controls and custom controls**, **tag helpers vs HTML helpers**, **view components vs partial views**, and how state/events work in components.
+Interview focus: the **difference between user controls and custom controls**, tag helpers vs HTML helpers, view components vs partial views, and how state/events work in components.
 
 # Versions
 
@@ -184,7 +184,7 @@ public static class HtmlHelperExtensions
 
 Register the namespace in `Views/web.config` (`<add namespace="Shop.Web.Helpers" />`) so all views see it.
 
-**Razor `@helper`** (MVC 5 only): inline helpers in `App_Code/Helpers.cshtml`. **Display/editor templates**: `Views/Shared/DisplayTemplates/Money.cshtml` used by `Html.DisplayFor(m => m.Price)` when the property has `[UIHint("Money")]` or matches the type name. **Child actions** (`Html.Action`) for self-contained widgets with their own data.
+**Razor `@helper`** (MVC 5 only): inline helpers in `App_Code/Helpers.cshtml`. Display/editor templates: `Views/Shared/DisplayTemplates/Money.cshtml` used by `Html.DisplayFor(m => m.Price)` when the property has `[UIHint("Money")]` or matches the type name. Child actions (`Html.Action`) for self-contained widgets with their own data.
 
 ## Lesson: [Intermediate|High] ASP.NET Core: custom tag helpers
 
@@ -236,7 +236,7 @@ Async tag helpers override `ProcessAsync` (e.g. to load data or get child conten
 
 ## Lesson: [Intermediate|High] ASP.NET Core: view components vs partial views
 
-A **view component** is a mini-controller + view for a reusable widget that needs its **own data and logic** (replaces MVC 5 child actions).
+A **view component** is a mini-controller + view for a reusable widget that needs its own data and logic (replaces MVC 5 child actions).
 
 ```csharp
 public sealed class CartSummaryViewComponent(ICartService carts) : ViewComponent
@@ -316,7 +316,7 @@ public sealed class CartSummaryViewComponent(ICartService carts) : ViewComponent
 }
 ```
 
-Key concepts: **lifecycle** (`OnInitialized(Async)`, `OnParametersSet(Async)`, `OnAfterRender(Async)`, `Dispose`), `StateHasChanged()`, `@bind` / `@bind-Value` two-way binding (`Value` + `ValueChanged` parameters), **CascadingValue**/`[CascadingParameter]` for shared context (theme, auth state), `@key` for list diffing, render modes in .NET 8+ (Static SSR, InteractiveServer, InteractiveWebAssembly, InteractiveAuto), JS interop (`IJSRuntime`), CSS isolation (`Component.razor.css`).
+Key concepts: **lifecycle** (`OnInitialized(Async)`, `OnParametersSet(Async)`, `OnAfterRender(Async)`, `Dispose`), `StateHasChanged()`, `@bind` / `@bind-Value` two-way binding (`Value` + `ValueChanged` parameters), CascadingValue/`[CascadingParameter]` for shared context (theme, auth state), `@key` for list diffing, render modes in .NET 8+ (Static SSR, InteractiveServer, InteractiveWebAssembly, InteractiveAuto), JS interop (`IJSRuntime`), CSS isolation (`Component.razor.css`).
 
 ## Lesson: [Intermediate|Medium] WinForms and WPF custom controls
 
@@ -339,7 +339,7 @@ public class NumericTextBox : TextBox
 }
 ```
 
-**WPF:** **UserControl** (XAML composition) vs **custom control** (`Control` subclass with a default **ControlTemplate** in `Themes/Generic.xaml`, fully re-stylable); expose data through **dependency properties** (support binding, styling, animation) and **routed events**.
+**WPF:** UserControl (XAML composition) vs custom control (`Control` subclass with a default ControlTemplate in `Themes/Generic.xaml`, fully re-stylable); expose data through dependency properties (support binding, styling, animation) and routed events.
 
 ```csharp
 public class RatingControl : Control

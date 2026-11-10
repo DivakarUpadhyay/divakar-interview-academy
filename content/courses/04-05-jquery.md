@@ -11,7 +11,7 @@ summary: Selectors, traversal, DOM manipulation, events and delegation, effects,
 
 # Overview
 
-**jQuery** is a small JavaScript library (created by **John Resig**, 2006) that made DOM manipulation, event handling, animation and AJAX simple and **cross-browser** with a concise API: `$("selector").action()`. "Write less, do more."
+**jQuery** is a small JavaScript library (created by John Resig, 2006) that made DOM manipulation, event handling, animation and AJAX simple and cross-browser with a concise API: `$("selector").action()`. "Write less, do more."
 
 It is still found in a huge number of existing websites, WordPress, Bootstrap 3/4 sites and classic **ASP.NET MVC / Web Forms** apps (jQuery Validation + Unobtrusive Validation). New projects usually use plain modern JavaScript or a framework (React/Angular/Vue), so interviews focus on maintaining existing jQuery code and knowing the modern equivalents.
 
@@ -36,7 +36,7 @@ Core ideas:
 | 3.7.1 | 2023 | Last 3.x feature release |
 | **4.0** | 2026 | Drops IE ≤ 10 and old Edge, removes deprecated APIs (e.g. `jQuery.trim`, `isArray`), ES modules, Trusted Types support |
 
-Companion projects: **jQuery UI** (widgets, interactions; maintenance mode), **jQuery Mobile** (deprecated 2021), **jQuery Migrate** (plugin that warns about deprecated APIs during upgrades), **jQuery Validation** (third-party plugin).
+Companion projects: **jQuery UI** (widgets, interactions; maintenance mode), jQuery Mobile (deprecated 2021), jQuery Migrate (plugin that warns about deprecated APIs during upgrades), jQuery Validation (third-party plugin).
 
 # Lifecycle
 
@@ -53,10 +53,10 @@ Companion projects: **jQuery UI** (widgets, interactions; maintenance mode), **j
 
 # Tools
 
-- **CDN** (code.jquery.com, cdnjs) or **npm** (`npm install jquery`) / LibMan in ASP.NET projects.
+- **CDN** (code.jquery.com, cdnjs) or npm (`npm install jquery`) / LibMan in ASP.NET projects.
 - **jQuery Migrate** for upgrading between majors.
 - Browser DevTools (inspect handlers in Elements → Event Listeners).
-- **jQuery UI**, **jQuery Validation** + **Microsoft jQuery Unobtrusive Validation**, DataTables, Select2, Bootstrap (≤ 4).
+- **jQuery UI**, jQuery Validation + Microsoft jQuery Unobtrusive Validation, DataTables, Select2, Bootstrap (≤ 4).
 - **You Might Not Need jQuery** (website): modern JavaScript equivalents.
 - ESLint plugin `eslint-plugin-jquery` / `no-jquery` to find and remove jQuery usage.
 
@@ -227,7 +227,7 @@ $(".new-row").highlight({ color: "#d3f9d8" }).addClass("seen");
 
 ## Lesson: [Intermediate|High] jQuery validation in ASP.NET MVC
 
-ASP.NET MVC tag helpers emit `data-val-*` attributes from data annotations; **jQuery Validation** + **jQuery Unobtrusive Validation** read them and validate on the client.
+ASP.NET MVC tag helpers emit `data-val-*` attributes from data annotations; **jQuery Validation** + jQuery Unobtrusive Validation read them and validate on the client.
 
 ```cshtml
 @section Scripts {

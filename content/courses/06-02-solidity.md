@@ -11,11 +11,11 @@ summary: Solidity syntax, data types and data locations, functions, visibility a
 
 # Overview
 
-**Solidity** is a statically typed, curly-brace, contract-oriented language for writing smart contracts on the **EVM** (Ethereum and EVM-compatible chains: Arbitrum, Optimism, Base, Polygon, BNB Chain, Avalanche...). Syntax is influenced by C++, Python and JavaScript. Created by Gavin Wood and others; developed by the Ethereum Foundation's Solidity team (first released 2015).
+**Solidity** is a statically typed, curly-brace, contract-oriented language for writing smart contracts on the EVM (Ethereum and EVM-compatible chains: Arbitrum, Optimism, Base, Polygon, BNB Chain, Avalanche...). Syntax is influenced by C++, Python and JavaScript. Created by Gavin Wood and others; developed by the Ethereum Foundation's Solidity team (first released 2015).
 
-A contract is like a class: **state variables** (stored permanently on-chain), **functions**, **modifiers**, **events**, **errors**, and can inherit from other contracts. Code is compiled with **solc** into EVM bytecode plus an **ABI**.
+A contract is like a class: **state variables** (stored permanently on-chain), functions, modifiers, events, errors, and can inherit from other contracts. Code is compiled with solc into EVM bytecode plus an ABI.
 
-Smart contract development is high-stakes: deployed code is public, usually immutable, and often holds money, bugs are exploited quickly. Interviews focus heavily on **security**, **gas costs** and **testing**.
+Smart contract development is high-stakes: deployed code is public, usually immutable, and often holds money, bugs are exploited quickly. Interviews focus heavily on **security**, gas costs and testing.
 
 # Versions
 
@@ -48,9 +48,9 @@ Always pin the compiler: `pragma solidity 0.8.28;` (or `^0.8.24`) and use a rece
 9. **Operate**: monitoring (events, Defender/Forta), admin actions via multisig + timelock, incident response (pause).
 10. **Upgrade or migrate**: through a proxy (if designed) or by deploying a new contract and migrating state.
 
-**Contract execution lifecycle (per call):** transaction/call reaches the contract → EVM loads bytecode → function selector (first 4 bytes of calldata = `keccak256("transfer(address,uint256)")[0:4]`) dispatches to the function → modifiers run → body executes reading/writing **storage**, using **memory**/**stack**, possibly calling other contracts → emits events → returns data, or **reverts** (all state changes undone, remaining gas returned except for what was used).
+**Contract execution lifecycle (per call):** transaction/call reaches the contract → EVM loads bytecode → function selector (first 4 bytes of calldata = `keccak256("transfer(address,uint256)")[0:4]`) dispatches to the function → modifiers run → body executes reading/writing storage, using memory/stack, possibly calling other contracts → emits events → returns data, or reverts (all state changes undone, remaining gas returned except for what was used).
 
-**Contract lifecycle on-chain:** creation transaction runs the **constructor** (init code) → runtime bytecode stored at the new address → used via calls → (legacy `selfdestruct` is effectively disabled since Dencun/EIP-6780 except within the same transaction as creation).
+**Contract lifecycle on-chain:** creation transaction runs the constructor (init code) → runtime bytecode stored at the new address → used via calls → (legacy `selfdestruct` is effectively disabled since Dencun/EIP-6780 except within the same transaction as creation).
 
 # Tools
 
@@ -120,7 +120,7 @@ contract SimpleBank {
 }
 ```
 
-**Value types:** `bool`, `uint8…uint256` (`uint` = `uint256`), `int8…int256`, `address` (20 bytes) / `address payable`, `bytes1…bytes32`, `enum`. **Reference types:** arrays (`uint[]`, `uint[10]`), `bytes`, `string`, `struct`, `mapping(K => V)` (no iteration, no length; every key exists with a default zero value).
+**Value types:** `bool`, `uint8…uint256` (`uint` = `uint256`), `int8…int256`, `address` (20 bytes) / `address payable`, `bytes1…bytes32`, `enum`. Reference types: arrays (`uint[]`, `uint[10]`), `bytes`, `string`, `struct`, `mapping(K => V)` (no iteration, no length; every key exists with a default zero value).
 
 **Units:** `1 ether = 1e18 wei`, `gwei`; time units `seconds`, `minutes`, `hours`, `days`, `weeks`. No floating point: use integers with fixed decimals.
 
@@ -150,7 +150,7 @@ receive() external payable { }                       // plain Ether transfers (e
 fallback() external payable { }                      // unknown function selector (or Ether with data)
 ```
 
-**Modifiers** wrap function logic (access control, state checks, reentrancy guard). **Function overloading** is allowed. Calls to `view`/`pure` functions from off-chain (`eth_call`) are free; when called inside a transaction they still cost gas.
+**Modifiers** wrap function logic (access control, state checks, reentrancy guard). Function overloading is allowed. Calls to `view`/`pure` functions from off-chain (`eth_call`) are free; when called inside a transaction they still cost gas.
 
 ## Lesson: [Basic|High] Data locations: storage, memory, calldata, stack and transient
 
@@ -197,7 +197,7 @@ catch Error(string memory reason) { emit OracleFailed(reason); }
 catch (bytes memory) { emit OracleFailed("unknown"); }
 ```
 
-On revert, **all state changes in the call are undone**; gas used so far is consumed. **Events** (`emit Transfer(from, to, amount)`) write to transaction logs: cheap, not readable by contracts, but indexed by off-chain apps; up to 3 `indexed` parameters become searchable topics.
+On revert, **all state changes in the call are undone**; gas used so far is consumed. Events (`emit Transfer(from, to, amount)`) write to transaction logs: cheap, not readable by contracts, but indexed by off-chain apps; up to 3 `indexed` parameters become searchable topics.
 
 # Module: Object-Oriented Solidity
 
@@ -271,7 +271,7 @@ contract CourseCertificate is ERC721, AccessControl {
 }
 ```
 
-Use **OpenZeppelin** instead of writing token logic yourself: audited, standard-compliant. **Ownable** (single owner) vs **AccessControl** (roles) vs **AccessManager** (centralised permissions, OZ 5).
+Use **OpenZeppelin** instead of writing token logic yourself: audited, standard-compliant. Ownable (single owner) vs AccessControl (roles) vs AccessManager (centralised permissions, OZ 5).
 
 ## Lesson: [Intermediate|High] Sending and receiving Ether safely
 
@@ -327,7 +327,7 @@ contract Vault is ReentrancyGuard {
 
 ## Lesson: [Advanced|Medium] Upgradeable contracts (proxy patterns)
 
-Contracts are immutable, so upgradeability uses a **proxy** that holds storage and **delegatecalls** into a replaceable **implementation** (logic) contract.
+Contracts are immutable, so upgradeability uses a **proxy** that holds storage and delegatecalls into a replaceable implementation (logic) contract.
 
 | Pattern | Upgrade logic lives in | Notes |
 |---|---|---|
@@ -336,7 +336,7 @@ Contracts are immutable, so upgradeability uses a **proxy** that holds storage a
 | Beacon proxy | Beacon contract shared by many proxies | Upgrade many instances at once |
 | Diamond (ERC-2535) | Multiple facets | Very large/modular systems; complex |
 
-Rules: use **initializers** instead of constructors (`initialize()` with `initializer` modifier; call `_disableInitializers()` in the implementation's constructor), never change the order/types of existing storage variables (append only, or use ERC-7201 namespaced storage), protect upgrades with a **multisig + timelock**, and validate with the OpenZeppelin Upgrades plugin. Upgradeability trades trustlessness for fixability: be transparent with users.
+Rules: use **initializers** instead of constructors (`initialize()` with `initializer` modifier; call `_disableInitializers()` in the implementation's constructor), never change the order/types of existing storage variables (append only, or use ERC-7201 namespaced storage), protect upgrades with a multisig + timelock, and validate with the OpenZeppelin Upgrades plugin. Upgradeability trades trustlessness for fixability: be transparent with users.
 
 ## Lesson: [Advanced|Medium] Gas optimisation
 
@@ -402,7 +402,7 @@ npx hardhat test
 npx hardhat ignition deploy ./ignition/modules/Bank.ts --network sepolia --verify
 ```
 
-Test types: unit, **fuzz**, **invariant** (properties that must always hold across random call sequences), **fork tests** (against real mainnet state), integration with frontends. Keep deployer keys in an encrypted keystore or hardware wallet: never in `.env` committed to Git.
+Test types: unit, **fuzz**, invariant (properties that must always hold across random call sequences), fork tests (against real mainnet state), integration with frontends. Keep deployer keys in an encrypted keystore or hardware wallet: never in `.env` committed to Git.
 
 # Interview
 
@@ -472,7 +472,7 @@ Everything on-chain is deterministic and visible: `block.timestamp`, `blockhash`
 
 ## [Scenario|High] You must build a token sale contract that accepts USDC and gives buyers your token. What would you check for security?
 
-Use OpenZeppelin ERC-20 and `SafeERC20` (`safeTransferFrom` for USDC); handle decimals correctly (USDC has 6, your token 18); checks-effects-interactions plus `nonReentrant`; caps per wallet and a total cap; start/end times; pausable by a multisig; no reliance on spot prices; no unbounded loops (let users claim: pull, not push); withdrawal of raised funds only by the treasury multisig; events for every purchase; comprehensive unit/fuzz tests including edge cases (zero amounts, rounding); an external audit; and legal/compliance review (securities rules, KYC).
+Use OpenZeppelin ERC-20 and `SafeERC20` (`safeTransferFrom` for USDC); handle decimals correctly (USDC has 6, your token 18); checks-effects-interactions plus `nonReentrant`; caps per wallet and a total cap; start/end times; pausable by a multisig; no reliance on spot prices; no unbounded loops (let users claim: pull, not push); withdrawal of raised funds only by the treasury multisig; events for every purchase; thorough unit/fuzz tests including edge cases (zero amounts, rounding); an external audit; and legal/compliance review (securities rules, KYC).
 
 ## [Scenario|High] A deployed contract has a bug that can drain funds, and it's not upgradeable. What do you do?
 

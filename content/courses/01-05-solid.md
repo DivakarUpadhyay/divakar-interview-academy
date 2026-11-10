@@ -11,7 +11,7 @@ summary: The five SOLID principles with bad-vs-good C# code, plus DRY, KISS, YAG
 
 # Overview
 
-**SOLID** is five object-oriented design principles that make code easier to change, test and extend. The acronym was coined by Michael Feathers around 2004 for principles collected by **Robert C. Martin ("Uncle Bob")** in the late 1990s and early 2000s.
+**SOLID** is five object-oriented design principles that make code easier to change, test and extend. The acronym was coined by Michael Feathers around 2004 for principles collected by Robert C. Martin ("Uncle Bob") in the late 1990s and early 2000s.
 
 | Letter | Principle | One-line meaning |
 |---|---|---|
@@ -227,7 +227,7 @@ builder.Services.AddKeyedSingleton<IPaymentGateway, StripeGateway>("stripe");   
 - **KISS: Keep It Simple:** the simplest design that works is easiest to maintain.
 - **YAGNI: You Aren't Gonna Need It:** don't build for hypothetical future requirements.
 - **Separation of Concerns:** UI, business logic and data access in separate layers.
-- **Composition over inheritance**, **Law of Demeter**, **Tell don't ask**.
+- **Composition over inheritance**, Law of Demeter, Tell don't ask.
 
 > **Interview tip:** show balance. "I apply SOLID where change is likely: payment providers, export formats. For a 20-line admin script I keep it simple (KISS/YAGNI)."
 
@@ -241,7 +241,7 @@ src/
   Shop.Api/             controllers, DI composition root              (→ Application, Infrastructure)
 ```
 
-- **DIP:** `Application` defines `IOrderRepository`; `Infrastructure` implements it. Dependencies point **inwards**.
+- **DIP:** `Application` defines `IOrderRepository`; `Infrastructure` implements it. Dependencies point inwards.
 - **SRP:** one handler per use case (`PlaceOrderHandler`), e.g. with MediatR or plain classes.
 - **OCP:** cross-cutting concerns as decorators/pipeline behaviours (logging, validation, caching) without editing handlers.
 - **ISP:** small ports (`IClock`, `ICurrentUser`, `IFileStore`).
@@ -273,7 +273,7 @@ Mathematically a square is a rectangle, but if `Square` overrides `Width`/`Heigh
 
 ## [Intermediate|High] What is the difference between Dependency Inversion, Dependency Injection and Inversion of Control?
 
-DIP is the design **principle**: depend on abstractions. IoC is the broader **concept** that control of object creation and flow is handed to a framework or container. DI is a **technique** to achieve IoC/DIP: dependencies are supplied from outside (constructor injection preferred) rather than created with `new` inside the class. ASP.NET Core's built-in container is an IoC container that performs DI.
+DIP is the design **principle**: depend on abstractions. IoC is the broader concept that control of object creation and flow is handed to a framework or container. DI is a technique to achieve IoC/DIP: dependencies are supplied from outside (constructor injection preferred) rather than created with `new` inside the class. ASP.NET Core's built-in container is an IoC container that performs DI.
 
 ## [Intermediate|High] What are the service lifetimes in ASP.NET Core DI and what is a captive dependency?
 
@@ -289,15 +289,15 @@ Yes. SOLID is a set of guidelines, not laws. Over-applying them creates "interfa
 
 ## [Intermediate|Medium] Which design patterns support which SOLID principles?
 
-Strategy, Decorator, Template Method, Observer → **OCP**. Adapter, Facade → **DIP/ISP** (wrap details behind your own abstraction). Factory/Abstract Factory → **DIP** (hide creation). Repository → **DIP/SRP**. Chain of Responsibility/middleware → **SRP + OCP**. Composite → **LSP** (leaf and composite are interchangeable).
+Strategy, Decorator, Template Method, Observer → **OCP**. Adapter, Facade → DIP/ISP (wrap details behind your own abstraction). Factory/Abstract Factory → DIP (hide creation). Repository → DIP/SRP. Chain of Responsibility/middleware → SRP + OCP. Composite → LSP (leaf and composite are interchangeable).
 
 ## [Advanced|Medium] How does Clean Architecture apply the Dependency Inversion Principle?
 
-The **Domain** and **Application** layers define interfaces (ports) such as `IOrderRepository` or `IEmailSender`. The **Infrastructure** layer implements them with EF Core, SMTP or Azure. The API project (composition root) wires them together. Source-code dependencies point inward, so business rules don't reference EF Core or ASP.NET. You can test them with in-memory fakes and swap infrastructure without touching them.
+The **Domain** and Application layers define interfaces (ports) such as `IOrderRepository` or `IEmailSender`. The Infrastructure layer implements them with EF Core, SMTP or Azure. The API project (composition root) wires them together. Source-code dependencies point inward, so business rules don't reference EF Core or ASP.NET. You can test them with in-memory fakes and swap infrastructure without touching them.
 
 ## [Advanced|Low] What is the Stable Dependencies / Stable Abstractions principle?
 
-They are package-level principles from Robert C. Martin. **Stable Dependencies:** depend in the direction of stability (packages that many others rely on should change rarely). **Stable Abstractions:** stable packages should be abstract (interfaces), so they can be extended without modification. Together they explain why the domain/interfaces project sits at the centre and has no dependencies.
+They are package-level principles from Robert C. Martin. **Stable Dependencies:** depend in the direction of stability (packages that many others rely on should change rarely). Stable Abstractions: stable packages should be abstract (interfaces), so they can be extended without modification. Together they explain why the domain/interfaces project sits at the centre and has no dependencies.
 
 ## [Scenario|High] Your `NotificationService` sends email via SMTP using `new SmtpClient()` inside the method. The business now wants SMS and WhatsApp too, and tests keep sending real emails. What do you change?
 
@@ -310,7 +310,7 @@ They are package-level principles from Robert C. Martin. **Stable Dependencies:*
 
 ## [Scenario|High] A code review shows `if (shape is Circle) ... else if (shape is Square) ...` in five places. What principle is violated and how do you fix it?
 
-It violates **OCP** (every new shape edits five places) and usually **LSP/polymorphism**. Move the behaviour into the types: `abstract double Area()` (or an interface method) implemented by each shape, and callers just call `shape.Area()`. If the operation shouldn't live in the shape (e.g. rendering), use the **Visitor** pattern, or a dictionary of strategies keyed by type.
+It violates **OCP** (every new shape edits five places) and usually LSP/polymorphism. Move the behaviour into the types: `abstract double Area()` (or an interface method) implemented by each shape, and callers just call `shape.Area()`. If the operation shouldn't live in the shape (e.g. rendering), use the Visitor pattern, or a dictionary of strategies keyed by type.
 
 ## [Scenario|Medium] A background service crashes with "Cannot consume scoped service from singleton". Explain and fix.
 

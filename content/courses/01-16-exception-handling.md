@@ -11,11 +11,11 @@ summary: Exceptions from first principles to production, try/catch/finally, filt
 
 # Overview
 
-An **exception** is an object that represents an error and **interrupts normal flow** until some code catches it. Good error handling means:
+An **exception** is an object that represents an error and interrupts normal flow until some code catches it. Good error handling means:
 
 1. **Prevent** what you can (validate input, check state).
 2. **Handle** what you can recover from, close to where it happens (retry, fallback, user message).
-3. **Let the rest bubble up** to a **global handler** that logs everything and returns a safe, consistent response.
+3. **Let the rest bubble up** to a global handler that logs everything and returns a safe, consistent response.
 4. **Never** hide errors (empty catch), leak details (stack traces) to users, or use exceptions for normal control flow.
 
 | Layer | Strategy |
@@ -341,7 +341,7 @@ public sealed class DomainExceptionFilter : IExceptionFilter
 builder.Services.AddControllers(o => o.Filters.Add<DomainExceptionFilter>());
 ```
 
-**5. Validation errors**: `[ApiController]` automatically returns **400 ValidationProblemDetails** when model binding/validation fails; customise with `ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = ...)`.
+**5. Validation errors**: `[ApiController]` automatically returns 400 ValidationProblemDetails when model binding/validation fails; customise with `ConfigureApiBehaviorOptions(o => o.InvalidModelStateResponseFactory = ...)`.
 
 **6. Status code pages for non-exception errors**: `UseStatusCodePagesWithReExecute("/Error/{0}")` renders a friendly page for 404/403 in MVC apps.
 
@@ -402,7 +402,7 @@ builder.Services.AddHttpClient<PaymentClient>(c => c.BaseAddress = new("https://
     .AddStandardResilienceHandler();      // retry with backoff + jitter, circuit breaker, attempt and total timeouts
 ```
 
-Retry only **transient** and **idempotent** operations; never retry a payment POST without an idempotency key. Combine with a **circuit breaker** so a failing dependency isn't hammered.
+Retry only **transient** and idempotent operations; never retry a payment POST without an idempotency key. Combine with a circuit breaker so a failing dependency isn't hammered.
 
 ## Lesson: [Intermediate|High] Custom error pages, error codes and user-friendly messages
 

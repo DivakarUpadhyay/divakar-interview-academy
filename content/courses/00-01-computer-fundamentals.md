@@ -11,7 +11,7 @@ summary: What happens inside a computer when your program runs, bits and bytes, 
 
 # Overview
 
-Every program you write: a C# API, a SQL query, a React page, finally runs as instructions on a **CPU** reading and writing **memory**, managed by an **operating system**. Knowing this layer explains things that otherwise look like magic: why a cache makes things fast, why the heap needs a garbage collector, why threads cause race conditions, why a query that reads from disk is slow.
+Every program you write: a C# API, a SQL query, a React page, finally runs as instructions on a **CPU** reading and writing memory, managed by an operating system. Knowing this layer explains things that otherwise look like magic: why a cache makes things fast, why the heap needs a garbage collector, why threads cause race conditions, why a query that reads from disk is slow.
 
 | Layer | What it does | Example |
 |---|---|---|
@@ -37,10 +37,10 @@ Every program you write: a C# API, a SQL query, a React page, finally runs as in
 **Life of a program run:**
 
 1. **Source code** → compiler → machine code or intermediate code (IL for .NET).
-2. You start it → the **OS creates a process**: virtual address space, loads the executable and libraries, creates the main **thread**.
+2. You start it → the **OS creates a process**: virtual address space, loads the executable and libraries, creates the main thread.
 3. The runtime (CLR) starts, JIT-compiles methods to machine code as they are first called.
 4. The **CPU executes** instructions: fetch → decode → execute → write back, millions per millisecond, using registers and caches.
-5. Data lives on the **stack** (method calls, locals) and the **heap** (objects); the OS maps virtual pages to physical RAM.
+5. Data lives on the **stack** (method calls, locals) and the heap (objects); the OS maps virtual pages to physical RAM.
 6. I/O (disk, network) is requested from the OS; the thread waits or continues asynchronously.
 7. On exit the OS frees all memory, handles and threads of the process.
 
@@ -55,7 +55,7 @@ Every program you write: a C# API, a SQL query, a React page, finally runs as in
 
 ## Lesson: [Basic|High] Bits, bytes, number systems and encoding
 
-Computers store everything as **bits** (0/1). 8 bits = 1 **byte**.
+Computers store everything as **bits** (0/1). 8 bits = 1 byte.
 
 | Unit | Size |
 |---|---|
@@ -119,7 +119,7 @@ add  eax, [tax]        ; add
 mov  [total], eax      ; store back to memory
 ```
 
-**Speed tricks inside modern CPUs:** pipelining (overlap stages of several instructions), out-of-order execution, **branch prediction** (guessing `if` results, sorted data makes branches predictable and loops faster), SIMD vector instructions (process 4–16 numbers at once, `System.Numerics.Vector<T>` in .NET).
+**Speed tricks inside modern CPUs:** pipelining (overlap stages of several instructions), out-of-order execution, branch prediction (guessing `if` results, sorted data makes branches predictable and loops faster), SIMD vector instructions (process 4–16 numbers at once, `System.Numerics.Vector<T>` in .NET).
 
 # Module: Memory
 
@@ -137,7 +137,7 @@ mov  [total], eax      ; store back to memory
 | Network (same datacenter) |: | ~0.5 ms round trip | |
 | Network (across continents) |: | ~150 ms round trip | |
 
-**Key idea:** each level is ~10× to 1000× slower than the one above. Data moves between cache and RAM in **cache lines** of 64 bytes, so reading memory **sequentially** (arrays) is much faster than jumping around (linked lists, scattered objects): this is **locality of reference**.
+**Key idea:** each level is ~10× to 1000× slower than the one above. Data moves between cache and RAM in cache lines of 64 bytes, so reading memory sequentially (arrays) is much faster than jumping around (linked lists, scattered objects): this is locality of reference.
 
 ```csharp
 // Same work, very different speed: row-by-row walks memory sequentially (cache-friendly)
@@ -191,11 +191,11 @@ void PlaceOrder()
 
 ## Lesson: [Intermediate|High] Virtual memory, paging and memory management by the OS
 
-Each process sees its own **virtual address space** (e.g. 128 TB on 64-bit Windows/Linux). The OS and CPU (MMU) translate virtual addresses to physical RAM in fixed-size **pages** (usually 4 KB).
+Each process sees its own **virtual address space** (e.g. 128 TB on 64-bit Windows/Linux). The OS and CPU (MMU) translate virtual addresses to physical RAM in fixed-size pages (usually 4 KB).
 
 - **Isolation:** one process can't read another's memory → security and stability.
 - **Overcommit:** processes can reserve more than physical RAM; pages are loaded only when touched.
-- **Page fault:** accessing a page not in RAM → the OS loads it (from the page file/swap or the executable on disk). Too many = **thrashing** (system becomes extremely slow).
+- **Page fault:** accessing a page not in RAM → the OS loads it (from the page file/swap or the executable on disk). Too many = thrashing (system becomes extremely slow).
 - **Memory-mapped files:** a file mapped into memory; reading memory reads the file (used by databases and the .NET loader).
 
 Terms you see in Task Manager / monitoring:
@@ -207,7 +207,7 @@ Terms you see in Task Manager / monitoring:
 | Virtual size | All reserved address space (often huge, mostly unused) |
 | Page file / swap | Disk area used when RAM is full |
 
-> **Interview tip:** "Memory leak in a managed app" usually means objects are still **referenced** (static lists, event handlers, caches without limits), so the GC is not allowed to free them, the OS sees private bytes grow until out-of-memory or the container is killed.
+> **Interview tip:** "Memory leak in a managed app" usually means objects are still referenced (static lists, event handlers, caches without limits), so the GC is not allowed to free them, the OS sees private bytes grow until out-of-memory or the container is killed.
 
 ## Lesson: [Intermediate|High] How memory is managed: manual, reference counting and garbage collection
 
@@ -242,7 +242,7 @@ The **OS kernel** sits between programs and hardware:
 | Networking | TCP/IP stack, sockets |
 | Security | Users, permissions, isolation |
 
-**User mode vs kernel mode:** your code runs in user mode; when it needs the OS (read a file, send a packet, allocate pages) it makes a **system call**, the CPU switches to kernel mode, the kernel does the work and returns. System calls are relatively expensive: that's why buffering (reading 64 KB at once instead of one byte at a time) matters.
+**User mode vs kernel mode:** your code runs in user mode; when it needs the OS (read a file, send a packet, allocate pages) it makes a system call, the CPU switches to kernel mode, the kernel does the work and returns. System calls are relatively expensive: that's why buffering (reading 64 KB at once instead of one byte at a time) matters.
 
 ## Lesson: [Intermediate|High] Processes vs threads, scheduling and context switches
 
@@ -254,7 +254,7 @@ The **OS kernel** sits between programs and hardware:
 | Communication | IPC: pipes, sockets, shared memory, queues | Shared variables (needs synchronisation) |
 | Crash impact | Only that process | Unhandled exception kills the whole process |
 
-**Scheduling:** the OS gives each runnable thread a **time slice** on a core, then switches to another, a **context switch** (save registers, load another thread's state, cache gets colder). Thousands of threads → lots of switching overhead. That's why .NET uses a **thread pool** (reuse a small number of threads) and **async/await** (don't hold a thread while waiting for I/O).
+**Scheduling:** the OS gives each runnable thread a time slice on a core, then switches to another, a context switch (save registers, load another thread's state, cache gets colder). Thousands of threads → lots of switching overhead. That's why .NET uses a thread pool (reuse a small number of threads) and async/await (don't hold a thread while waiting for I/O).
 
 **Thread states:** new → ready → running → waiting/blocked (I/O, lock, sleep) → ready … → terminated.
 
@@ -267,7 +267,7 @@ Console.WriteLine($"Cores: {Environment.ProcessorCount}");
 
 ## Lesson: [Intermediate|High] Concurrency problems: race conditions, deadlocks and how to avoid them
 
-**Concurrency** = several tasks in progress at once (may interleave on one core). **Parallelism** = tasks literally running at the same time on several cores.
+**Concurrency** = several tasks in progress at once (may interleave on one core). Parallelism = tasks literally running at the same time on several cores.
 
 | Problem | What happens | Fix |
 |---|---|---|
@@ -288,7 +288,7 @@ var gate = new object();
 lock (gate) { /* only one thread at a time here */ }      // ✅ mutual exclusion
 ```
 
-The same ideas appear in databases: SQL Server uses **locks and isolation levels** to stop concurrent transactions corrupting data, and can **deadlock** too (it then kills one transaction as the victim).
+The same ideas appear in databases: SQL Server uses **locks and isolation levels** to stop concurrent transactions corrupting data, and can deadlock too (it then kills one transaction as the victim).
 
 # Module: From Code to Execution
 
@@ -300,15 +300,15 @@ The same ideas appear in databases: SQL Server uses **locks and isolation levels
 | Interpreted | Interpreter executes source/bytecode line by line | Python (bytecode VM), classic JavaScript, PowerShell | Portable, slower |
 | Bytecode + **JIT** | Compile to intermediate code; at runtime compile hot methods to machine code | .NET (IL → RyuJIT), Java (bytecode → HotSpot), JavaScript V8 | Portable + fast after warm-up, startup cost |
 
-**Compiler stages:** lexing (characters → tokens) → parsing (tokens → syntax tree) → semantic analysis (types, symbols) → optimisation → code generation. The C# compiler **Roslyn** does these to produce IL; the **JIT** then turns IL into machine code for the actual CPU (x64 or ARM64), with tiered compilation (quick code first, optimised code for hot methods).
+**Compiler stages:** lexing (characters → tokens) → parsing (tokens → syntax tree) → semantic analysis (types, symbols) → optimisation → code generation. The C# compiler Roslyn does these to produce IL; the JIT then turns IL into machine code for the actual CPU (x64 or ARM64), with tiered compilation (quick code first, optimised code for hot methods).
 
 ## Lesson: [Intermediate|Medium] Putting it together: what happens when your .NET API handles a request
 
 1. The network card receives packets → OS TCP/IP stack reassembles them → data lands in a **socket** buffer (kernel memory).
 2. Kestrel (ASP.NET Core server), waiting asynchronously on that socket, is woken by an I/O completion; a **thread-pool thread** picks up the work.
-3. Bytes are parsed into an `HttpContext` (objects allocated on the **heap**); middleware and your controller run: **CPU** executes JIT-compiled code, using **stack** frames for each method call.
+3. Bytes are parsed into an `HttpContext` (objects allocated on the **heap**); middleware and your controller run: CPU executes JIT-compiled code, using stack frames for each method call.
 4. Your code awaits a SQL query → the thread returns to the pool (no thread blocked); the request is sent through another socket to SQL Server.
-5. SQL Server (its own process) checks its **buffer pool in RAM**; if the pages aren't cached it reads them from **disk** (slow), executes the plan, returns rows.
+5. SQL Server (its own process) checks its **buffer pool in RAM**; if the pages aren't cached it reads them from disk (slow), executes the plan, returns rows.
 6. The continuation runs on a pool thread, serialises JSON, writes to the socket; the OS sends packets back.
 7. Objects of the request become unreachable → collected later by the **GC** (most die in generation 0, very cheaply).
 

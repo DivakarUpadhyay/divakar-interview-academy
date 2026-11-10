@@ -11,7 +11,7 @@ summary: Explaining career gaps, layoffs, frequent job changes, domain/tech swit
 
 # Overview
 
-Two topics make many candidates nervous: **gaps or unusual career moves**, and **talking about money**. Both are normal parts of hiring, and both go well when you prepare **honest, short, confident** answers.
+Two topics make many candidates nervous: **gaps or unusual career moves**, and talking about money. Both are normal parts of hiring, and both go well when you prepare honest, short, confident answers.
 
 Principles:
 
@@ -82,7 +82,7 @@ Don'ts: don't lie or invent a company; don't over-share medical or personal deta
 
 ## Lesson: [Intermediate|High] Switching technology, domain or role
 
-- **Tech switch** (e.g. .NET → React, support → development, manual testing → automation, data → cloud): show **evidence** of the new skill, projects, certifications, internal contributions, and connect transferable skills.
+- **Tech switch** (e.g. .NET → React, support → development, manual testing → automation, data → cloud): show evidence of the new skill, projects, certifications, internal contributions, and connect transferable skills.
 - **Domain switch** (banking → healthcare): highlight domain-agnostic strengths (data handling, compliance awareness, client communication) and a learning plan.
 - **Service company → product company**: product companies focus more on DSA/coding rounds and system design; prepare those explicitly (see Coding Practice).
 - **Developer → lead/manager**: show examples of informal leadership (mentoring, reviews, running stand-ups).
@@ -114,17 +114,17 @@ Don'ts: don't lie or invent a company; don't over-share medical or personal deta
 | ESOPs / RSUs | Equity with a vesting schedule (e.g. 4 years with a 1-year cliff) |
 | Retention bonus, relocation, notice buyout | Negotiable extras |
 
-**In-hand (take-home)** = fixed monthly gross − employee PF (12% of basic) − professional tax (state-dependent, e.g. ₹200/month in several states) − income tax (TDS). Ask HR for the **CTC breakup** and calculate in-hand under the **new vs old tax regime**.
+**In-hand (take-home)** = fixed monthly gross − employee PF (12% of basic) − professional tax (state-dependent, e.g. ₹200/month in several states) − income tax (TDS). Ask HR for the CTC breakup and calculate in-hand under the new vs old tax regime.
 
 Typical hike expectations when switching in Indian IT vary widely with skills, demand and company type: research rather than assume a fixed percentage.
 
 ## Lesson: [Basic|Medium] Understanding an offer in Taiwan
 
-- Salaries are quoted **monthly** (月薪): annual pay is usually **12 months + bonuses**. Many companies pay a **year-end bonus** (年終獎金) and some pay festival bonuses or profit sharing (員工分紅); these vary widely and aren't guaranteed by law, ask how many months were actually paid in recent years.
-- Mandatory **labour insurance** and **national health insurance**: employee contributes a portion, employer the rest.
-- **Labour pension** (new system): employer contributes **at least 6%** of monthly wage to your individual pension account; you may voluntarily add up to 6% (tax-deductible).
+- Salaries are quoted **monthly** (月薪): annual pay is usually 12 months + bonuses. Many companies pay a year-end bonus (年終獎金) and some pay festival bonuses or profit sharing (員工分紅); these vary widely and aren't guaranteed by law, ask how many months were actually paid in recent years.
+- Mandatory **labour insurance** and national health insurance: employee contributes a portion, employer the rest.
+- **Labour pension** (new system): employer contributes at least 6% of monthly wage to your individual pension account; you may voluntarily add up to 6% (tax-deductible).
 - Statutory minimum wage for 2026: **NT$29,500/month** (adjusted yearly; verify current figures).
-- Foreign professionals: employer-sponsored **work permits** usually require a minimum monthly salary for white-collar roles (commonly cited as NT$47,971, but check the Ministry of Labor's current rules); the **Taiwan Employment Gold Card** is an alternative open work permit for qualified professionals.
+- Foreign professionals: employer-sponsored **work permits** usually require a minimum monthly salary for white-collar roles (commonly cited as NT$47,971, but check the Ministry of Labor's current rules); the Taiwan Employment Gold Card is an alternative open work permit for qualified professionals.
 - Ask about: base salary, guaranteed months, year-end bonus history, annual leave (statutory minimums based on seniority), overtime policy, remote work, probation (試用期), and relocation/visa support.
 
 ## Lesson: [Intermediate|High] Researching your market value
@@ -141,7 +141,7 @@ Typical hike expectations when switching in Indian IT vary widely with skills, d
 ## Lesson: [Intermediate|High] Answering "What is your current/expected salary?"
 
 - **Current salary**: answer truthfully if asked (it can be verified); you may add context ("My current fixed is ₹14 LPA plus variable; my expectation is based on the role and market, not just my current pay"). In some regions, asking about salary history is restricted by law: know your local rules.
-- **Expected salary**: give a **researched range** or a number with justification, ideally after you understand the role.
+- **Expected salary**: give a researched range or a number with justification, ideally after you understand the role.
 
 > "Based on the scope of this role, my experience with .NET microservices on Azure and current market data for similar roles in Bengaluru, I'm looking for a fixed component in the range of ₹24–27 lakhs. I'm flexible depending on the overall package, including variable pay and growth opportunities."
 

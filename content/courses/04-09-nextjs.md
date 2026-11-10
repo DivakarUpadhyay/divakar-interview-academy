@@ -11,7 +11,7 @@ summary: What Next.js adds to React, the App Router folder structure with sample
 
 # Overview
 
-**Next.js** (by Vercel) is a **React framework** for full stack web apps. React is a UI library; Next.js adds everything around it: file-based **routing**, **server rendering**, **data fetching**, **API endpoints**, **image/font optimisation**, **SEO metadata**, bundling and deployment.
+**Next.js** (by Vercel) is a React framework for full stack web apps. React is a UI library; Next.js adds everything around it: file-based routing, server rendering, data fetching, API endpoints, image/font optimisation, SEO metadata, bundling and deployment.
 
 | Feature | Plain React (Vite SPA) | Next.js |
 |---|---|---|
@@ -41,9 +41,9 @@ DevLadder itself is built with Next.js (App Router, Server Components reading SQ
 
 1. Request reaches the Next.js server (Node.js runtime, edge, or Vercel's infrastructure); **proxy/middleware** runs first (redirects, auth checks, rewrites).
 2. The router matches the URL to `app/products/[id]/page.tsx` and its parent **layouts**.
-3. **Server Components** render on the server: `await params`, fetch data (database, APIs) directly; the output is the **RSC payload** (a serialised component tree) and HTML.
+3. **Server Components** render on the server: `await params`, fetch data (database, APIs) directly; the output is the RSC payload (a serialised component tree) and HTML.
 4. Static parts may come from the cache (prerendered at build or revalidated); dynamic parts stream in with **Suspense** boundaries (`loading.tsx`).
-5. The browser receives HTML immediately (fast first paint, SEO-friendly), then downloads JavaScript only for **Client Components** (`"use client"`) and **hydrates** them to make them interactive.
+5. The browser receives HTML immediately (fast first paint, SEO-friendly), then downloads JavaScript only for **Client Components** (`"use client"`) and hydrates them to make them interactive.
 6. Navigations with `<Link>` fetch only the RSC payload for the new route (no full page reload); prefetching happens for links in view.
 7. Mutations go through **Server Actions** or route handlers; `revalidatePath`/`revalidateTag`/`updateTag` refresh cached data.
 
@@ -325,7 +325,7 @@ File conventions `sitemap.ts`, `robots.ts`, `opengraph-image.tsx`, `icon.tsx` ge
 
 ## Lesson: [Intermediate|Medium] Authentication and deployment (Vercel, Azure, IIS, Docker)
 
-**Authentication:** Auth.js/NextAuth (OAuth providers, credentials, Microsoft Entra ID), Clerk, or your own JWT/cookie session. Check auth in **three places**: proxy (fast redirects), Server Components/layouts (render), and every Server Action/route handler (security, they're public endpoints).
+**Authentication:** Auth.js/NextAuth (OAuth providers, credentials, Microsoft Entra ID), Clerk, or your own JWT/cookie session. Check auth in three places: proxy (fast redirects), Server Components/layouts (render), and every Server Action/route handler (security, they're public endpoints).
 
 **Deployment options:**
 

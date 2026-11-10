@@ -11,7 +11,7 @@ summary: Automation pyramid and Purdue model, sensors and actuators, signals (di
 
 # Overview
 
-**Industrial automation** uses control systems: PLCs, DCS, SCADA, robots, to run machines and processes with little human intervention. It is the **OT (Operational Technology)** side of a factory, as opposed to **IT** (ERP, email, business apps). Industry 4.0 is largely about connecting the two.
+**Industrial automation** uses control systems: PLCs, DCS, SCADA, robots, to run machines and processes with little human intervention. It is the OT (Operational Technology) side of a factory, as opposed to IT (ERP, email, business apps). Industry 4.0 is largely about connecting the two.
 
 **Automation pyramid / Purdue model (ISA-95 levels):**
 
@@ -51,7 +51,7 @@ Typical industries: automotive, pharma, food & beverage, oil & gas, power, water
 3. **Write outputs**: copy the output image to output modules (motors, valves).
 4. **Housekeeping**: communications, diagnostics; then repeat. Scan time is typically 1–50 ms.
 
-**Automation project lifecycle:** requirements & URS → functional design spec (FDS) → I/O list and electrical design → panel build → PLC/HMI programming → **FAT** (Factory Acceptance Test at the vendor) → installation → **SAT** (Site Acceptance Test) → commissioning → validation (IQ/OQ/PQ in pharma) → maintenance and change management.
+**Automation project lifecycle:** requirements & URS → functional design spec (FDS) → I/O list and electrical design → panel build → PLC/HMI programming → FAT (Factory Acceptance Test at the vendor) → installation → SAT (Site Acceptance Test) → commissioning → validation (IQ/OQ/PQ in pharma) → maintenance and change management.
 
 # Tools
 
@@ -78,7 +78,7 @@ Typical industries: automotive, pharma, food & beverage, oil & gas, power, water
 | Pressure / level / flow transmitter | Process values | Analog 4–20 mA, HART, fieldbus |
 | Encoder | Speed / position | Pulses (high-speed counter) |
 
-**Actuators (outputs):** contactors and motors, **VFD** (variable frequency drive, controls AC motor speed), solenoid valves, pneumatic cylinders, control valves, servo drives, indicator lamps, buzzers.
+**Actuators (outputs):** contactors and motors, VFD (variable frequency drive, controls AC motor speed), solenoid valves, pneumatic cylinders, control valves, servo drives, indicator lamps, buzzers.
 
 **Signal types:**
 
@@ -103,7 +103,7 @@ A **PLC (Programmable Logic Controller)** is a rugged industrial computer: CPU, 
 | Programming | IEC 61131-3 languages | Any language |
 | Reliability | Very high, hot-swap modules, redundancy options | Lower |
 
-Related controllers: **DCS** (Distributed Control System, plant-wide continuous processes such as refineries, tightly integrated with its own HMI, e.g. Emerson DeltaV, ABB 800xA, Honeywell Experion); **PAC** (programmable automation controller: PLC + PC features); **RTU** (remote terminal unit for remote sites like pipelines); **safety PLC** (SIL-rated, e.g. Siemens F-CPU, GuardLogix); **soft/virtual PLC** running on industrial PCs.
+Related controllers: **DCS** (Distributed Control System, plant-wide continuous processes such as refineries, tightly integrated with its own HMI, e.g. Emerson DeltaV, ABB 800xA, Honeywell Experion); PAC (programmable automation controller: PLC + PC features); RTU (remote terminal unit for remote sites like pipelines); safety PLC (SIL-rated, e.g. Siemens F-CPU, GuardLogix); soft/virtual PLC running on industrial PCs.
 
 # Module: PLC Programming
 
@@ -128,7 +128,7 @@ Related controllers: **DCS** (Distributed Control System, plant-wide continuous 
 ```
 
 - `| |` normally open contact (true when the bit is 1), `|/|` normally closed contact (true when the bit is 0), `( )` output coil.
-- Pressing **Start** energises **Motor**; the parallel **Motor** contact "seals in" so it stays on after Start is released; **Stop** (wired NC in the field for fail-safety) breaks the rung.
+- Pressing **Start** energises Motor; the parallel Motor contact "seals in" so it stays on after Start is released; Stop (wired NC in the field for fail-safety) breaks the rung.
 
 Same logic in Structured Text:
 
@@ -167,7 +167,7 @@ BoxFull := ctParts.Q;                        // true after 100 parts
 
 ## Lesson: [Intermediate|Medium] PID control loops
 
-**Closed-loop control:** measure the **process variable (PV)**, compare with the **setpoint (SP)**, and adjust the **output (CV/MV)** to reduce the error.
+**Closed-loop control:** measure the process variable (PV), compare with the setpoint (SP), and adjust the output (CV/MV) to reduce the error.
 
 ```text
 SP ──►(+)──error──► PID ──CV──► valve/heater ──► process ──► PV
@@ -218,7 +218,7 @@ Practicalities: anti-windup, bumpless transfer between manual and auto, output l
 | Input registers (3xxxx): 16 bit | Read-only | FC04 |
 | Holding registers (4xxxx): 16 bit | Read/write | FC03 read, FC06 write single, FC16 write multiple |
 
-32-bit floats use **two registers**: check the word/byte order (big-endian vs "word swapped") in the device manual. Modbus has **no authentication or encryption**: keep it on isolated networks.
+32-bit floats use **two registers**: check the word/byte order (big-endian vs "word swapped") in the device manual. Modbus has no authentication or encryption: keep it on isolated networks.
 
 ## Lesson: [Advanced|High] OPC UA: the standard for IT/OT data exchange
 
@@ -283,7 +283,7 @@ Design rules: **read-mostly** (writes to PLCs only through controlled, audited p
 **Functional safety**: protecting people and equipment when something fails:
 
 - Standards: IEC 61508 (general), IEC 61511 (process industry SIS), ISO 13849 / IEC 62061 (machinery).
-- **SIL** (Safety Integrity Level 1–4) / **PL** (Performance Level a–e) express required risk reduction.
+- **SIL** (Safety Integrity Level 1–4) / PL (Performance Level a–e) express required risk reduction.
 - Emergency stop circuits are hard-wired or on safety PLCs; standard PLC logic must never be the only protection.
 - Fail-safe design: stop buttons wired normally-closed, outputs de-energise to a safe state, watchdogs.
 

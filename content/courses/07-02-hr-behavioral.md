@@ -11,7 +11,7 @@ summary: How HR and behavioural rounds work, the STAR method, "tell me about you
 
 # Overview
 
-The **HR round** checks whether you are a good fit for the company and role beyond technical skills: communication, attitude, motivation, stability, culture fit, salary expectations and notice period. **Behavioural interviews** (asked by HR, managers and even technical panels) use questions like "Tell me about a time when..." on the principle that **past behaviour predicts future behaviour**.
+The **HR round** checks whether you are a good fit for the company and role beyond technical skills: communication, attitude, motivation, stability, culture fit, salary expectations and notice period. Behavioural interviews (asked by HR, managers and even technical panels) use questions like "Tell me about a time when..." on the principle that past behaviour predicts future behaviour.
 
 What interviewers evaluate:
 
@@ -50,7 +50,7 @@ Interview practices have evolved:
 5. **Managerial / techno-managerial round**: ownership, team fit, scenarios.
 6. **HR round**: behavioural questions, culture fit, salary discussion.
 7. **Offer**: verbal offer → written offer letter → negotiation → acceptance.
-8. **Background verification** (employment, education, address, criminal check) → **onboarding**.
+8. **Background verification** (employment, education, address, criminal check) → onboarding.
 
 **Answer lifecycle (how to handle any HR question):** listen fully → pause briefly → structure (STAR or point-reason-example) → answer in 60–120 seconds → connect back to the role → stop and let them ask follow-ups.
 
@@ -80,23 +80,23 @@ Tips: use **"I"** for your actions (not only "we"); quantify results (time saved
 
 **Example (tight deadline):**
 
-> **S:** In my last project, the client moved a regulatory reporting release forward by two weeks. **T:** I owned the SSIS and SQL Server part, 14 reports had to be validated. **A:** I listed the reports by risk, automated the reconciliation checks with T-SQL scripts instead of manual Excel comparisons, split work with two colleagues, and gave the client daily status with risks. **R:** We delivered 3 days early with zero defects in UAT, and the reconciliation scripts became part of the standard release checklist.
+> **S:** In my last project, the client moved a regulatory reporting release forward by two weeks. T: I owned the SSIS and SQL Server part, 14 reports had to be validated. A: I listed the reports by risk, automated the reconciliation checks with T-SQL scripts instead of manual Excel comparisons, split work with two colleagues, and gave the client daily status with risks. R: We delivered 3 days early with zero defects in UAT, and the reconciliation scripts became part of the standard release checklist.
 
 ## Lesson: [Basic|High] "Tell me about yourself": the 60–90 second pitch
 
 Formula: **Present → Past → Future** (or Who you are → What you've done → What you want and why here).
 
-> "I'm a .NET developer with 5 years of experience building web APIs and data platforms with C#, ASP.NET Core, SQL Server and Azure. **Currently** at ABC Technologies, I work on a payments platform where I designed the reconciliation service that processes about 2 lakh transactions a day and cut the nightly batch from 3 hours to 25 minutes. **Before that**, at XYZ, I built SSIS/SSRS reporting for a banking client and moved their deployments to Azure DevOps pipelines. **I'm now looking for** a role where I can work on cloud-native, high-scale systems, which is why this position on your Azure platform team interests me."
+> "I'm a .NET developer with 5 years of experience building web APIs and data platforms with C#, ASP.NET Core, SQL Server and Azure. **Currently** at ABC Technologies, I work on a payments platform where I designed the reconciliation service that processes about 2 lakh transactions a day and cut the nightly batch from 3 hours to 25 minutes. Before that, at XYZ, I built SSIS/SSRS reporting for a banking client and moved their deployments to Azure DevOps pipelines. I'm now looking for a role where I can work on cloud-native, high-scale systems, which is why this position on your Azure platform team interests me."
 
 Do: tailor it to the job description, include 1–2 measurable achievements, finish with why this role. Don't: recite your CV line by line, talk about family/personal life at length (unless asked), or go over 2 minutes.
 
 ## Lesson: [Basic|High] Strengths, weaknesses and self-awareness
 
-**Strengths**: pick 2–3 relevant to the role, each with **proof**:
+**Strengths**: pick 2–3 relevant to the role, each with proof:
 
 > "My strength is debugging production issues systematically. Last quarter I traced a recurring timeout to parameter sniffing in a stored procedure using Query Store, fixed it, and added monitoring: incidents for that service dropped to zero."
 
-**Weakness**: real, not disqualifying for the role, and show **what you are doing about it**:
+**Weakness**: real, not disqualifying for the role, and show what you are doing about it:
 
 > "I used to take on too much myself instead of delegating, because I wanted things done perfectly. It slowed the team down in one release. Since then I break work into tasks in Jira early, pair with juniors, and review instead of rewriting: our last sprint finished all committed stories."
 
@@ -130,7 +130,7 @@ Show ambition aligned with the company, not a plan to leave:
 
 ## Lesson: [Basic|Medium] Logistics: notice period, relocation, shifts, joining date
 
-- **Notice period**: state it exactly (e.g. 60 days) and whether **buyout** or early release is possible. Don't promise what you can't deliver.
+- **Notice period**: state it exactly (e.g. 60 days) and whether buyout or early release is possible. Don't promise what you can't deliver.
 - **Relocation**: be clear about willingness and timing; ask about relocation support.
 - **Shifts / on-call / travel**: answer honestly; ask how often.
 - **Bond / service agreement**: read the terms before accepting.

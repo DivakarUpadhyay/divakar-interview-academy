@@ -44,7 +44,7 @@ Together logs, metrics and traces are called **observability**.
 3. A log entry is created: timestamp, level, category, message template, **named properties** (PaymentId, Attempt), exception, scope data (RequestId, TraceId, user).
 4. Each registered **provider/sink** receives it: console, file, Seq, Application Insights, database…
 5. Sinks often **buffer and batch** asynchronously, then write/send.
-6. Logs are **stored** with a retention period, **queried** (search by property, KQL), turned into **alerts** and dashboards.
+6. Logs are **stored** with a retention period, queried (search by property, KQL), turned into alerts and dashboards.
 
 # Tools
 
@@ -220,7 +220,7 @@ finally
 }
 ```
 
-Concepts: **sinks** (Console, File, Seq, Elasticsearch, Application Insights, SQL Server via `Serilog.Sinks.MSSqlServer`), **enrichers** (machine name, thread id, environment, user), **destructuring** (`{@Order}` logs the object's properties; `{$Order}` its ToString), `LogContext.PushProperty("TenantId", id)`.
+Concepts: **sinks** (Console, File, Seq, Elasticsearch, Application Insights, SQL Server via `Serilog.Sinks.MSSqlServer`), enrichers (machine name, thread id, environment, user), destructuring (`{@Order}` logs the object's properties; `{$Order}` its ToString), `LogContext.PushProperty("TenantId", id)`.
 
 ## Lesson: [Intermediate|Medium] NLog and log4net (including .NET Framework apps)
 
@@ -269,7 +269,7 @@ Log.Info("Products page loaded");
 Log.Error("Save failed", ex);
 ```
 
-**Built-in .NET Framework options:** `System.Diagnostics.Trace` with listeners in web.config, `EventLog.WriteEntry` (Windows Event Viewer, needs a registered source), ASP.NET **health monitoring**, **ELMAH** (automatic unhandled-error logging with a web viewer `/elmah.axd`: protect it!).
+**Built-in .NET Framework options:** `System.Diagnostics.Trace` with listeners in web.config, `EventLog.WriteEntry` (Windows Event Viewer, needs a registered source), ASP.NET health monitoring, ELMAH (automatic unhandled-error logging with a web viewer `/elmah.axd`: protect it!).
 
 | | Serilog | NLog | log4net | MS ILogger only |
 |---|---|---|---|---|
@@ -381,7 +381,7 @@ public sealed class AuditInterceptor(ICurrentUser user) : SaveChangesInterceptor
 }
 ```
 
-SQL Server alternatives: **temporal tables** (automatic row history), **SQL Server Audit**, Change Data Capture.
+SQL Server alternatives: **temporal tables** (automatic row history), SQL Server Audit, Change Data Capture.
 
 ## Lesson: [Intermediate|High] OpenTelemetry, Application Insights and querying logs in production
 

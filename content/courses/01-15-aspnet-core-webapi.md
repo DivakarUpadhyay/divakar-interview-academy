@@ -16,7 +16,7 @@ summary: REST principles, controllers vs Minimal APIs, middleware, status codes,
 - **Controller-based APIs**: `[ApiController]` classes with actions (feature-rich: filters, model binding conventions).
 - **Minimal APIs** (.NET 6+): lambda endpoints mapped in `Program.cs` (`app.MapGet(...)`), less ceremony, AOT-friendly.
 
-Related technologies: **gRPC** (high-performance HTTP/2 + Protobuf RPC), **SignalR** (real-time WebSockets), **GraphQL** (Hot Chocolate), **YARP** (reverse proxy/API gateway).
+Related technologies: **gRPC** (high-performance HTTP/2 + Protobuf RPC), SignalR (real-time WebSockets), GraphQL (Hot Chocolate), YARP (reverse proxy/API gateway).
 
 **REST** (Representational State Transfer, Roy Fielding, 2000) constraints: client–server, stateless, cacheable, uniform interface (resources identified by URIs, manipulated via representations, standard HTTP methods), layered system, (optional) code on demand.
 
@@ -78,7 +78,7 @@ Related technologies: **gRPC** (high-performance HTTP/2 + Protobuf RPC), **Signa
 
 Guidelines: nouns not verbs (`/orders`, not `/getOrders`), plural collections, hierarchy for relationships, query string for filtering/sorting/paging, consistent casing (kebab-case paths, camelCase JSON), version the API, use standard status codes.
 
-**Idempotent** methods give the same result if repeated: GET, PUT, DELETE, HEAD, OPTIONS. **Safe** methods don't change state: GET, HEAD, OPTIONS. POST is neither; PATCH is not guaranteed idempotent.
+**Idempotent** methods give the same result if repeated: GET, PUT, DELETE, HEAD, OPTIONS. Safe methods don't change state: GET, HEAD, OPTIONS. POST is neither; PATCH is not guaranteed idempotent.
 
 ## Lesson: [Basic|High] HTTP status codes you must know
 
@@ -275,10 +275,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 ```
 
-A **JWT** has three Base64Url parts: `header.payload.signature`. The payload holds **claims** (`sub`, `iss`, `aud`, `exp`, `iat`, roles/scopes). It is **signed, not encrypted**: anyone can read it, so never put secrets in it. The server validates signature, issuer, audience and expiry without a DB lookup (stateless).
+A **JWT** has three Base64Url parts: `header.payload.signature`. The payload holds claims (`sub`, `iss`, `aud`, `exp`, `iat`, roles/scopes). It is signed, not encrypted: anyone can read it, so never put secrets in it. The server validates signature, issuer, audience and expiry without a DB lookup (stateless).
 
-- **Access token**: short-lived (5–60 min). **Refresh token**: long-lived, stored securely, rotated on use, revocable server-side.
-- OAuth 2.0 flows: **Authorization Code + PKCE** (SPAs, mobile, web), **Client Credentials** (service-to-service). Implicit and password grants are deprecated.
+- **Access token**: short-lived (5–60 min). Refresh token: long-lived, stored securely, rotated on use, revocable server-side.
+- OAuth 2.0 flows: **Authorization Code + PKCE** (SPAs, mobile, web), Client Credentials (service-to-service). Implicit and password grants are deprecated.
 - OpenID Connect adds identity (ID token) on top of OAuth 2.0.
 
 ## Lesson: [Intermediate|High] CORS, HTTPS, rate limiting and API keys
@@ -348,7 +348,7 @@ app.MapOpenApi();                                       // /openapi/v1.json
 // UI: Scalar (app.MapScalarApiReference()) or Swashbuckle/NSwag Swagger UI
 ```
 
-Versioning strategies: **URL segment** (`/v2/orders`: most visible), **query string** (`?api-version=2.0`), **header** (`api-version: 2`), **media type** (`Accept: application/vnd.shop.v2+json`). Only make breaking changes in a new major version; additive changes are non-breaking.
+Versioning strategies: **URL segment** (`/v2/orders`: most visible), query string (`?api-version=2.0`), header (`api-version: 2`), media type (`Accept: application/vnd.shop.v2+json`). Only make breaking changes in a new major version; additive changes are non-breaking.
 
 ## Lesson: [Advanced|High] HttpClient correctly: IHttpClientFactory and resilience
 
@@ -366,7 +366,7 @@ public class WeatherClient(HttpClient http) : IWeatherClient
 }
 ```
 
-- `new HttpClient()` per request → **socket exhaustion** (sockets stay in TIME_WAIT). One static `HttpClient` forever → **stale DNS**.
+- `new HttpClient()` per request → **socket exhaustion** (sockets stay in TIME_WAIT). One static `HttpClient` forever → stale DNS.
 - `IHttpClientFactory` pools and recycles `HttpMessageHandler`s (default lifetime 2 minutes): solves both. (Alternatively a singleton `HttpClient` with `SocketsHttpHandler.PooledConnectionLifetime`.)
 
 ## Lesson: [Advanced|Medium] Real-time and RPC: SignalR, gRPC, webhooks
@@ -379,24 +379,24 @@ public class WeatherClient(HttpClient http) : IWeatherClient
 ## Lesson: [Advanced|High] Microservices basics for API developers
 
 - Each service owns its data (database per service), deploys independently, communicates via HTTP/gRPC (sync) or messaging (async: Azure Service Bus, RabbitMQ, Kafka).
-- **API Gateway** (Azure API Management, YARP, Ocelot): routing, auth, rate limiting, aggregation; **BFF** per client type.
-- **Service discovery** (Kubernetes DNS, Aspire service discovery), **config** centralised, **observability** via OpenTelemetry traces with correlation IDs.
-- **Resilience**: timeouts, retries, circuit breakers; **idempotency keys** for POSTs; **Outbox** for reliable events; **Saga** for distributed transactions.
+- **API Gateway** (Azure API Management, YARP, Ocelot): routing, auth, rate limiting, aggregation; BFF per client type.
+- **Service discovery** (Kubernetes DNS, Aspire service discovery), config centralised, observability via OpenTelemetry traces with correlation IDs.
+- **Resilience**: timeouts, retries, circuit breakers; idempotency keys for POSTs; Outbox for reliable events; Saga for distributed transactions.
 - Start with a **modular monolith** unless you need independent scaling/deployment: microservices add operational cost.
 
 # Interview
 
 ## [Beginner|High] What is REST? What are its constraints?
 
-REST is an architectural style for networked APIs (Roy Fielding, 2000). Constraints: client–server separation, **statelessness** (each request carries everything needed, e.g. a token), cacheability, a **uniform interface** (resources identified by URIs, standard methods, self-descriptive messages, optionally hypermedia), a layered system, and optional code-on-demand. In practice: resource-oriented URLs, HTTP verbs, status codes, and JSON representations.
+REST is an architectural style for networked APIs (Roy Fielding, 2000). Constraints: client–server separation, **statelessness** (each request carries everything needed, e.g. a token), cacheability, a uniform interface (resources identified by URIs, standard methods, self-descriptive messages, optionally hypermedia), a layered system, and optional code-on-demand. In practice: resource-oriented URLs, HTTP verbs, status codes, and JSON representations.
 
 ## [Beginner|High] What is the difference between PUT, POST and PATCH?
 
-**POST** creates a resource (server assigns the ID) or triggers a process; not idempotent; returns 201 + Location. **PUT** replaces the whole resource at a known URI; idempotent (sending it twice gives the same state). **PATCH** partially updates (JSON Patch or JSON Merge Patch); not necessarily idempotent. Missing fields in PUT usually mean "set to default/null", in PATCH they mean "leave unchanged".
+**POST** creates a resource (server assigns the ID) or triggers a process; not idempotent; returns 201 + Location. PUT replaces the whole resource at a known URI; idempotent (sending it twice gives the same state). PATCH partially updates (JSON Patch or JSON Merge Patch); not necessarily idempotent. Missing fields in PUT usually mean "set to default/null", in PATCH they mean "leave unchanged".
 
 ## [Beginner|High] What is the difference between 401 and 403?
 
-**401 Unauthorized** really means *unauthenticated*: no valid credentials, so the client should log in or refresh its token (the response includes `WWW-Authenticate`). **403 Forbidden** means the identity is known but lacks permission, and re-authenticating won't help. In ASP.NET Core, `Challenge()` produces 401 and `Forbid()` produces 403.
+**401 Unauthorized** really means *unauthenticated*: no valid credentials, so the client should log in or refresh its token (the response includes `WWW-Authenticate`). 403 Forbidden means the identity is known but lacks permission, and re-authenticating won't help. In ASP.NET Core, `Challenge()` produces 401 and `Forbid()` produces 403.
 
 ## [Beginner|High] What does the `[ApiController]` attribute do?
 
@@ -444,7 +444,7 @@ Offset: `Skip((page-1)*size).Take(size)` plus a total count. It's simple and all
 
 ## [Intermediate|Medium] What are the rate-limiting algorithms in ASP.NET Core?
 
-Built-in since .NET 7 (`AddRateLimiter`): **Fixed window** (N requests per window; bursty at window edges), **Sliding window** (window split into segments; smoother), **Token bucket** (tokens refill at a rate; allows bursts up to bucket size), **Concurrency** (max simultaneous requests). Partition by user, API key or IP; return 429 with `Retry-After`. For multiple instances, apply limits at the gateway (APIM, Front Door) or use a distributed store.
+Built-in since .NET 7 (`AddRateLimiter`): **Fixed window** (N requests per window; bursty at window edges), Sliding window (window split into segments; smoother), Token bucket (tokens refill at a rate; allows bursts up to bucket size), Concurrency (max simultaneous requests). Partition by user, API key or IP; return 429 with `Retry-After`. For multiple instances, apply limits at the gateway (APIM, Front Door) or use a distributed store.
 
 ## [Advanced|High] How do you make a POST endpoint idempotent (e.g. payments)?
 
@@ -472,7 +472,7 @@ Profile first (Application Insights, EF logging). Typical fixes: add pagination 
 
 ## [Scenario|High] A downstream payment API is slow and occasionally down, and your API threads pile up. How do you protect your service?
 
-Add **timeouts** (per attempt and total), **retries** with exponential backoff and jitter only for idempotent calls (or with idempotency keys), a **circuit breaker** to fail fast while it's down, and a **bulkhead/concurrency limit** so payment calls can't consume all resources. `AddStandardResilienceHandler()` covers most of this. For non-interactive flows, put requests on a queue (Service Bus) and process them asynchronously with status callbacks or webhooks. Return a clear 503/202 to clients and alert on circuit-open events.
+Add **timeouts** (per attempt and total), retries with exponential backoff and jitter only for idempotent calls (or with idempotency keys), a circuit breaker to fail fast while it's down, and a bulkhead/concurrency limit so payment calls can't consume all resources. `AddStandardResilienceHandler()` covers most of this. For non-interactive flows, put requests on a queue (Service Bus) and process them asynchronously with status callbacks or webhooks. Return a clear 503/202 to clients and alert on circuit-open events.
 
 ## [Scenario|Medium] Mobile clients on an old app version break when you rename a JSON field. How do you avoid this in future?
 
@@ -480,7 +480,7 @@ Treat the API as a contract. Make only **additive** changes in the current versi
 
 ## [Scenario|Medium] After scaling the API to 3 instances, users randomly get logged out and in-memory cache data differs. Why?
 
-The state was per instance: in-memory session or cache, and maybe Data Protection keys (used for cookies and antiforgery) generated per instance. Fix: keep the API stateless (JWT), store session/cache in **Redis** (`IDistributedCache`/HybridCache L2), and persist **Data Protection keys** to a shared store (Azure Blob + Key Vault, Redis or a DB) with the same application name. Avoid sticky sessions as a crutch.
+The state was per instance: in-memory session or cache, and maybe Data Protection keys (used for cookies and antiforgery) generated per instance. Fix: keep the API stateless (JWT), store session/cache in **Redis** (`IDistributedCache`/HybridCache L2), and persist Data Protection keys to a shared store (Azure Blob + Key Vault, Redis or a DB) with the same application name. Avoid sticky sessions as a crutch.
 
 ## [Beginner|Medium] What is Swagger/OpenAPI and how do you add it to an ASP.NET Core API?
 

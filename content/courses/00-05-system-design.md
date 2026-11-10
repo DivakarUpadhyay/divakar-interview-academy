@@ -11,7 +11,7 @@ summary: How to design large systems, requirements and estimation, scalability a
 
 # Overview
 
-**High-Level Design (HLD)** describes a system as boxes and arrows: clients, load balancers, services, databases, caches, queues, storage, and how data flows between them. **Low-Level Design (LLD)** zooms into one box: classes, interfaces, methods, database tables (next course). **System design interviews** are mostly HLD for experienced roles, with some LLD.
+**High-Level Design (HLD)** describes a system as boxes and arrows: clients, load balancers, services, databases, caches, queues, storage, and how data flows between them. Low-Level Design (LLD) zooms into one box: classes, interfaces, methods, database tables (next course). System design interviews are mostly HLD for experienced roles, with some LLD.
 
 | Question HLD answers | Example decision |
 |---|---|
@@ -94,7 +94,7 @@ Stateless services are the key to horizontal scaling: keep session/state in Redi
 
 ## Lesson: [Intermediate|High] CAP theorem, consistency models and PACELC
 
-**CAP:** in a distributed data store, when a **network partition** happens you must choose between **Consistency** (every read sees the latest write) and **Availability** (every request gets a response). Partitions are unavoidable, so the real choice is CP vs AP during failures.
+**CAP:** in a distributed data store, when a network partition happens you must choose between Consistency (every read sees the latest write) and Availability (every request gets a response). Partitions are unavoidable, so the real choice is CP vs AP during failures.
 
 | Choice | Behaviour during partition | Examples |
 |---|---|---|
@@ -103,7 +103,7 @@ Stateless services are the key to horizontal scaling: keep session/state in Redi
 
 **PACELC:** if Partition → choose A or C; Else (normal operation) → choose Latency or Consistency. Synchronous replication = more consistency, more latency.
 
-**Consistency models:** strong (linearizable) → read-your-writes → monotonic reads → causal → **eventual** (replicas converge eventually). Choose per feature: payment balance strong; like counts eventual.
+**Consistency models:** strong (linearizable) → read-your-writes → monotonic reads → causal → eventual (replicas converge eventually). Choose per feature: payment balance strong; like counts eventual.
 
 **ACID vs BASE:** ACID (Atomicity, Consistency, Isolation, Durability), relational transactions. BASE (Basically Available, Soft state, Eventually consistent): many NoSQL systems.
 
@@ -111,7 +111,7 @@ Stateless services are the key to horizontal scaling: keep session/state in Redi
 
 ## Lesson: [Intermediate|High] Load balancing and API gateways
 
-Clients → **DNS** (can balance across regions: Azure Traffic Manager/Front Door) → **load balancer** (L4 or L7) → service instances. Algorithms: round robin, least connections, consistent hashing (sticky by user/key), weighted. Health checks remove failed instances. Load balancers themselves are redundant (active-passive pairs or managed cloud services).
+Clients → **DNS** (can balance across regions: Azure Traffic Manager/Front Door) → load balancer (L4 or L7) → service instances. Algorithms: round robin, least connections, consistent hashing (sticky by user/key), weighted. Health checks remove failed instances. Load balancers themselves are redundant (active-passive pairs or managed cloud services).
 
 An **API gateway** adds authentication, rate limiting, request routing to microservices, response aggregation and API versioning (Azure API Management, YARP, Kong).
 
@@ -155,7 +155,7 @@ Browser cache → CDN → API gateway/output cache → application in-memory cac
 | Object storage | Azure Blob, S3 | Huge files cheaply | Images, videos, backups |
 | Vector | pgvector, Azure AI Search vectors, Qdrant | Similarity search on embeddings | AI/RAG, recommendations |
 
-Default: **start with a relational database** unless a specific need (massive scale for simple access patterns, flexible schema, special query type) points elsewhere. Many systems are **polyglot**: SQL for transactions + Redis + Blob + search index.
+Default: **start with a relational database** unless a specific need (massive scale for simple access patterns, flexible schema, special query type) points elsewhere. Many systems are polyglot: SQL for transactions + Redis + Blob + search index.
 
 ## Lesson: [Advanced|High] Replication, partitioning, sharding and consistent hashing
 
@@ -189,7 +189,7 @@ Choose a shard key that spreads load evenly and keeps related data together (e.g
 | Ordering | Per queue/session | Per partition |
 | Use | Background jobs, commands, decoupling services | Analytics, event sourcing, IoT, activity tracking, CDC |
 
-Benefits: **decoupling** (producer doesn't wait for the consumer), **load levelling** (absorb spikes), **reliability** (retry, dead-letter queue), **fan-out** (many subscribers). Design consumers to be **idempotent** (at-least-once delivery). Use the outbox pattern to publish events reliably with database changes.
+Benefits: **decoupling** (producer doesn't wait for the consumer), load levelling (absorb spikes), reliability (retry, dead-letter queue), fan-out (many subscribers). Design consumers to be idempotent (at-least-once delivery). Use the outbox pattern to publish events reliably with database changes.
 
 ## Lesson: [Intermediate|Medium] Rate limiting, search, storage and CDNs
 
@@ -276,7 +276,7 @@ Key decisions:
 - **Failure handling:** timeouts, retries with backoff + jitter, circuit breakers, bulkheads, graceful degradation (show cached data), health checks.
 - **Observability:** logs, metrics (golden signals: latency, traffic, errors, saturation), distributed traces; SLOs and alerts on symptoms users feel.
 - **Deployments:** blue-green, canary releases, feature flags, automatic rollback.
-- **Disaster recovery:** **RPO** (how much data you can lose) and **RTO** (how long you can be down) drive the design, backups (RPO hours), async geo-replication (minutes), sync replication (zero); regular restore drills.
+- **Disaster recovery:** RPO (how much data you can lose) and RTO (how long you can be down) drive the design, backups (RPO hours), async geo-replication (minutes), sync replication (zero); regular restore drills.
 - **Security:** authentication at the edge, least privilege between services, encryption in transit and at rest, secrets in a vault, WAF, DDoS protection.
 
 # Interview

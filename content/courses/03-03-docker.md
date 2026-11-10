@@ -11,7 +11,7 @@ summary: Containers vs VMs, images and layers, Dockerfile for .NET, multi-stage 
 
 # Overview
 
-**Docker** packages an application with everything it needs (runtime, libraries, config) into a **container image** that runs the same on a laptop, CI server or cloud. A **container** is a running instance of an image: an isolated process that shares the host's OS kernel.
+**Docker** packages an application with everything it needs (runtime, libraries, config) into a container image that runs the same on a laptop, CI server or cloud. A container is a running instance of an image: an isolated process that shares the host's OS kernel.
 
 | | Virtual machine | Container |
 |---|---|---|
@@ -21,7 +21,7 @@ summary: Containers vs VMs, images and layers, Dockerfile for .NET, multi-stage 
 | Density | Few per host | Many per host |
 | OS | Any guest OS | Shares host kernel (Linux containers on Linux; Windows containers on Windows) |
 
-Key pieces: **Docker Engine** (daemon `dockerd` + CLI), **images**, **containers**, **Dockerfile**, **registries** (Docker Hub, Azure Container Registry, GitHub Container Registry), **volumes**, **networks**, **Docker Compose**. Standards: the **OCI** (Open Container Initiative) image and runtime specs; low-level runtimes **containerd** and **runc**.
+Key pieces: **Docker Engine** (daemon `dockerd` + CLI), images, containers, Dockerfile, registries (Docker Hub, Azure Container Registry, GitHub Container Registry), volumes, networks, Docker Compose. Standards: the OCI (Open Container Initiative) image and runtime specs; low-level runtimes containerd and runc.
 
 # Versions
 
@@ -40,15 +40,15 @@ Key pieces: **Docker Engine** (daemon `dockerd` + CLI), **images**, **containers
 | 2023 | **Docker Compose v2** (`docker compose`) replaces `docker-compose`; Docker Scout; Docker Init |
 | 2024–2025 | Docker Engine 27/28: Docker Build Cloud, Docker Desktop AI features, hardened images |
 
-.NET images: `mcr.microsoft.com/dotnet/sdk` (build), `aspnet` (ASP.NET Core runtime), `runtime` (console apps), `runtime-deps` (self-contained/AOT). Since .NET 8 they run as a **non-root** `app` user and default to port **8080**.
+.NET images: `mcr.microsoft.com/dotnet/sdk` (build), `aspnet` (ASP.NET Core runtime), `runtime` (console apps), `runtime-deps` (self-contained/AOT). Since .NET 8 they run as a **non-root** `app` user and default to port 8080.
 
 # Lifecycle
 
 **Container lifecycle:**
 
-`docker create` → **Created** → `docker start` → **Running** → `docker pause` → **Paused** → `docker unpause` → Running → `docker stop` (SIGTERM, then SIGKILL after 10 s) → **Exited** → `docker start` again or `docker rm` → **Removed**. `docker run` = create + start. `docker kill` sends SIGKILL immediately. Restart policies: `no`, `on-failure`, `always`, `unless-stopped`.
+`docker create` → **Created** → `docker start` → Running → `docker pause` → Paused → `docker unpause` → Running → `docker stop` (SIGTERM, then SIGKILL after 10 s) → Exited → `docker start` again or `docker rm` → Removed. `docker run` = create + start. `docker kill` sends SIGKILL immediately. Restart policies: `no`, `on-failure`, `always`, `unless-stopped`.
 
-**Image lifecycle:** write **Dockerfile** → `docker build` (each instruction creates a cached **layer**) → `docker tag` → `docker push` to a registry → `docker pull` on the target → `docker run` → update → rebuild/retag → prune old images.
+**Image lifecycle:** write Dockerfile → `docker build` (each instruction creates a cached layer) → `docker tag` → `docker push` to a registry → `docker pull` on the target → `docker run` → update → rebuild/retag → prune old images.
 
 **Dev-to-prod flow:** code → Dockerfile → CI builds and tests the image → scan for vulnerabilities → push with an immutable tag (git SHA) → deploy to Kubernetes/Azure Container Apps/App Service → monitor.
 
@@ -72,10 +72,10 @@ Key pieces: **Docker Engine** (daemon `dockerd` + CLI), **images**, **containers
 
 ## Lesson: [Basic|High] Images, containers, layers and registries
 
-- **Image**: read-only template made of stacked **layers** (each Dockerfile instruction adds one). Identified by `repository:tag` (e.g. `myacr.azurecr.io/shop-api:1.4.2`) and an immutable **digest** (`@sha256:...`).
+- **Image**: read-only template made of stacked layers (each Dockerfile instruction adds one). Identified by `repository:tag` (e.g. `myacr.azurecr.io/shop-api:1.4.2`) and an immutable digest (`@sha256:...`).
 - **Container**: image + a thin writable layer + runtime config (env vars, ports, mounts). Changes in the writable layer are lost when the container is removed.
 - **Layer caching**: unchanged layers are reused between builds and shared between images on disk (copy-on-write via the overlay2 storage driver).
-- **Registry**: stores images; **repository**: one image name with many tags.
+- **Registry**: stores images; repository: one image name with many tags.
 
 ```bash
 docker pull mcr.microsoft.com/dotnet/aspnet:10.0
@@ -108,7 +108,7 @@ docker system df                      # disk usage
 | `HEALTHCHECK` | Command to test container health |
 | `LABEL`, `VOLUME`, `STOPSIGNAL`, `SHELL` | Metadata, mount points, signals |
 
-**CMD vs ENTRYPOINT:** `ENTRYPOINT ["dotnet", "Api.dll"]` fixes the program; `CMD ["--urls", "http://+:8080"]` supplies default args that `docker run image <args>` replaces. Use the **exec form** (JSON array) so the app is PID 1 and receives SIGTERM for graceful shutdown.
+**CMD vs ENTRYPOINT:** `ENTRYPOINT ["dotnet", "Api.dll"]` fixes the program; `CMD ["--urls", "http://+:8080"]` supplies default args that `docker run image <args>` replaces. Use the exec form (JSON array) so the app is PID 1 and receives SIGTERM for graceful shutdown.
 
 ## Lesson: [Intermediate|High] Multi-stage Dockerfile for ASP.NET Core
 
@@ -163,7 +163,7 @@ docker network create shopnet
 docker run -d --name api --network shopnet shop-api:1.0     # reachable as http://api:8080 by other containers on shopnet
 ```
 
-Network drivers: **bridge** (default; user-defined bridges give DNS by container name), **host** (share host network stack), **none**, **overlay** (multi-host, Swarm), **macvlan**. `-p 8080:80` publishes host port 8080 → container port 80.
+Network drivers: **bridge** (default; user-defined bridges give DNS by container name), host (share host network stack), none, overlay (multi-host, Swarm), macvlan. `-p 8080:80` publishes host port 8080 → container port 80.
 
 # Module: Docker Compose
 
@@ -243,7 +243,7 @@ docker cp api:/app/appsettings.json .                 # copy files out
 docker history shop-api:1.0                           # layers and sizes
 ```
 
-Common issues: app listening on `localhost` instead of `0.0.0.0` inside the container (ASP.NET Core images listen on all interfaces on 8080); wrong port mapping (80 vs 8080 after .NET 8); exit code **137** = killed (OOM or SIGKILL); **139** = segfault; container exits immediately because the main process ended; file permission errors when running as non-root; DNS between containers needs a user-defined network.
+Common issues: app listening on `localhost` instead of `0.0.0.0` inside the container (ASP.NET Core images listen on all interfaces on 8080); wrong port mapping (80 vs 8080 after .NET 8); exit code **137** = killed (OOM or SIGKILL); 139 = segfault; container exits immediately because the main process ended; file permission errors when running as non-root; DNS between containers needs a user-defined network.
 
 ## Lesson: [Intermediate|Medium] Where containers run in Azure
 
@@ -303,7 +303,7 @@ The official `aspnet` images don't include `curl`. Either install it in your fin
 
 **4. Graceful shutdown**
 
-`docker stop` sends **SIGTERM**, waits (10 seconds by default), then sends **SIGKILL**. ASP.NET Core handles SIGTERM: it stops accepting new requests and waits for running ones to finish, up to `HostOptions.ShutdownTimeout` (30 seconds by default in current .NET). If Docker's wait is shorter than the app's, requests get cut off mid-way, so set `stop_grace_period` (Compose) or `docker stop -t 40` longer than the app's timeout.
+`docker stop` sends **SIGTERM**, waits (10 seconds by default), then sends SIGKILL. ASP.NET Core handles SIGTERM: it stops accepting new requests and waits for running ones to finish, up to `HostOptions.ShutdownTimeout` (30 seconds by default in current .NET). If Docker's wait is shorter than the app's, requests get cut off mid-way, so set `stop_grace_period` (Compose) or `docker stop -t 40` longer than the app's timeout.
 
 Use the **exec form** `ENTRYPOINT ["dotnet", "Shop.Api.dll"]`. The shell form (`ENTRYPOINT dotnet Shop.Api.dll`) wraps your app in `/bin/sh`, which doesn't forward SIGTERM, so the app gets killed after the timeout instead of shutting down cleanly.
 
@@ -358,9 +358,9 @@ These are the errors people hit most when containerising .NET apps, with the usu
 
 **"Bind for 0.0.0.0:8080 failed: port is already allocated".** Another container or a local process already uses that host port. Find it with `docker ps` (or `netstat -ano | findstr :8080` on Windows), stop it, or map a different host port: `-p 8081:8080`.
 
-**The app works inside the container but the browser can't reach it.** Check the mapping goes to the port the app listens on. Since .NET 8 the images listen on **8080**, so old `-p 80:80` mappings stop working. The app must also listen on `0.0.0.0`, not `localhost`, inside the container.
+**The app works inside the container but the browser can't reach it.** Check the mapping goes to the port the app listens on. Since .NET 8 the images listen on 8080, so old `-p 80:80` mappings stop working. The app must also listen on `0.0.0.0`, not `localhost`, inside the container.
 
-**"Cannot connect to SQL Server" from the API container.** Inside Compose, use the **service name** as the server (`Server=sql`), not `localhost`: `localhost` inside a container means the container itself. From your host machine, `localhost,1433` is correct. Also add `TrustServerCertificate=True` for the self-signed certificate in development.
+**"Cannot connect to SQL Server" from the API container.** Inside Compose, use the service name as the server (`Server=sql`), not `localhost`: `localhost` inside a container means the container itself. From your host machine, `localhost,1433` is correct. Also add `TrustServerCertificate=True` for the self-signed certificate in development.
 
 **"exec /entrypoint.sh: no such file or directory" although the file exists.** The script was saved with Windows (CRLF) line endings, so Linux looks for `/bin/sh\r`. Convert it to LF (in VS Code, click "CRLF" in the status bar) and add `*.sh text eol=lf` to `.gitattributes`.
 
@@ -422,7 +422,7 @@ Each instruction produces a layer; Docker reuses a cached layer if the instructi
 
 ## [Advanced|Medium] How does Docker isolate containers under the hood?
 
-Linux **namespaces** isolate what a process can see: PID, network, mount, UTS (hostname), IPC, user and cgroup namespaces. **cgroups** limit and account resources (CPU, memory, I/O). **Union/overlay filesystems** provide layered images with copy-on-write. Security layers: capabilities, seccomp profiles, AppArmor/SELinux, user namespaces/rootless mode. containerd and runc (OCI runtime) actually create the containers.
+Linux **namespaces** isolate what a process can see: PID, network, mount, UTS (hostname), IPC, user and cgroup namespaces. cgroups limit and account resources (CPU, memory, I/O). Union/overlay filesystems provide layered images with copy-on-write. Security layers: capabilities, seccomp profiles, AppArmor/SELinux, user namespaces/rootless mode. containerd and runc (OCI runtime) actually create the containers.
 
 ## [Advanced|Medium] Why did Kubernetes "remove Docker" and does it matter?
 

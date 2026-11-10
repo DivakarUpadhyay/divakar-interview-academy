@@ -11,7 +11,7 @@ summary: The SQL Server architecture (protocol layer, relational engine, storage
 
 # Overview
 
-SQL Server looks simple from outside: you send T-SQL and get rows, but inside it is an operating system of its own. Understanding it explains **why** indexes help, **why** a query is slow, **why** blocking and deadlocks happen and **how** data survives a crash.
+SQL Server looks simple from outside: you send T-SQL and get rows, but inside it is an operating system of its own. Understanding it explains **why** indexes help, why a query is slow, why blocking and deadlocks happen and how data survives a crash.
 
 ```text
 Client (ADO.NET / EF / SSMS)
@@ -54,16 +54,16 @@ Client (ADO.NET / EF / SSMS)
 **Life of a query: `SELECT Name FROM dbo.Customers WHERE Id = 42`:**
 
 1. **Connect**: the client opens a TCP connection (pooled by ADO.NET), authenticates, gets a session (SPID).
-2. **Send**: the batch arrives as TDS packets; a **worker thread** on a **scheduler** (one per CPU core) picks it up.
+2. **Send**: the batch arrives as TDS packets; a worker thread on a scheduler (one per CPU core) picks it up.
 3. **Parse**: syntax check → parse tree.
 4. **Algebrize (bind)**: resolve names (tables, columns, types), check permissions → query tree.
 5. **Plan cache lookup**: hash the query text; if a cached plan exists, reuse it (skip optimisation).
-6. **Optimize**: cost-based optimizer uses **statistics** to estimate rows, explores alternatives (indexes, join orders and algorithms) and chooses the cheapest **execution plan**; plan stored in cache.
-7. **Execute**: the executor runs plan operators; the storage engine reads needed **pages** through the **buffer pool** (from memory if cached, otherwise physical reads from disk).
+6. **Optimize**: cost-based optimizer uses statistics to estimate rows, explores alternatives (indexes, join orders and algorithms) and chooses the cheapest execution plan; plan stored in cache.
+7. **Execute**: the executor runs plan operators; the storage engine reads needed pages through the buffer pool (from memory if cached, otherwise physical reads from disk).
 8. **Lock**: shared locks (or row versions) protect consistency according to the isolation level.
 9. **Return**: rows are streamed back in TDS packets; locks released per isolation rules.
 
-For a **write**: the change is applied to pages **in memory**, the log record is written to the **transaction log** first (write-ahead logging), and on `COMMIT` the log is hardened to disk; dirty data pages are written later by checkpoint/lazy writer.
+For a **write**: the change is applied to pages in memory, the log record is written to the transaction log first (write-ahead logging), and on `COMMIT` the log is hardened to disk; dirty data pages are written later by checkpoint/lazy writer.
 
 # Tools
 
@@ -90,7 +90,7 @@ For a **write**: the change is applied to pages **in memory**, the log record is
 | Lock manager | Locks for concurrency control; deadlock detection (every 5 s by default, faster when deadlocks are found) |
 | **SQLOS** | SQL Server's "OS layer": cooperative scheduling, memory management, I/O, waits |
 
-**Scheduling:** SQLOS creates one **scheduler** per logical CPU. Each task (a request or part of a parallel query) runs on a **worker** (thread). Workers **yield cooperatively**; when a task must wait (for a page read, a lock, a log flush, memory, network), it goes to a waiting list with a **wait type**. When the resource is ready it moves to the runnable queue.
+**Scheduling:** SQLOS creates one scheduler per logical CPU. Each task (a request or part of a parallel query) runs on a worker (thread). Workers yield cooperatively; when a task must wait (for a page read, a lock, a log flush, memory, network), it goes to a waiting list with a wait type. When the resource is ready it moves to the runnable queue.
 
 ```text
 RUNNING ──needs resource──▶ SUSPENDED (wait type, e.g. PAGEIOLATCH_SH) ──resource ready──▶ RUNNABLE (waiting for CPU = signal wait) ──▶ RUNNING
@@ -117,9 +117,9 @@ ORDER BY wait_time_ms DESC;
 
 ## Lesson: [Intermediate|High] Pages, extents, files and allocation maps
 
-- A database has at least one **data file** (`.mdf`, plus optional `.ndf` in **filegroups**) and one **log file** (`.ldf`).
-- Data files are divided into **pages of 8 KB** (8,192 bytes: 96-byte header, row data, **row offset array** at the end). Maximum in-row data ≈ 8,060 bytes per row.
-- 8 contiguous pages = an **extent** (64 KB). **Mixed extents** (shared by objects) vs **uniform extents** (one object; default for new allocations since SQL Server 2016).
+- A database has at least one **data file** (`.mdf`, plus optional `.ndf` in filegroups) and one log file (`.ldf`).
+- Data files are divided into **pages of 8 KB** (8,192 bytes: 96-byte header, row data, row offset array at the end). Maximum in-row data ≈ 8,060 bytes per row.
+- 8 contiguous pages = an **extent** (64 KB). Mixed extents (shared by objects) vs uniform extents (one object; default for new allocations since SQL Server 2016).
 
 | Page type | Holds |
 |---|---|
@@ -132,7 +132,7 @@ ORDER BY wait_time_ms DESC;
 | DCM / BCM | Changed extents since last full backup / bulk-logged operations |
 | Boot page, file header | Database and file metadata |
 
-**Row structure (FixedVar format):** status bits, fixed-length columns, **null bitmap**, variable-length column count and offset array, variable-length data. That's why fixed-length types (`INT`, `CHAR(10)`) are laid out first and `VARCHAR` columns need offsets.
+**Row structure (FixedVar format):** status bits, fixed-length columns, null bitmap, variable-length column count and offset array, variable-length data. That's why fixed-length types (`INT`, `CHAR(10)`) are laid out first and `VARCHAR` columns need offsets.
 
 ```sql
 -- See how many pages a table uses and how full they are
@@ -142,11 +142,11 @@ FROM sys.dm_db_index_physical_stats(DB_ID(), OBJECT_ID('dbo.Orders'), NULL, NULL
 
 ## Lesson: [Intermediate|High] Heaps, clustered and nonclustered indexes: B+ tree internals
 
-**Heap**: a table without a clustered index: rows stored in no particular order, located by a **RID** (file:page:slot). Updates that grow a row may leave **forwarding pointers**. Fine for staging tables; usually bad for OLTP.
+**Heap**: a table without a clustered index: rows stored in no particular order, located by a RID (file:page:slot). Updates that grow a row may leave forwarding pointers. Fine for staging tables; usually bad for OLTP.
 
-**Clustered index**: the table itself **is** a B+ tree ordered by the clustering key: root page → intermediate pages → **leaf pages containing the full rows**. One per table.
+**Clustered index**: the table itself is a B+ tree ordered by the clustering key: root page → intermediate pages → leaf pages containing the full rows. One per table.
 
-**Nonclustered index**: a separate B+ tree on chosen key columns; leaf rows contain the key + a **row locator**: the clustering key (if the table is clustered) or the RID (heap). Up to 999 per table.
+**Nonclustered index**: a separate B+ tree on chosen key columns; leaf rows contain the key + a row locator: the clustering key (if the table is clustered) or the RID (heap). Up to 999 per table.
 
 ```text
 Clustered index on Orders(OrderId)                  Nonclustered index on Orders(CustomerId) INCLUDE (Total)
@@ -163,7 +163,7 @@ Clustered index on Orders(OrderId)                  Nonclustered index on Orders
 | **Key lookup** (bookmark lookup) | For each row found in a nonclustered index, fetch missing columns from the clustered index | 1 seek per row: expensive for many rows |
 | **Covering index** | Nonclustered index containing all needed columns (keys + `INCLUDE`) | No lookups |
 
-**Choosing a clustered key:** narrow (it's copied into every nonclustered index), unique, static (never updated) and ever-increasing (`INT IDENTITY`, `BIGINT`, sequential GUID) to avoid **page splits**. Random `NEWID()` GUID keys cause splits and fragmentation.
+**Choosing a clustered key:** narrow (it's copied into every nonclustered index), unique, static (never updated) and ever-increasing (`INT IDENTITY`, `BIGINT`, sequential GUID) to avoid page splits. Random `NEWID()` GUID keys cause splits and fragmentation.
 
 **Page splits and fill factor:** inserting into a full page splits it into two half-full pages (expensive, logged, causes fragmentation). `FILLFACTOR = 90` leaves 10 % free space on leaf pages at rebuild time for tables with random inserts.
 
@@ -180,9 +180,9 @@ CREATE INDEX IX_Orders_Open ON dbo.Orders(OrderDate) WHERE Status = 'Open';   --
 
 ## Lesson: [Advanced|High] Statistics, cardinality estimation and the query optimizer
 
-The optimizer is **cost-based**: it estimates how many rows each step will produce (**cardinality**) and picks the plan with the lowest estimated cost (CPU + I/O). Estimates come from **statistics**:
+The optimizer is **cost-based**: it estimates how many rows each step will produce (cardinality) and picks the plan with the lowest estimated cost (CPU + I/O). Estimates come from statistics:
 
-- A **histogram** of up to **200 steps** on the first column of the statistics object (values and row counts per range).
+- A **histogram** of up to 200 steps on the first column of the statistics object (values and row counts per range).
 - **Density** vectors for column combinations (average uniqueness).
 - Created automatically for indexes and for columns used in predicates (`AUTO_CREATE_STATISTICS`), updated automatically after enough changes (`AUTO_UPDATE_STATISTICS`; dynamic threshold ≈ √(1000 × rows) since SQL Server 2016 / compat level 130).
 
@@ -234,13 +234,13 @@ CROSS APPLY sys.dm_exec_query_plan(qs.plan_handle) qp
 ORDER BY qs.total_worker_time DESC;
 ```
 
-**Query Store** (database-level flight recorder): stores queries, plans and runtime statistics over time; shows **regressed queries** after a deployment or stats update; lets you **force** a previous good plan. Enabled by default for new databases in SQL Server 2022 and in Azure SQL.
+**Query Store** (database-level flight recorder): stores queries, plans and runtime statistics over time; shows regressed queries after a deployment or stats update; lets you force a previous good plan. Enabled by default for new databases in SQL Server 2022 and in Azure SQL.
 
 Plan cache pollution: ad-hoc queries with literals (`WHERE Id = 1`, `WHERE Id = 2` …) each get their own plan, use parameters; consider `optimize for ad hoc workloads`.
 
 ## Lesson: [Advanced|High] Reading execution plans: operators and join algorithms
 
-Plans are read **right to left** (data flow) and **top to bottom**; each arrow's thickness shows the row count. Compare **estimated vs actual rows**: big differences point to statistics/estimation problems.
+Plans are read **right to left** (data flow) and top to bottom; each arrow's thickness shows the row count. Compare estimated vs actual rows: big differences point to statistics/estimation problems.
 
 | Operator | Meaning |
 |---|---|
@@ -256,7 +256,7 @@ Plans are read **right to left** (data flow) and **top to bottom**; each arrow's
 | Spool | Stores intermediate results for reuse |
 | Parallelism (Gather/Repartition Streams) | Parallel plan exchanges |
 
-Warnings to look for: **implicit conversion** warnings, **spills** to tempdb (Sort/Hash warnings), **missing index** suggestions (evaluate, don't blindly create), huge estimated vs actual gaps, key lookups executed thousands of times.
+Warnings to look for: **implicit conversion** warnings, spills to tempdb (Sort/Hash warnings), missing index suggestions (evaluate, don't blindly create), huge estimated vs actual gaps, key lookups executed thousands of times.
 
 ```sql
 SET STATISTICS IO, TIME ON;          -- logical reads per table + CPU/elapsed time
@@ -273,16 +273,16 @@ SELECT o.OrderId, o.Total FROM dbo.Orders o WHERE o.CustomerId = 42 ORDER BY o.O
 | Query workspace (memory grants) | Sorts, hash joins/aggregates during execution |
 | Lock memory, connections, CLR, columnstore object pool, In-Memory OLTP | Other components |
 
-- **Logical read** = page read from the buffer pool; **physical read** = page had to come from disk first. Tuning aims to reduce logical reads (less data touched).
-- The **lazy writer** frees memory by writing dirty pages and evicting least-recently-used pages when memory is needed; **Page Life Expectancy** indicates how long pages stay cached.
+- **Logical read** = page read from the buffer pool; physical read = page had to come from disk first. Tuning aims to reduce logical reads (less data touched).
+- The **lazy writer** frees memory by writing dirty pages and evicting least-recently-used pages when memory is needed; Page Life Expectancy indicates how long pages stay cached.
 - SQL Server takes as much memory as allowed: always set **max server memory** to leave RAM for the OS and other processes.
-- **Memory grants** are reserved before a query runs based on estimates; under-estimates cause **spills to tempdb**, over-estimates waste memory and cause `RESOURCE_SEMAPHORE` waits (memory grant feedback in 2019+ adjusts this automatically).
+- **Memory grants** are reserved before a query runs based on estimates; under-estimates cause spills to tempdb, over-estimates waste memory and cause `RESOURCE_SEMAPHORE` waits (memory grant feedback in 2019+ adjusts this automatically).
 
 # Module: Transactions, Logging and Concurrency
 
 ## Lesson: [Advanced|High] The transaction log, write-ahead logging, checkpoint and recovery
 
-**Write-ahead logging (WAL):** every change is first recorded in the **transaction log** (sequential writes, each record with an **LSN**: log sequence number). A transaction is committed when its log records are **hardened** (flushed) to the log file. Data pages are changed in memory and written to data files later.
+**Write-ahead logging (WAL):** every change is first recorded in the transaction log (sequential writes, each record with an LSN: log sequence number). A transaction is committed when its log records are hardened (flushed) to the log file. Data pages are changed in memory and written to data files later.
 
 **Checkpoint** periodically writes dirty data pages to disk (indirect checkpoints with a target recovery time, default 60 s for new databases), limiting how much log must be replayed after a crash.
 
@@ -294,7 +294,7 @@ SELECT o.OrderId, o.Total FROM dbo.Orders o WHERE o.CustomerId = 42 ORDER BY o.O
 
 **Accelerated Database Recovery (ADR, 2019)** keeps row versions in a persistent version store so undo is near-instant and long-running transaction rollbacks don't take hours.
 
-The log is divided into **virtual log files (VLFs)**; space is reused (truncated) only when no longer needed by active transactions, replication, availability groups or: in the FULL model, until a **log backup**.
+The log is divided into **virtual log files (VLFs)**; space is reused (truncated) only when no longer needed by active transactions, replication, availability groups or: in the FULL model, until a log backup.
 
 | Recovery model | Log behaviour | Point-in-time restore |
 |---|---|---|
@@ -316,7 +316,7 @@ Common problem: FULL recovery without log backups → **log file grows until the
 | Intent (IS, IX, SIX) | Signal locks at a lower level (on table/page above a row) | Allows fast checks |
 | Schema (Sch-S, Sch-M) | Compiling / altering objects | Sch-M blocks everything |
 
-**Granularity:** row (key/RID) → page → partition → table (object). **Lock escalation** converts many row/page locks (~5,000 on one object) into a table lock to save memory: can cause sudden blocking.
+**Granularity:** row (key/RID) → page → partition → table (object). Lock escalation converts many row/page locks (~5,000 on one object) into a table lock to save memory: can cause sudden blocking.
 
 **Latches** are lightweight internal locks protecting in-memory structures (pages in the buffer pool) for very short durations: e.g. `PAGELATCH_EX` contention on the last page of an ever-increasing key under heavy inserts (fix: `OPTIMIZE_FOR_SEQUENTIAL_KEY`, partitioning, hash keys).
 
@@ -331,7 +331,7 @@ Common problem: FULL recovery without log backups → **log file grows until the
 | **READ COMMITTED SNAPSHOT (RCSI)** | ❌ | ✅ | ✅ | Readers read the last committed version: readers don't block writers |
 | SNAPSHOT | ❌ | ❌ | ❌ | Whole transaction sees a consistent snapshot; update conflicts raise an error |
 
-**Row versioning:** with RCSI/SNAPSHOT, updates keep the previous row version in the **version store** (tempdb, or the persistent version store with ADR); readers follow the version chain. Benefit: far less blocking between readers and writers (Azure SQL Database uses RCSI by default). Cost: tempdb usage and a 14-byte versioning tag per row.
+**Row versioning:** with RCSI/SNAPSHOT, updates keep the previous row version in the version store (tempdb, or the persistent version store with ADR); readers follow the version chain. Benefit: far less blocking between readers and writers (Azure SQL Database uses RCSI by default). Cost: tempdb usage and a 14-byte versioning tag per row.
 
 ```sql
 ALTER DATABASE Shop SET READ_COMMITTED_SNAPSHOT ON WITH ROLLBACK IMMEDIATE;
@@ -344,20 +344,20 @@ WHERE r.blocking_session_id <> 0;
 
 ## Lesson: [Intermediate|High] Deadlocks, tempdb and how they relate to app design
 
-**Deadlock:** two sessions each hold a lock the other needs. The lock monitor detects the cycle and kills the cheaper transaction (**deadlock victim**, error **1205**); the application should retry.
+**Deadlock:** two sessions each hold a lock the other needs. The lock monitor detects the cycle and kills the cheaper transaction (deadlock victim, error 1205); the application should retry.
 
 ```text
 Session A: UPDATE Orders (row 1, X lock) → then wants Customers (row 7)
 Session B: UPDATE Customers (row 7, X lock) → then wants Orders (row 1)   → cycle → one is the victim
 ```
 
-Prevention: access tables in the **same order**, keep transactions **short** (no user interaction or HTTP calls inside), index foreign keys and search columns (fewer rows locked), use RCSI so reads don't take shared locks, use `UPDLOCK` for read-then-update patterns, and retry 1205 in code. Capture graphs from the `system_health` Extended Events session.
+Prevention: access tables in the **same order**, keep transactions short (no user interaction or HTTP calls inside), index foreign keys and search columns (fewer rows locked), use RCSI so reads don't take shared locks, use `UPDLOCK` for read-then-update patterns, and retry 1205 in code. Capture graphs from the `system_health` Extended Events session.
 
 **tempdb**: shared by the whole instance: temporary tables (`#t`), table variables, sort/hash spills, version store, index rebuilds with `SORT_IN_TEMPDB`, internal worktables. Best practices: multiple equally sized data files (typically 1 per core up to 8) to reduce allocation contention, fast storage, memory-optimised tempdb metadata (2019+).
 
 ## Lesson: [Advanced|Medium] Columnstore, In-Memory OLTP and other storage options
 
-**Columnstore indexes** store data **by column** in compressed segments (rowgroups of ~1 million rows), with **batch mode** execution processing ~900 rows at a time. Huge gains (10× compression, 10–100× faster) for analytics and aggregations over millions of rows; less suited to single-row lookups and frequent small updates (delta store + tuple mover handle inserts).
+**Columnstore indexes** store data by column in compressed segments (rowgroups of ~1 million rows), with batch mode execution processing ~900 rows at a time. Huge gains (10× compression, 10–100× faster) for analytics and aggregations over millions of rows; less suited to single-row lookups and frequent small updates (delta store + tuple mover handle inserts).
 
 ```sql
 CREATE CLUSTERED COLUMNSTORE INDEX CCI_FactSales ON dbo.FactSales;            -- data warehouse fact table
@@ -366,7 +366,7 @@ CREATE NONCLUSTERED COLUMNSTORE INDEX NCCI_Orders ON dbo.Orders(OrderDate, Total
 
 **In-Memory OLTP (Hekaton):** memory-optimised tables with lock- and latch-free structures (hash and range indexes), optimistic multi-versioning and natively compiled stored procedures, for extreme insert/update rates (session state, queues, IoT ingestion). Durable (`SCHEMA_AND_DATA`) or not.
 
-**Partitioning:** split a large table by a column (usually date) into partitions on filegroups, partition elimination, fast archiving with `SWITCH`, per-partition index maintenance. It's mainly a **manageability** feature; queries without the partition key don't get faster.
+**Partitioning:** split a large table by a column (usually date) into partitions on filegroups, partition elimination, fast archiving with `SWITCH`, per-partition index maintenance. It's mainly a manageability feature; queries without the partition key don't get faster.
 
 **Compression:** row and page compression reduce I/O and memory at some CPU cost.
 
