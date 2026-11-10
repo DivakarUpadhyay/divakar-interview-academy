@@ -2,7 +2,7 @@
 // Each draft = the full lesson + the course's top interview questions + a link back to the lesson, with
 // canonical_url pointing at DevLadder so search engines treat the lesson page as the original.
 //
-// Usage: node scripts/devto-drafts.mjs [--count 7] [--dry-run] [--refresh]
+// Usage: node scripts/devto-drafts.mjs [--count 7] [--dry-run] [--refresh] [--refresh-published]
 // Needs DEVTO_API_KEY in .env.devto.local (gitignored). Lessons already on dev.to (draft or published) are skipped,
 // detected by their canonical URL, so the script can run every week without duplicates.
 import fs from "node:fs";
@@ -81,7 +81,8 @@ function article(l) {
   const qs = l.top.slice(0, 3).map((q) => `### ${q.question}\n\n${q.answer.trim()}`).join("\n\n");
   const courseUrl = `${SITE}/courses/${l.course.slug}`;
   const next = l.next ? `\n\nNext in the course: [${l.next.title}](${l.next.url}) →` : "";
-  const body = `*Lesson ${l.index + 1} of ${l.total} in the free [${l.course.title}](${courseUrl}) course on DevLadder.*
+  // The first line pulls readers to the site: dev.to readers rarely scroll to a link at the bottom.
+  const body = `**👉 [Full lesson with practice questions on DevLadder](${l.url})** (free, lesson ${l.index + 1} of ${l.total} in the [${l.course.title}](${courseUrl}) course)
 
 ${l.body.trim()}
 
@@ -93,7 +94,7 @@ ${qs}
 
 Read the [full lesson with progress tracking](${l.url}) and the rest of the course on **DevLadder**: free step-by-step tutorials and interview questions for developers.${next}`;
   return {
-    title: `${l.title} (${l.course.title.split(": ")[0]})`.slice(0, 128),
+    title: `${l.title} (${l.course.title.split(": ")[0].split(" (")[0]})`.slice(0, 128),
     body_markdown: body,
     published: false,
     canonical_url: l.url,
@@ -121,15 +122,19 @@ for (let page = 1; ; page++) {
   if (items.length < 1000) break;
 }
 
-// --refresh: rewrite the body of drafts this script already created (e.g. after a template change); never touches published posts.
-if (args.includes("--refresh")) {
+// --refresh: rewrite title and body of drafts this script created (e.g. after a template change).
+// --refresh-published: do the same for posts already live (keeps them published, same URL).
+if (args.includes("--refresh") || args.includes("--refresh-published")) {
+  const live = args.includes("--refresh-published");
   const byUrl = new Map(lessons().map((l) => [l.url, l]));
-  const drafts = await call("GET", `${API}/articles/me/unpublished?per_page=1000`);
+  const drafts = await call("GET", `${API}/articles/me/${live ? "published" : "unpublished"}?per_page=1000`);
   for (const d of drafts) {
     const l = byUrl.get((d.canonical_url ?? "").replace(/\/$/, ""));
     if (!l) continue;
-    await call("PUT", `${API}/articles/${d.id}`, { article: { ...article(l), published: false } });
-    console.log(`- refreshed draft #${d.id}: ${d.title}`);
+    const { published, ...fields } = article(l);
+    if (dryRun) { console.log(`- would update #${d.id}: ${fields.title}`); continue; }
+    await call("PUT", `${API}/articles/${d.id}`, { article: live ? fields : { ...fields, published: false } });
+    console.log(`- refreshed ${live ? "post" : "draft"} #${d.id}: ${fields.title}`);
     await new Promise((r) => setTimeout(r, 4000));
   }
   process.exit(0);
