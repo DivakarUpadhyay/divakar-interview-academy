@@ -32,6 +32,9 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
   const [open, setOpen] = useState(false);
   const [drop, setDrop] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // After a dropdown link is clicked the pointer is usually still over the menu, so :hover (and :focus-within on the
+  // clicked link) would keep the dropdown open on the new page. `hold` hides hover menus until the pointer leaves.
+  const [hold, setHold] = useState(false);
   useEffect(() => { setOpen(false); setDrop(null); setLoading(false); }, [path]);
 
   // Instant feedback on navigation: close menus and show a thin progress bar the moment an internal link is
@@ -44,12 +47,15 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
       if (!a || !href || !href.startsWith("/") || a.target === "_blank") return;
       // Close the dropdown even when a same-page link is clicked. Only route changes need a progress bar.
       setDrop(null); setOpen(false);
+      if (a.closest(".menubar")) { setHold(true); a.blur(); }
       if (href.split("#")[0] === location.pathname) return;
       setLoading(true);
     };
     // Capture phase: runs before Next.js <Link> handles (and prevents) the click.
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Tab") setHold(false); };   // keyboard users get focus menus back
     document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("click", onClick, true); document.removeEventListener("keydown", onKey); };
   }, []);
 
   const toggleTheme = () => {
@@ -72,7 +78,7 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
     className: `menu-item${mega ? " mega" : ""}${drop === key ? " show" : ""}`,
     onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => prefetchMenu(e.currentTarget),
     onFocus: (e: React.FocusEvent<HTMLDivElement>) => prefetchMenu(e.currentTarget),
-    onMouseLeave: () => setDrop((d) => (d === key ? null : d)),
+    onMouseLeave: () => { setDrop((d) => (d === key ? null : d)); setHold(false); },
   });
   const trigger = (key: string, label: string, active: boolean) => (
     <button type="button" className={`menu-link${active ? " active" : ""}`} aria-expanded={drop === key}
@@ -114,7 +120,7 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
         <button className="theme-btn" onClick={toggleTheme} title="Toggle dark mode">◐</button>
         <button className="menu-toggle" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Menu">☰</button>
       </div>
-      <nav className={`menubar${open ? " open" : ""}`} aria-label="Main">
+      <nav className={`menubar${open ? " open" : ""}${hold ? " hold" : ""}`} aria-label="Main">
         <div className="container menu">
           <Link href="/" className={`menu-link home${path === "/" ? " active" : ""}`} title="Home">⌂</Link>
           {navMenu.map((t) => {

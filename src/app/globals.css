@@ -544,3 +544,9 @@ main.container { min-height: calc(100vh - 120px); min-height: calc(100svh - 120p
 /* Breathing room between the header and the page content (.container's padding shorthand would otherwise reset it). */
 main.container { padding-top: 28px; padding-bottom: 40px; }
 @media (max-width: 600px) { main.container { padding-top: 18px; } }
+
+/* Right after a menu link is clicked: keep hover/focus dropdowns closed until the pointer leaves that menu. */
+.menubar.hold .menu-item:not(.show):hover > .dropdown, .menubar.hold .menu-item:not(.show):focus-within > .dropdown { display: none; }
+
+/* Tall mega menus (Interview Questions) must fit short laptop screens: scroll inside the dropdown instead of being cut off. */
+@media (min-width: 1101px) { .menu-item > .dropdown { max-height: calc(100vh - 116px); max-height: calc(100dvh - 116px); overflow-y: auto; overscroll-behavior: contain; } }

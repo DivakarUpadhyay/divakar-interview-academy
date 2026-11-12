@@ -6,6 +6,7 @@ const TOPICS = new Set([
   "Mock .NET interview", "CV and LinkedIn review", "Career and salary call",
   "24-hour interview prep", "Interview answer review",
   "Interview Prep Pack", "Project or job enquiry", "Sponsorship",
+  "General question", "Correction or suggestion", "Request a new course", "Privacy question", "Partnership",
 ]);
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });

@@ -8,7 +8,6 @@ import { buildMenu } from "@/lib/menu";
 import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/seo";
 import { GtmHead, GtmNoScript } from "@/components/GoogleTagManager";
 import { AdSenseScript } from "@/components/AdSense";
-import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -110,7 +109,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </footer>
         <CopyHandler />
         <GtmHead />
-        <Analytics />
       </body>
     </html>
   );
