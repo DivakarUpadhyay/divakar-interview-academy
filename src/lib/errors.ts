@@ -1,7 +1,7 @@
 // "Fix this error" pages: one page per exact error message developers paste into Google.
 // Text uses `backticks` for code; ErrorPage renders them as <code>. `snippet` is an optional code block.
 export type ErrorFix = {
-  slug: string; area: "SQL Server" | "ASP.NET Core" | "Entity Framework Core" | "C#" | "Docker";
+  slug: string; area: "SQL Server" | "ASP.NET Core" | "Entity Framework Core" | "C#" | "Docker" | "Node.js";
   title: string; message: string; meaning: string; causes: string[]; fixes: string[];
   snippet?: { lang: string; code: string }; lesson?: { href: string; title: string };
 };
@@ -281,6 +281,163 @@ app.MapControllers();` },
       "Or publish on a different host port: `-p 8081:8080`.",
     ],
     lesson: { href: "/courses/docker/lessons/common-docker-errors-and-how-to-fix-them", title: "Common Docker errors and how to fix them" },
+  },
+  {
+    slug: "sql-server-violation-of-primary-key-constraint-2627", area: "SQL Server",
+    title: "Violation of PRIMARY KEY constraint: cannot insert duplicate key (error 2627)",
+    message: "Violation of PRIMARY KEY constraint 'PK_Customers'. Cannot insert duplicate key in object 'dbo.Customers'. The duplicate key value is (42).",
+    meaning: "You tried to insert a row whose primary key (or unique key, error 2601) already exists. SQL Server even tells you the duplicate value at the end of the message.",
+    causes: [
+      "The app generates its own IDs and produced one that already exists.",
+      "The same record is saved twice, for example a double-clicked Save button or a retried request.",
+      "Data imports or seed scripts that run more than once.",
+    ],
+    fixes: [
+      "Let the database create keys: an `IDENTITY` column, a sequence, or `NEWSEQUENTIALID()`.",
+      "Make inserts safe to repeat: check first, or use `MERGE` / `INSERT ... WHERE NOT EXISTS`.",
+      "Disable the Save button while a request is running, and handle error 2627 as \"already exists\" in the API.",
+    ],
+    snippet: { lang: "sql", code: `INSERT INTO dbo.Customers (Id, Name)
+SELECT @Id, @Name
+WHERE NOT EXISTS (SELECT 1 FROM dbo.Customers WHERE Id = @Id);` },
+    lesson: { href: "/courses/sqlserver", title: "SQL Server and T-SQL course" },
+  },
+  {
+    slug: "sql-server-cannot-insert-explicit-value-for-identity-column", area: "SQL Server",
+    title: "Cannot insert explicit value for identity column when IDENTITY_INSERT is set to OFF",
+    message: "Cannot insert explicit value for identity column in table 'Orders' when IDENTITY_INSERT is set to OFF.",
+    meaning: "The column is an `IDENTITY` column, so SQL Server creates its values. Your insert also tried to set that column yourself.",
+    causes: [
+      "An `INSERT` that lists the identity column, often copied from a `SELECT *` script.",
+      "EF Core sending a non-zero key value for a new entity.",
+      "Copying rows between databases and keeping the original IDs.",
+    ],
+    fixes: [
+      "Leave the identity column out of the column list and let SQL Server number the row.",
+      "In EF Core, leave the key at 0 (default) for new entities.",
+      "If you really need to keep the original IDs (a one-off migration), wrap the insert in `SET IDENTITY_INSERT dbo.Orders ON` / `OFF` and list the columns explicitly.",
+    ],
+    snippet: { lang: "sql", code: `SET IDENTITY_INSERT dbo.Orders ON;
+INSERT INTO dbo.Orders (Id, CustomerId, Total) SELECT Id, CustomerId, Total FROM Staging.Orders;
+SET IDENTITY_INSERT dbo.Orders OFF;` },
+    lesson: { href: "/courses/sqlserver", title: "SQL Server and T-SQL course" },
+  },
+  {
+    slug: "sql-server-string-or-binary-data-would-be-truncated", area: "SQL Server",
+    title: "String or binary data would be truncated (error 8152 / 2628)",
+    message: "String or binary data would be truncated in table 'Shop.dbo.Customers', column 'Phone'. Truncated value: '+886-912-345'.",
+    meaning: "A value is longer than the column allows, for example 20 characters going into `VARCHAR(15)`. Newer SQL Server versions (error 2628) name the table, column and value; older ones (8152) don't.",
+    causes: [
+      "The column is too small for real data (names, addresses, phone numbers with country codes).",
+      "Unicode text going into a column sized for fewer characters than expected.",
+      "An import file with extra spaces or a different format than planned.",
+    ],
+    fixes: [
+      "Read the column name in the 2628 message and check the longest value you need to store.",
+      "Widen the column: `ALTER TABLE dbo.Customers ALTER COLUMN Phone NVARCHAR(30) NULL;`",
+      "Validate the length in the app (`[MaxLength(30)]` / `HasMaxLength(30)` in EF Core) so users get a clear message.",
+      "On SQL Server 2017 or 2016 SP2, turn on trace flag 460 to get the detailed 2628 message.",
+    ],
+    lesson: { href: "/courses/sqlserver", title: "SQL Server and T-SQL course" },
+  },
+  {
+    slug: "efcore-no-database-provider-has-been-configured", area: "Entity Framework Core",
+    title: "No database provider has been configured for this DbContext",
+    message: "System.InvalidOperationException: No database provider has been configured for this DbContext. A provider can be configured by overriding the 'DbContext.OnConfiguring' method or by using 'AddDbContext' on the application service provider.",
+    meaning: "EF Core doesn't know which database to use (SQL Server, PostgreSQL…) for this context instance.",
+    causes: [
+      "The context was created with `new ShopDbContext()` instead of being injected.",
+      "`AddDbContext` was called without `UseSqlServer(...)`.",
+      "The DbContext has no constructor taking `DbContextOptions<ShopDbContext>`, so the configured options never reach it.",
+    ],
+    fixes: [
+      "Register it with a provider: `builder.Services.AddDbContext<ShopDbContext>(o => o.UseSqlServer(cs));`",
+      "Add the constructor: `public ShopDbContext(DbContextOptions<ShopDbContext> options) : base(options) { }`",
+      "Inject the context through the constructor instead of creating it with `new`.",
+    ],
+    lesson: { href: "/courses/efcore", title: "Entity Framework Core course" },
+  },
+  {
+    slug: "efcore-unable-to-create-an-object-of-type-dbcontext", area: "Entity Framework Core",
+    title: "Unable to create an object of type 'DbContext' (dotnet ef migrations)",
+    message: "Unable to create an object of type 'ShopDbContext'. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728",
+    meaning: "`dotnet ef` couldn't build your DbContext at design time (when adding a migration), usually because it couldn't start the app or find the connection string.",
+    causes: [
+      "The command runs against the wrong project: the context is in a class library and the startup project isn't set.",
+      "The app throws during startup (missing configuration, a service that needs a real connection).",
+      "There's no way to construct the context outside the running app.",
+    ],
+    fixes: [
+      "Point the tool at both projects: `dotnet ef migrations add Init --project src/Shop.Data --startup-project src/Shop.Api`",
+      "Add `--verbose` to see the real startup exception.",
+      "Add a design-time factory so the tools can create the context without starting the app.",
+    ],
+    snippet: { lang: "csharp", code: `public class ShopDbContextFactory : IDesignTimeDbContextFactory<ShopDbContext>
+{
+    public ShopDbContext CreateDbContext(string[] args) =>
+        new(new DbContextOptionsBuilder<ShopDbContext>()
+            .UseSqlServer("Server=localhost;Database=Shop;Trusted_Connection=True;TrustServerCertificate=True")
+            .Options);
+}` },
+    lesson: { href: "/courses/efcore", title: "Entity Framework Core course" },
+  },
+  {
+    slug: "system-text-json-value-could-not-be-converted", area: "ASP.NET Core",
+    title: "The JSON value could not be converted to System.Int32 (or DateTime, Guid…)",
+    message: "System.Text.Json.JsonException: The JSON value could not be converted to System.Int32. Path: $.quantity | LineNumber: 0 | BytePositionInLine: 18.",
+    meaning: "The JSON sent to your API has a value of the wrong type for that property, for example `\"2\"` (a string) where the C# property is an `int`. The `Path` tells you which property.",
+    causes: [
+      "Numbers sent as strings (`\"quantity\": \"2\"`), common from JavaScript forms.",
+      "Dates in a format System.Text.Json doesn't parse, or `null` for a non-nullable property.",
+      "Enums sent as names when the API expects numbers (or the other way round).",
+    ],
+    fixes: [
+      "Fix the client to send the right type, guided by the `Path` in the message.",
+      "Allow numbers in strings: `JsonNumberHandling.AllowReadingFromString`.",
+      "Accept enum names with `JsonStringEnumConverter`, and make properties nullable (`int?`) where `null` is valid.",
+    ],
+    snippet: { lang: "csharp", code: `builder.Services.AddControllers().AddJsonOptions(o =>
+{
+    o.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
+    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});` },
+    lesson: { href: "/courses/aspnet-core-webapi", title: "ASP.NET Core Web API course" },
+  },
+  {
+    slug: "docker-cannot-connect-to-the-docker-daemon", area: "Docker",
+    title: "Cannot connect to the Docker daemon. Is the docker daemon running?",
+    message: "Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?",
+    meaning: "The `docker` command works, but the Docker engine it talks to isn't running, or your user isn't allowed to reach it.",
+    causes: [
+      "Docker Desktop isn't started (Windows and macOS).",
+      "On Linux, the docker service is stopped.",
+      "On Linux, your user isn't in the `docker` group.",
+      "WSL 2 integration isn't enabled for your distro in Docker Desktop.",
+    ],
+    fixes: [
+      "Start Docker Desktop and wait until it says it's running.",
+      "Linux: `sudo systemctl start docker` (and `sudo systemctl enable docker` to start it on boot).",
+      "Linux: `sudo usermod -aG docker $USER`, then log out and back in.",
+      "Docker Desktop → Settings → Resources → WSL integration → enable your distro.",
+    ],
+    lesson: { href: "/courses/docker", title: "Docker course" },
+  },
+  {
+    slug: "npm-err-eresolve-unable-to-resolve-dependency-tree", area: "Node.js",
+    title: "npm ERR! ERESOLVE unable to resolve dependency tree",
+    message: "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! Could not resolve dependency: peer react@\"^17.0.0\" from some-library@2.1.0",
+    meaning: "A package says it only works with a different version of another package (a \"peer dependency\") than the one in your project, and npm 7+ refuses to guess.",
+    causes: [
+      "Upgrading React or Angular before a library supports the new version.",
+      "An old library that was never updated for current framework versions.",
+    ],
+    fixes: [
+      "Read which package and version it wants, then upgrade that library to a version that supports yours.",
+      "If you've checked it works anyway: `npm install --legacy-peer-deps` (the npm 6 behaviour).",
+      "Avoid `--force`, which can install versions that really are incompatible.",
+      "Commit `package-lock.json` so everyone on the team gets the same versions.",
+    ],
+    lesson: { href: "/courses/nodejs", title: "Node.js course" },
   },
 ];
 
