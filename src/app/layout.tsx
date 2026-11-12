@@ -66,49 +66,47 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="site-footer">
           <div className="container footer-cols">
             <div className="footer-about">
-              <h4>DevLadder</h4>
-              <p>Free, step-by-step lessons from fundamentals to advanced, with the interview questions companies actually ask.</p>
+              <Link href="/" className="footer-brand"><span className="brand-mark">DL</span>DevLadder</Link>
+              <p>Free tutorials that take you from the basics to advanced topics one step at a time, with the interview questions
+                companies really ask. No sign-up, no paywall on the lessons.</p>
+              <Link href="/courses" className="footer-cta">Browse all courses →</Link>
             </div>
-            <div>
+            <nav aria-label="Learn">
               <h4>Learn</h4>
               {menu.filter((t) => t.slug !== "interview").map((t) => (
                 <Link key={t.slug} href={t.groups[0]?.links[0]?.href ?? "/courses"}>{t.label}</Link>
               ))}
-            </div>
-            <div>
+              <Link href="/roadmap">Roadmap and syllabus</Link>
+            </nav>
+            <nav aria-label="Practice">
               <h4>Practice</h4>
-              <Link href="/interview-questions">Interview Questions by Role</Link>
-              <Link href="/practice">Mock Interview Test</Link>
-              <Link href="/cheatsheets">Cheat Sheets</Link>
-              <Link href="/interview-day">Interview Day</Link>
-              <Link href="/notebook">My Notebook</Link>
-            </div>
-            <div>
-              <h4>More</h4>
-              <Link href="/tools">Free Developer Tools</Link>
-              <Link href="/errors">Fix Common Errors</Link>
-              <Link href="/roadmap">Roadmap &amp; Syllabus</Link>
-              <Link href="/courses">All Courses</Link>
-              <Link href="/search">Search</Link>
+              <Link href="/interview-questions">Interview questions by role</Link>
+              <Link href="/practice">10-minute mock test</Link>
+              <Link href="/cheatsheets">Cheat sheets</Link>
+              <Link href="/interview-day">Interview day checklist</Link>
+              <Link href="/notebook">My notebook</Link>
+            </nav>
+            <nav aria-label="Tools">
+              <h4>Tools and fixes</h4>
+              <Link href="/tools">Free developer tools</Link>
+              <Link href="/errors">Common error fixes</Link>
+              <Link href="/search">Search the site</Link>
               <Link href="/api-docs">REST API</Link>
-            </div>
-            <div>
-              <h4>Site</h4>
-              <Link href="/mentoring">Mock Interviews</Link>
+            </nav>
+            <nav aria-label="Work with me">
+              <h4>Get help</h4>
+              <Link href="/mentoring">Mock interviews and CV review</Link>
               <Link href="/interview-prep-pack">Interview Prep Pack</Link>
-              <Link href="/hire">Hire Me</Link>
-              <Link href="/advertise">Advertise</Link>
-              <Link href="/about">About</Link>
-              <Link href="/contact">Contact</Link>
-              <Link href="/privacy">Privacy Policy</Link>
-              <Link href="/terms">Terms of Use</Link>
-              <Link href="/disclosure">Disclosure</Link>
-            </div>
+              <Link href="/hire">Hire me for a project</Link>
+              <Link href="/advertise">Advertise or sponsor</Link>
+            </nav>
           </div>
-          <div className="container row footer-bottom">
-            <span>© {new Date().getFullYear()} DevLadder · by Divakar Upadhyay</span>
-            <span className="spacer" />
-            <span>Learn in order · revise · practise</span>
+          <div className="container footer-bottom">
+            <span>© {new Date().getFullYear()} DevLadder, made by Divakar Upadhyay in Taipei</span>
+            <span className="footer-legal">
+              <Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/privacy">Privacy</Link>
+              <Link href="/terms">Terms</Link><Link href="/disclosure">Disclosure</Link>
+            </span>
           </div>
         </footer>
         <CopyHandler />

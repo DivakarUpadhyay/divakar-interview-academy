@@ -4,6 +4,7 @@
 const TO = "divakaru1991@gmail.com";
 const TOPICS = new Set([
   "Mock .NET interview", "CV and LinkedIn review", "Career and salary call",
+  "24-hour interview prep", "Interview answer review",
   "Interview Prep Pack", "Project or job enquiry", "Sponsorship",
 ]);
 

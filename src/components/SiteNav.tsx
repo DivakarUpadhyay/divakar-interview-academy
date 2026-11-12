@@ -17,7 +17,7 @@ const PRACTICE = [
   ["/demo", "Demo Kit", "Run JavaScript and SQL live in the browser"],
 ] as const;
 const MORE = [
-  ["/mentoring", "Mock Interviews & Mentoring"],
+  ["/mentoring", "Mock Interviews & CV Review"],
   ["/interview-prep-pack", "Interview Prep Pack"],
   ["/hire", "Hire Me"],
   ["/roadmap", "Roadmap & Syllabus"],
@@ -43,8 +43,10 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
       const a = (e.target as HTMLElement).closest("a");
       const href = a?.getAttribute("href");
       if (!a || !href || !href.startsWith("/") || a.target === "_blank") return;
+      // Close the dropdown even when a same-page link is clicked. Only route changes need a progress bar.
+      setDrop(null); setOpen(false);
       if (href.split("#")[0] === location.pathname) return;
-      setDrop(null); setOpen(false); setLoading(true);
+      setLoading(true);
     };
     // Capture phase: runs before Next.js <Link> handles (and prevents) the click.
     document.addEventListener("click", onClick, true);
@@ -103,9 +105,10 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
         <Link href="/" className="brand">
           <span className="brand-mark">DL</span>
           <span>Dev<span className="brand-accent">Ladder</span></span>
+          <span className="brand-tag">Learn step by step,<br />crack the interview</span>
         </Link>
         <form className="top-search" action="/search" role="search">
-          <input type="search" name="q" placeholder="Search tutorials, questions, cheat sheets…" aria-label="Search" />
+          <input type="search" name="q" placeholder="Search lessons, interview questions, errors…" aria-label="Search" />
           <button type="submit" aria-label="Search">⌕</button>
         </form>
         <Link href="/notebook" className={`notebook-btn${isActive("/notebook") ? " active" : ""}`} title="My Notebook: revise list, notes, interview-day checklist">📒 <span>My Notebook</span></Link>
@@ -157,7 +160,7 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
             </div>
           </div>
           <div {...itemProps("more")}>
-            {trigger("more", "More", MORE.some(([h]) => path === h))}
+            {trigger("more", "Get Help", MORE.some(([h]) => path === h))}
             <div className="dropdown right">
               {MORE.map(([href, label]) => (
                 <Link key={href} href={href} className={path === href ? "active" : ""}>{label}</Link>
