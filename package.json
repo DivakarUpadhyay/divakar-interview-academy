@@ -6,7 +6,7 @@
   "scripts": {
     "db": "node scripts/build-db.mjs",
     "dev": "node scripts/build-db.mjs && next dev",
-    "build": "node scripts/build-db.mjs && next build",
+    "build": "node scripts/build-db.mjs && next build && node scripts/split-sitemap.mjs",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node --test tests/content.test.mjs",
