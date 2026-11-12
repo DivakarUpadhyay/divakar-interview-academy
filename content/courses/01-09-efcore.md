@@ -111,6 +111,24 @@ var orders = await db.Orders.Include(o => o.Customer).Where(o => o.Total > 1000)
 
 > **Interview tip:** "Code First vs Database First": Code First, classes are the source of truth and migrations create/alter the database; Database First, the existing database is the source of truth and the model is generated from it (EDMX in EF6, scaffolding in EF Core).
 
+### How it works
+
+Without an ORM you open a connection, write the SQL yourself, run it, then loop over a `SqlDataReader` and copy each column into an object by hand. That works, but the copying code is boring, easy to get wrong and has to change every time a column changes. An ORM does that mapping for you. You describe your classes once, and EF builds the SQL, sends parameters safely and turns rows back into objects.
+
+The price you pay is control. EF decides what SQL to send, so you need to know how to read the SQL it produces. A good EF developer is someone who can look at a LINQ query and roughly guess the SQL before running it.
+
+### Common mistakes
+
+- Thinking an ORM means you no longer need to know SQL. You still need indexes, joins and execution plans; EF only writes the statements.
+- Mixing EF6 and EF Core namespaces in one project. `System.Data.Entity` is EF6, `Microsoft.EntityFrameworkCore` is EF Core, and their `Include` methods are different.
+- Moving an old app from EF6 to EF Core without checking lazy loading. Pages that "just worked" in EF6 suddenly have null navigation properties.
+
+### Try it yourself
+
+1. Create a console app, add `Microsoft.EntityFrameworkCore.Sqlite`, and map one `Book` class with `Id`, `Title` and `Price`.
+2. Insert three books and read them back with `Where(b => b.Price > 10)`.
+3. Turn on logging with `optionsBuilder.LogTo(Console.WriteLine)` and read the SQL EF sent. Write down how your LINQ became SQL.
+
 ## Lesson: [Basic|High] DbContext, DbSet and configuration
 
 ```csharp
@@ -149,6 +167,28 @@ builder.Services.AddDbContext<AppDbContext>(o =>
 
 `AddDbContextPool` reuses context instances for high-throughput apps; `AddDbContextFactory` + `IDbContextFactory<T>` for Blazor Server, background services and parallel work.
 
+### How it works
+
+`DbContext` is your session with the database. It holds the connection settings, the model (what classes map to what tables) and the change tracker (which objects you loaded and what you changed). Each `DbSet<T>` is a door into one table: you query through it and add or remove entities through it.
+
+Building the model is expensive, so EF builds it once per context type and caches it. Creating a new `DbContext` instance is cheap. That is why the normal pattern is one short-lived context per web request, registered as scoped in dependency injection.
+
+### Common mistakes
+
+- Registering the context as a singleton. One context shared by every request means shared change tracking, thread-safety errors and memory that only grows.
+- Using one context from several threads at once, for example with `Task.WhenAll` over several queries. You get "A second operation was started on this context instance".
+- Putting the connection string in code. Keep it in `appsettings.json` for development and in user secrets, environment variables or Key Vault for real environments.
+
+### Real-world example
+
+In a typical ASP.NET Core API the controller or service gets `AppDbContext` from the constructor, runs one or two queries, calls `SaveChangesAsync` once and returns. The container disposes the context when the request ends. Background jobs are different: they live longer than a request, so they ask an `IDbContextFactory<AppDbContext>` for a fresh context per unit of work.
+
+### Try it yourself
+
+1. Register `AppDbContext` with `AddDbContext` and inject it into a minimal API endpoint.
+2. Write a `BackgroundService` that cleans old rows every minute. Use `AddDbContextFactory` and create a new context inside each loop.
+3. Try injecting the scoped context straight into the `BackgroundService` and read the error you get. Explain it in one sentence.
+
 ## Lesson: [Basic|High] Code-first vs database-first and migrations
 
 ```bash
@@ -161,6 +201,28 @@ dotnet ef database update                       # applies pending migrations (__
 dotnet ef migrations remove                     # removes the last, unapplied migration
 dotnet ef migrations script --idempotent -o deploy.sql   # SQL for DBAs / pipelines
 dotnet ef migrations bundle --self-contained    # executable that applies migrations (CI/CD)
+
+### How it works
+
+A migration is a snapshot of the difference between your model now and your model at the last migration. When you run `migrations add`, EF compares your classes with the `ModelSnapshot.cs` file and writes C# that would move the database from the old shape to the new one. `database update` runs the pending migrations in order and records each one in the `__EFMigrationsHistory` table, so it never runs the same migration twice.
+
+Database-first works the other way round. The database already exists, often owned by a DBA team, and `dbcontext scaffold` reads its schema and writes the classes. You can re-scaffold after the schema changes, but anything you edited in the generated classes is overwritten, so put your own code in partial classes.
+
+### Common mistakes
+
+- Renaming a property and trusting the generated migration. EF may write `DropColumn` plus `AddColumn`, which deletes the data. Change it to `RenameColumn` by hand.
+- Editing a migration that has already been applied somewhere. Add a new migration instead.
+- Calling `Database.Migrate()` at startup in an app that runs on several servers. Two instances can try to migrate at the same time.
+
+### Real-world example
+
+A common team setup: developers add migrations locally and commit them with the code change. The build pipeline runs `dotnet ef migrations script --idempotent` and a DBA or the release pipeline applies that script before the new version of the app is deployed. The script is safe to run twice because it checks the history table.
+
+### Try it yourself
+
+1. Create a migration for a `Customer` table, apply it, then add a `Phone` column with a second migration.
+2. Rename `Phone` to `PhoneNumber`, look at the generated code, and fix it to use `RenameColumn`.
+3. Generate an idempotent script and read it. Find the `IF NOT EXISTS` checks against `__EFMigrationsHistory`.
 
 # database-first (scaffold)
 dotnet ef dbcontext scaffold "Server=.;Database=Legacy;Trusted_Connection=True;TrustServerCertificate=True" \
@@ -202,6 +264,22 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
 
 Fluent-only features: composite keys (`HasKey(x => new { x.A, x.B })`), indexes, sequences, table splitting, owned types, value conversions, query filters, seed data (`HasData`), inheritance mapping.
 
+### How it works
+
+EF builds the model in three passes. First conventions guess everything they can: a property called `Id` is the key, `CustomerId` next to a `Customer` navigation is the foreign key, `string` becomes `nvarchar(max)`. Then data annotations on your classes override the guesses. Last, Fluent API code in `OnModelCreating` overrides both. Knowing this order explains most "why did EF do that?" surprises.
+
+### Common mistakes
+
+- Leaving strings without a maximum length. `nvarchar(max)` columns cannot be indexed normally and waste memory grants in big queries.
+- Forgetting decimal precision. Without `HasPrecision(18, 2)` EF warns you and SQL Server may round money values.
+- Spreading configuration across annotations and Fluent API for the same property. Pick one style per project; most teams use Fluent API in `IEntityTypeConfiguration<T>` classes so entities stay plain.
+
+### Try it yourself
+
+1. Map a `Product` with only conventions and look at the generated table.
+2. Add a configuration class that sets the table name, max lengths, decimal precision and a unique index on `Sku`.
+3. Create a migration and compare the two table definitions.
+
 # Module: Relationships and Modelling
 
 ## Lesson: [Intermediate|High] One-to-one, one-to-many, many-to-many
@@ -223,6 +301,28 @@ public class Enrollment { public int StudentId { get; set; } public int CourseId
 ```
 
 Delete behaviours: `Cascade` (default for required relationships), `Restrict`/`NoAction`, `SetNull`, `ClientSetNull`. SQL Server rejects multiple cascade paths: use `Restrict` on one.
+
+### How it works
+
+A relationship has a principal (the "one" side, for example `Customer`) and a dependent (the side that holds the foreign key, for example `Order`). EF needs to know which side owns the key; for one-to-many it is obvious, for one-to-one you tell it with `HasForeignKey<T>()`. Navigation properties are only for your C# code. In the database there is just a foreign key column and a constraint.
+
+Delete behaviour decides what happens to dependents when the principal is deleted. With `Cascade` the database deletes the orders when a customer is deleted. With `Restrict` the delete fails while orders still exist, which is usually what business data needs.
+
+### Common mistakes
+
+- Leaving cascade delete on for business data. Deleting one customer silently deletes years of orders and invoices.
+- Adding a plain many-to-many and later needing extra columns such as `EnrolledOn`. Plan an explicit join entity when the link itself has data.
+- Making both navigations required in a one-to-one and then being unable to insert either row first.
+
+### Real-world example
+
+In an online shop `Order` to `OrderLine` is one-to-many with cascade delete, because lines mean nothing without their order. `Customer` to `Order` is one-to-many with `Restrict`, because orders are financial records and must survive. `Product` to `Tag` is many-to-many with no extra data, so the automatic join table is enough.
+
+### Try it yourself
+
+1. Model `Customer`, `Order`, `OrderLine` and `Product` with the delete rules above.
+2. Try to delete a customer who has orders and read the exception.
+3. Add `Student` and `Course` as many-to-many, then change it to an `Enrollment` entity with a `Grade` column.
 
 ## Lesson: [Intermediate|Medium] Owned types, complex types, value conversions and inheritance
 
@@ -246,6 +346,22 @@ Inheritance strategies:
 | **TPT**: Table per Type | Base table + one per derived type | Normalised; joins make it slower |
 | **TPC**: Table per Concrete type (EF 7) | One table per concrete class | No joins for concrete queries; IDs must be unique across tables |
 
+### How it works
+
+Owned and complex types let you keep small value objects such as `Address` or `Money` as real classes in C# while storing their fields as columns in the owner's table. Value conversions change how one property is stored, for example an enum saved as readable text instead of a number. Inheritance mapping decides how a class hierarchy such as `Payment`, `CardPayment` and `BankPayment` is laid out in tables.
+
+### Common mistakes
+
+- Storing enums as integers and later reordering the enum members. Every stored value now means something else. Text conversion avoids this.
+- Picking TPT because it looks tidy, then finding every query joins five tables. Start with TPH unless you have a clear reason.
+- Putting large, frequently filtered data in JSON columns. JSON is good for flexible extras, not for fields you search on every request.
+
+### Try it yourself
+
+1. Add an `Address` value object to `Customer` with `ComplexProperty` and check the column names.
+2. Store `OrderStatus` as a string and confirm the column shows `Paid`, `Shipped` and so on.
+3. Map `Payment` with TPH, then switch it to TPC and compare the tables and the SQL for `db.Payments.ToList()`.
+
 # Module: Querying
 
 ## Lesson: [Basic|High] Querying, tracking vs no-tracking
@@ -265,6 +381,28 @@ var dtos = await db.Orders
 ```
 
 `AsNoTrackingWithIdentityResolution()`: no tracking but still one instance per key. Configure default: `UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)` for read-heavy contexts.
+
+### How it works
+
+A LINQ query on a `DbSet` does nothing until you enumerate it with `ToListAsync`, `FirstAsync`, `CountAsync` and so on. Up to that point you are only building an expression tree. EF then translates the whole tree to SQL, runs it and builds objects from the rows.
+
+With tracking on, EF keeps a snapshot of every loaded entity so it can tell later what you changed. That costs memory and time. With `AsNoTracking`, EF skips the snapshot. With `Select` projections into DTOs, nothing is tracked at all, and EF only reads the columns you asked for.
+
+### Common mistakes
+
+- Calling `ToList()` too early and then filtering in memory. `db.Orders.ToList().Where(...)` loads the entire table.
+- Tracking thousands of rows for a read-only report page.
+- Returning entities straight from an API. You leak columns you did not mean to share and risk serialisation loops. Project to a DTO.
+
+### Real-world example
+
+A product list page with filters and paging should be one projected query: `Where` for the filters, `OrderBy`, `Skip` and `Take` for the page, and `Select` into a small DTO. That is one round trip that reads only the needed columns, with no tracking cost. The edit page loads one tracked entity because it will be saved.
+
+### Try it yourself
+
+1. Write the same list query three ways: tracked entities, `AsNoTracking`, and a `Select` DTO.
+2. Log the SQL for each and compare the column lists.
+3. Measure each with 10,000 rows using `Stopwatch` and note the difference.
 
 ## Lesson: [Intermediate|High] Loading related data: eager, explicit, lazy
 
@@ -291,6 +429,24 @@ await db.Entry(order).Reference(o => o.Customer).LoadAsync();
 | Explicit | When you call `Load` | Extra round trips, but controlled |
 | Lazy | On first access of navigation | **N+1 queries**, hidden DB calls, serialisation loops |
 
+### How it works
+
+By default EF loads only the entity you ask for. Related data stays empty until you say how to load it. Eager loading joins the related tables into the same query. Explicit loading fetches them later when you call `Load`. Lazy loading uses proxy classes that fetch the data the moment you touch a navigation property, which feels convenient and is the most common cause of slow EF apps.
+
+With two or more collection `Include`s in one query, SQL returns every combination of rows (a cartesian product). Ten lines and ten payments for one order becomes a hundred rows. `AsSplitQuery` sends one query per collection instead.
+
+### Common mistakes
+
+- The N+1 problem: one query for 50 orders, then one more query per order when a loop reads `order.Customer.Name`. That is 51 round trips.
+- Including everything "just in case". Each `Include` adds joins and data you may not show.
+- Using split queries without thinking about consistency. Each query runs separately, so data can change between them unless you use a transaction.
+
+### Try it yourself
+
+1. Turn on lazy loading, loop over 50 orders printing the customer name, and count the SQL statements in the log.
+2. Fix it with `Include`, then fix it again with a `Select` projection. Compare both.
+3. Include two collections, count the rows returned, then add `AsSplitQuery` and count again.
+
 ## Lesson: [Intermediate|High] Raw SQL, stored procedures and bulk operations
 
 ```csharp
@@ -310,6 +466,24 @@ await db.Products.Where(p => p.CategoryId == 3)
 ```
 
 `FromSqlRaw`/`ExecuteSqlRaw` take a string + parameters: never concatenate user input into them. `ExecuteUpdate/Delete` bypass the change tracker (tracked entities become stale) and run immediately.
+
+### How it works
+
+EF covers most queries, but sometimes SQL is simpler: a reporting query with window functions, an existing stored procedure, or a hint the DBA asked for. `FromSql` with an interpolated string turns each `{value}` into a real SQL parameter, so it is safe. The `Raw` versions take a plain string and are only safe if you pass parameters separately.
+
+`ExecuteUpdate` and `ExecuteDelete` run one set-based statement in the database without loading any rows into memory. Updating a million rows this way takes seconds instead of minutes.
+
+### Common mistakes
+
+- Building SQL with `+` or `string.Format` and user input. That is SQL injection, even inside EF.
+- Using `ExecuteUpdate` and then trusting tracked entities in the same context. They still hold the old values.
+- Using `FromSql` with a stored procedure and then adding `Where` after it. EF cannot compose on top of `EXEC`, so it fails or filters in memory.
+
+### Try it yourself
+
+1. Write a report that groups sales by month with `SqlQuery<T>` into an unmapped record.
+2. Delete all draft orders older than 30 days with `ExecuteDeleteAsync` and check the single SQL statement in the log.
+3. Write the same delete with a loop and `Remove`, time both, and compare.
 
 # Module: Saving Data
 
@@ -336,6 +510,26 @@ await db.SaveChangesAsync(ct);
 
 `SaveChanges` wraps all pending changes in **one transaction** and batches statements (SQL Server default batch up to 42 statements). Interceptors (`SaveChangesInterceptor`) or overriding `SaveChangesAsync` are common for audit fields (`CreatedAt`, `ModifiedBy`).
 
+### How it works
+
+`Add`, `Update` and `Remove` do not touch the database. They only change entity states in the change tracker. `SaveChangesAsync` is the moment EF compares snapshots, works out the needed statements, orders them so foreign keys are satisfied, and runs them in one transaction. If any statement fails, all of them roll back.
+
+### Common mistakes
+
+- Calling `SaveChanges` inside a loop. Every call is a round trip and its own transaction. Make the changes, then save once.
+- Using `Update(entity)` with a DTO mapped from a form. It marks every column modified, so fields the form did not send get overwritten with defaults.
+- Forgetting that `Remove` on a principal may cascade to dependents.
+
+### Real-world example
+
+An "edit customer" API usually loads the customer, copies only the allowed fields from the request DTO, and saves. EF then updates only the columns that actually changed. Audit fields like `UpdatedAt` and `UpdatedBy` are filled in one place by an interceptor, so no endpoint can forget them.
+
+### Try it yourself
+
+1. Insert 1,000 rows calling `SaveChanges` after each, then again with one `SaveChanges` at the end. Compare the time.
+2. Update a customer through `Update(dto)` and through load-and-copy. Compare the generated `UPDATE` statements.
+3. Add an interceptor that sets `CreatedAt` and `UpdatedAt` for every entity that implements `IAuditable`.
+
 ## Lesson: [Intermediate|High] Concurrency control
 
 ```csharp
@@ -361,6 +555,26 @@ catch (DbUpdateConcurrencyException ex)
 
 **Optimistic concurrency** (rowversion / `IsConcurrencyToken()`): no locks; detect conflicts on save, default choice for web apps. Pessimistic (locks: `SELECT ... WITH (UPDLOCK)`, serializable transactions): prevents conflicts but reduces throughput.
 
+### How it works
+
+Optimistic concurrency assumes conflicts are rare. Each row carries a version, usually a SQL Server `rowversion` that changes on every update. When EF saves, it adds `AND RowVersion = @original` to the `WHERE` clause. If someone else changed the row first, no rows match, EF sees zero rows affected and throws `DbUpdateConcurrencyException`. Nothing is overwritten silently.
+
+### Common mistakes
+
+- Having no concurrency token at all. The last save wins and nobody notices that an earlier change was lost.
+- Catching the exception and simply retrying the same values. That is the same as having no check.
+- Forgetting to send the row version to the browser and back in web apps. Without the original version, EF compares against the current one and never detects a conflict.
+
+### Real-world example
+
+Two support agents open the same ticket. The first changes the priority and saves. The second changes the status and saves a minute later. With a row version the second save fails, the screen reloads with the current values and shows the agent what changed, and the agent applies the status change again on top of the fresh data.
+
+### Try it yourself
+
+1. Add a `[Timestamp]` column to `Product`.
+2. Load the same product in two contexts, change the price in both, and save both. Catch the exception from the second save.
+3. Implement "store wins" and "client wins" handlers and explain when you would use each.
+
 ## Lesson: [Intermediate|High] Transactions
 
 ```csharp
@@ -381,6 +595,24 @@ catch
 ```
 
 With `EnableRetryOnFailure`, user-initiated transactions must run inside an execution strategy: `await db.Database.CreateExecutionStrategy().ExecuteAsync(async () => { ... })`. Savepoints are created automatically by `SaveChanges` inside an explicit transaction.
+
+### How it works
+
+Every `SaveChanges` call is already one transaction. You need an explicit transaction only when several separate operations must succeed or fail together, for example a `SaveChanges` plus an `ExecuteUpdate`, or two `SaveChanges` calls where the second needs an ID from the first.
+
+With retry on failure turned on, EF may replay your work after a transient network error. A hand-written transaction cannot be replayed halfway through, so EF asks you to wrap it in an execution strategy that can retry the whole block.
+
+### Common mistakes
+
+- Keeping a transaction open while calling an external API or waiting for a user. Locks are held the whole time and other requests queue up.
+- Opening a transaction and using a second `DbContext` inside it. The second context does not join the transaction unless you share the connection.
+- Swallowing the exception in `catch` after the rollback, so the caller thinks the order was saved.
+
+### Try it yourself
+
+1. Place an order and reduce stock in one transaction. Force an exception before commit and confirm neither change is saved.
+2. Turn on `EnableRetryOnFailure`, run the same code, and read the error. Fix it with `CreateExecutionStrategy`.
+3. Look at the locks in SQL Server with `sys.dm_tran_locks` while the transaction is open.
 
 # Module: Performance and Advanced
 
@@ -403,6 +635,26 @@ With `EnableRetryOnFailure`, user-initiated transactions must run inside an exec
 private static readonly Func<AppDbContext, int, Task<Product?>> GetById =
     EF.CompileAsyncQuery((AppDbContext db, int id) => db.Products.FirstOrDefault(p => p.Id == id));
 ```
+
+### How to use this checklist
+
+Do not apply all twelve points blindly. Measure first. Turn on SQL logging or Application Insights, find the slowest or most frequent queries, and fix those. In most real apps two or three changes, usually projection, removing N+1 and adding one missing index, solve almost all the slowness.
+
+### A worked example
+
+A dashboard took four seconds. The log showed 120 queries. Lazy loading was reading the customer of each order inside a Razor loop (N+1), and every query loaded full entities with a large `Notes` column. The fix was one projected query with the customer name in the DTO, `AsNoTracking`, and an index on `(Status, CreatedAt)`. The page dropped to 150 milliseconds with three SQL statements.
+
+### Common mistakes
+
+- Adding compiled queries or context pooling before fixing the real problem. They save microseconds while N+1 costs seconds.
+- Caching everything in memory to hide slow queries. The data goes stale and memory grows.
+- Not checking the execution plan. A query that looks fine in LINQ may scan a whole table because an index is missing.
+
+### Try it yourself
+
+1. Seed 100,000 orders. Write the slowest reasonable version of an "orders this month" page.
+2. Apply the checklist one item at a time and record the time after each step.
+3. Keep only the changes that made a real difference and note why.
 
 ## Lesson: [Advanced|Medium] Global query filters, interceptors, shadow properties and temporal tables
 
@@ -431,12 +683,69 @@ b.Entity<Product>().ToTable(t => t.IsTemporal());
 var asOf = await db.Products.TemporalAsOf(DateTime.UtcNow.AddDays(-7)).ToListAsync();
 ```
 
+### How it works
+
+A global query filter is a `Where` that EF adds to every query for that entity, including queries through `Include`. That makes it ideal for soft delete and multi-tenant apps, where forgetting the filter even once would be a bug or a data leak. Interceptors are hooks around EF operations: before saving, before a command runs, when a connection opens. Shadow properties are columns EF knows about that your class does not expose. Temporal tables keep the full history of every row in SQL Server, so you can query the data as it was at any time.
+
+### Common mistakes
+
+- Reading the tenant ID for a filter from a static value. Filters must read it from the current context instance, or tenants see each other's data.
+- Using `IgnoreQueryFilters()` in normal code paths. Keep it for admin screens and clearly named methods.
+- Doing slow work such as HTTP calls inside an interceptor. It runs on every save.
+
+### Real-world example
+
+A SaaS app stores the tenant ID on every table. The context receives the current tenant from the logged-in user, a global filter adds `TenantId = @tenant` to every query, and an interceptor stamps the tenant ID on every new row. Developers cannot forget either step, and a code review only needs to check the few places that call `IgnoreQueryFilters`.
+
+### Try it yourself
+
+1. Add soft delete with an `IsDeleted` flag, a query filter, and an interceptor that turns `Remove` into an update.
+2. Add a tenant filter and write a test that proves tenant A cannot read tenant B's orders.
+3. Make `Products` temporal, change a price twice, and query the old prices with `TemporalAll`.
+
 ## Lesson: [Intermediate|Medium] Testing code that uses EF Core
 
 - **In-Memory provider**: fast but not relational (no SQL, no constraints, no transactions); Microsoft discourages it for testing DB behaviour.
 - **SQLite in-memory** (`DataSource=:memory:`), relational, fast; some SQL Server differences.
 - **Testcontainers** with real SQL Server: most accurate; slower startup (share one container per test run, reset with Respawn).
 - Or hide EF behind repositories and mock those for unit tests of business logic.
+
+### How to choose
+
+Ask what you are testing. If it is business logic that happens to save data, hide the data access behind an interface and unit test the logic with a fake. If it is the query itself, the mapping or a constraint, you need a real relational database, because only a real database enforces keys, runs your SQL and behaves like production.
+
+### A practical setup
+
+Many teams use Testcontainers to start one SQL Server container for the whole test run, apply migrations once, and reset data between tests with Respawn. Tests stay realistic and the suite still finishes in a minute or two.
+
+```csharp
+public class DbFixture : IAsyncLifetime
+{
+    private readonly MsSqlContainer _sql = new MsSqlBuilder().Build();
+    public AppDbContext CreateContext() =>
+        new(new DbContextOptionsBuilder<AppDbContext>().UseSqlServer(_sql.GetConnectionString()).Options);
+
+    public async Task InitializeAsync()
+    {
+        await _sql.StartAsync();
+        await using var db = CreateContext();
+        await db.Database.MigrateAsync();
+    }
+    public Task DisposeAsync() => _sql.DisposeAsync().AsTask();
+}
+```
+
+### Common mistakes
+
+- Testing with the In-Memory provider and trusting the result. It ignores unique indexes, foreign keys and transactions, so tests pass while production fails.
+- Sharing data between tests so they only pass in a certain order.
+- Mocking `DbSet` with a mocking library. It is painful and does not prove the query works.
+
+### Try it yourself
+
+1. Write a test that inserts two products with the same unique `Sku`. Run it with the In-Memory provider, then with SQLite or Testcontainers, and compare.
+2. Build the fixture above and write three tests for an order service.
+3. Add Respawn and make the tests run in any order.
 
 # Interview
 

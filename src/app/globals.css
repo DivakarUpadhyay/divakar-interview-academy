@@ -516,3 +516,18 @@ main.container { min-height: calc(100vh - 120px); min-height: calc(100svh - 120p
 .popular-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
 .popular-card { display: grid; gap: 4px; color: var(--text); }
 .popular-card span { color: var(--muted); font-size: .9rem; }
+
+/* Home: each learning step is a card listing its courses, laid out side by side */
+.step-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); align-items: start; }
+.step-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 12px 8px; }
+.step-head { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: .95rem; margin: 0 4px 8px; }
+.step-num { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; font-size: .8rem; }
+.row-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.row-grid .course-row { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.course-row { display: flex; align-items: center; gap: 12px; padding: 9px 8px; border-radius: 10px; border: 1px solid transparent; color: var(--text); transition: background .12s, border-color .12s, transform .12s; }
+.course-row:hover { color: var(--text); background: var(--surface-2); border-color: var(--accent); transform: translateY(-1px); }
+.course-row .tile-icon { width: 40px; height: 40px; border-radius: 10px; font-size: .78rem; flex: none; }
+.course-row-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+.course-row .tile-name { font-size: .93rem; }
+.course-row .tile-progress { width: 100%; max-width: 160px; }
+@media (max-width: 480px) { .step-grid, .row-grid { grid-template-columns: 1fr; gap: 12px; } }

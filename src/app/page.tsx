@@ -44,26 +44,35 @@ export default function Home() {
         </div>
       </section>
       <h2 className="home-title">Learn Programming</h2>
-      <p className="home-sub">Each subject runs from basics to advanced: study the topics left to right. The bar under a tile shows your progress.</p>
-      {menu.map((t) => (
-        <section key={t.slug} className="tile-section">
-          <h2>{t.title}</h2>
-          {t.groups.map((g, i) => (
-            <div key={g.title}>
-              {t.groups.length > 1 && <div className="tile-group">{i + 1}. {g.title}</div>}
-              <div className="tiles">
-                {g.links.map((l) => (
-                  <Link key={l.href} href={l.href} className="tile">
-                    <span className="tile-icon" style={{ background: l.color }}>{l.icon}</span>
-                    <span className="tile-name">{l.title}</span>
-                    {l.slug && <TileProgress slug={l.slug} total={l.lessons ?? 0} />}
-                  </Link>
+      <p className="home-sub">Follow the steps in order. Each subject goes from basics to advanced, and the bar shows your progress.</p>
+      {menu.map((t) => {
+        const row = (l: (typeof t.groups)[number]["links"][number]) => (
+          <Link key={l.href} href={l.href} className="course-row">
+            <span className="tile-icon" style={{ background: l.color }}>{l.icon}</span>
+            <span className="course-row-text">
+              <span className="tile-name">{l.title}</span>
+              {l.slug && <TileProgress slug={l.slug} total={l.lessons ?? 0} />}
+            </span>
+          </Link>
+        );
+        return (
+          <section key={t.slug} className="tile-section">
+            <h2>{t.title}</h2>
+            {t.groups.length > 1 ? (
+              <div className="step-grid">
+                {t.groups.map((g, i) => (
+                  <div key={g.title} className="step-card">
+                    <div className="step-head"><span className="step-num">{i + 1}</span>{g.title}</div>
+                    {g.links.map(row)}
+                  </div>
                 ))}
               </div>
-            </div>
-          ))}
-        </section>
-      ))}
+            ) : (
+              <div className="row-grid">{t.groups.flatMap((g) => g.links.map(row))}</div>
+            )}
+          </section>
+        );
+      })}
 
       <section className="tile-section">
         <h2>Practice</h2>
