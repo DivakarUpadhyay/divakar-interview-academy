@@ -24,7 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url("/practice", 0.6),
     url("/interview-day", 0.6),
     url("/demo", 0.5),
-    url("/api-docs", 0.3),
     url("/tools", 0.9, "weekly"),
     ...TOOLS.map((t) => url(`/tools/${t.slug}`, 0.9, "weekly")),
     url("/errors", 0.9, "weekly"),

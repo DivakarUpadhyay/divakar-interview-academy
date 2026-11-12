@@ -131,7 +131,8 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 main { padding: 16px 0 28px; }
 .site-footer { margin-top: 48px; background: var(--menu-bg); color: rgb(255 255 255 / 82%); padding: 36px 0 18px; font-size: .93rem; line-height: 1.55; }
 .site-footer a { color: rgb(255 255 255 / 82%); }
-.site-footer a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.site-footer a, .site-footer a:hover, .site-footer a:focus { text-decoration: none; }
+.site-footer a:hover { color: #fff; }
 .footer-cols { display: grid; gap: 28px 32px; grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); }
 .footer-cols h4 { margin: 0 0 10px; color: #fff; font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; }
 .footer-cols nav a { display: block; padding: 3px 0; }

@@ -23,7 +23,6 @@ const MORE = [
   ["/roadmap", "Roadmap & Syllabus"],
   ["/courses", "All Courses"],
   ["/search", "Search"],
-  ["/api-docs", "REST API"],
 ] as const;
 
 export default function SiteNav({ menu }: { menu: MenuTrack[] }) {

@@ -91,7 +91,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/tools">Free developer tools</Link>
               <Link href="/errors">Common error fixes</Link>
               <Link href="/search">Search the site</Link>
-              <Link href="/api-docs">REST API</Link>
             </nav>
             <nav aria-label="Work with me">
               <h4>Get help</h4>
