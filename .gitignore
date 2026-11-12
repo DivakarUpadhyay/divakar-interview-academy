@@ -24,3 +24,5 @@ __pycache__/
 
 # Paid products (sold, not published in the public repo)
 /products/
+
+.wrangler/
