@@ -20,22 +20,26 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Skip quietly until the CLOUDFLARE_API_TOKEN secret has been added (deploys from the PC still work meanwhile).
-    if: ${{ vars.GITHUB_DEPLOY == 'on' }}
     env:
+      HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}   # skip quietly until the secret has been added
       NEXT_PUBLIC_ADSENSE_CLIENT: ca-pub-4620362748422172   # public publisher id, already visible in every page's HTML
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - if: env.HAS_TOKEN == 'true'
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run build
+      - if: env.HAS_TOKEN == 'true'
+        run: npm ci
+      - if: env.HAS_TOKEN == 'true'
+        run: npm run build
       - name: Upload to Cloudflare Pages
+        if: env.HAS_TOKEN == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: b8e4d7f71a8ab54f70cb3054b843181c   # account ids are not secret
         run: npx --yes wrangler@4.151.2 pages deploy out --project-name devladder --branch main --commit-dirty=true
       - name: Tell search engines (IndexNow)
+        if: env.HAS_TOKEN == 'true'
         run: node scripts/indexnow.mjs || true
