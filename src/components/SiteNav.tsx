@@ -86,6 +86,16 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
     </Link>
   );
 
+  // Small tracks share one "More Topics" menu so the bar stays readable on laptops (one column per track).
+  const SMALL = ["automation", "web3"];
+  const small = menu.filter((t) => SMALL.includes(t.slug));
+  const navMenu: MenuTrack[] = [
+    ...menu.filter((t) => !SMALL.includes(t.slug) && t.slug !== "interview"),
+    ...(small.length ? [{ slug: "more-topics", label: "More Topics", title: "More Topics",
+      groups: small.flatMap((t) => t.groups.map((g) => ({ ...g, title: t.groups.length > 1 ? g.title : t.label }))) }] : []),
+    ...menu.filter((t) => t.slug === "interview"),
+  ];
+
   return (
     <>
       {loading && <div className="nav-progress" role="progressbar" aria-label="Loading page" />}
@@ -105,13 +115,13 @@ export default function SiteNav({ menu }: { menu: MenuTrack[] }) {
       <nav className={`menubar${open ? " open" : ""}`} aria-label="Main">
         <div className="container menu">
           <Link href="/" className={`menu-link home${path === "/" ? " active" : ""}`} title="Home">⌂</Link>
-          {menu.map((t) => {
+          {navMenu.map((t) => {
             const mega = t.groups.length > 1;
             return (
               <div key={t.slug} {...itemProps(t.slug, mega)}>
                 {trigger(t.slug, t.label, trackActive(t))}
                 <div className="dropdown">
-                  {mega && <div className="drop-title">{t.title} <span className="hint">, basics to advanced, left to right</span></div>}
+                  {mega && <div className="drop-title">{t.title}<span className="hint">: basics to advanced, left to right</span></div>}
                   <div className="drop-cols">
                     {t.groups.map((g, i) => (
                       <div key={g.title} className="drop-col">
