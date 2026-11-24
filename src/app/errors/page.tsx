@@ -5,7 +5,7 @@ import { ERRORS } from "@/lib/errors";
 
 export const metadata: Metadata = pageMeta({
   title: "Fix Common .NET, SQL Server and Docker Errors",
-  description: "Plain explanations and step-by-step fixes for the errors .NET developers hit most: SQL Server connection and login errors, deadlocks, EF Core, ASP.NET Core startup, CORS and Docker.",
+  description: "Plain explanations and step-by-step fixes for the errors .NET developers hit most: SQL Server, EF Core, ASP.NET Core, IIS hosting (500.19, 500.31, 502.5), C#, Docker, Git and JavaScript.",
   path: "/errors",
 });
 

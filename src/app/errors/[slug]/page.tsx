@@ -19,7 +19,7 @@ function Text({ s }: { s: string }) {
   return <>{s.split(/(`[^`]+`)/).map((part, i) => part.startsWith("`") ? <code key={i}>{part.slice(1, -1)}</code> : part)}</>;
 }
 
-const TRACK: Record<string, string> = { "SQL Server": "data", Docker: "devops-cloud" };
+const TRACK: Record<string, string> = { "SQL Server": "data", Docker: "devops-cloud", Kubernetes: "devops-cloud", Git: "devops-cloud", IIS: "devops-cloud", JavaScript: "frontend", React: "frontend" };
 
 export default async function ErrorFixPage({ params }: PageProps<"/errors/[slug]">) {
   const e = errorBySlug((await params).slug);

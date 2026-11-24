@@ -1,12 +1,14 @@
 // "Fix this error" pages: one page per exact error message developers paste into Google.
 // Text uses `backticks` for code; ErrorPage renders them as <code>. `snippet` is an optional code block.
+import { MORE_ERRORS } from "./errors-more";
+
 export type ErrorFix = {
-  slug: string; area: "SQL Server" | "ASP.NET Core" | "Entity Framework Core" | "C#" | "Docker" | "Node.js" | "Kubernetes" | "Git";
+  slug: string; area: "SQL Server" | "ASP.NET Core" | "Entity Framework Core" | "C#" | "Docker" | "Node.js" | "Kubernetes" | "Git" | "IIS" | "JavaScript" | "React";
   title: string; message: string; meaning: string; causes: string[]; fixes: string[];
   snippet?: { lang: string; code: string }; lesson?: { href: string; title: string };
 };
 
-export const ERRORS: ErrorFix[] = [
+const BASE_ERRORS: ErrorFix[] = [
   {
     slug: "sql-server-network-related-or-instance-specific-error", area: "SQL Server",
     title: "A network-related or instance-specific error occurred while establishing a connection to SQL Server",
@@ -690,5 +692,7 @@ kubectl describe pod api-7d9f8c6b5d-x2k4q | grep -A5 "Last State"` },
     lesson: { href: "/courses/nodejs", title: "Node.js course" },
   },
 ];
+
+export const ERRORS: ErrorFix[] = [...BASE_ERRORS, ...MORE_ERRORS];
 
 export const errorBySlug = (slug: string) => ERRORS.find((e) => e.slug === slug);
