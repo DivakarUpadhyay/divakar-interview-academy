@@ -1,8 +1,8 @@
 // Creates dev.to DRAFTS (never published) from DevLadder lessons, so a person can review and publish them by hand.
-// Each draft = the full lesson + the course's top interview questions + a link back to the lesson, with
+// Each draft = a teaser (opening of the lesson, one interview question, more questions to try) + links back to the lesson, with
 // canonical_url pointing at DevLadder so search engines treat the lesson page as the original.
 //
-// Usage: node scripts/devto-drafts.mjs [--count 7] [--dry-run] [--refresh] [--refresh-published]
+// Usage: node scripts/devto-drafts.mjs [--count 7] [--dry-run] [--refresh] [--refresh-published] [--show]
 // Needs DEVTO_API_KEY in .env.devto.local (gitignored). Lessons already on dev.to (draft or published) are skipped,
 // detected by their canonical URL, so the script can run every week without duplicates.
 import fs from "node:fs";
@@ -77,22 +77,63 @@ function pick(all, done, n) {
   return picked;
 }
 
+// Splits Markdown into blank-line blocks without breaking code fences.
+function blocks(md) {
+  const out = [];
+  let cur = [], fence = false;
+  for (const line of md.trim().split("\n")) {
+    if (/^\s*```/.test(line)) fence = !fence;
+    if (!fence && line.trim() === "" && cur.length) { out.push(cur.join("\n")); cur = []; continue; }
+    cur.push(line);
+  }
+  if (cur.length) out.push(cur.join("\n"));
+  return out;
+}
+const words = (s) => s.split(/\s+/).filter(Boolean).length;
+
+// Teaser: the opening of the lesson only. Full-length posts got ~390 dev.to views and zero clicks to the site
+// (2026-11-24), because readers had nothing left to come for. Short lessons stay whole; the hook is then the questions.
+function teaser(body) {
+  const bs = blocks(body);
+  const total = words(body);
+  if (total < 140 || bs.length < 3) return { shown: body.trim(), rest: [] };
+  const shown = [];
+  let n = 0;
+  for (const b of bs) {
+    if (shown.length >= 2 && n >= total * 0.45) break;
+    shown.push(b);
+    n += words(b);
+  }
+  // Names of the sections the reader hasn't seen yet, from "**Label:**" openings.
+  const rest = bs.slice(shown.length).map((b) => b.match(/^\*\*([^*]{3,60}?):?\*\*/)?.[1]?.replace(/[:(].*$/, "").trim()).filter(Boolean);
+  return { shown: shown.join("\n\n"), rest: [...new Set(rest)].slice(0, 5) };
+}
+
 function article(l) {
-  const qs = l.top.slice(0, 3).map((q) => `### ${q.question}\n\n${q.answer.trim()}`).join("\n\n");
   const courseUrl = `${SITE}/courses/${l.course.slug}`;
+  const courseName = l.course.title.split(": ")[0];
   const next = l.next ? `\n\nNext in the course: [${l.next.title}](${l.next.url}) →` : "";
+  const { shown, rest } = teaser(l.body);
+  const cut = shown.length < l.body.trim().length;
+  // Rotate by lesson so posts from one course don't all open with the same question.
+  const k = l.top.length ? l.index % l.top.length : 0;
+  const [first, ...others] = [...l.top.slice(k), ...l.top.slice(0, k)];
+  const more = others.slice(0, 4).map((q) => `- ${q.question}`).join("\n");
+  const restLine = rest.length ? `The full lesson goes on to cover: ${rest.join(", ")}.\n\n` : "";
   // The first line pulls readers to the site: dev.to readers rarely scroll to a link at the bottom.
-  const body = `**👉 [Full lesson with practice questions on DevLadder](${l.url})** (free, lesson ${l.index + 1} of ${l.total} in the [${l.course.title}](${courseUrl}) course)
+  const body = `**👉 [Read the full lesson on DevLadder](${l.url})** (free, lesson ${l.index + 1} of ${l.total} in the [${l.course.title}](${courseUrl}) course)
 
-${l.body.trim()}
+${shown}
 
-## Interview questions on ${l.course.title.split(": ")[0]}
+${cut ? `${restLine}**[Continue reading the lesson →](${l.url})**\n\n` : ""}## An interview question on ${courseName}
 
-${qs}
+${first ? `### ${first.question}\n\n${first.answer.trim()}` : ""}
 
----
+## Can you answer these?
 
-Read the [full lesson with progress tracking](${l.url}) and the rest of the course on **DevLadder**: free step-by-step tutorials and interview questions for developers.${next}`;
+${more}
+
+The answers, plus ${Math.max(l.top.length - 1, 0)} more ${courseName} interview questions and a mock-interview mode, are free on **[DevLadder](${l.url})**.${next}`;
   return {
     title: `${l.title} (${l.course.title.split(": ")[0].split(" (")[0]})`.slice(0, 128),
     body_markdown: body,
@@ -127,13 +168,14 @@ for (let page = 1; ; page++) {
 if (args.includes("--refresh") || args.includes("--refresh-published")) {
   const live = args.includes("--refresh-published");
   const byUrl = new Map(lessons().map((l) => [l.url, l]));
-  const drafts = await call("GET", `${API}/articles/me/${live ? "published" : "unpublished"}?per_page=1000`);
+  // /articles/me/published leaves out scheduled posts (published with a future date), so filter the full list.
+  const drafts = (await call("GET", `${API}/articles/me/all?per_page=1000`)).filter((a) => a.published === live);
   for (const d of drafts) {
     const l = byUrl.get((d.canonical_url ?? "").replace(/\/$/, ""));
     if (!l) continue;
     const { published, ...fields } = article(l);
-    if (dryRun) { console.log(`- would update #${d.id}: ${fields.title}`); continue; }
-    await call("PUT", `${API}/articles/${d.id}`, { article: live ? fields : { ...fields, published: false } });
+    if (dryRun) { console.log(`- would update #${d.id}: ${fields.title}`); if (args.includes("--show")) console.log(`${fields.body_markdown}\n`); continue; }
+    await call("PUT", `${API}/articles/${d.id}`, { article: live ? { ...fields, published_at: d.published_at } : { ...fields, published: false } });
     console.log(`- refreshed ${live ? "post" : "draft"} #${d.id}: ${fields.title}`);
     await new Promise((r) => setTimeout(r, 4000));
   }
