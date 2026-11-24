@@ -1,7 +1,7 @@
 // "Fix this error" pages: one page per exact error message developers paste into Google.
 // Text uses `backticks` for code; ErrorPage renders them as <code>. `snippet` is an optional code block.
 export type ErrorFix = {
-  slug: string; area: "SQL Server" | "ASP.NET Core" | "Entity Framework Core" | "C#" | "Docker" | "Node.js";
+  slug: string; area: "SQL Server" | "ASP.NET Core" | "Entity Framework Core" | "C#" | "Docker" | "Node.js" | "Kubernetes" | "Git";
   title: string; message: string; meaning: string; causes: string[]; fixes: string[];
   snippet?: { lang: string; code: string }; lesson?: { href: string; title: string };
 };
@@ -436,6 +436,256 @@ SET IDENTITY_INSERT dbo.Orders OFF;` },
       "If you've checked it works anyway: `npm install --legacy-peer-deps` (the npm 6 behaviour).",
       "Avoid `--force`, which can install versions that really are incompatible.",
       "Commit `package-lock.json` so everyone on the team gets the same versions.",
+    ],
+    lesson: { href: "/courses/nodejs", title: "Node.js course" },
+  },
+  {
+    slug: "linq-sequence-contains-no-elements", area: "C#",
+    title: "InvalidOperationException: Sequence contains no elements",
+    message: "System.InvalidOperationException: Sequence contains no elements\n   at System.Linq.ThrowHelper.ThrowNoElementsException()\n   at System.Linq.Enumerable.First[TSource](IEnumerable`1 source)",
+    meaning: "You called `First()`, `Single()`, `Last()`, `Min()`, `Max()` or `Average()` on a collection or query that returned zero rows. These methods have no value to give back, so they throw.",
+    causes: [
+      "`First()` or `Single()` on a query whose filter matched nothing, for example a user id that doesn't exist.",
+      "`Max()` or `Average()` on an empty list of numbers.",
+      "Test data or a new database that simply has no rows yet.",
+    ],
+    fixes: [
+      "If \"not found\" is a normal case, use `FirstOrDefault()` / `SingleOrDefault()` and check for `null`.",
+      "For numbers, make the result nullable: `list.Max(x => (int?)x.Price)` returns `null` on an empty list.",
+      "Or guard first: `if (!items.Any()) return ...;`",
+      "Keep `First()` / `Single()` only where an empty result really is a bug, so it fails loudly.",
+    ],
+    snippet: { lang: "csharp", code: `var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+if (user is null) return NotFound();
+
+decimal? top = orders.Max(o => (decimal?)o.Total); // null when there are no orders` },
+    lesson: { href: "/courses/linq", title: "LINQ course" },
+  },
+  {
+    slug: "csharp-index-was-outside-the-bounds-of-the-array", area: "C#",
+    title: "IndexOutOfRangeException: Index was outside the bounds of the array",
+    message: "System.IndexOutOfRangeException: Index was outside the bounds of the array.",
+    meaning: "You read or wrote `array[i]` where `i` is below 0 or not less than `array.Length`. For a `List<T>` the same mistake throws `ArgumentOutOfRangeException` instead.",
+    causes: [
+      "A loop written as `i <= arr.Length` instead of `i < arr.Length` (off by one).",
+      "`string.Split()` returned fewer parts than expected, then the code reads `parts[2]`.",
+      "Assuming `args[0]` exists when the program was started without arguments.",
+    ],
+    fixes: [
+      "Loop with `for (int i = 0; i < arr.Length; i++)` or simply `foreach`.",
+      "Check the length before reading: `if (parts.Length < 3) { /* bad line */ }`.",
+      "Use list patterns when the shape can vary (see snippet).",
+      "In the debugger, look at the index value and the array length on the line that threw.",
+    ],
+    snippet: { lang: "csharp", code: `var parts = line.Split(',');
+if (parts is [var name, var city, var age])
+    Console.WriteLine($"{name} from {city}, {age}");
+else
+    Console.WriteLine($"Skipping bad line: {line}");` },
+    lesson: { href: "/courses/csharp", title: "C# course" },
+  },
+  {
+    slug: "efcore-cannot-access-a-disposed-context-instance", area: "Entity Framework Core",
+    title: "Cannot access a disposed context instance (ObjectDisposedException)",
+    message: "System.ObjectDisposedException: Cannot access a disposed context instance. A common cause of this error is disposing a context instance that was resolved from dependency injection and then later trying to use the same context instance elsewhere in your application.",
+    meaning: "Your `DbContext` was already disposed (its request or `using` block ended), and some code still tried to query or save with it.",
+    causes: [
+      "An `async void` method, or a task that isn't awaited, keeps running after the HTTP request has finished.",
+      "A scoped `DbContext` injected into a singleton or a `BackgroundService`.",
+      "Returning an `IQueryable` out of a `using` block and enumerating it later.",
+      "Lazy loading a navigation property after the context is gone.",
+    ],
+    fixes: [
+      "Await every call: change `async void` to `async Task` and `await` it all the way up.",
+      "In background services, create a scope per unit of work with `IServiceScopeFactory` (see snippet).",
+      "Materialise results inside the context's lifetime: call `ToListAsync()` before returning.",
+      "Load related data up front with `Include()` instead of relying on lazy loading.",
+    ],
+    snippet: { lang: "csharp", code: `public class Cleanup(IServiceScopeFactory scopes) : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            using var scope = scopes.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ShopDb>();
+            await db.Carts.Where(c => c.UpdatedAt < DateTime.UtcNow.AddDays(-30)).ExecuteDeleteAsync(ct);
+            await Task.Delay(TimeSpan.FromHours(1), ct);
+        }
+    }
+}` },
+    lesson: { href: "/courses/efcore", title: "Entity Framework Core course" },
+  },
+  {
+    slug: "efcore-the-entity-type-requires-a-primary-key", area: "Entity Framework Core",
+    title: "The entity type requires a primary key to be defined",
+    message: "System.InvalidOperationException: The entity type 'OrderLine' requires a primary key to be defined. If you intended to use a keyless entity type, call 'HasNoKey' in 'OnModelCreating'.",
+    meaning: "EF Core tracks rows by their key. It couldn't find one on this class, so it can't build the model.",
+    causes: [
+      "The key property isn't called `Id` or `<ClassName>Id`, so the convention doesn't find it.",
+      "The key is a field, or has no public getter and setter.",
+      "A table with a composite key (two columns) that was never configured.",
+      "The class maps to a view or a raw SQL result that really has no key.",
+    ],
+    fixes: [
+      "Rename the property to `Id`, or mark it with `[Key]`.",
+      "Composite key: `modelBuilder.Entity<OrderLine>().HasKey(x => new { x.OrderId, x.LineNo });`",
+      "For views and query results: `modelBuilder.Entity<SalesReport>().HasNoKey().ToView(\"vw_Sales\");`",
+      "Make sure it is a property with `{ get; set; }`, not a field.",
+    ],
+    lesson: { href: "/courses/efcore", title: "Entity Framework Core course" },
+  },
+  {
+    slug: "system-text-json-possible-object-cycle-was-detected", area: "ASP.NET Core",
+    title: "JsonException: A possible object cycle was detected",
+    message: "System.Text.Json.JsonException: A possible object cycle was detected. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 64. Consider using ReferenceHandler.Preserve on JsonSerializerOptions to support cycles.",
+    meaning: "The serializer walked from an object to its children and found a path back to the parent (for example `Order.Customer.Orders[0].Customer...`), so it would loop forever.",
+    causes: [
+      "Returning EF Core entities with two-way navigation properties straight from a controller.",
+      "Using `Include()` on both sides of a relationship.",
+    ],
+    fixes: [
+      "Best fix: return a DTO with only the fields the client needs (see snippet). It also stops you leaking columns.",
+      "Quick fix: `builder.Services.AddControllers().AddJsonOptions(o => o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);`",
+      "Mark the back-reference with `[JsonIgnore]` if it is never needed in JSON.",
+    ],
+    snippet: { lang: "csharp", code: `public record OrderDto(int Id, decimal Total, string CustomerName);
+
+var orders = await db.Orders
+    .Select(o => new OrderDto(o.Id, o.Total, o.Customer.Name))
+    .ToListAsync();
+return Ok(orders);` },
+    lesson: { href: "/courses/aspnet-core-webapi", title: "ASP.NET Core Web API course" },
+  },
+  {
+    slug: "httpclient-the-ssl-connection-could-not-be-established", area: "ASP.NET Core",
+    title: "HttpRequestException: The SSL connection could not be established",
+    message: "System.Net.Http.HttpRequestException: The SSL connection could not be established, see inner exception.\n ---> System.Security.Authentication.AuthenticationException: The remote certificate is invalid according to the validation procedure: RemoteCertificateNameMismatch, RemoteCertificateChainErrors",
+    meaning: "`HttpClient` reached the server, but the HTTPS handshake failed because your machine doesn't trust the server's certificate. The inner exception tells you which check failed.",
+    causes: [
+      "Calling a local API that uses the ASP.NET Core development certificate, which isn't trusted yet.",
+      "A self-signed or internal company certificate whose root CA isn't installed on the machine or in the container.",
+      "Calling the server by IP or a different host name than the one on the certificate (`RemoteCertificateNameMismatch`).",
+      "The server only supports old TLS versions, or the certificate has expired.",
+    ],
+    fixes: [
+      "Local dev: run `dotnet dev-certs https --trust`.",
+      "Install the company root CA. In a Linux container, copy it to `/usr/local/share/ca-certificates/` and run `update-ca-certificates`.",
+      "Use the exact host name that is on the certificate.",
+      "Don't ship `ServerCertificateCustomValidationCallback = (_, _, _, _) => true`; it turns off HTTPS protection completely.",
+    ],
+    lesson: { href: "/courses/aspnet-core-webapi", title: "ASP.NET Core Web API course" },
+  },
+  {
+    slug: "aspnet-core-unable-to-configure-https-endpoint", area: "ASP.NET Core",
+    title: "Unable to configure HTTPS endpoint. No server certificate was specified",
+    message: "System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.",
+    meaning: "Kestrel was told to listen on HTTPS but has no certificate to use.",
+    causes: [
+      "The dev certificate was never created on this machine, or it expired.",
+      "Running in Docker, where the host's dev certificate isn't available.",
+      "Production is set up with an `https://` URL but no certificate is configured.",
+    ],
+    fixes: [
+      "Local dev: `dotnet dev-certs https --clean` then `dotnet dev-certs https --trust`.",
+      "Docker: export a cert with `dotnet dev-certs https -ep ./https/aspnetapp.pfx -p <password>`, mount it and set `ASPNETCORE_Kestrel__Certificates__Default__Path` and `__Password`.",
+      "Behind a reverse proxy (Nginx, IIS, a cloud load balancer) let the proxy handle HTTPS and listen on plain HTTP inside: `ASPNETCORE_URLS=http://+:8080`.",
+    ],
+    lesson: { href: "/courses/aspnet-core-webapi", title: "ASP.NET Core Web API course" },
+  },
+  {
+    slug: "kubernetes-crashloopbackoff", area: "Kubernetes",
+    title: "Kubernetes pod status CrashLoopBackOff",
+    message: "NAME                     READY   STATUS             RESTARTS      AGE\napi-7d9f8c6b5d-x2k4q     0/1     CrashLoopBackOff   6 (40s ago)   8m",
+    meaning: "The container starts, exits (crashes or finishes), and Kubernetes keeps restarting it, waiting longer each time. The problem is inside the app or its config, not in Kubernetes itself.",
+    causes: [
+      "The app throws on startup: a missing environment variable, secret or connection string.",
+      "A liveness probe that fails before the app is ready, so Kubernetes kills it.",
+      "The container is OOMKilled because the memory limit is too low.",
+      "The image's command exits right away (for example a script that finishes).",
+    ],
+    fixes: [
+      "Read the logs of the crashed run: `kubectl logs <pod> --previous`.",
+      "Check events and the last state: `kubectl describe pod <pod>` (look for `OOMKilled` or probe failures).",
+      "Add a `startupProbe` or a larger `initialDelaySeconds` for slow-starting apps.",
+      "Raise `resources.limits.memory` if the reason is `OOMKilled`.",
+    ],
+    snippet: { lang: "bash", code: `kubectl get pods
+kubectl logs api-7d9f8c6b5d-x2k4q --previous
+kubectl describe pod api-7d9f8c6b5d-x2k4q | grep -A5 "Last State"` },
+    lesson: { href: "/courses/kubernetes", title: "Kubernetes course" },
+  },
+  {
+    slug: "kubernetes-imagepullbackoff-errimagepull", area: "Kubernetes",
+    title: "Kubernetes ImagePullBackOff / ErrImagePull",
+    message: "Failed to pull image \"myregistry.azurecr.io/api:1.4\": rpc error: code = NotFound desc = failed to pull and unpack image\nWarning  Failed  kubelet  Error: ImagePullBackOff",
+    meaning: "The node couldn't download the container image, so the pod never starts.",
+    causes: [
+      "A typo in the image name or tag, or the tag was never pushed.",
+      "A private registry without credentials (`unauthorized` / `authentication required`).",
+      "The node can't reach the registry (network, proxy, firewall).",
+      "The image was built for another CPU type (ARM vs AMD64).",
+    ],
+    fixes: [
+      "Run `kubectl describe pod <pod>` and read the exact pull error under Events.",
+      "Check the tag exists: `docker manifest inspect myregistry.azurecr.io/api:1.4`.",
+      "Create a pull secret and reference it in `imagePullSecrets`, or attach the registry to the cluster (for AKS: `az aks update --attach-acr`).",
+      "Build for the node's platform: `docker buildx build --platform linux/amd64 ...`.",
+    ],
+    snippet: { lang: "bash", code: `kubectl create secret docker-registry regcred \\
+  --docker-server=myregistry.azurecr.io \\
+  --docker-username=<user> --docker-password=<password>
+# then in the pod spec:
+#   imagePullSecrets:
+#     - name: regcred` },
+    lesson: { href: "/courses/kubernetes", title: "Kubernetes course" },
+  },
+  {
+    slug: "git-refusing-to-merge-unrelated-histories", area: "Git",
+    title: "fatal: refusing to merge unrelated histories",
+    message: "fatal: refusing to merge unrelated histories",
+    meaning: "The two branches have no commit in common, so Git won't merge them unless you say that's intended.",
+    causes: [
+      "You created a repo on GitHub with a README, then pushed a local repo made with `git init` separately.",
+      "Merging two separate projects into one repository.",
+    ],
+    fixes: [
+      "If joining them is what you want: `git pull origin main --allow-unrelated-histories`, fix any conflicts, then commit.",
+      "If the remote only has a starter README you don't need, push over it with `git push --force-with-lease origin main` (only on a repo nobody else uses yet).",
+    ],
+    lesson: { href: "/courses/git", title: "Git course" },
+  },
+  {
+    slug: "git-failed-to-push-some-refs-updates-were-rejected", area: "Git",
+    title: "error: failed to push some refs (Updates were rejected)",
+    message: "! [rejected]        main -> main (fetch first)\nerror: failed to push some refs to 'github.com:me/shop.git'\nhint: Updates were rejected because the remote contains work that you do not have locally.",
+    meaning: "Someone (or you, from another machine or the GitHub website) pushed commits that your local branch doesn't have. Git refuses to overwrite them.",
+    causes: [
+      "A teammate pushed first.",
+      "You edited a file on the GitHub website.",
+      "You rewrote local history with `rebase` or `commit --amend` after pushing.",
+    ],
+    fixes: [
+      "Get their work, then push: `git pull --rebase origin main` and `git push`.",
+      "Fix any conflicts, `git add` the files, `git rebase --continue`, then push.",
+      "Only after rewriting your own branch: `git push --force-with-lease` (safer than `--force`, it stops if someone else pushed).",
+    ],
+    lesson: { href: "/courses/git", title: "Git course" },
+  },
+  {
+    slug: "node-error-listen-eaddrinuse-address-already-in-use", area: "Node.js",
+    title: "Error: listen EADDRINUSE: address already in use :::3000",
+    message: "Error: listen EADDRINUSE: address already in use :::3000\n    at Server.setupListenHandle [as _listen2] (node:net:1872:16)",
+    meaning: "Another process is already listening on that port, so your server can't bind to it.",
+    causes: [
+      "An earlier run of the same app is still running (often in another terminal, or left by a crashed watcher).",
+      "A different app (another dev server, a Docker container) uses the port.",
+    ],
+    fixes: [
+      "Windows: `netstat -ano | findstr :3000`, then `taskkill /PID <pid> /F`.",
+      "macOS / Linux: `lsof -i :3000`, then `kill <pid>`.",
+      "Or start on another port: `PORT=3001 npm start` (PowerShell: `$env:PORT=3001; npm start`).",
+      "Read the port from the environment in your code: `app.listen(process.env.PORT ?? 3000)`.",
     ],
     lesson: { href: "/courses/nodejs", title: "Node.js course" },
   },
