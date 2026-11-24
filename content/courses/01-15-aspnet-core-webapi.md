@@ -80,6 +80,29 @@ Guidelines: nouns not verbs (`/orders`, not `/getOrders`), plural collections, h
 
 **Idempotent** methods give the same result if repeated: GET, PUT, DELETE, HEAD, OPTIONS. Safe methods don't change state: GET, HEAD, OPTIONS. POST is neither; PATCH is not guaranteed idempotent.
 
+### How it works
+
+REST treats your system as a set of **resources** (orders, customers, invoices), each with its own URL. The HTTP method says what you want to do with it, so the URL never needs a verb. The client and server share nothing except the request: every call carries everything the server needs (the token, the filters, the body), which is what "stateless" means. That is why a REST API can sit behind a load balancer and any server can answer any request.
+
+Idempotency matters for retries. If a `PUT` or `DELETE` times out, the client can safely send it again because the second call leaves the same final state. A repeated `POST` can create a second order, so payment and order APIs usually accept an **idempotency key** header and return the first result for a repeated key.
+
+### Common mistakes
+
+- Verbs in URLs: `/api/createOrder`, `/api/orders/delete/42`. Use the method instead.
+- Returning `200` with `{ "success": false }` for errors. Clients, proxies and monitoring tools all read the status code first.
+- Deep nesting such as `/customers/7/orders/42/lines/3/products`. Two levels is usually enough; after that, give the resource its own top-level URL.
+- Changing the meaning of a field in place. Add a new field or a new version instead, because existing clients will break silently.
+
+### Real-world example
+
+An online shop's "place order" screen sends `POST /api/orders` with an `Idempotency-Key: 5f1c...` header. The API returns `201 Created` and `Location: /api/orders/1001`. The phone loses signal and the app retries; the API sees the same key and returns the same `201` with order 1001 instead of charging the customer twice.
+
+### Try it yourself
+
+1. Design URLs and methods for a library system: books, members, loans and "return a book".
+2. Decide which of your endpoints are idempotent, and which one needs an idempotency key.
+3. Write the status code each endpoint returns on success and on the most common failure.
+
 ## Lesson: [Basic|High] HTTP status codes you must know
 
 | Code | Meaning | When |
@@ -102,6 +125,26 @@ Guidelines: nouns not verbs (`/orders`, not `/getOrders`), plural collections, h
 | 429 Too Many Requests | Rate limited | + `Retry-After` |
 | 500 Internal Server Error | Unhandled server error | |
 | 502/503/504 | Gateway / unavailable / timeout | Downstream failures |
+
+### How it works
+
+The first digit tells the client what kind of result it got: **2xx** success, **3xx** go somewhere else, **4xx** the client must change the request, **5xx** the server failed and the same request might work later. Retry logic, browsers, CDNs and dashboards all rely on that split. A client should retry a `503` or `504` with backoff, but retrying a `400` will fail the same way every time.
+
+### Common mistakes
+
+- Mixing up **401** and **403**. 401 means "I don't know who you are" (no token, expired token). 403 means "I know who you are, and you can't do this".
+- Returning **500** for bad input. That pages the on-call engineer for a typo in the client. Validation problems are 400 (or 422 if your API uses it for business rules).
+- Returning **404** for an empty list. `GET /api/orders?status=open` with no matches is `200` with `[]`.
+- Hiding every error behind 200. Monitoring then shows a healthy API while users see failures.
+
+### Real-world example
+
+A mobile app calls `GET /api/orders/42` and gets `401`: it silently refreshes the access token and tries once more. On `403` it shows "You don't have access to this order". On `404` it shows "Order not found". On `503` it waits 2, then 4 seconds and retries. One status code, four different behaviours, and none of them needs to parse an error message.
+
+### Try it yourself
+
+1. List the status codes your current project returns and find one endpoint that returns the wrong one.
+2. Pick the right code for: duplicate email on sign-up, an expired token, a request body over 10 MB, and a payment provider that is down.
 
 ## Lesson: [Basic|High] Controller-based API
 
@@ -135,6 +178,29 @@ public class OrdersController(IOrderService orders) : ControllerBase
 
 `[ApiController]` gives: attribute routing required, automatic **400 ValidationProblemDetails** when `ModelState` is invalid, binding-source inference (complex types from body, simple from route/query), ProblemDetails for error status codes.
 
+### How it works
+
+When a request arrives, **routing** matches the URL and method to an action, for example `GET api/orders/42` → `OrdersController.Get(42)`. **Model binding** fills the parameters: `id` from the route, `OrderQuery` from the query string, `CreateOrderRequest` from the JSON body. Then validation runs, filters run, the action runs, and the returned `ActionResult` is serialised to JSON with the right status code.
+
+A controller instance is created for every request and disposed afterwards, so it is safe to inject scoped services such as a `DbContext`. Passing `CancellationToken` lets ASP.NET Core cancel your database query when the client disconnects.
+
+### Common mistakes
+
+- Putting business logic and EF queries straight into the action. Keep actions thin and move the work into a service you can unit test.
+- Returning `Ok(dto)` after a create. Use `CreatedAtAction` so the client gets `201` and a `Location` header.
+- Inheriting from `Controller` instead of `ControllerBase` in an API. `Controller` adds view support you don't need.
+- Forgetting `[ApiController]`, then wondering why invalid models reach the action and bodies don't bind.
+
+### Real-world example
+
+In a typical company API, `OrdersController` has five or six actions of two lines each. Each one calls `IOrderService`, which owns the rules ("an order needs at least one line", "only open orders can be cancelled") and talks to the database. Tests cover the service directly. A few integration tests use `WebApplicationFactory` to call the real endpoints in memory.
+
+### Try it yourself
+
+1. Create `ProductsController` with list, get, create and delete actions that return 200, 201, 204 and 404 correctly.
+2. Add `CancellationToken` to each action and pass it all the way to EF Core.
+3. Write one integration test with `WebApplicationFactory<Program>` that checks a missing product returns 404.
+
 ## Lesson: [Basic|High] Minimal APIs
 
 ```csharp
@@ -161,6 +227,28 @@ orders.MapPost("/", async (CreateOrderRequest req, IOrderService svc, Cancellati
 | Native AOT | Not supported | Supported |
 | Best for | Large APIs, teams used to MVC | Microservices, small/fast APIs |
 
+### How it works
+
+Minimal APIs map a route straight to a delegate. ASP.NET Core looks at the lambda's parameters at startup and generates the binding code: route values, query string, JSON body and services from DI are all inferred. There is no controller class, no action selection and less reflection, which makes startup faster and allows Native AOT.
+
+`MapGroup` gives a set of endpoints a shared prefix, tags, auth rules and filters, so a large API still stays organised. `TypedResults` and `Results<Ok<T>, NotFound>` tell OpenAPI exactly which responses an endpoint can return.
+
+### Common mistakes
+
+- Writing every endpoint in `Program.cs`. Put each feature in its own static class with a `MapOrderEndpoints(this IEndpointRouteBuilder app)` extension method.
+- Using `Results.Ok` instead of `TypedResults.Ok`. Both work, but only typed results describe the response type for OpenAPI and tests.
+- Assuming validation happens automatically. Before .NET 10 you need a filter or FluentValidation; in .NET 10 call `builder.Services.AddValidation()`.
+
+### Real-world example
+
+A small notification microservice has eight endpoints. With Minimal APIs it is one `Program.cs` plus two endpoint files. It is published with Native AOT into a small container that starts in milliseconds, which matters when Kubernetes scales it from 2 to 20 pods at peak time.
+
+### Try it yourself
+
+1. Rewrite the products controller from the previous lesson as a `MapGroup("/api/products")` with typed results.
+2. Move the endpoints into `ProductEndpoints.cs` with an extension method and call it from `Program.cs`.
+3. Open `/openapi/v1.json` and check that the 404 response is documented.
+
 # Module: Building Robust APIs
 
 ## Lesson: [Intermediate|High] Middleware: built-in and custom
@@ -185,6 +273,29 @@ app.Map("/health", b => b.Run(async c => await c.Response.WriteAsync("OK")));   
 ```
 
 `Use` can call `next`; `Run` is terminal; `Map`/`MapWhen` branch the pipeline. **Order matters**: e.g. `UseAuthentication` before `UseAuthorization`; CORS before auth; exception handler first.
+
+### How it works
+
+The pipeline is a chain of delegates. Each middleware gets the `HttpContext` and a `next` delegate. Code before `await next(ctx)` runs on the way in, and code after it runs on the way out, in reverse order. That is why the exception handler goes first: it wraps everything after it, so any exception thrown further down passes back through it.
+
+The usual order is: exception handler, HSTS, HTTPS redirection, static files, routing, CORS, authentication, authorization, your own middleware, then the endpoints. A middleware class is created once (it behaves like a singleton), so inject scoped services into `InvokeAsync` parameters, not into the constructor.
+
+### Common mistakes
+
+- `UseAuthorization` before `UseAuthentication`: the user is never identified, so every protected endpoint returns 401.
+- Injecting a scoped service (like `DbContext`) into a middleware constructor. It becomes a captured singleton.
+- Writing to the response after `next` has already started sending it. You get "Headers are read-only, response has already started".
+- Reading the request body in middleware without `ctx.Request.EnableBuffering()`, so the controller finds an empty body.
+
+### Real-world example
+
+Most production APIs have a correlation-id middleware like the one above. The gateway, the API and the services it calls all log the same id, so support can paste one id from an error screen into Seq or Application Insights and see every log line of that request across all services.
+
+### Try it yourself
+
+1. Write a middleware that logs method, path, status code and elapsed milliseconds for every request.
+2. Put it before and after `UseExceptionHandler` and compare what it logs when an action throws.
+3. Change it to skip `/health` requests.
 
 ## Lesson: [Intermediate|High] Global error handling with ProblemDetails
 
@@ -214,6 +325,27 @@ app.UseStatusCodePages();
 
 **ProblemDetails** (RFC 9457, formerly 7807) is the standard JSON error shape: `type`, `title`, `status`, `detail`, `instance`, plus extensions such as `traceId` and `errors`.
 
+### How it works
+
+`UseExceptionHandler` catches any unhandled exception from the rest of the pipeline. It clears the response and calls your registered `IExceptionHandler`s in order until one returns `true`. `IProblemDetailsService` writes the standard JSON error, and `AddProblemDetails` makes the plain status codes your API returns (400, 404, 409) use the same shape. Clients then need one error parser, not one per endpoint.
+
+### Common mistakes
+
+- `try/catch` in every action. It duplicates code and still misses exceptions thrown in filters and middleware.
+- Sending `ex.ToString()` or stack traces to clients in production. That leaks internal details; log them and return a `traceId` instead.
+- Using exceptions for normal flow. A missing product is an expected case; return `NotFound()` rather than throwing in a hot path.
+- Logging the same exception at every layer. Log it once, in the global handler.
+
+### Real-world example
+
+A customer reports "the app says something went wrong". The error JSON they see includes `"traceId": "00-4bf92f...-01"`. Support searches that id in Application Insights and finds the exact SQL timeout and the line that threw it, without ever showing the stack trace to the customer.
+
+### Try it yourself
+
+1. Add the handler above and make an endpoint throw `NotFoundException`. Check you get a 404 ProblemDetails.
+2. Add `traceId` as an extension field: `ProblemDetails.Extensions["traceId"] = Activity.Current?.Id ?? ctx.TraceIdentifier`.
+3. Return the stack trace only when `IHostEnvironment.IsDevelopment()` is true.
+
 ## Lesson: [Intermediate|High] DTOs, validation and mapping
 
 - Never expose EF entities directly: use **request/response DTOs** (records) to avoid over-posting, circular references and leaking internal fields.
@@ -235,6 +367,29 @@ public class CreateOrderValidator : AbstractValidator<CreateOrderRequest>
 }
 ```
 
+### How it works
+
+A DTO is the contract you promise clients. Your entities can change (rename a column, add an internal flag) while the DTO stays the same, so clients don't break. Request DTOs also decide which fields a client is allowed to send. If you bind straight to an `Order` entity, a client can post `"status": "Paid"` or `"total": 0` and EF will save it; this is **over-posting**.
+
+Validation should happen at the edge, before your service runs: `[ApiController]` checks data annotations automatically, FluentValidation handles rules that need code or the database, and the service still enforces business rules that depend on state.
+
+### Common mistakes
+
+- One DTO for create, update and read. They need different fields (no `Id` on create, read-only fields on read).
+- Mapping with AutoMapper "by convention" and then debugging a field that silently stayed null. Hand-written or source-generated mappings fail at compile time instead.
+- Validating only in the browser. Anyone can call the API with curl.
+- Mapping after `ToListAsync()`. Project in the query with `Select(...)` so SQL fetches only the columns the DTO needs.
+
+### Real-world example
+
+A HR system's `Employee` entity has `Salary`, `BankAccount` and `NationalId`. The public `/api/employees` endpoint returns `EmployeeSummaryDto(Id, Name, Department)`. Only a payroll endpoint with its own policy returns the sensitive fields. Without DTOs, one careless `return Ok(employee)` would expose everyone's salary.
+
+### Try it yourself
+
+1. Create separate `CreateProductRequest`, `UpdateProductRequest` and `ProductDto` records.
+2. Add a FluentValidation rule that the product name is unique (check the database).
+3. Rewrite one list query to project with `Select` and compare the generated SQL in the logs.
+
 ## Lesson: [Intermediate|High] Paging, filtering, sorting and HATEOAS
 
 ```csharp
@@ -254,6 +409,27 @@ public async Task<PagedResult<OrderDto>> ListAsync(OrderQuery q, CancellationTok
 
 - Cap the page size. For large/realtime data use **keyset (cursor) pagination**: `WHERE Id > @lastId ORDER BY Id`: stable and fast, no deep `OFFSET`.
 - **HATEOAS** (hypermedia links in responses) is REST's top maturity level (Richardson Maturity Model level 3); rarely fully used in practice.
+
+### How it works
+
+The query is built step by step as an `IQueryable`, so nothing runs until `CountAsync` and `ToListAsync`. EF turns the chain into one SQL statement with `WHERE`, `ORDER BY` and `OFFSET ... FETCH`. Offset paging is simple, but the database still has to walk past every skipped row, so page 5,000 is much slower than page 1. Keyset paging remembers the last value you saw and asks for rows after it, which uses the index directly.
+
+### Common mistakes
+
+- Paging without a stable `ORDER BY`. SQL Server doesn't promise an order, so rows can repeat or vanish between pages. Add a tie-breaker: `.OrderByDescending(o => o.CreatedAt).ThenBy(o => o.Id)`.
+- No maximum page size, so `?pageSize=1000000` loads the whole table.
+- Building sort from user input with string concatenation into SQL. Map allowed sort names to expressions instead.
+- Running `CountAsync` on huge tables for every request. Consider "has more" instead of an exact total.
+
+### Real-world example
+
+An admin grid of 3 million orders uses offset paging for the first pages people actually click, with the total shown. The "export all" job and the mobile app's infinite scroll use keyset paging (`?after=98231`), which stays equally fast at the end of the table.
+
+### Try it yourself
+
+1. Add `?sort=total` and `?sort=-total` using a dictionary of allowed sort expressions.
+2. Implement keyset paging with an `after` cursor and return `nextCursor` in the response.
+3. Look at the SQL for page 1 and page 1,000 with offset paging and compare the timings.
 
 # Module: Security
 
@@ -281,6 +457,29 @@ A **JWT** has three Base64Url parts: `header.payload.signature`. The payload hol
 - OAuth 2.0 flows: **Authorization Code + PKCE** (SPAs, mobile, web), Client Credentials (service-to-service). Implicit and password grants are deprecated.
 - OpenID Connect adds identity (ID token) on top of OAuth 2.0.
 
+### How it works
+
+The client signs in at an identity provider (Microsoft Entra ID, Auth0, Keycloak, or your own token endpoint) and receives an access token. It sends it on every call as `Authorization: Bearer <token>`. The JWT bearer handler checks the signature with the issuer's public key (downloaded once from the issuer's metadata and cached), then checks issuer, audience and expiry. If all pass, it builds a `ClaimsPrincipal` and `[Authorize]` and policies decide what the user may do. No database call is needed per request.
+
+Because the token is valid until it expires, you can't "log out" a stolen token instantly. That is why access tokens are short-lived and refresh tokens are revocable.
+
+### Common mistakes
+
+- Storing tokens in `localStorage` in a browser app, where any XSS script can read them. A backend-for-frontend with an HttpOnly cookie is safer.
+- Turning off `ValidateAudience` or `ValidateIssuer` "to make it work". Then a token issued for another app is accepted by yours.
+- A weak or committed signing key for self-issued tokens. Use at least 256 random bits and keep it in Key Vault or user secrets.
+- Forgetting that the default `ClockSkew` is 5 minutes, then wondering why "expired" tokens still work for a while.
+
+### Real-world example
+
+A company's React portal signs users in with Entra ID using Authorization Code + PKCE. The API trusts only tokens with audience `api://shop-api`. Managers get the `Orders.Approve` scope, and the approve endpoint has `RequireAuthorization("orders.approve")`. A nightly billing job uses Client Credentials with its own app identity, so its calls show up separately in the logs.
+
+### Try it yourself
+
+1. Issue a token from a test endpoint with `JsonWebTokenHandler`, then call a protected endpoint with and without it.
+2. Paste the token into the [JWT decoder](/tools/jwt-decoder) and find `exp`, `aud` and your custom claim.
+3. Add a policy that requires a `department` claim equal to `finance`.
+
 ## Lesson: [Intermediate|High] CORS, HTTPS, rate limiting and API keys
 
 ```csharp
@@ -300,6 +499,29 @@ app.MapGet("/api/search", Search).RequireRateLimiting("per-client");
 
 - **CORS** is a *browser* mechanism: the server tells browsers which other origins may call it (preflight `OPTIONS` for non-simple requests). It is not authentication: non-browser clients ignore it. Never `AllowAnyOrigin` with credentials (not allowed anyway).
 - Other protections: HTTPS only, input validation, request size limits, API keys for partner identification (not as the only auth), secrets in Key Vault, security headers.
+
+### How it works
+
+Browsers block JavaScript on `app.example.com` from reading responses from `api.example.com` unless the API says it is allowed. For anything beyond simple requests, the browser first sends a **preflight** `OPTIONS` request asking which origins, methods and headers are allowed. The CORS middleware answers it and adds `Access-Control-Allow-Origin` to real responses. Call `UseCors` after `UseRouting` and before `UseAuthorization`, otherwise preflights get 401.
+
+The rate limiter keeps counters per partition (per user, API key or IP). When a partition runs out of permits, requests get `429` until the window resets. Fixed window is simplest, sliding window smooths bursts at the window edges, token bucket allows short bursts, and concurrency limits how many requests run at the same time.
+
+### Common mistakes
+
+- "Fixing" CORS by allowing everything. CORS doesn't protect your API from curl or Postman, so it can't replace authentication.
+- Partitioning rate limits by IP behind a load balancer without forwarded headers. Every client then shares the proxy's IP and one limit.
+- Sending API keys in the query string, where they end up in server and proxy logs. Use a header.
+- Testing CORS from Postman and concluding it works. Only a browser enforces CORS.
+
+### Real-world example
+
+A public search API allows 100 requests per minute per API key on the free plan and 2,000 on the paid plan, using `PartitionedRateLimiter` keyed by plan. Rejected calls get `429` with `Retry-After`, and the client SDK waits that long before trying again. The company's own web app is the only allowed CORS origin.
+
+### Try it yourself
+
+1. Call your API from a page on another port and read the CORS error in the browser console, then fix it with a named policy.
+2. Add a token bucket limiter per user id and test it with a quick loop in PowerShell or bash.
+3. Return a `Retry-After` header from `OnRejected`.
 
 # Module: Performance, Versioning and Docs
 
@@ -326,6 +548,29 @@ public class ProductService(HybridCache cache, AppDbContext db)
 
 Cache invalidation strategies: expiration (absolute/sliding), explicit removal on write, tags, versioned keys.
 
+### How it works
+
+Caching trades freshness for speed. Each layer is closer to the user: an HTTP cache at a CDN never reaches your server at all, output caching skips your endpoint, and data caching (`IMemoryCache`, Redis, `HybridCache`) skips the database. With several API instances, an in-memory cache is different on every server, so a write on one server leaves stale data on the others. That is where a distributed cache or HybridCache's L2 comes in.
+
+A **cache stampede** happens when a popular key expires and 500 requests miss at once, all hitting the database. HybridCache lets only one caller rebuild the value while the others wait for it.
+
+### Common mistakes
+
+- Caching per-user data under a shared key, so one customer sees another customer's basket. Put the user or tenant id in the key.
+- No expiry and no invalidation, so a price change shows up hours later.
+- Expecting output caching to cache authenticated requests. By default it only caches `200` responses to GET or HEAD without auth or cookies.
+- Caching EF entities with tracking. Cache plain DTOs.
+
+### Real-world example
+
+A product catalogue API gets 2,000 requests a second for 50,000 products that change a few times a day. Product details live in HybridCache for 10 minutes, and an admin update calls `RemoveAsync($"product:{id}")`. Database load drops by over 95% and the p95 response time goes from about 80 ms to under 5 ms.
+
+### Try it yourself
+
+1. Add output caching to a list endpoint with a tag, and evict the tag when a product is created.
+2. Wrap a slow query in `HybridCache.GetOrCreateAsync` and log how often the factory really runs under load.
+3. Add `ETag` support to `GET /api/products/{id}` so an unchanged product returns `304`.
+
 ## Lesson: [Intermediate|High] API versioning and OpenAPI
 
 ```csharp
@@ -350,6 +595,29 @@ app.MapOpenApi();                                       // /openapi/v1.json
 
 Versioning strategies: **URL segment** (`/v2/orders`: most visible), query string (`?api-version=2.0`), header (`api-version: 2`), media type (`Accept: application/vnd.shop.v2+json`). Only make breaking changes in a new major version; additive changes are non-breaking.
 
+### How it works
+
+The versioning package reads the version from the URL, query string or header, picks the matching action, and adds `api-supported-versions` (and deprecated versions) to responses so clients can see what is coming. Old and new versions run side by side in the same app until the old one is retired.
+
+OpenAPI is a machine-readable description of every endpoint, parameter, response and schema. From .NET 9, `AddOpenApi()` builds it from your endpoints and types at runtime (or at build time). Tools then generate client SDKs, mock servers and documentation pages such as Scalar or Swagger UI from the same file.
+
+### Common mistakes
+
+- Versioning on every small change. Adding a field or an endpoint is not breaking; only removing or changing existing behaviour needs a new version.
+- Shipping v2 without a plan to retire v1, so you maintain both forever. Announce a sunset date and mark it deprecated.
+- Leaving the OpenAPI document out of date, for example with actions that return `IActionResult` and no `ProducesResponseType`. Generated clients then expect the wrong types.
+- Exposing internal admin endpoints in the public OpenAPI document.
+
+### Real-world example
+
+A logistics company has partners on `/api/v1/shipments`. v2 changes `weight` from pounds to a `{ value, unit }` object. Both versions run together for 12 months; v1 responses carry `api-deprecated-versions: 1.0`, and partners regenerate their client from `/openapi/v2.json` when they are ready to move.
+
+### Try it yourself
+
+1. Add `v1` and `v2` of one endpoint where v2 renames a field, and call both.
+2. Add `AddOpenApi()` and Scalar, then generate a C# client with NSwag or Kiota.
+3. Mark v1 as deprecated and check the response headers.
+
 ## Lesson: [Advanced|High] HttpClient correctly: IHttpClientFactory and resilience
 
 ```csharp
@@ -369,12 +637,60 @@ public class WeatherClient(HttpClient http) : IWeatherClient
 - `new HttpClient()` per request → **socket exhaustion** (sockets stay in TIME_WAIT). One static `HttpClient` forever → stale DNS.
 - `IHttpClientFactory` pools and recycles `HttpMessageHandler`s (default lifetime 2 minutes): solves both. (Alternatively a singleton `HttpClient` with `SocketsHttpHandler.PooledConnectionLifetime`.)
 
+### How it works
+
+`HttpClient` itself is a thin wrapper. The expensive part is the handler underneath, which owns the TCP connections. The factory keeps handlers in a pool and recycles each one after its lifetime (2 minutes by default), so connections are reused but DNS changes are still picked up. Typed clients (`AddHttpClient<IWeatherClient, WeatherClient>`) get a configured `HttpClient` injected and keep all calls to one API in one class.
+
+`AddStandardResilienceHandler()` adds a ready-made pipeline: a rate limiter, a total timeout, retries with exponential backoff and jitter, a circuit breaker and a per-attempt timeout. When the remote API is down, the circuit breaker stops you from sending thousands of doomed requests and lets it recover.
+
+### Common mistakes
+
+- `using var client = new HttpClient()` inside a method that runs on every request. Under load you run out of sockets.
+- Retrying `POST` calls that aren't idempotent, so a slow payment call gets charged twice. Use `options.Retry.DisableForUnsafeHttpMethods()` or idempotency keys.
+- Relying on the default 100-second `HttpClient.Timeout`. One slow dependency then ties up your threads and makes your own API slow.
+- Not passing `CancellationToken`, so calls keep running after the user has left.
+
+### Real-world example
+
+A checkout API calls a tax service, a stock service and a payment provider. Each has its own typed client and timeout. When the tax service starts failing, the circuit breaker opens after a burst of errors and checkout uses a cached tax table for a few minutes instead of hanging. The incident becomes a log warning instead of an outage.
+
+### Try it yourself
+
+1. Create a typed client for a public API (for example a weather or currency API) with a base address and a 5-second timeout.
+2. Add `AddStandardResilienceHandler()` and point it at an endpoint that fails half the time; watch the retries in the logs.
+3. Disable retries for POST and explain why in a code comment.
+
 ## Lesson: [Advanced|Medium] Real-time and RPC: SignalR, gRPC, webhooks
 
 - **SignalR**: server push to clients over WebSockets (fallback: Server-Sent Events, long polling). Hubs, groups, Azure SignalR Service for scale-out. Use for chat, dashboards, notifications.
 - **gRPC**: contract-first (`.proto`), HTTP/2, binary Protobuf, streaming (server, client, bidirectional), generated clients. Great for internal service-to-service calls; browsers need gRPC-Web.
 - **Webhooks**: your API calls the client's URL when events happen; sign payloads (HMAC), retry with backoff, idempotency.
 - **Server-Sent Events**: one-way server → browser streaming over HTTP (.NET 10 adds `TypedResults.ServerSentEvents`).
+
+### How it works
+
+**SignalR** keeps a connection open per client and lets the server call methods on clients (`Clients.Group("orders").SendAsync(...)`). With more than one server, a message sent on server A must reach clients connected to server B, so you need a backplane (Redis) or Azure SignalR Service, and sticky sessions unless clients use WebSockets only.
+
+**gRPC** generates client and server code from a `.proto` file. Messages are small binary Protobuf over HTTP/2, so calls are fast and strongly typed, and both sides break at compile time if the contract changes badly.
+
+**Webhooks** turn polling around: instead of a client asking "anything new?" every minute, you send an HTTP POST to the client's URL when something happens.
+
+### Common mistakes
+
+- Using SignalR to push large data. Push a small "order 42 changed" message and let the client fetch details with a normal GET.
+- Exposing gRPC directly to browsers. Browsers can't speak native gRPC; use gRPC-Web or a REST endpoint.
+- Webhook receivers that do slow work before answering. Return `200` fast, put the event on a queue and process it in the background.
+- Not verifying webhook signatures, so anyone can post fake "payment succeeded" events. Compare HMACs with `CryptographicOperations.FixedTimeEquals`.
+
+### Real-world example
+
+A food delivery app uses all three. Internal services (orders, kitchen, drivers) talk gRPC. The customer app gets live "your driver is 3 minutes away" updates through SignalR. The payment provider calls a webhook when a card payment succeeds, and the API verifies the signature before marking the order as paid.
+
+### Try it yourself
+
+1. Build a SignalR hub that broadcasts a message to a group and a small HTML page that listens.
+2. Write a webhook receiver that verifies an `X-Signature` HMAC-SHA256 header.
+3. Define a `.proto` with one unary and one server-streaming method and call it from a console client.
 
 ## Lesson: [Advanced|High] Microservices basics for API developers
 
@@ -383,6 +699,29 @@ public class WeatherClient(HttpClient http) : IWeatherClient
 - **Service discovery** (Kubernetes DNS, Aspire service discovery), config centralised, observability via OpenTelemetry traces with correlation IDs.
 - **Resilience**: timeouts, retries, circuit breakers; idempotency keys for POSTs; Outbox for reliable events; Saga for distributed transactions.
 - Start with a **modular monolith** unless you need independent scaling/deployment: microservices add operational cost.
+
+### How it works
+
+Each service is a separate deployable app with its own database, so teams can release on their own schedule and scale only the busy parts. The price is that every call between services can now fail, be slow or arrive twice. Synchronous calls (HTTP, gRPC) are simple but chain failures together. Messaging (Service Bus, RabbitMQ, Kafka) decouples services in time: the order service publishes `OrderPlaced` and the email and stock services react when they are ready.
+
+The **Outbox** pattern solves "I saved the order but crashed before publishing the event": save the event in the same database transaction as the order, and a background worker publishes it afterwards. A **Saga** replaces a distributed transaction with a series of local steps and compensating actions ("payment failed, so release the reserved stock").
+
+### Common mistakes
+
+- Splitting by technical layer (a "database service", a "validation service") instead of by business capability.
+- Several services sharing one database, so a schema change breaks everyone and you have a distributed monolith.
+- Long chains of synchronous calls: if each of five services is 99.9% available, the chain is only about 99.5%.
+- Starting with microservices for a small team and a new product, then spending most of the time on infrastructure.
+
+### Real-world example
+
+An e-commerce company starts as a modular monolith with clear Orders, Catalog and Payments modules. When Black Friday traffic shows that the Catalog needs 10x the servers of everything else, they move just Catalog into its own service behind YARP, with its own database and a cache. The other modules stay in the monolith for now.
+
+### Try it yourself
+
+1. Draw the services for a cinema booking system and mark which calls are synchronous and which are events.
+2. Implement an outbox table and a `BackgroundService` that publishes pending rows to a queue (or just logs them).
+3. Write down what should happen, step by step, if payment fails after seats are reserved.
 
 # Interview
 
