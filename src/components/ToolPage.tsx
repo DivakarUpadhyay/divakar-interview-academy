@@ -29,7 +29,7 @@ export default function ToolPage({ tool, children, howTo, faq }: {
           <details key={q} className="panel"><summary>{q}</summary><p>{a}</p></details>
         ))}
       </section>
-      <Resources track={tool.slug === "sql-formatter" ? "data" : "dotnet"} />
+      <Resources track={tool.slug.startsWith("sql-") ? "data" : "dotnet"} />
       <section className="tool-related">
         <h2>More free tools</h2>
         <div className="tool-grid">
