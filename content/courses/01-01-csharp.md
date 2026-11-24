@@ -97,6 +97,28 @@ dotnet run -- Divakar
 
 > **Interview tip:** "Managed code" = code whose execution is managed by the CLR (memory, security, exceptions). "Unmanaged code" = native code outside the CLR, e.g. Win32 DLLs called via P/Invoke.
 
+### How it works
+
+When you run `dotnet build`, the C# compiler (Roslyn) turns your code into **IL** (intermediate language) inside a `.dll`, plus metadata that describes every type. When the program starts, the runtime loads that DLL and the **JIT compiler** turns each method into native machine code the first time it is called. From then on the CPU runs native code. The CLR also gives you garbage collection, type checks and exceptions, so you don't manage memory by hand.
+
+There are two .NET families. **.NET Framework 4.8** runs only on Windows and gets security fixes but no new features. **Modern .NET** (.NET Core, then .NET 5 to .NET 10) is cross-platform and open source, and a new version ships every November. Even-numbered versions are LTS: .NET 10 (November 2025) is supported until November 2028.
+
+### Common mistakes
+
+- Saying ".NET Core and .NET 8 are different products". .NET 5+ *is* the continuation of .NET Core; "Core" was dropped from the name.
+- Starting a new project on .NET Framework. Use it only to maintain existing apps (Web Forms, WCF services, old WinForms).
+- Mixing up the SDK and the runtime. Developers install the SDK (compiler + tools); servers only need the runtime.
+
+### Real-world example
+
+A company has a 10-year-old ASP.NET MVC 5 portal on .NET Framework 4.8 and IIS. New services are written in ASP.NET Core on .NET 10 and run in Linux containers, which are cheaper to host. Both share a SQL Server database, and the old portal is moved page by page over the next two years.
+
+### Try it yourself
+
+1. Run `dotnet --list-sdks` and `dotnet --list-runtimes` and note which versions you have.
+2. Create a console app, build it, and open the `.dll` in ILSpy to see the IL the compiler produced.
+3. Explain to a friend in two sentences why C# code can run on Windows, Linux and macOS.
+
 ## Lesson: [Basic|High] First program, namespaces and keywords
 
 **Classic program structure** (what every C# file looked like before C# 9, and what top-level statements generate for you):
@@ -229,6 +251,29 @@ Console.WriteLine(b1.X); // 99
 ```
 
 > **Interview tip:** "Value types live on the stack" is only partly true. A value-type *field* inside a class lives on the heap with that object. Say: value types are stored *inline* where they are declared.
+
+### How it works
+
+A variable of a value type *is* the data: an `int` variable holds 4 bytes of number. A variable of a reference type holds an address, and the object lives on the managed heap. Assigning or passing a value type copies all of its data; assigning a reference type copies only the address, so two variables can point at one object. That single rule explains most "why did my change disappear?" and "why did this change somewhere else?" bugs.
+
+`==` follows the same idea. For value types (and records) it compares the data. For classes it compares *identity*, meaning "is this the same object?", unless the class overrides it. `string` overrides it, which is why two strings with the same text are equal.
+
+### Common mistakes
+
+- Changing a struct you got from a list: `points[0].X = 5` doesn't compile for `List<Point>` (error CS1612) because the indexer returns a copy. Replace the whole item instead.
+- Making large or mutable structs. Every assignment copies them, and edits made to a copy are lost silently.
+- Expecting a method to replace the caller's object without `ref`. The method gets a copy of the reference, not the caller's variable.
+- Comparing two class instances with `==` and expecting their properties to be compared.
+
+### Real-world example
+
+`DateTime`, `decimal`, `Guid` and `TimeSpan` are all structs: small values that are copied and compared by content. Business entities like `Customer` and `Order` are classes, because the same customer object is shared by the service, the cache and the EF change tracker, and a change should be seen by all of them.
+
+### Try it yourself
+
+1. Write a method that takes a `Point` struct and a `Box` class, changes `X` on both, and print the values back in `Main`.
+2. Put a `Point` struct in a `List<Point>`, try `list[0].X = 5`, read the compiler error, then fix it.
+3. Compare two `new Box { X = 1 }` objects with `==`, then change `Box` to a `record` and compare again.
 
 ## Lesson: [Basic|High] Variables, constants and operators
 
@@ -366,6 +411,29 @@ string csv = sb.ToString();   // one final allocation
 - Compare with `string.Equals(a, b, StringComparison.OrdinalIgnoreCase)` rather than `ToLower()`.
 - `string.IsNullOrWhiteSpace(x)` covers `null`, `""` and `"   "`.
 
+### How it works
+
+A `string` is an object on the heap holding UTF-16 characters, and it can never change after it is created. `s += "b"` doesn't edit `s`: it allocates a new string with the old text plus `"b"` and points `s` at it. In a loop of 10,000 appends that means 10,000 strings, each copying everything before it, so the work grows with the square of the length.
+
+`StringBuilder` keeps a growable buffer of characters and only builds a `string` when you call `ToString()`. Immutability has upsides too: strings are safe to share between threads, they work as dictionary keys, and literals with the same text are stored once (interning).
+
+### Common mistakes
+
+- `+=` inside a loop that builds a big report, CSV or HTML. Use `StringBuilder` or `string.Join`.
+- `a.ToLower() == b.ToLower()`. It allocates two new strings and is wrong for some languages (the Turkish "i"). Use `string.Equals(a, b, StringComparison.OrdinalIgnoreCase)`.
+- Building SQL by concatenating user input, which allows SQL injection. Use parameters.
+- Using `StringBuilder` for two or three pieces. Interpolation (`$"{a} {b}"`) is clearer and just as fast there.
+
+### Real-world example
+
+A nightly export writes 200,000 order lines to CSV. The first version used `csv += line + "\n"` and took minutes while memory kept growing. Switching to a `StreamWriter` that writes each line straight to the file made it finish in seconds with flat memory, because the full text never had to sit in memory at all.
+
+### Try it yourself
+
+1. Time 50,000 appends with `+=` and with `StringBuilder` using `Stopwatch`, and compare.
+2. Write a method that checks whether two user names are equal ignoring case, without `ToLower`.
+3. Use `string.Join(", ", names)` to replace a loop that adds commas by hand.
+
 ## Lesson: [Basic|Medium] DateTime, DateOnly, TimeSpan and time zones
 
 ```csharp
@@ -483,6 +551,29 @@ List<int> list = [.. nums, 10];   // spread
 
 Generic collections are **type-safe** (compile-time errors instead of runtime `InvalidCastException`) and faster for value types (no boxing). Use the non-generic ones only when maintaining old code.
 
+### How it works
+
+Every collection is a trade-off between how fast you can find, add and remove items. `List<T>` stores items next to each other in an array, so reading by index is instant but finding a value means checking each item. `Dictionary` and `HashSet` turn a key into a hash code that points almost directly at the right bucket, so a lookup takes about the same time for 10 items or 10 million. Sorted collections keep a tree or sorted array, so they cost a little more per operation but stay in order.
+
+The interfaces describe what a caller may do. Returning `IReadOnlyList<T>` says "you can read this, not change it", which keeps other code from modifying your internal list.
+
+### Common mistakes
+
+- Calling `list.Contains(x)` inside a loop over another big list. That is O(n × m); put the values in a `HashSet<T>` first.
+- Using `ConcurrentDictionary` everywhere "to be safe". It is slower than `Dictionary` and only needed when several threads write at the same time.
+- Changing a collection while looping over it with `foreach`, which throws ["Collection was modified"](/errors/csharp-collection-was-modified-enumeration-operation-may-not-execute).
+- Returning a `List<T>` from a public method when the caller only needs to read it.
+
+### Real-world example
+
+An import job checks 500,000 incoming rows against 200,000 existing customer emails. With `List<string>.Contains` it ran for over an hour. Loading the emails once into a `HashSet<string>(StringComparer.OrdinalIgnoreCase)` brought it down to a couple of seconds, with one line changed.
+
+### Try it yourself
+
+1. Fill a `List<int>` and a `HashSet<int>` with 1,000,000 numbers and time 10,000 `Contains` calls on each.
+2. Pick the right collection for: a print queue, browser back history, unique tags, and product price by SKU.
+3. Change a method that returns `List<Order>` to return `IReadOnlyList<Order>` and see which callers break.
+
 ## Lesson: [Basic|High] List<T> and Dictionary<TKey, TValue> in depth
 
 ```csharp
@@ -522,6 +613,29 @@ foreach (var (item, count) in stock) Console.WriteLine($"{item}: {count}");
 - Average O(1) lookup using the key's `GetHashCode()` and `Equals()`; keys must be unique and not null.
 - Iteration order is **not guaranteed**: use `SortedDictionary`/`SortedList` or sort with LINQ when order matters.
 - Custom key types must override `Equals` and `GetHashCode` consistently (records do this for you).
+
+### How it works
+
+A `Dictionary` keeps an array of buckets. To add a key, it calls `GetHashCode()`, uses the number to pick a bucket and stores the entry there. To find a key, it does the same and then calls `Equals()` on the few entries in that bucket. That is why lookups are O(1) on average, and why a key's hash code must never change while the key is in the dictionary.
+
+`List<T>` wraps an array. When `Count` reaches `Capacity`, it allocates a new array twice as large and copies everything over. That copy is rare, so `Add` is still fast on average, but if you know you'll add 100,000 items, `new List<T>(100_000)` avoids the repeated copies.
+
+### Common mistakes
+
+- `dict[key]` on a key that might be missing, which throws `KeyNotFoundException`. Use `TryGetValue`.
+- `ContainsKey` followed by `dict[key]`. That is two lookups; `TryGetValue` does one.
+- Using a mutable class as a key and changing a field that is part of its hash code. The entry is still in the dictionary but can never be found again.
+- Removing items from a `List` with `RemoveAt` inside a forward `for` loop, which skips the next item. Use `RemoveAll` or loop backwards.
+
+### Real-world example
+
+An order service caches exchange rates in a `Dictionary<string, decimal>` created with `StringComparer.OrdinalIgnoreCase`, so `"usd"`, `"USD"` and `"Usd"` all hit the same entry. Prices are converted with `TryGetValue`, and a missing currency returns a clear validation error instead of a crash.
+
+### Try it yourself
+
+1. Count how many times each word appears in a paragraph using a `Dictionary<string, int>`, ignoring case.
+2. Make a `record` with `Id` and `Code` and use it as a dictionary key; then try the same with a class without overriding `Equals`.
+3. Remove all odd numbers from a list three ways (`RemoveAll`, backwards loop, LINQ `Where`) and compare the results.
 
 ## Lesson: [Basic|Medium] SortedList, HashSet, Stack and Queue
 
@@ -657,6 +771,29 @@ Console.WriteLine(o1 == new Order(1, 100)); // True: value equality
 
 **Choose:** class for entities with identity/behaviour; struct for small immutable values (< ~16 bytes, no inheritance); record for DTOs and immutable data compared by value.
 
+### How it works
+
+A **class** gives you a reference type with identity: two objects with the same data are still two different objects. A **struct** is a value type: it is copied on assignment and compared by its data. A **record** is a class (or `record struct`) where the compiler writes value equality, `ToString()`, deconstruction and `with` copying for you, so two records with the same values are equal.
+
+An **enum** is a set of named constants stored as an integer (`int` by default). The name exists for you; the database and JSON usually see the number unless you tell the serializer to use names.
+
+### Common mistakes
+
+- Using records for EF Core entities. Entities need identity and change tracking, while records compare by value and encourage replacing objects with `with`. Records are great for DTOs and messages.
+- Casting any number to an enum: `(Status)99` is allowed and gives a value that isn't defined. Check with `Enum.IsDefined` when the number comes from outside.
+- Changing enum numbers after release. The database still holds the old numbers, so existing rows get the wrong meaning.
+- Forgetting `[Flags]` and powers of two (1, 2, 4, 8) when values can be combined.
+
+### Real-world example
+
+In an API, `Order` is a class that EF Core tracks, `OrderDto` is a `record` returned to clients, `Money` is a small struct holding amount and currency, and `OrderStatus` is an enum stored as an int with explicit values that never change. Each kind of type is used for what it is good at.
+
+### Try it yourself
+
+1. Write `Product` as a class and as a record, create two objects with the same data and compare them with `==`.
+2. Use `with` to make a discounted copy of a record without changing the original.
+3. Create a `[Flags]` enum for file permissions and check a combined value with `HasFlag`.
+
 ## Lesson: [Basic|Medium] Structs and enums in depth
 
 **Struct rules:**
@@ -730,6 +867,29 @@ modern.Add(1);       // no boxing: generics
 
 Cost: an allocation and later GC work. Generics (C# 2.0) removed most boxing.
 
+### How it works
+
+Every value type can be treated as an `object`, but an `object` variable must point to something on the heap. So when you assign an `int` to `object`, the runtime allocates a small heap object, copies the number into it and gives you a reference: that is boxing. Unboxing checks that the object really holds that exact type and copies the value back out. Each box is a new allocation that the garbage collector must clean up later.
+
+Boxing also happens quietly: when a struct is used through an interface it implements, when a value type goes into a non-generic collection, or when you pass it to a method that takes `object`.
+
+### Common mistakes
+
+- Unboxing to a different type: `(long)(object)42` throws `InvalidCastException`. Unbox to `int` first, then convert.
+- Using `ArrayList`, `Hashtable` or `List<object>` for numbers in hot code.
+- Expecting changes to a boxed struct to affect the original. The box holds a copy.
+- Worrying about boxing in code that runs a few times. It only matters in tight loops and high-traffic paths.
+
+### Real-world example
+
+A metrics library stored counters in `Dictionary<string, object>`. Every increment boxed a new `long`, and under load the app spent noticeable time in garbage collection. Changing it to `Dictionary<string, long>` (and later `Interlocked` on a class field) removed millions of allocations per minute.
+
+### Try it yourself
+
+1. Add 1,000,000 ints to an `ArrayList` and to a `List<int>` and compare time and memory with `GC.GetTotalAllocatedBytes()`.
+2. Box an `int`, then try to unbox it as `long` and read the exception.
+3. Find a place in your own code where a struct is passed as an interface or `object`.
+
 ## Lesson: [Intermediate|High] Nullable types and null safety
 
 ```csharp
@@ -745,6 +905,29 @@ string sure = middle!;             // null-forgiving operator: you promise it is
 ```
 
 Nullable reference types are **compile-time warnings only**; at runtime a `string` can still be null if a warning was ignored.
+
+### How it works
+
+There are two separate features. `int?` is really `Nullable<int>`, a struct with a `HasValue` flag and a `Value`, so value types can say "no value". **Nullable reference types** (`string?`) don't change the runtime at all: they are annotations that let the compiler track which variables might be null and warn you before you dereference one. With `<Nullable>enable</Nullable>`, a plain `string` means "never null" and `string?` means "might be null".
+
+The compiler follows your checks: after `if (name is null) return;` it knows `name` is safe below. That moves the classic [NullReferenceException](/errors/csharp-object-reference-not-set-to-an-instance-of-an-object) from production to a compile-time warning.
+
+### Common mistakes
+
+- Using `!` (null-forgiving) to silence warnings without checking. The warning disappears, the crash stays.
+- Turning nullable on for an old project and fixing 2,000 warnings in one go. Enable it file by file with `#nullable enable`.
+- Leaving warnings as warnings. Add `<WarningsAsErrors>nullable</WarningsAsErrors>` once the project is clean.
+- Forgetting that data from JSON, the database or reflection can still be null even when the type says it isn't. Validate at the edges.
+
+### Real-world example
+
+With nullable enabled, EF Core reads the annotations too: `string Name` becomes a `NOT NULL` column and `string? MiddleName` becomes nullable, so the database schema matches what the code promises. Teams that switch it on usually find a handful of real null bugs in the first week.
+
+### Try it yourself
+
+1. Enable nullable in a small project and fix each warning properly, without using `!`.
+2. Write a method that returns `Customer?` and make every caller handle the null case.
+3. Use `??`, `?.` and `??=` once each in a realistic line of code.
 
 ## Lesson: [Basic|High] var, object initializers, anonymous types and dynamic
 
@@ -845,6 +1028,29 @@ Send("a@b.com", urgent: true);   // named argument skips optional ones
 
 - **Pass by value** (default): for reference types the *reference* is copied, so the method can mutate the object but cannot make the caller point to a different one, unless you use `ref`.
 
+### How it works
+
+By default C# passes **a copy** of each argument. For a value type that is a copy of the data; for a reference type it is a copy of the reference, so the method can change the object's contents but not which object the caller's variable points at. `ref` passes the caller's variable itself, so the method can read and replace it. `out` is like `ref` but the method must assign it, and the caller doesn't have to initialise it. `in` passes by reference but read-only, to avoid copying large structs.
+
+Optional parameter defaults are compiled **into the caller**. If a library changes `subject = "Hi"` to `subject = "Hello"`, callers keep sending `"Hi"` until they are recompiled.
+
+### Common mistakes
+
+- Using `ref`/`out` to return several values in new code. A tuple or a small record is clearer: `(bool ok, int age) Parse(...)`.
+- Changing default values in a public library and expecting existing callers to pick them up.
+- Long lists of optional `bool` parameters: `Send("a@b.com", true, false, true)`. Use named arguments or an options object.
+- Expecting `ref`/`out` in async methods. Async methods and iterators can't take `ref`, `out` or `in` parameters.
+
+### Real-world example
+
+The whole `TryParse` family (`int.TryParse`, `Guid.TryParse`, `Dictionary.TryGetValue`) uses `out` so the method can return a `bool` for success and the value at the same time, without throwing. Reading user input with `if (!int.TryParse(text, out var qty)) return BadRequest();` is a pattern you'll see in almost every codebase.
+
+### Try it yourself
+
+1. Write `bool TryParsePrice(string text, out decimal price)` that accepts `"12.50"` and `"12,50"`.
+2. Rewrite it to return `(bool Ok, decimal Price)` and compare the calling code.
+3. Write a method with two optional parameters and call it using only the second one by name.
+
 ## Lesson: [Intermediate|High] Delegates, Func, Action, events and lambdas
 
 A **delegate** is a type-safe reference to a method. `Func<..., TResult>` returns a value, `Action<...>` returns void, `Predicate<T>` returns bool.
@@ -867,6 +1073,29 @@ th.Read(45);
 - **Event vs delegate:** outside the class, an event can only be subscribed (`+=`) or unsubscribed (`-=`); it cannot be invoked or reassigned.
 - **Multicast:** a delegate can hold several methods; all are invoked in order.
 - **Closure:** a lambda captures variables from the outer scope (by reference, not by value).
+
+### How it works
+
+A delegate is an object that holds a method (and, for instance methods, the target object), so you can pass behaviour around like data. A lambda is just short syntax for creating one. When a lambda uses a variable from the surrounding method, the compiler moves that variable into a hidden class shared by the method and the lambda: that is a **closure**, and it's why the lambda sees later changes to the variable.
+
+An event is a delegate field with a lock on it: other classes can only add or remove handlers. The class that owns the event decides when to raise it, which is the observer pattern built into the language.
+
+### Common mistakes
+
+- Subscribing to an event on a long-lived object (a static service, the main window) from a short-lived one and never unsubscribing. The publisher keeps the subscriber alive: a classic memory leak.
+- Capturing a `for` loop variable in lambdas that run later. All of them share one variable and see its final value. Copy it into a local inside the loop. (`foreach` gets a fresh variable each time since C# 5.)
+- Raising an event without the null check: use `TooHot?.Invoke(...)`.
+- Throwing from one handler of a multicast delegate, which stops the remaining handlers from running.
+
+### Real-world example
+
+LINQ is delegates everywhere: `orders.Where(o => o.Total > 100)` passes a `Func<Order, bool>`. ASP.NET Core middleware is a chain of `RequestDelegate`s, and minimal API endpoints are lambdas. In desktop apps, a button's `Click` is an event, and a file watcher raises `Changed` events that your code subscribes to.
+
+### Try it yourself
+
+1. Write a method `Retry(Func<Task> action, int times)` and call it with a lambda.
+2. Create a `Stock` class with a `PriceChanged` event and two subscribers that react differently.
+3. Reproduce the `for` loop closure bug with a list of `Action`s, then fix it.
 
 ## Lesson: [Intermediate|Medium] Anonymous methods, Predicate and multicast delegates
 
@@ -939,6 +1168,29 @@ T Max<T>(T a, T b) where T : IComparable<T> => a.CompareTo(b) >= 0 ? a : b;
 Constraints: `where T : class`, `struct`, `new()`, `notnull`, `unmanaged`, a base class, an interface, or `T : U`.
 
 **Covariance / contravariance:** `IEnumerable<out T>` lets `IEnumerable<string>` be used as `IEnumerable<object>`; `Action<in T>` lets `Action<object>` be used as `Action<string>`: see the next lesson.
+
+### How it works
+
+An extension method is a static method that the compiler lets you call as if it were an instance method. `"x@y.com".IsEmail()` compiles to `StringExtensions.IsEmail("x@y.com")`. It can't see private members, and if the type already has an instance method with the same signature, the instance method wins. C# 14 adds `extension` blocks, which also allow extension properties.
+
+Generics let you write code once for many types while keeping type safety. For reference types the runtime shares one compiled copy; for each value type it creates a specialised copy, which is why `List<int>` needs no boxing. Constraints tell the compiler what `T` can do, so you can call `CompareTo` or `new T()` inside generic code.
+
+### Common mistakes
+
+- Adding extension methods to `object` or `string` for very specific business logic, so they show up in every IntelliSense list.
+- Hiding expensive work (database calls) behind an innocent-looking extension method.
+- Writing `Repository<T>` with no constraint and then casting `T` inside. Add `where T : IEntity` instead.
+- Over-generalising: a generic method used by one type is harder to read than a normal one.
+
+### Real-world example
+
+All of LINQ (`Where`, `Select`, `OrderBy`) is extension methods on `IEnumerable<T>` and `IQueryable<T>`. In ASP.NET Core, `builder.Services.AddOrders()` is a common team pattern: an extension method on `IServiceCollection` that registers everything a feature needs, which keeps `Program.cs` short.
+
+### Try it yourself
+
+1. Write `IServiceCollection AddReporting(this IServiceCollection services)` that registers two services.
+2. Write a generic `T Clamp<T>(T value, T min, T max) where T : IComparable<T>` and use it with `int` and `DateTime`.
+3. Write `string Truncate(this string s, int max)` and handle `null` and short strings.
 
 ## Lesson: [Advanced|Medium] Covariance and contravariance
 
@@ -1021,6 +1273,29 @@ finally
 - Catch specific exceptions first, general ones last.
 - Don't use exceptions for normal control flow; use `TryParse`-style APIs.
 - Custom exception: derive from `Exception`, provide the standard constructors (next lesson).
+
+### How it works
+
+When code throws, the runtime looks up the call stack for the nearest `catch` whose type (and `when` filter) matches. Every `finally` block on the way is run as the stack unwinds. If nothing matches, the app crashes (or, in ASP.NET Core, the exception middleware turns it into a 500). Throwing is relatively slow because the runtime captures the stack trace, which is one more reason not to use exceptions for normal outcomes like "user not found".
+
+Exception filters (`when`) are checked *before* the stack unwinds, so a filter that returns `false` leaves the original stack intact for a crash dump or a later handler.
+
+### Common mistakes
+
+- `catch (Exception) { }` that swallows everything. The bug is now invisible and data may be half-saved.
+- `throw ex;` instead of `throw;`, which loses where the error really happened.
+- Catching exceptions only to log and rethrow at every layer, so one error appears ten times in the logs.
+- Catching an exception you can't do anything about. Only catch where you can recover, add context, or translate it.
+
+### Real-world example
+
+A payment service catches `HttpRequestException` from the bank API only around that one call, retries twice, then throws a `PaymentUnavailableException` with the original as `InnerException`. Everything else bubbles up to the global handler, which logs it once and returns a 500 with a trace id. The support team can find the real bank error from that id.
+
+### Try it yourself
+
+1. Write code that reads a file and handles "file missing" and "no permission" differently.
+2. Compare the stack traces printed after `throw;` and `throw ex;`.
+3. Use an exception filter to catch `SqlException` only when `ex.Number == 1205` (deadlock) and retry.
 
 ## Lesson: [Basic|High] Built-in exceptions, throw and custom exceptions
 
@@ -1118,6 +1393,29 @@ public sealed class Wrapper : IDisposable
 
 - **Finalizer** (`~ClassName()`) runs on the finaliser thread at an unknown time; only needed when you own a raw unmanaged handle. Call `GC.SuppressFinalize(this)` in `Dispose` when a finaliser exists.
 - Calling `GC.Collect()` manually is almost always wrong.
+
+### How it works
+
+The garbage collector only knows about **memory**. It finds objects that nothing references any more and reclaims them, at a time it chooses. Most objects die young, so the GC checks Gen 0 often and cheaply, and promotes survivors to Gen 1 and Gen 2, which it checks less often. ASP.NET Core apps use Server GC by default, with a heap per CPU core for throughput.
+
+Things like database connections, file handles and sockets are not just memory: there's a limited number of them, and they must be released *now*, not "eventually". `Dispose()` is where an object releases them, and `using` guarantees `Dispose()` runs even if an exception is thrown.
+
+### Common mistakes
+
+- Forgetting `using` on `SqlConnection`, `FileStream` or `StreamWriter`. Connections leak until the pool runs out and requests start timing out.
+- Disposing something you don't own, like a `DbContext` or `HttpClient` that dependency injection gave you. The container disposes it.
+- Thinking .NET can't leak memory. Objects kept alive by static lists, event subscriptions or caches without limits are never collected.
+- Calling `GC.Collect()` to "fix" memory. Find what is holding references instead, with dotnet-counters, dotnet-gcdump or a memory profiler.
+
+### Real-world example
+
+An API started failing every afternoon with "Timeout expired. The timeout period elapsed prior to obtaining a connection from the pool". One repository method opened a `SqlConnection` without `using` on an error path. Each failed request leaked one connection until all 100 in the pool were gone. Adding `using` fixed it, and the incident note became "every IDisposable gets a using".
+
+### Try it yourself
+
+1. Write a class that opens a file in its constructor and implements `IDisposable` correctly.
+2. Run `dotnet-counters monitor -n <your app>` and watch GC counts and heap size while you call an endpoint in a loop.
+3. Create a static `List<byte[]>` that grows on every request and watch memory climb, then fix it.
 
 ## Lesson: [Advanced|Medium] Span<T>, Memory<T> and performance basics
 
@@ -1276,6 +1574,29 @@ Rules:
 
 > **Interview tip:** async is about scalability, not speed. One request doesn't get faster; the server handles more concurrent requests because threads aren't blocked waiting on I/O.
 
+### How it works
+
+When execution reaches an `await` on a task that isn't finished yet, the method saves its local variables in a state machine, registers "continue from here" with the task, and **returns** to its caller. The thread goes back to the pool to serve other work. When the I/O completes (the database answers, the HTTP response arrives), a thread-pool thread picks up the state machine and runs the rest of the method. No thread sits waiting during the I/O, which is why one server can handle thousands of concurrent requests.
+
+`async` spreads: once a method awaits, its caller should await it too, all the way up to the controller or `Main`. This is called "async all the way".
+
+### Common mistakes
+
+- `.Result` or `.Wait()` on a task. In ASP.NET Core it blocks a thread for the whole call and, under load, causes thread-pool starvation; in UI apps it can deadlock.
+- `async void` methods. Their exceptions can't be caught by the caller and can crash the process.
+- Running several EF Core queries with `Task.WhenAll` on one `DbContext`, which throws ["A second operation was started on this context"](/errors/efcore-second-operation-started-on-this-context).
+- Wrapping synchronous code in `Task.Run` inside ASP.NET Core to "make it async". It only moves the work to another thread.
+
+### Real-world example
+
+A dashboard endpoint called three slow services one after the other: 300 + 400 + 500 ms = 1.2 seconds. Starting all three tasks first and then `await Task.WhenAll(...)` made the endpoint take about 500 ms, the time of the slowest call. Under load the server also needed fewer threads, because none of them were blocked waiting.
+
+### Try it yourself
+
+1. Call two URLs one after another and then with `Task.WhenAll`, timing both versions.
+2. Add a `CancellationToken` to an endpoint, pass it to an `HttpClient` call, and cancel the request from the browser.
+3. Find any `.Result` or `.Wait()` in your project and change it to `await`.
+
 ## Lesson: [Intermediate|High] Threads, Tasks, Parallel and thread safety
 
 | Tool | Use for |
@@ -1301,6 +1622,29 @@ try { await CallApiAsync(); } finally { sem.Release(); }
 ```
 
 **Race condition:** two threads read-modify-write shared state without synchronisation. Deadlock: two threads each hold a lock the other needs, avoid by always taking locks in the same order and keeping lock scopes small. You cannot `await` inside a `lock` block: use `SemaphoreSlim`.
+
+### How it works
+
+The **thread pool** keeps a set of worker threads and hands them work items. `Task.Run`, `Parallel.ForEach` and the continuations after `await` all run there. Creating threads is expensive, so the pool grows slowly when all its threads are busy; if your code blocks threads (sleeping, `.Result`, synchronous I/O), new requests wait in a queue even though the CPU is idle. That is thread-pool starvation.
+
+When two threads touch the same data, you need synchronisation. `lock` lets only one thread at a time into a block; `Interlocked` does single operations (increment, swap) atomically without a lock; concurrent collections handle the locking inside.
+
+### Common mistakes
+
+- Using `Parallel.ForEach` for I/O such as HTTP calls. It blocks pool threads. Use `Parallel.ForEachAsync` with `MaxDegreeOfParallelism`, or `Task.WhenAll` with a `SemaphoreSlim`.
+- `lock (this)` or locking on a string. Other code can take the same lock. Lock on a private object.
+- Thinking `ConcurrentDictionary.GetOrAdd(key, factory)` runs the factory only once. Under a race it can run more than once; wrap the value in `Lazy<T>` if that matters.
+- Starting threads with `new Thread` for short jobs. Use tasks.
+
+### Real-world example
+
+A job had to resize 50,000 product images stored in cloud storage. The first version ran them one by one (hours). `Parallel.ForEachAsync` with `MaxDegreeOfParallelism = 16` finished in minutes without overloading the storage account, and an `Interlocked` counter reported progress safely from all workers.
+
+### Try it yourself
+
+1. Increment a shared `int` from 10 tasks 100,000 times each without a lock, then with `Interlocked.Increment`, and compare the totals.
+2. Download 20 URLs with at most 4 at a time using `Parallel.ForEachAsync`.
+3. Write a producer/consumer with `Channel<T>`: one task writes numbers, two tasks read and print them.
 
 ## Lesson: [Advanced|Medium] IEnumerable, yield and async streams
 
