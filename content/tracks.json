@@ -3,7 +3,7 @@
     "slug": "foundations",
     "title": "0. Fundamentals",
     "menu": "Fundamentals",
-    "summary": "Start here: how computers and memory work, data structures and algorithms, how the web works (networking and hosting), and system design — high-level and low-level design."
+    "summary": "Start here: how computers and memory work, data structures and algorithms, how the web works (networking and hosting), and system design: high-level and low-level design."
   },
   {
     "slug": "dotnet",

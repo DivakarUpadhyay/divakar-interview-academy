@@ -76,48 +76,190 @@ Why interviewers care: almost every .NET round starts with C# fundamentals (valu
 
 ## Lesson: [Basic|High] What C# and .NET are
 
-C# is the **language**; .NET is the platform (runtime + base class library + SDK). You write C#, the compiler produces IL, and the .NET runtime executes it.
+This lesson follows one tiny program all the way from the text you type to instructions running on the CPU. Once you can picture every step, the rest of C# (types, memory, async, performance) stops feeling like magic, because every later topic is a detail of one of these steps.
 
-- **CLR** (Common Language Runtime): JIT, GC, type safety, exception handling, threading.
-- **BCL** (Base Class Library): `System`, `System.Collections.Generic`, `System.IO`, `System.Net.Http`, ...
-- **CTS / CLS**: the common type system that lets C#, F# and VB.NET interoperate.
+### 1. Four words people mix up
+
+| Word | What it is | In .NET |
+|---|---|---|
+| **Language** | Rules for writing code: keywords, syntax, types | C#, F#, VB.NET |
+| **Compiler** | Program that turns your source code into another form | Roslyn (`csc`) turns C# into IL |
+| **Runtime** | Program that loads and runs compiled code, manages memory and threads | The CLR (CoreCLR in modern .NET) |
+| **Libraries / framework** | Ready-made code you call instead of writing it yourself | Base Class Library (`System.*`), ASP.NET Core, EF Core |
+
+So **C# is the language**, and **.NET is everything else**: the compiler, the runtime, the libraries and the tools (the SDK) that make a C# program actually run. You can write C# without knowing this, but you can't explain *why* a program is slow, why memory grows or why it runs on Linux without it.
+
+```text
+ ┌──────────────────────────── .NET SDK (what developers install) ────────────────────────────┐
+ │  dotnet CLI (new, build, run, publish, test)   Roslyn compiler   MSBuild   NuGet client     │
+ │  ┌──────────────────────── .NET Runtime (what servers need) ───────────────────────────┐   │
+ │  │  CLR: type loader · JIT compiler · garbage collector · exceptions · threads · interop │   │
+ │  │  Base Class Library: System, System.IO, System.Net.Http, System.Text.Json, ...        │   │
+ │  └────────────────────────────────────────────────────────────────────────────────────────┘   │
+ │  Extra shared frameworks: ASP.NET Core runtime, Windows Desktop runtime (WinForms/WPF)        │
+ └─────────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 2. The program we will follow
 
 ```csharp
-// Program.cs: a complete program using top-level statements (C# 9+)
+// Program.cs (top-level statements, C# 9+)
 Console.WriteLine("Hello, Divakar!");
 var name = args.Length > 0 ? args[0] : "world";
 Console.WriteLine($"Hello, {name}");
 ```
 
 ```bash
-dotnet new console -n HelloApp
+dotnet new console -n HelloApp     # creates HelloApp.csproj + Program.cs
 cd HelloApp
-dotnet run -- Divakar
+dotnet run -- Divakar              # builds, then runs with the argument "Divakar"
 ```
 
-> **Interview tip:** "Managed code" = code whose execution is managed by the CLR (memory, security, exceptions). "Unmanaged code" = native code outside the CLR, e.g. Win32 DLLs called via P/Invoke.
+`dotnet run` hides two separate jobs: **build** (compile once, on your machine) and **run** (load and execute, every time the program starts). We will look at each.
 
-### How it works
+### 3. Build time: from C# text to an assembly
 
-When you run `dotnet build`, the C# compiler (Roslyn) turns your code into **IL** (intermediate language) inside a `.dll`, plus metadata that describes every type. When the program starts, the runtime loads that DLL and the **JIT compiler** turns each method into native machine code the first time it is called. From then on the CPU runs native code. The CLR also gives you garbage collection, type checks and exceptions, so you don't manage memory by hand.
+`dotnet build` starts **MSBuild**, which reads `HelloApp.csproj` (target framework, packages, settings), restores NuGet packages, and then calls the **Roslyn** compiler. Roslyn works in stages:
 
-There are two .NET families. **.NET Framework 4.8** runs only on Windows and gets security fixes but no new features. **Modern .NET** (.NET Core, then .NET 5 to .NET 10) is cross-platform and open source, and a new version ships every November. Even-numbered versions are LTS: .NET 10 (November 2025) is supported until November 2028.
+| Stage | What happens | Example |
+|---|---|---|
+| 1. Lexing | The text is split into tokens | `Console` `.` `WriteLine` `(` `"Hello, Divakar!"` `)` `;` |
+| 2. Parsing | Tokens become a **syntax tree** that matches C# grammar | an invocation expression with one string argument |
+| 3. Binding (semantic analysis) | Names are resolved to real symbols and types are checked | `Console` = `System.Console`, `WriteLine(string)` is the chosen overload |
+| 4. Lowering | Modern syntax is rewritten into simpler C# | top-level statements become `class Program { static void <Main>$(string[] args) }`; `$"..."` becomes string-building calls |
+| 5. Emit | IL code and metadata are written into a file | `bin/Debug/net10.0/HelloApp.dll` |
+
+Errors such as "CS0103: The name 'nmae' does not exist" come from step 3; this is why the IDE can underline mistakes while you type: Visual Studio and VS Code run the same Roslyn stages continuously.
+
+**What is inside `HelloApp.dll`?** It is a Portable Executable (PE) file, the same container format Windows uses for programs, holding three things:
+
+1. **IL (Intermediate Language)**: instructions for an imaginary stack-based CPU. They are the same on every OS and processor.
+2. **Metadata**: tables describing every type, method, field and every external method you call (for example "method `WriteLine(string)` in type `System.Console` in assembly `System.Console`").
+3. **Manifest**: the assembly's name, version, and the list of other assemblies it depends on.
+
+This is the IL Roslyn produces for the first line (you can see it yourself with ILSpy or `ildasm`):
+
+```text
+.method private hidebysig static void '<Main>$'(string[] args) cil managed
+{
+  .entrypoint
+  ldstr      "Hello, Divakar!"                                        // push a reference to the string onto the evaluation stack
+  call       void [System.Console]System.Console::WriteLine(string)  // pop it and call WriteLine
+  ...
+  ret                                                                 // return from Main
+}
+```
+
+Next to the `.dll`, the build writes `HelloApp.runtimeconfig.json` (which runtime version to use, for example `Microsoft.NETCore.App 10.0`), `HelloApp.deps.json` (which assemblies and packages the app needs) and, on Windows, `HelloApp.exe`, a small native launcher called the **apphost**.
+
+### 4. Run time: from double-click to `Main`
+
+Running `dotnet HelloApp.dll` (or `HelloApp.exe`) starts a chain of small native programs before any of your code runs:
+
+```text
+dotnet.exe / HelloApp.exe  (host / muxer)
+   └─▶ hostfxr     reads HelloApp.runtimeconfig.json, finds an installed runtime that matches (e.g. 10.0.x)
+         └─▶ hostpolicy   reads HelloApp.deps.json, builds the list of assemblies the app may load
+               └─▶ coreclr    starts the runtime: creates the GC heap, starts the thread pool, loads System.Private.CoreLib
+                     └─▶ loads HelloApp.dll, finds the entry point, calls <Main>$
+```
+
+If the matching runtime isn't installed, the chain stops at `hostfxr` with the familiar "You must install or update .NET to run this application" message. A **self-contained** publish copies the runtime next to your app, so the target machine needs nothing installed.
+
+### 5. Loading types and the JIT compiler
+
+The CPU can't run IL. The **JIT (Just-In-Time) compiler**, called RyuJIT, turns IL into native machine code (x64, ARM64...) **the first time each method is called**:
+
+1. When the runtime first needs a type (for example `System.Console`), the **type loader** reads its metadata and builds an in-memory **MethodTable**: the type's size, its base type, its interfaces and a slot for every method.
+2. Each method slot starts by pointing to a small stub instead of real code.
+3. The first call lands in the stub. The stub asks the JIT to compile that method's IL, stores the native code in memory, and updates the slot to point to it.
+4. Every later call jumps straight to the native code. The JIT never touches that method again (unless tiering, below, decides to improve it).
+
+That is why the first request to a freshly started web API is slower than the second one: the first one pays for loading types and JIT-compiling the methods it uses.
+
+**Tiered compilation** (on by default since .NET Core 3.0) makes startup fast *and* steady-state code fast:
+
+| Tier | When | Code quality |
+|---|---|---|
+| Tier 0 | First calls | Compiled quickly with few optimisations, so the app starts fast |
+| Tier 1 | After a method has been called about 30 times | Recompiled in the background with full optimisations; the slot is switched to the new code |
+| Dynamic PGO (default since .NET 8) | During Tier 0 | The runtime records which branches and types are actually used, and Tier 1 optimises for them, for example by inlining the most common implementation of an interface call |
+| OSR (on-stack replacement) | A long loop in a method that is still at Tier 0 | Jumps into optimised code in the middle of the loop instead of waiting for the next call |
+
+Alternatives to JIT at startup: **ReadyToRun** stores precompiled native code inside the DLL (faster startup, the JIT can still improve hot methods), and **Native AOT** compiles the whole app to one native executable at publish time (fastest startup, smallest memory, no JIT at all, but no runtime code generation, so some reflection-heavy libraries don't work).
+
+### 6. Memory: the stack, the heap and the garbage collector
+
+While `Main` runs, each thread has a **stack**: a block of memory where each method call gets a frame holding its parameters, local variables and the return address. Values like `int` live directly in the frame. Objects (for example the `string` "Hello, Divakar!") live on the **managed heap**, and the frame only holds a reference (an address) to them.
+
+Every object on the heap starts with two hidden fields: an **object header** (used for locking and hash codes) and a pointer to its type's **MethodTable**. That pointer is how the runtime knows the object's type at run time, which makes casts, `is`, `GetType()` and virtual calls work. On 64-bit .NET even an empty object takes 24 bytes.
+
+Allocating is very cheap: the runtime keeps a pointer to free space and moves it forward. When the youngest part of the heap (generation 0) fills up, the **garbage collector** pauses the threads, finds every object still reachable from **roots** (local variables on stacks, static fields, CPU registers), keeps those, and reclaims the rest. Surviving objects are promoted to generation 1, then 2. Most objects die young, so most collections are small and fast. This is why you never call `free` or `delete` in C#, and also why holding references longer than needed (a static list that only grows) is how .NET programs leak memory.
+
+### 7. How `Console.WriteLine` reaches the screen
+
+Your code calls `Console.WriteLine("Hello, Divakar!")`. Inside the Base Class Library:
+
+```text
+Console.WriteLine(string)
+  → Console.Out (a synchronized TextWriter, created on first use)
+    → StreamWriter encodes the UTF-16 string into bytes (UTF-8 by default on Linux)
+      → ConsoleStream for the OS
+        → Windows: WriteFile / WriteConsoleW in kernel32     Linux/macOS: write() system call (through libSystem.Native)
+          → the operating system draws the text in the terminal
+```
+
+This is the general pattern of .NET: the BCL gives you one portable API, and underneath it calls the operating system through **P/Invoke** (calls into native libraries). The same `HelloApp.dll` therefore runs on Windows, Linux and macOS: only the runtime and the lowest layer differ per OS, and you pick them with a **runtime identifier** such as `win-x64`, `linux-x64` or `osx-arm64` when you publish.
+
+### 8. What "managed" really buys you
+
+Code that runs under the CLR is **managed code**. Because the runtime knows every type and every reference, it can:
+
+- **Check types**: an invalid cast throws `InvalidCastException` instead of corrupting memory.
+- **Check bounds**: `arr[10]` on a 10-element array throws `IndexOutOfRangeException` instead of reading someone else's memory.
+- **Manage memory**: no dangling pointers or double frees, because the GC decides when memory is reused.
+- **Turn crashes into exceptions** with a stack trace, so you can see exactly which method failed.
+- **Let languages share code**: the **CTS** (Common Type System) defines types the same way for C#, F# and VB.NET, so a class written in one can be used from another.
+
+**Unmanaged code** (C/C++ DLLs, Win32 APIs) runs outside these guarantees. .NET can call it through P/Invoke, which is useful for drivers and old libraries, but mistakes there can crash the whole process.
+
+### 9. The .NET family in one table
+
+| Product | Years | Runs on | Status today |
+|---|---|---|---|
+| .NET Framework 1.0 → 4.8.1 | 2002–2022 | Windows only | Supported as part of Windows; security fixes only, no new features |
+| .NET Core 1.0 → 3.1 | 2016–2019 | Windows, Linux, macOS | Out of support |
+| .NET 5, 6, 7, 8, 9, 10 | 2020 → yearly every November | Windows, Linux, macOS, containers, mobile (via .NET MAUI) | .NET 10 (November 2025) is the current LTS, supported to November 2028 |
+
+Even-numbered releases are **LTS** (3 years of support); odd-numbered ones are **STS** (2 years). New projects should target the latest LTS. Each version's new features are covered in the [.NET Internals course](/courses/dotnet-internals).
+
+### How it works (summary)
+
+1. You write C#. **Roslyn** checks it and compiles it to **IL + metadata** in an assembly (`.dll`).
+2. At startup the **host** finds the right runtime, which loads your assembly and its dependencies.
+3. The **type loader** builds MethodTables; the **JIT** turns each method into native code on its first call, and **tiered compilation** later replaces hot methods with better-optimised code.
+4. Objects live on the **managed heap**; the **GC** reclaims the ones nothing refers to.
+5. The **BCL** gives you portable APIs that call the operating system underneath, so the same compiled app runs on Windows, Linux and macOS.
 
 ### Common mistakes
 
 - Saying ".NET Core and .NET 8 are different products". .NET 5+ *is* the continuation of .NET Core; "Core" was dropped from the name.
+- Saying C# is "interpreted". It is compiled twice: to IL at build time and to native code by the JIT (or ahead of time with ReadyToRun or Native AOT).
+- Judging performance from the first request after a restart, which includes type loading and JIT time. Warm up and measure many requests.
 - Starting a new project on .NET Framework. Use it only to maintain existing apps (Web Forms, WCF services, old WinForms).
 - Mixing up the SDK and the runtime. Developers install the SDK (compiler + tools); servers only need the runtime.
 
 ### Real-world example
 
-A company has a 10-year-old ASP.NET MVC 5 portal on .NET Framework 4.8 and IIS. New services are written in ASP.NET Core on .NET 10 and run in Linux containers, which are cheaper to host. Both share a SQL Server database, and the old portal is moved page by page over the next two years.
+A company has a 10-year-old ASP.NET MVC 5 portal on .NET Framework 4.8 and IIS. New services are written in ASP.NET Core on .NET 10 and run in Linux containers, which are cheaper to host. One of them, an Azure Function that must answer quickly after scaling from zero, is published with ReadyToRun so its first request doesn't wait for the JIT. Both old and new systems share a SQL Server database, and the old portal is moved page by page over the next two years.
 
 ### Try it yourself
 
-1. Run `dotnet --list-sdks` and `dotnet --list-runtimes` and note which versions you have.
-2. Create a console app, build it, and open the `.dll` in ILSpy to see the IL the compiler produced.
-3. Explain to a friend in two sentences why C# code can run on Windows, Linux and macOS.
+1. Run `dotnet --info`, then `dotnet --list-sdks` and `dotnet --list-runtimes`, and note which versions you have.
+2. Build the HelloApp above, open `bin/Debug/net10.0/HelloApp.dll` in [ILSpy](https://github.com/icsharpcode/ILSpy) and find `<Main>$`, its `ldstr` and `call` instructions, and the metadata for `System.Console`.
+3. Open `HelloApp.runtimeconfig.json` and `HelloApp.deps.json` and explain what each line is for.
+4. Run `dotnet publish -c Release -r win-x64 --self-contained` (or `linux-x64`) and compare the output folder with the normal build. What extra files appear and why?
+5. Add a loop that calls a small method 1,000,000 times, time the first 10 calls and the last 10 calls with `Stopwatch`, and explain the difference using tiered compilation.
 
 ## Lesson: [Basic|High] First program, namespaces and keywords
 

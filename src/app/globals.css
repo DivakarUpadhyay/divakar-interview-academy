@@ -550,3 +550,34 @@ main.container { padding-top: 28px; padding-bottom: 40px; }
 
 /* Tall mega menus (Interview Questions) must fit short laptop screens: scroll inside the dropdown instead of being cut off. */
 @media (min-width: 1101px) { .menu-item > .dropdown { max-height: calc(100vh - 116px); max-height: calc(100dvh - 116px); overflow-y: auto; overscroll-behavior: contain; } }
+
+/* Touch screens: every link and button is at least ~28px tall (WCAG 2.2 asks for 24px), labels readable. */
+.badge { font-size: .75rem; }
+.code-lang { font-size: .75rem; }
+@media (pointer: coarse), (max-width: 640px) {
+  /* Inline padding enlarges the tap area without breaking the breadcrumb into separate lines. */
+  .crumbs { line-height: 2; }
+  .crumbs a, .footer-cta, .qi-course h3 a { padding: 6px 2px; }
+  main li > a:only-child { display: inline-block; padding: 4px 0; }
+  .copy-btn { padding: 5px 10px; font-size: .78rem; }
+  .code-lang { right: 78px; }
+  input[type="checkbox"], input[type="radio"] { width: 24px; height: 24px; }
+  label.check { min-height: 32px; }
+}
+
+/* Roadmap rows: the number and the "N lessons · N Q&A" label never shrink or break mid-word; on phones the
+   label moves under the course title instead of squeezing it. */
+details.panel > summary > .muted:first-of-type { flex: none; }
+details.panel > summary > .small { white-space: nowrap; overflow-wrap: normal; }
+.rm-title { flex: 1 1 0; min-width: 0; }
+.rm-title + .spacer { display: none; }
+@media (max-width: 520px) {
+  details.panel > summary { flex-wrap: wrap; row-gap: 2px; }
+  details.panel > summary > .spacer { display: none; }
+  details.panel > summary > .small { flex-basis: 100%; padding-left: 40px; }
+}
+
+/* Long inline code (e.g. builder.Services.AddScoped<IOrderService, OrderService>()) wraps instead of pushing the page sideways. */
+p code, li code, td code { overflow-wrap: anywhere; word-break: break-word; }
+/* Titles such as "InvalidOperationException: ..." or "StreamReader/StreamWriter" are single words wider than a phone. */
+h1, h2, h3, h4 { overflow-wrap: anywhere; }

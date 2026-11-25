@@ -25,7 +25,7 @@ export default function Roadmap() {
           {courses.filter((c) => c.track_slug === t.slug).map((c) => (
             <details key={c.slug} className="panel">
               <summary>
-                <span className="muted">{c.seq}.</span> {c.title}
+                <span className="muted">{c.seq}.</span> <span className="rm-title">{c.title}</span>
                 <span className="spacer" />
                 <span className="muted small">{c.lessons} lessons · {c.questions} Q&amp;A</span>
               </summary>
